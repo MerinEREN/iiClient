@@ -1,35 +1,41 @@
 import React, {Component}  from "react"
 import PropTypes from 'prop-types'
+import Snackbar from 'material-ui/Snackbar'
 
 class ErrorMsg extends Component {
 	constructor(props) {
 		super(props)
-		this.handleDismissClick = this.handleDismissClick.bind(this)
+		this.state = {
+			open: false
+		}
+		this.handleRequestClose = this.handleRequestClose.bind(this)
 	}
-	handleDismissClick(e) {
-		this.props.setErrorMessage(null)
-		e.preventDefault()
+	componentWillReceiveProps(nextProps) {
+			this.setState({open: true})
+	}
+	handleRequestClose() {
+		this.setState({open: false})
 	}
 	render() {
 		const {errorMessage} = this.props
-		return errorMessage 
-			||
-			(
-				<p style={{backgroundColor: '#e99', padding: 10}}>
-					<b>{errorMessage}</b>
-					{' '}
-					(<a href="#"
-						onTouchTap={this.handleDismissClick}>
-						Dismiss
-					</a>)
-				</p>
-			)
+		return <Snackbar 
+				open={this.state.open} 
+				message={errorMessage} 
+				autoHideDuration={5000} 
+				onRequestClose={this.handleRequestClose}
+			/>
 	}
 }
 
-ErrorMsg.propTypes = {
-	errorMessage : PropTypes.string,
-	setErrorMessage: PropTypes.func.isRequired
+ErrorMsg.defaultProps = {
+	errorMessage: 'dummy message'
 }
+
+
+ErrorMsg.propTypes = {
+	errorMessage: PropTypes.string
+}
+
+ErrorMsg.muiName = 'Snackbar'
 
 export default ErrorMsg

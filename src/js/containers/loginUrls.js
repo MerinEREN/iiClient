@@ -1,7 +1,7 @@
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import loadLoginUrls from '../middlewares/loginUrls'
-import LoginComponent from '../components/loginUrls'
+import LoginUrlsComponent from '../components/loginUrls'
 
 const mapStateToProps = (state) => {
 	return {
@@ -17,6 +17,6 @@ const mapDispatchToProps = (dispatch) => {
 	)
 }
 
-const Login = connect(mapStateToProps, mapDispatchToProps)(LoginComponent)
+const LoginUrls = connect(mapStateToProps, mapDispatchToProps)(LoginUrlsComponent)
 
-export default Login
+export default LoginUrls

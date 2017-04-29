@@ -6,7 +6,7 @@ import Popover from 'material-ui/Popover'
 import Menu from 'material-ui/Menu'
 import MenuItem from 'material-ui/MenuItem'
 
-class Login extends Component {
+class LoginUrls extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -71,9 +71,9 @@ class Login extends Component {
 	}
 }
 
-	Login.propTypes = {
-		loginUrls: PropTypes.object.isRequired, 
-		loadLoginUrls: PropTypes.func.isRequired
-	}
+LoginUrls.propTypes = {
+	loginUrls: PropTypes.object.isRequired, 
+	loadLoginUrls: PropTypes.func.isRequired
+}
 
-	export default Login
+export default LoginUrls

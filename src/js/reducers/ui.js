@@ -1,6 +1,6 @@
 import {combineReducers} from 'redux'
 import selectedTheme from './theme'
-import {openDrawer} from './body'
+import {openDrawer} from './drawer'
 
 // Higher-Order Reducer
 const ui = combineReducers({

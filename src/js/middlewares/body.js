@@ -1,9 +1,9 @@
 import {makeLoader} from './utilities'
+import {toggleDrawer} from '../actions/drawer'
 import {
 	userAccountRequest, 
 	userAccountSuccess, 
-	userAccountFailure, 
-	toggleDrawer
+	userAccountFailure
 } from '../actions/body'
 
 const loadUserAccount = makeLoader({

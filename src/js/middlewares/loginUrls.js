@@ -7,12 +7,12 @@ import {
 
 const loadLoginUrls = makeLoader({
 	actionCreators: {
-			actionsRequest: [loginUrlsRequest],
-			actionsSuccess: [loginUrlsSuccess],
+		actionsRequest: [loginUrlsRequest],
+		actionsSuccess: [loginUrlsSuccess],
 		actionsFailure: [loginUrlsFailure]
 	}, 
 	options: {
-			isCached: state => Object.keys(state.loginUrls.items).length
+		isCached: state => Object.keys(state.loginUrls.items).length
 	}
 })
 

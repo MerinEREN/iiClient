@@ -1,5 +1,5 @@
 // import fetch from 'isomorphic-fetch'
-import {toggleFetching} from '../actions/body'
+import {toggleFetching} from '../actions/fetchingProgres'
 import {setErrorMessage} from '../actions/errorMsg'
 
 export default function fetchDomainDataIfNeeded(args) {

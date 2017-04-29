@@ -28,11 +28,11 @@ function applyCustomTheme() {
 	})
 }
 let theme = {
-	id : cookie.load('theme'),
+	ID : cookie.load('theme'),
 	value: null
 }
-if (theme.id) {
-	switch (theme.id) {
+if (theme.ID) {
+	switch (theme.ID) {
 		case 'light':
 			theme.value = getMuiTheme(lightBaseTheme)
 			break
@@ -45,29 +45,29 @@ if (theme.id) {
 } else {
 	// theme = {'custom', applyCustomTheme()}
 	theme = {
-		id: 'light',
+		ID: 'light',
 		value: applyCustomTheme()
 	}
 }
 
 function changeTheme(state, action) {
-	switch (state.id) {
+	switch (state.ID) {
 		case 'light':
 			cookie.save('theme', 'dark')
 			return {
-				id: 'dark',
+				ID: 'dark',
 				value: getMuiTheme(darkBaseTheme)
 			}
 		case 'dark':
 			cookie.save('theme', 'light')
 			return {
-				id: 'light',
+				ID: 'light',
 				value: getMuiTheme(lightBaseTheme)
 			}
 		default:
 			cookie.save('theme', 'custom')
 			return {
-				id: 'custom',
+				ID: 'custom',
 				value: applyCustomTheme()
 			}
 	}
