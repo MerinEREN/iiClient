@@ -4,4 +4,4 @@ import {
 } from './types'
 
 // Action Creators
-export const toggleDrawer = makeActionCreator(TOGGLE_DRAWER)
+export const toggleDrawer = makeActionCreator(TOGGLE_DRAWER, 'cookies')

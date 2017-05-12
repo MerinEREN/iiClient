@@ -37,7 +37,14 @@ function shouldFetchDomainData(state, args) {
 }
 
 function fetchDomainData(args) {
-	const {actionsRequest, actionsSuccess, actionsFailure, request, hideFetching, groupID} = args
+	const {
+		actionsRequest, 
+		actionsSuccess, 
+		actionsFailure, 
+		request, 
+		hideFetching, 
+		groupID
+	} = args
 	return dispatch => {
 		actionsRequest.every(v => dispatch(v(groupID)))
 		if(!hideFetching)
@@ -121,9 +128,8 @@ function fetchDomainData(args) {
 			})
 			.catch(err => {
 				console.log(
-					`There has been a problem with my fetch`
-					+
-					` operation: ${err.message}`
+					`There has been a problem with my fetch
+					operation: ${err.message}`
 				)
 				actionsFailure.every(v => dispatch(v(err.message, groupID)))
 				dispatch(setErrorMessage(err.message))

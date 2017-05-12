@@ -1,38 +1,83 @@
-import React, {Component} from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
-import {Link} from 'react-router'
 import IconMenu from 'material-ui/IconMenu'
 import IconButton from 'material-ui/IconButton'
+import Avatar from 'material-ui/Avatar'
 import MenuItem from 'material-ui/MenuItem'
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert'
+import {Card, CardHeader} from 'material-ui/Card'
+import Divider from 'material-ui/Divider'
+import ChevronLeft from 'material-ui/svg-icons/navigation/chevron-left'
+import Language from 'material-ui/svg-icons/action/language'
+import SignOut from 'material-ui/svg-icons/action/exit-to-app'
 
-const Logged = () => (
-			<IconMenu
-				iconButtonElement={
-					<IconButton><MoreVertIcon /></IconButton>
-				}
-				targetOrigin={{horizontal: 'right', vertical: 'top'}}
-				anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+const styles = {
+	divider: {
+		marginTop: 0
+	}, 
+	iconButton: {
+		padding: 0
+	}, 
+	iconMenu: {
+		listStyle: {
+			paddingTop: 0
+		}
+	}, 
+	card: {
+		boxShadow: 'none'
+	}, 
+	cardHeader: {
+		textStyle: {
+			paddingRight: 0
+			}
+	}
+}
+
+const Logged = ({acc, user, signOut}) => (
+	<IconMenu
+		iconButtonElement={
+			<IconButton 
+				style= {styles.iconButton}
 			>
-				{/* GET THOSE ITEMS FROM PROPS */}
-				<MenuItem primaryText="Refresh" />
-				<MenuItem primaryText="Help" />
-				<MenuItem children={
-					<a 
-						style={{textDecoration: 'none'}}
-								href="logout/"
-								activeStyle={{
-									textDecoration: 
-									'none', 
-									color: '#0097a7'
-								}}
-							>
-								Logout
-							</a>
-				}
+				<Avatar src={user.photo.path || 'img/adele.jpg'} />
+			</IconButton>
+		}
+		targetOrigin={{horizontal: 'right', vertical: 'top'}}
+		anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+		listStyle={styles.iconMenu.listStyle}
+	>
+		<Card style={styles.card}>
+			<CardHeader
+				title={acc.ID}
+				subtitle={user.email}
+				textStyle={styles.cardHeader.textStyle}
+				avatar={user.photo.path || 'img/adele.jpg'}
 			/>
-		</IconMenu>
-			)
+		</Card>
+		<Divider style={styles.divider} />
+		<MenuItem 
+			primaryText="Language" 
+			leftIcon={<ChevronLeft />}
+			rightIcon={<Language />}
+			menuItems={[
+				<MenuItem primaryText="Turkish" />, 
+				<MenuItem primaryText="English" />, 
+				<MenuItem primaryText="German" />
+			]}
+		/>
+		<MenuItem 
+			primaryText="Sign Out"
+			insetChildren={true}
+			rightIcon={<SignOut />}
+			onTouchTap={() => signOut()}
+		/>
+	</IconMenu>
+)
+
+Logged.propTypes = {
+	user: PropTypes.object.isRequired, 
+	acc: PropTypes.object.isRequired, 
+	signOut: PropTypes.func.isRequired
+}
 
 // My custom 'Logged' component acts like 'IconMenu' mui component !!!!!!!!!!!!!!!!!!!!!!!
 Logged.muiName = 'IconMenu'

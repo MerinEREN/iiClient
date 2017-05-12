@@ -1,4 +1,3 @@
-import fetchDomainDataIfNeeded from './fetch'
 import loadDemands from './demands'
 import loadOffers from './offers'
 import loadServicePacks from './servicePacks'

@@ -1,5 +1,4 @@
 import React from 'react'
-import muiThemeable from 'material-ui/styles/muiThemeable'
 import CounterChip from '../containers/counterChip'
 import TimelineList from '../containers/timelineList'
 
@@ -9,4 +8,4 @@ const Timeline = () =>  (
 		<TimelineList/>
 	</div>
 )
-export default muiThemeable()(Timeline)
+export default Timeline

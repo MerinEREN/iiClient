@@ -1,11 +1,16 @@
 import React, {Component}  from "react"
-import PropTypes from 'prop-types'
-import cookie from 'react-cookie'
+import PropTypes, {instanceOf} from 'prop-types'
+import {Cookies, withCookies} from 'react-cookie'
+import muiThemeable from 'material-ui/styles/muiThemeable'
 import LinearProgress from 'material-ui/LinearProgress'
 import AppBar from 'material-ui/AppBar'
+import {ToolbarGroup} from 'material-ui/Toolbar'
+import IconButton from 'material-ui/IconButton'
+import Badge from 'material-ui/Badge'
+import NotificationsIcon from 'material-ui/svg-icons/social/notifications'
 import Login from '../containers/login'
 import LoginUrls  from '../containers/loginUrls'
-import Logged  from '../components/logged'
+import Logged  from '../containers/logged'
 import Drawer from '../containers/drawer'
 import ErrorMsg  from '../containers/errorMsg'
 
@@ -15,12 +20,13 @@ class Body extends Component {
 		// MODIFY THIS SESSION CONTROL !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		// 'ACSID' is for prod, and 'dev_appserver_login is for development.
 		// true is optional "doNotParse" arg.
-		// If not specified load() deserialize any cookie starting with "{" or "[".
-		this.session = cookie.load('ACSID', true) 
+		// If not specified get() deserialize any cookies starting with "{" or "[".
+		const {cookies, loadData} = this.props
+		this.session = cookies.get('ACSID', true) 
 			|| 
-			cookie.load('dev_appserver_login', true)
+			cookies.get('dev_appserver_login', true)
 		if (this.session)
-			this.props.loadData()
+			loadData()
 		this.state = {completed: 0}
 		// IT IS POSIBLE TO CALL THE FUNCTION EVEN BELOW BINDING !!!!!!!!!!!!!!!!!!
 		this.progress = this.progress.bind(this)
@@ -50,36 +56,79 @@ class Body extends Component {
 	}
 	render() {
 		const {
-			theme, 
+			muiTheme, 
 			isFetching, 
-			// acc, 
+			acc, 
 			user, 
 			toggleDrawer, 
 			children
 		} = this.props
+		this.styles = {
+			div: {
+				backgroundColor: muiTheme.palette.canvasColor,
+				opacity: this.session ? 1 : 0.5, 
+			}, 
+			appBar: {
+				fontStyle: "italic"
+			}, 
+			badge: {
+				badgeStyle: {
+					display: 5 ? "flex" : "none", 
+					width: 21, 
+					height: 21, 
+					zIndex: 1, 
+					top: 12, 
+					right: 13
+				}, 
+				style: {
+					paddingTop: 5 ? 8 : 0, 
+					paddingRight: 5 ? 14 : 0, 
+					paddingBottom: 0, 
+					paddingLeft: 0 
+				}
+			}
+		}
 		return (
 			<div
-				style={{
-					backgroundColor: theme.value.palette.canvasColor,
-					opacity: this.session ? 1 : 0.5
-				}}
+				style={this.styles.div}
 			>
-				<AppBar
-					title="User Name"
-					showMenuIconButton={this.session !== undefined}
-					iconElementRight={this.session === undefined ?
-							<LoginUrls />
-							:
-							<Logged />
-					}
-					onLeftIconButtonTouchTap={() => toggleDrawer()}
-				/>
 				{
 					isFetching && <LinearProgress 
 						mode="determinate" 
 						value={this.state.completed} 
 					/>
 				}
+				<AppBar
+					title={user.name || "Ince Is"}
+					style={this.styles.appBar}
+					showMenuIconButton={this.session !== undefined}
+					onLeftIconButtonTouchTap={() => toggleDrawer()}
+				>
+					<ToolbarGroup>
+							<Badge 
+								badgeContent={5} 
+								secondary={true} 
+								badgeStyle={this.styles.badge.badgeStyle}
+								style={this.styles.badge.style}
+							>
+								<IconButton 
+									tooltip="Notifications"
+								>
+									<NotificationsIcon />
+								</IconButton>
+							</Badge>
+						{
+							this.session === undefined 
+								?
+								<LoginUrls />
+								:
+								<Logged 
+									acc= {acc} 
+									user={user} 
+								/>
+						}
+					</ToolbarGroup>
+				</AppBar>
 				{this.session && <Drawer {...this.props} />}
 				{this.session ? children : <Login />}
 				{<ErrorMsg />}
@@ -89,12 +138,18 @@ class Body extends Component {
 }
 
 Body.defaultProps = {
-	acc: {}, 
-	user: {}
+	acc: {
+		photo: {}
+	}, 
+	user: {
+		photo: {}, 
+		roles: []
+	}
 }
 
 Body.propTypes = {
-	theme: PropTypes.object.isRequired,
+	cookies: instanceOf(Cookies).isRequired, 
+	muiTheme: PropTypes.object.isRequired,
 	isFetching: PropTypes.bool.isRequired,
 	acc: PropTypes.object,
 	user: PropTypes.object,
@@ -103,4 +158,4 @@ Body.propTypes = {
 	children: PropTypes.node.isRequired
 }
 
-export default Body
+export default withCookies(muiThemeable()(Body))

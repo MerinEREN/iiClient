@@ -30,11 +30,9 @@ const mapStateToProps = state => {
 		    } */
 	const {
 		isFetching, 
-		ui: {selectedTheme}, 
 		entities: {accounts, users}
 	} = state
 	return {
-		theme: selectedTheme,
 		isFetching,
 		acc: accounts.byId[accounts.allIds[0]], 
 		user: users.byId[users.allIds[0]]
