@@ -7,14 +7,14 @@ import {
 
 const loadOffers = makeLoader({
 	defaults: {
-		url: '/offers', 
-		groupID: 'all'
+		URL: '/offers/', 
+		paginationID: 'offers'
 	},
 	actionCreators: {
 		actionsRequest: [offersRequest],
 		actionsSuccess: [offersSuccess],
 		actionsFailure: [offersFailure]
 	}
-})
+	})
 
 export default loadOffers

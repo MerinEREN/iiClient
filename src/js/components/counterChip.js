@@ -8,9 +8,9 @@ class CounterChip extends Component {
 		this.state = {display: 'none'}
 		this.getData = this.getData.bind(this)
 	}
-	componentDidMount() {
+	componentWillMount() {
 		// Get timeline items count every 5 minutes.
-		this.loadDataInterval = setInterval(() => this.getCount(), 300000)
+		this.loadDataInterval = setInterval(() => this.getCount(), 600000)
 	}
 	componentWillReceiveProps(nextProps) {
 		if(nextProps.counter.value) {
@@ -21,21 +21,31 @@ class CounterChip extends Component {
 		}
 	}
 	getCount() {
-		const {counter, loadData, getUrl} = this.props
-		getUrl('/timeline')
-		loadData({
-			url: counter.nextPageUrl, 
+		const {loadCount, getURL} = this.props
+		loadCount({
+			URL: getURL('timeline', 'nextPageURL'), 
 			groupID: 'timeline'
 		})
 	}
 	getData() {
 		this.setState({display: 'none'})
-		const {counter, loadItems, getUrl} = this.props
-		getUrl('/timeline', 'd=next')
-		loadItems({
-			url: counter.nextPageUrl, 
-			groupID: 'timeline'
-		})
+		const {loadItems} = this.props
+		loadItems(
+			{
+				dArgs: {
+					returnedURL: 'nextPageURL', 
+					groupID: 'timeline'
+				}, 
+				oArgs: {
+					returnedURL: 'nextPageURL', 
+					groupID: 'timeline'
+				}, 
+				spArgs: {
+					returnedURL: 'nextPageURL', 
+					groupID: 'timeline'
+				}
+			}
+		)
 	}
 	componentWillUnmount() {
 		clearInterval(this.loadDataInterval)
@@ -57,9 +67,9 @@ CounterChip.defaultProps = {
 
 CounterChip.propTypes = {
 	counter: PropTypes.object.isRequired, 
-	loadData: PropTypes.func.isRequired, 
+	loadCount: PropTypes.func.isRequired, 
 	loadItems: PropTypes.func.isRequired, 
-	getUrl: PropTypes.func.isRequired 
+	getURL: PropTypes.func.isRequired 
 }
 
 CounterChip.muiName = 'Chip'

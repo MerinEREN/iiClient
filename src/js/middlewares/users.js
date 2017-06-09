@@ -7,16 +7,13 @@ import {
 
 const loadUsers = makeLoader({
 	defaults: {
-		url: '/users'
+		URL: '/users/', 
+		paginationID: 'users'
 	}, 
 	actionCreators: {
 		actionsRequest: [usersRequest],
 		actionsSuccess: [usersSuccess],
 		actionsFailure: [usersFailure]
-	}, 
-	options: {
-		// CHANGE THIS BELOW
-		isCached: state => state.group.usersByAccount[props.groupID].isFetching
 	}
 })
 

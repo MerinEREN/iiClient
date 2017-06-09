@@ -14,6 +14,6 @@ const loadLoginUrls = makeLoader({
 	options: {
 		isCached: state => Object.keys(state.loginUrls.items).length
 	}
-})
+	})
 
 export default loadLoginUrls

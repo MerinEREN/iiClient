@@ -1,6 +1,6 @@
 // import fetch from 'isomorphic-fetch'
 import {toggleFetching} from '../actions/fetchingProgres'
-import {setErrorMessage} from '../actions/errorMsg'
+import {setSnackbarMessage} from '../actions/snackbar'
 
 export default function fetchDomainDataIfNeeded(args) {
 	// Function also receives getState()
@@ -36,33 +36,33 @@ function shouldFetchDomainData(state, args) {
 	} */
 }
 
-function fetchDomainData(args) {
+const fetchDomainData = args => dispatch => {
 	const {
 		actionsRequest, 
 		actionsSuccess, 
 		actionsFailure, 
 		request, 
+		groupID, 
 		hideFetching, 
-		groupID
+		showSnackbar
 	} = args
-	return dispatch => {
-		actionsRequest.every(v => dispatch(v(groupID)))
-		if(!hideFetching)
-			dispatch(toggleFetching())
-		// REMOVE IF STATEMENT BELOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		/* if (self.fetch)
+	actionsRequest.every(v => dispatch(v(groupID)))
+	if(!hideFetching)
+		dispatch(toggleFetching())
+	// REMOVE IF STATEMENT BELOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	/* if (self.fetch)
 			console.log('fetch is supported by the browser')
 		else
 			console.log('fetch is not supported by the browser,' + 
 				'use XMLHttpRequest instead') */
-		// return fetch(`http://www.reddit.com/r/${subreddit}.json`)
-		return fetch(request)
-			.then(response => {
-				// throw new TypeError('Hello my funny TypeError =)')
-				if(!hideFetching)
-					dispatch(toggleFetching())
-				if (response.ok) {
-					// console.log(response)
+	// return fetch(`http://www.reddit.com/r/${subreddit}.json`)
+	return fetch(request)
+		.then(response => {
+			// throw new TypeError('Hello my funny TypeError =)')
+			if(!hideFetching)
+				dispatch(toggleFetching())
+			if (response.ok) {
+				if (request.method === 'GET') {
 					const contentType = response.headers
 						.get('content-type')
 					if (
@@ -106,33 +106,33 @@ function fetchDomainData(args) {
 							.then(body => {
 								const json = 
 									JSON.parse(body)
-								// For loadUserAccount only
-									/* if(Array.isArray(json.result)) {
-									json.result.every((r, i) => dispatch(actionsSuccess[i](groupID, {...json, result: r}, Date.now)()))
-								} else { */
-									actionsSuccess.every(v => 
-										dispatch(v(json, 
-											Date.now(), groupID)))
-								}
-								// }
+								actionsSuccess.every(v => 
+									dispatch(v(json, 
+										Date.now(), groupID)))
+							}
 							)
 					}
-				} else {
-					// response code is not between 199 and 300
-					console.log(
-						'Response code is not between 199 and '
-						+
-						'300')
 				}
-				dispatch(setErrorMessage(null))
-			})
-			.catch(err => {
+			} else {
+				// response code is not between 199 and 300
 				console.log(
-					`There has been a problem with my fetch
+					'Response code is not between 199 and '
+					+
+					'300')
+			}
+			// USE Response.status HERE TO HANDLE RESPONSE STATUSES !!!!!!!!!!!
+			if(showSnackbar) {
+				dispatch(setSnackbarMessage(response.headers.get('Date')))
+			}
+		})
+		.catch(err => {
+			if(!hideFetching)
+				dispatch(toggleFetching())
+			console.log(
+				`There has been a problem with my fetch
 					operation: ${err.message}`
-				)
-				actionsFailure.every(v => dispatch(v(err.message, groupID)))
-				dispatch(setErrorMessage(err.message))
-			})
-	}
+			)
+			actionsFailure.every(v => dispatch(v(err.message, groupID)))
+			dispatch(setSnackbarMessage(err.message))
+		})
 }

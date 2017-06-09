@@ -2,10 +2,10 @@ import loadDemands from './demands'
 import loadOffers from './offers'
 import loadServicePacks from './servicePacks'
 
-export default function loadData(args) {
+export default function loadData({dArgs, oArgs, spArgs}) {
 	return dispatch => {
-		dispatch(loadDemands(args))
-		dispatch(loadOffers(args))
-		dispatch(loadServicePacks(args))
+		dispatch(loadDemands(dArgs))
+		dispatch(loadOffers(oArgs))
+		dispatch(loadServicePacks(spArgs))
 	}
 }

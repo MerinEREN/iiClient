@@ -1,7 +1,7 @@
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import CounterChipComponent from '../components/counterChip'
-import loadData, {getUrl} from '../middlewares/counters'
+import loadCount, {getURL} from '../middlewares/counters'
 import loadItems from '../middlewares/timelineList'
 
 // Can use ownProps here.
@@ -11,11 +11,11 @@ const mapStateToProps = state => {
 	}
 }
 
-const mapDispatchToProps = (dispatch) => bindActionCreators(
+const mapDispatchToProps = dispatch => bindActionCreators(
 	{
-		loadData, 
+		loadCount, 
 		loadItems, 
-		getUrl
+		getURL
 	},
 	dispatch
 )

@@ -1,52 +1,52 @@
 import createReducer from './utilities'
 import {
-	LOGIN_URLS_REQUEST,
-	LOGIN_URLS_SUCCESS,
-	LOGIN_URLS_FAILURE
+	SIGN_OUT_URL_REQUEST,
+	SIGN_OUT_URL_SUCCESS,
+	SIGN_OUT_URL_FAILURE
 } from '../actions/types'
 
 // Case Reducers
-function loginUrlsRequest(state, action) {
+function signOutURLRequest(state, action) {
 	return {
 		...state,
 		isFetching: true
 	}
 }
-function loginUrlsSuccess(state, action) {
+function signOutURLSuccess(state, action) {
 	return {
 		...state,
 		isFetching: false,
 		didInvalidate: false,
-		items: action.response.result,
+		value: action.response.result,
 		error: false,
 		lastUpdated: action.receivedAt
 	}
 }
-function loginUrlsFailure(state, action) {
+function signOutURLFailure(state, action) {
 	return {
 		...state,
 		isFetching: false,
 		didInvalidate: true,
-		items: {},
+		value: null,
 		error: action.error,
 		lastUpdated: action.receivedAt
 	}
 }
 
 // Slice Reducer
-const loginUrls = createReducer(
+const signOutURL = createReducer(
 	{
 		isFetching: false,
 		didInvalidate: true,
-		items: {},
+		value: null,
 		error: false,
 		lastUpdated: null
 	},
 	{
-		LOGIN_URLS_REQUEST: loginUrlsRequest,
-		LOGIN_URLS_SUCCESS: loginUrlsSuccess,
-		LOGIN_URLS_FAILURE: loginUrlsFailure
+		SIGN_OUT_URL_REQUEST: signOutURLRequest,
+		SIGN_OUT_URL_SUCCESS: signOutURLSuccess,
+		SIGN_OUT_URL_FAILURE: signOutURLFailure
 	}
 )
 
-export default loginUrls
+export default signOutURL

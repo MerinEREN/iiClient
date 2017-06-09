@@ -1,43 +1,39 @@
 import {makeLoader} from './utilities'
-import {generateUrl} from './utilities'
+import {generateURL} from './utilities'
 import {
 	counterRequest, 
 	counterSuccess, 
 	counterFailure 
 } from '../actions/counters'
 
-export const getUrl = (domain, direction) => (dispatch, getState) => {
+export const getURL = (groupID, returnedURL) => (dispatch, getState) => {
 	const {
-		dnpu, 
-		onpu, 
-		spnpu
-	} = {
 		demands: {
-			timeline: {nextPageUrl}
+			timeline: {[returnedURL]: dURL}
 		}, 
 		offers: {
-			timeline: {nextPageUrl}
+			timeline: {[returnedURL]: oURL}
 		}, 
 		servicePacks: {
-			timeline: {nextPageUrl}
+			timeline: {[returnedURL]: spURL}
 		}
 	} = getState().pagination
-	const url = generateUrl(domain, direction, dnpu, onpu, spnpu)
-	return dispatch(counterSuccess(
-		{nextPageUrl: url}, 
-		Date.now(), 
-		'timeline'))
+	return generateURL(groupID, returnedURL, dURL, oURL, spURL)
 }
 
-const loadData = makeLoader({
+const loadCount = makeLoader({
+	defaults: {
+		URL: '/timeline', 
+		paginationID: 'counters'
+	}, 
 	actionCreators: {
-			actionsRequest: [counterRequest],
-			actionsSuccess: [counterSuccess],
-			actionsFailure: [counterFailure]
+		actionsRequest: [counterRequest],
+		actionsSuccess: [counterSuccess],
+		actionsFailure: [counterFailure]
 	},
 	options: {
 		hideFetching: true
 	}
 })
 
-export default loadData
+export default loadCount

@@ -37,7 +37,7 @@ const allIds = createReducer(
 		USERS_SUCCESS: pushIds
 	}
 )
-export const usersByAccount = paginate({
+export const paginationUsers = paginate({
 	mapActionToKey: action => action.groupID, 
 	types: [
 		USERS_REQUEST, 

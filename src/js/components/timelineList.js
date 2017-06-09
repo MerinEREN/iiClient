@@ -6,9 +6,23 @@ import Offer from "../components/offer"
 import ServicePack from "../components/servicePack"
 
 class TimelineList extends Component {
-	constructor(props) {
-		super(props)
-		this.props.loadData({groupID: "timeline"})
+	componentWillMount() {
+		this.props.loadData( 
+			{
+				dArgs: {
+					URL: '/demands', 
+					groupID: 'timeline'
+				}, 
+				oArgs: {
+					URL: '/offers', 
+					groupID: 'timeline'
+				}, 
+				spArgs: {
+					URL: '/servicePacks', 
+					groupID: 'timeline'
+				}
+			}
+		)
 	}
 	render() {
 		const {items} =  this.props 
@@ -43,7 +57,7 @@ class TimelineList extends Component {
 							}
 						})
 						:
-						<div style={{color: "#ffffff"}}>No Item</div>
+						<div>No Item</div>
 				}
 			</List>
 		)

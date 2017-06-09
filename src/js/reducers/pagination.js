@@ -1,7 +1,8 @@
 import {combineReducers} from 'redux'
 import counters from './counters'
 import {accountsInPagination as accounts} from './accounts'
-import {usersByAccount} from './users'
+import {paginationUsers as users} from './users'
+import {paginationPages as pages} from './pages'
 import {paginationDemands as demands} from './demands'
 import {paginationOffers as offers} from './offers'
 import {paginationServicePacks as servicePacks} from './servicePacks'
@@ -11,7 +12,8 @@ import {paginationServicePacks as servicePacks} from './servicePacks'
 const pagination = combineReducers({
 	counters, 
 	accounts, 
-	usersByAccount,
+	users,
+	pages, 
 	demands,
 	offers, 
 	servicePacks

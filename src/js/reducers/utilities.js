@@ -27,7 +27,8 @@ export const paginate = ({types, mapActionToKey}) => {
 	const updatePagination = (state = {
 		value: null, 
 		ids: [],
-		nextPageUrl: null,
+		nextPageURL: null,
+		prevPageURL: null,
 		pageCount: 0,
 		// error: false, 
 		isFetching: false,
@@ -46,7 +47,8 @@ export const paginate = ({types, mapActionToKey}) => {
 					// ids: union(state.ids, action.response.result),
 					ids: mergeKeysIntoArray(state.ids, action.response.
 						result), 
-					nextPageUrl: action.response.nextPageUrl,
+					nextPageURL: action.response.nextPageURL,
+					prevPageURL: action.response.prevPageURL,
 					pageCount: state.pageCount + 1, 
 					isFetching: false
 				}

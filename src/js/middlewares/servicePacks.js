@@ -7,14 +7,14 @@ import {
 
 const loadServicePacks = makeLoader({
 	defaults: {
-		url: '/servicePacks', 
-		groupID: 'all'
+		URL: '/servicePacks/', 
+		paginationID: 'servicePacks', 
 	},
 	actionCreators: {
 		actionsRequest: [servicePacksRequest],
 		actionsSuccess: [servicePacksSuccess],
 		actionsFailure: [servicePacksFailure]
 	}
-})
+	})
 
 export default loadServicePacks

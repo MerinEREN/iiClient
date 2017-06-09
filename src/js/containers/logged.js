@@ -1,17 +1,14 @@
 import {connect} from 'react-redux'
-import {bindActionCreators} from 'redux'
 import LoggedComponent from '../components/logged'
-import signOut from '../middlewares/signOut'
 
-const mapDispatchToProps = dispatch => bindActionCreators(
-	{
-		signOut
-	},
-	dispatch
-)
+const mapStateToProps = state => {
+	return {
+		signOutURL: state.signOutURL
+	}
+}
 
 // connect IS A MUST FOR INTERNAL dispatch !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-const Logged = connect(null, mapDispatchToProps)(LoggedComponent)
+const Logged = connect(mapStateToProps)(LoggedComponent)
 
 export default Logged
 

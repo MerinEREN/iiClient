@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import {Link} from 'react-router'
 import IconMenu from 'material-ui/IconMenu'
 import IconButton from 'material-ui/IconButton'
 import Avatar from 'material-ui/Avatar'
@@ -28,11 +29,14 @@ const styles = {
 	cardHeader: {
 		textStyle: {
 			paddingRight: 0
-			}
+		}
+	}, 
+	a: {
+		textDecoration: 'none'
 	}
 }
 
-const Logged = ({acc, user, signOut}) => (
+const Logged = ({acc, user, signOutURL}) => (
 	<IconMenu
 		iconButtonElement={
 			<IconButton 
@@ -64,19 +68,23 @@ const Logged = ({acc, user, signOut}) => (
 				<MenuItem primaryText="German" />
 			]}
 		/>
-		<MenuItem 
-			primaryText="Sign Out"
-			insetChildren={true}
-			rightIcon={<SignOut />}
-			onTouchTap={() => signOut()}
-		/>
+		<a 
+			href={signOutURL.value}
+			style={styles.a}
+		>
+			<MenuItem 
+				primaryText="Sign Out"
+				insetChildren={true}
+				rightIcon={<SignOut />}
+			/>
+		</a>
 	</IconMenu>
 )
 
 Logged.propTypes = {
 	user: PropTypes.object.isRequired, 
 	acc: PropTypes.object.isRequired, 
-	signOut: PropTypes.func.isRequired
+	signOutURL: PropTypes.object.isRequired
 }
 
 // My custom 'Logged' component acts like 'IconMenu' mui component !!!!!!!!!!!!!!!!!!!!!!!

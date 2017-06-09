@@ -10,7 +10,6 @@ const sortByLastModified = (is) => {
 }
 
 function getItemsFromEntities(pagination, entities) {
-	// console.log(pagination)
 	const pds = pagination.demands.timeline
 	const pos = pagination.offers.timeline
 	const psps = pagination.servicePacks.timeline

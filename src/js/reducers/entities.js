@@ -1,6 +1,7 @@
 import {combineReducers} from 'redux'
 import accounts from './accounts'
 import users from './users'
+import pages from './pages'
 import demands from './demands'
 import offers from './offers'
 import servicePacks from './servicePacks'
@@ -9,6 +10,7 @@ import servicePacks from './servicePacks'
 const entities= combineReducers({
 	accounts,
 	users,
+	pages, 
 	offers,
 	demands, 
 	servicePacks

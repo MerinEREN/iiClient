@@ -189,11 +189,11 @@ const drawer = ({cookies, acc, user, open, changeTheme, toggleDrawer}) => (
 				<ListItem 
 					containerElement={
 						<Link
-							to="/manageContents"
+							to="/pages"
 							activeStyle={styles.link.activeStyle}
 						/>
 					}
-					primaryText='Manage Contents'
+					primaryText='Pages'
 					leftIcon={<EditContent />}
 				/>
 			}

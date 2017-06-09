@@ -5,6 +5,7 @@ import {
 	userAccountSuccess, 
 	userAccountFailure
 } from '../actions/body'
+import loadSignOutURL from './signOutURL'
 
 const loadUserAccount = makeLoader({
 	actionCreators: {
@@ -17,5 +18,6 @@ const loadUserAccount = makeLoader({
 export default function loadData() {
 	return dispatch => {
 		dispatch(loadUserAccount()).then(dispatch(toggleDrawer()))
+		dispatch(loadSignOutURL({URL: '/signout/'}))
 	}
 }

@@ -29,7 +29,7 @@ const mapStateToProps = state => {
 		      lastUpdated
 		    } */
 	const {
-		isFetching, 
+		appState: {isFetching}, 
 		entities: {accounts, users}
 	} = state
 	return {

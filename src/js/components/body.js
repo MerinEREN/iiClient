@@ -4,6 +4,8 @@ import {Cookies, withCookies} from 'react-cookie'
 import muiThemeable from 'material-ui/styles/muiThemeable'
 import LinearProgress from 'material-ui/LinearProgress'
 import AppBar from 'material-ui/AppBar'
+import AutoComplete from 'material-ui/AutoComplete'
+import Search from 'material-ui/svg-icons/action/search'
 import {ToolbarGroup} from 'material-ui/Toolbar'
 import IconButton from 'material-ui/IconButton'
 import Badge from 'material-ui/Badge'
@@ -12,7 +14,7 @@ import Login from '../containers/login'
 import LoginUrls  from '../containers/loginUrls'
 import Logged  from '../containers/logged'
 import Drawer from '../containers/drawer'
-import ErrorMsg  from '../containers/errorMsg'
+import Snackbar  from '../containers/snackbar'
 
 class Body extends Component {
 	constructor(props) {
@@ -21,15 +23,17 @@ class Body extends Component {
 		// 'ACSID' is for prod, and 'dev_appserver_login is for development.
 		// true is optional "doNotParse" arg.
 		// If not specified get() deserialize any cookies starting with "{" or "[".
-		const {cookies, loadData} = this.props
+		const {cookies} = this.props
 		this.session = cookies.get('ACSID', true) 
-			|| 
-			cookies.get('dev_appserver_login', true)
-		if (this.session)
-			loadData()
+				|| 
+				cookies.get('dev_appserver_login', true)
 		this.state = {completed: 0}
 		// IT IS POSIBLE TO CALL THE FUNCTION EVEN BELOW BINDING !!!!!!!!!!!!!!!!!!
 		this.progress = this.progress.bind(this)
+	}
+	componentWillMount() {
+		if (this.session)
+			this.props.loadData()
 	}
 	componentWillReceiveProps(nextProps) {
 		if (!nextProps.isFetching) {
@@ -65,15 +69,16 @@ class Body extends Component {
 		} = this.props
 		this.styles = {
 			div: {
-				backgroundColor: muiTheme.palette.canvasColor,
-				opacity: this.session ? 1 : 0.5, 
+				backgroundColor: muiTheme.palette.canvasColor, 
+				height: '100vh'
+				// opacity: this.session ? 1 : 0.5
 			}, 
 			appBar: {
 				fontStyle: "italic"
 			}, 
 			badge: {
 				badgeStyle: {
-					display: 5 ? "flex" : "none", 
+					display: (this.session && 5) ? "flex" : "none", 
 					width: 21, 
 					height: 21, 
 					zIndex: 1, 
@@ -81,6 +86,7 @@ class Body extends Component {
 					right: 13
 				}, 
 				style: {
+					display: (this.session) ? "flex" : "none", 
 					paddingTop: 5 ? 8 : 0, 
 					paddingRight: 5 ? 14 : 0, 
 					paddingBottom: 0, 
@@ -114,7 +120,7 @@ class Body extends Component {
 								<IconButton 
 									tooltip="Notifications"
 								>
-									<NotificationsIcon />
+									<NotificationsIcon/>
 								</IconButton>
 							</Badge>
 						{
@@ -131,7 +137,7 @@ class Body extends Component {
 				</AppBar>
 				{this.session && <Drawer {...this.props} />}
 				{this.session ? children : <Login />}
-				{<ErrorMsg />}
+				{<Snackbar />}
 			</div>
 		)
 	}
