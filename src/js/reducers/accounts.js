@@ -9,13 +9,13 @@ import {
 } from '../actions/types'
 
 // Case Reducers
-function mergeById(state, action) {
+function mergeByID(state, action) {
 	const {result} = action.response
 	if(result.account)
 		return {...state, ...result.account}
 	return {...state, ...result}
 }
-function pushIds(state, action) {
+function pushIDs(state, action) {
 	const {result} = action.response
 	if(result.account) 
 		return mergeKeysIntoArray(state, result.account)
@@ -23,18 +23,18 @@ function pushIds(state, action) {
 }
 
 // Slice Reducer
-const byId = createReducer(
+const byID = createReducer(
 	{}, 
 	{
-		USER_ACCOUNT_SUCCESS: mergeById, 
-		ACCOUNTS_SUCCESS: mergeById
+		USER_ACCOUNT_SUCCESS: mergeByID, 
+		ACCOUNTS_SUCCESS: mergeByID
 	}
 )
-const allIds = createReducer(
+const allIDs = createReducer(
 	[], 
 	{
-		USER_ACCOUNT_SUCCESS: pushIds, 
-		ACCOUNTS_SUCCESS: pushIds
+		USER_ACCOUNT_SUCCESS: pushIDs, 
+		ACCOUNTS_SUCCESS: pushIDs
 	}
 )
 export const accountsInPagination = paginate({
@@ -48,8 +48,8 @@ export const accountsInPagination = paginate({
 
 //Higher-Order Reducer
 const accounts = combineReducers({
-	byId,
-	allIds
+	byID,
+	allIDs
 })
 
 export default accounts

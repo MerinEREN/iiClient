@@ -9,13 +9,13 @@ import {
 } from '../actions/types'
 
 // Case Reducers
-function mergeById(state, action) {
+function mergeByID(state, action) {
 	const {result} = action.response
 	if(result.user) 
 		return {...state, ...result.user}
 	return {...state, ...result}
 }
-function pushIds(state, action) {
+function pushIDs(state, action) {
 	const {result} = action.response
 	if(result.user) 
 		return mergeKeysIntoArray(state, result.user)
@@ -23,18 +23,18 @@ function pushIds(state, action) {
 }
 
 // Slice Reducers
-const byId = createReducer(
+const byID = createReducer(
 	{}, 
 	{
-		USER_ACCOUNT_SUCCESS: mergeById, 
-		USERS_SUCCESS: mergeById
+		USER_ACCOUNT_SUCCESS: mergeByID, 
+		USERS_SUCCESS: mergeByID
 	}
 )
-const allIds = createReducer(
+const allIDs = createReducer(
 	[], 
 	{
-		USER_ACCOUNT_SUCCESS: pushIds, 
-		USERS_SUCCESS: pushIds
+		USER_ACCOUNT_SUCCESS: pushIDs, 
+		USERS_SUCCESS: pushIDs
 	}
 )
 export const paginationUsers = paginate({
@@ -48,8 +48,8 @@ export const paginationUsers = paginate({
 
 // Higher-Order Reducer
 const users = combineReducers({
-	byId,
-	allIds
+	byID,
+	allIDs
 })
 
 export default users
@@ -95,7 +95,7 @@ function pushUser(state, action) {
 }
 
 // Slice Reducers
-const byId = createReducer(
+const byID = createReducer(
 	{
 		isFetching: false,
 		didInvalidate: true,
@@ -109,7 +109,7 @@ const byId = createReducer(
 		RECEIVE_USERS_DATA_ERROR: receiveUsersDataError
 	}
 )
-const allIds = createReducer(
+const allIDs = createReducer(
 	[], 
 	{
 		RECEIVE_USERS_DATA_SUCCESS: pushUser

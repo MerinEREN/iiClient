@@ -42,11 +42,16 @@ const fetchDomainData = args => dispatch => {
 		actionsSuccess, 
 		actionsFailure, 
 		request, 
+		bodyData, 
 		groupID, 
 		hideFetching, 
 		showSnackbar
 	} = args
-	actionsRequest.every(v => dispatch(v(groupID)))
+	if (request.method !== 'GET') {
+		actionsSuccess.every(ac => dispatch(ac({result: bodyData}, Date.now(), groupID)))
+	}
+	if (actionsRequest)
+		actionsRequest.every(ac => dispatch(ac(groupID)))
 	if(!hideFetching)
 		dispatch(toggleFetching())
 	// REMOVE IF STATEMENT BELOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -74,8 +79,8 @@ const fetchDomainData = args => dispatch => {
 					) {
 						response.text()
 							.then(body => 
-								actionsSuccess.every(v => 
-									dispatch(v(body, 
+								actionsSuccess.every(ac => 
+									dispatch(ac(body, 
 										Date.now()))))
 					} else if (
 						contentType
@@ -106,8 +111,8 @@ const fetchDomainData = args => dispatch => {
 							.then(body => {
 								const json = 
 									JSON.parse(body)
-								actionsSuccess.every(v => 
-									dispatch(v(json, 
+								actionsSuccess.every(ac => 
+									dispatch(ac(json, 
 										Date.now(), groupID)))
 							}
 							)
@@ -121,9 +126,8 @@ const fetchDomainData = args => dispatch => {
 					'300')
 			}
 			// USE Response.status HERE TO HANDLE RESPONSE STATUSES !!!!!!!!!!!
-			if(showSnackbar) {
+			if(showSnackbar)
 				dispatch(setSnackbarMessage(response.headers.get('Date')))
-			}
 		})
 		.catch(err => {
 			if(!hideFetching)
@@ -132,7 +136,12 @@ const fetchDomainData = args => dispatch => {
 				`There has been a problem with my fetch
 					operation: ${err.message}`
 			)
-			actionsFailure.every(v => dispatch(v(err.message, groupID)))
+			const rslt = {result: bodyData}
+			actionsFailure.every(ac => dispatch(ac(
+				err.message, 
+				groupID, 
+				rslt
+			)))
 			dispatch(setSnackbarMessage(err.message))
 		})
 }

@@ -189,7 +189,7 @@ const drawer = ({cookies, acc, user, open, changeTheme, toggleDrawer}) => (
 				<ListItem 
 					containerElement={
 						<Link
-							to="/pages"
+							to="/pages/"
 							activeStyle={styles.link.activeStyle}
 						/>
 					}
@@ -212,8 +212,8 @@ const drawer = ({cookies, acc, user, open, changeTheme, toggleDrawer}) => (
 					<Link
 						// add if at accounts page control to
 						// attribute 'to'
-						// to={condition ? '/Demands' : `/${acc.ID}/Demands`}
-						to="/demands"
+						// to={condition ? '/Demands/' : `/${acc.ID}/Demands/`}
+						to="/demands/"
 						activeStyle={styles.link.activeStyle}
 					/>
 				} 
@@ -223,7 +223,7 @@ const drawer = ({cookies, acc, user, open, changeTheme, toggleDrawer}) => (
 			<ListItem 
 				containerElement={
 					<Link
-						to="/offers"
+						to="/offers/"
 						activeStyle={styles.link.activeStyle}
 					/>
 				} 
@@ -233,7 +233,7 @@ const drawer = ({cookies, acc, user, open, changeTheme, toggleDrawer}) => (
 			<ListItem 
 				containerElement={
 					<Link
-						to="/servicePacks"
+						to="/servicePacks/"
 						activeStyle={styles.link.activeStyle}
 					/>
 				} 

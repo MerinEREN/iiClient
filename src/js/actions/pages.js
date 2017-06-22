@@ -19,6 +19,7 @@ export const pagesSuccess = makeActionCreator(
 export const pagesFailure = makeActionCreator(
 	PAGES_FAILURE, 
 	'error', 
-	'groupID'
+	'groupID', 
+	'response'
 )
 

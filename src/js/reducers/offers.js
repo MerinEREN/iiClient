@@ -1,8 +1,8 @@
 import {combineReducers} from 'redux'
 import createReducer, {
 	paginate, 
-	mergeKeysIntoArray, 
-	mergeObjectsIntoObject
+	mergeObjectIntoObject, 
+	pushIDs
 } from './utilities'
 import {
 	OFFERS_REQUEST, 
@@ -10,25 +10,17 @@ import {
 	OFFERS_FAILURE
 } from '../actions/types'
 
-// Case Reducers
-function mergeById(state, action) {
-	return {...state, ...action.response.result}
-}
-function pushIds(state, action) {
-	return mergeKeysIntoArray(state, action.response.result)
-}
-
 // Slice Reducers
-const byId = createReducer(
+const byID = createReducer(
 	{}, 
 	{
-		OFFERS_SUCCESS: mergeById
+		OFFERS_SUCCESS: mergeObjectIntoObject
 	}
 )
-const allIds = createReducer(
+const allIDs = createReducer(
 	[], 
 	{
-		OFFERS_SUCCESS: pushIds
+		OFFERS_SUCCESS: pushIDs
 	}
 )
 export const paginationOffers = paginate({
@@ -42,8 +34,8 @@ export const paginationOffers = paginate({
 
 // Higher-Order Reducer
 const offers = combineReducers({
-	byId,
-	allIds
+	byID,
+	allIDs
 })
 
 export default offers

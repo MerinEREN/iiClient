@@ -1,19 +1,18 @@
 import {makeLoader} from './utilities'
 import {
-	pagePostRequest, 
-	pagePostSuccess, 
-	pagePostFailure
-} from '../actions/page'
+	pagesSuccess, 
+	pagesFailure
+} from '../actions/pages'
 
 export const postPage = makeLoader({
 	defaults: {
 		URL: '/pages/', 
-		method: 'POST'
+		method: 'POST', 
+		paginationID: 'pages'
 	},
 	actionCreators: {
-		actionsRequest: [pagePostRequest],
-		actionsSuccess: [pagePostSuccess],
-		actionsFailure: [pagePostFailure]
+		actionsSuccess: [pagesSuccess],
+		actionsFailure: [pagesFailure]
 	}, 
 	options: {
 		hideFetching: true, 

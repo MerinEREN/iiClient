@@ -1,8 +1,10 @@
 import {combineReducers} from 'redux'
 import createReducer, {
 	paginate, 
-	mergeKeysIntoArray, 
-	mergeObjectsIntoObject
+	mergeObjectIntoObject, 
+	pushIDs, 
+	removeFromObject, 
+	removeFromArray
 } from './utilities'
 import {
 	PAGES_REQUEST, 
@@ -10,25 +12,19 @@ import {
 	PAGES_FAILURE
 } from '../actions/types'
 
-// Case Reducers
-function mergeById(state, action) {
-	return {...state, ...action.response.result}
-}
-function pushIds(state, action) {
-	return mergeKeysIntoArray(state, action.response.result)
-}
-
 // Slice Reducers
-const byId = createReducer(
+const byID = createReducer(
 	{}, 
 	{
-		PAGES_SUCCESS: mergeById
+		PAGES_SUCCESS: mergeObjectIntoObject, 
+		PAGES_FAILURE: removeFromObject
 	}
 )
-const allIds = createReducer(
+const allIDs = createReducer(
 	[], 
 	{
-		PAGES_SUCCESS: pushIds
+		PAGES_SUCCESS: pushIDs,
+		PAGES_FAILURE: removeFromArray
 	}
 )
 export const paginationPages = paginate({
@@ -42,8 +38,8 @@ export const paginationPages = paginate({
 
 // Higher-Order Reducer
 const pages = combineReducers({
-	byId,
-	allIds
+	byID,
+	allIDs
 })
 
 export default pages

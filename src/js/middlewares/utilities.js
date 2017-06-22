@@ -41,9 +41,20 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 	}
 	return (args = {}) => {
 		let {returnedURL, groupID, body} = args
-		init.body = body
+		if (body) {
+			switch (body.type) {
+				case 'blob':
+					init.body = new Blob(
+						Object.values(body.data).map(v => {
+							const {ID, ...rest} = v
+							return JSON.stringify(rest)
+						}), 
+						{type : body.contentType}
+					)
+			}
+		}
 		if(args.headers)
-			Object.entries(args.headers).forEach(v => init.headers.set(v))
+			Object.entries(args.headers).forEach(a => init.headers.set(a))
 		returnedURL = returnedURL || 'prevPageURL'
 		groupID = groupID || 'all'
 		return (dispatch, getState) => {
@@ -87,6 +98,7 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 				false
 			return dispatch(fetchDomainDataIfNeeded({
 				request: new Request(URL, init),
+				bodyData: body && body.data, 
 				groupID, 
 				...actionCreators, 
 				hideFetching, 
@@ -95,4 +107,14 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 			}))
 		}
 	}
+}
+
+export const trimSpace = (s) => {
+	let str = ''
+	s = s.trim()
+	for(let ch of s) {
+		if (ch !== ' ')
+			str = str.concat(ch)
+	}
+	return str
 }

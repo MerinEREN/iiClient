@@ -4,6 +4,7 @@ import {Link} from 'react-router'
 import {GridList, GridTile} from 'material-ui/GridList'
 import VerticalStepper from './verticalStepper'
 import TextField from 'material-ui/TextField'
+import {trimSpace} from '../middlewares/utilities'
 
 const styles = {
 	root: {
@@ -77,12 +78,18 @@ class Pages extends Component {
 		const {title} = this.state
 		const {postPage} = this.props
 		this.handleAddPage()
-		const blob = new Blob([JSON.stringify({
-			title: title, 
-			path: this.fileName.value 
-		})], {type : 'application/json'})
 		postPage({
-			body: blob
+			body: {
+				type: 'blob', 
+				contentType: 'appliceation/json', 
+				data: {
+					[trimSpace(title)]: {
+						ID: trimSpace(title), 
+						title: title, 
+						path: this.fileName.value 
+					}
+				}
+			}
 		})
 	}
 	handleAddPage() {
@@ -94,7 +101,6 @@ class Pages extends Component {
 	}
 	renderGridTile(ID, p) {
 		const {dapb} = this.state
-		console.log(ID, p)
 		return (
 			<GridTile  
 				key={ID}
@@ -105,12 +111,12 @@ class Pages extends Component {
 				style={styles.gridTile.style} 
 				containerElement={
 						<Link 
-							to={p.path} 
+							to={p.ID} 
 							activeStyle={styles.link.activeStyle} 
 						/> 
 				}
 			>
-				<img src={p.path} />
+				<img src={p.path || 'img/adele.jpg'} />
 			</GridTile>
 		)
 	}
@@ -163,7 +169,7 @@ class Pages extends Component {
 							cellHeight={333}
 						>
 							{ 
-								Object.entries(pages).map((ID, p) => this.renderGridTile(ID, p))
+								Object.entries(pages).map(a => this.renderGridTile(...a))
 							}
 							<GridTile  
 								title={'Add Page'}

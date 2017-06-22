@@ -26,7 +26,7 @@ export const paginate = ({types, mapActionToKey}) => {
 
 	const updatePagination = (state = {
 		value: null, 
-		ids: [],
+		IDs: [],
 		nextPageURL: null,
 		prevPageURL: null,
 		pageCount: 0,
@@ -34,29 +34,51 @@ export const paginate = ({types, mapActionToKey}) => {
 		isFetching: false,
 		// didInvalidate: true
 	}, action) => {
-		switch (action.type) {
+		const {type, response} = action
+		switch (type) {
 			case requestType:
 				return {
 					...state,
 					isFetching: true
 				}
 			case successType:
-				return {
-					...state,
-					value: setValue(action.response.result), 
-					// ids: union(state.ids, action.response.result),
-					ids: mergeKeysIntoArray(state.ids, action.response.
-						result), 
-					nextPageURL: action.response.nextPageURL,
-					prevPageURL: action.response.prevPageURL,
-					pageCount: state.pageCount + 1, 
-					isFetching: false
-				}
+				// First one is for GET request only.
+				return (response.nextPageURL || response.prevPageURL) 
+					? 
+					{
+						...state,
+						// For timeline count only.
+						value: setValue(response.result), 
+						// IDs: union(state.IDs, response.result),
+						IDs: mergeKeysIntoArray(
+							state.IDs, 
+							response.result
+						), 
+						nextPageURL: response.nextPageURL,
+						prevPageURL: response.prevPageURL,
+						pageCount: state.pageCount + 1, 
+						isFetching: false
+					}
+					: 
+					{
+						...state,
+						IDs: mergeKeysIntoArray(
+							state.IDs, 
+							response.result
+						)
+					}
 			case failureType:
-				return {
-					...state,
-					isFetching: false
-				}
+				return !response 
+					?
+					{
+						...state,
+						isFetching: false
+					}
+					:
+					{
+						...state,
+						IDs: removeFromArray(state.IDs, action), 
+					}
 			default:
 				return state
 		}
@@ -81,6 +103,54 @@ export const paginate = ({types, mapActionToKey}) => {
 	}
 }
 
+function setValue(r){
+	return typeof r === "object" ? null : r
+}
+
+export const mergeKeysIntoArray = (a, o) => {
+	if (!o)
+		return a
+	const IDs = Object.keys(o).map(k => k)
+	return [...a, ...IDs]
+}
+
+export const mergeObjectIntoObject = (state, action) => {
+	return {...state, ...action.response.result}
+}
+
+export const pushIDs = (state, action) => {
+	return mergeKeysIntoArray(state, action.response.result)
+}
+
+export const removeFromObject = (state, action) => {
+	const {result} = acltion.response
+	if (!result)
+		return state
+	let newState = {}
+	Object.entries(state).every(([k, v]) => {
+		if(!result.hasOwnProperty(k))
+			newState[k] = v
+	})
+	return newState
+}
+
+export const removeFromArray = (state, action) => {
+	/* return [
+		...state.slice(0, action.ID.index),
+		...state.slice(action.ID.index + 1)
+	] */
+	// return state.filter( (item, index) => index !== action.response.result.ID.index)
+	const {result} = acltion.response
+	if (!result)
+		return state
+	let map = []
+	for(var id of state) {
+		if(!result.hasOwnProperty(id))
+			map.push(id)
+	}
+	return map
+}
+
 export const updateObject = (oldObject, newValues) => {
 	// Encapsulate the idea of passing a new object as the first parameter
 	// to Object.assign to ensure we correctly copy data instead of mutating
@@ -101,19 +171,6 @@ export const updateItemInArray = (array, itemId, updateItemCallback) => {
 	return updatedItems;
 }
 
-function setValue(r){
-	if(typeof r === "object")
-		return null
-	return r
-}
-
-export const mergeKeysIntoArray = (a, o) => {
-	if (!o)
-		return a
-	let ids = []
-	Object.keys(o).forEach(k => ids.push(k))
-	return [...a, ...ids]
-}
 /* const newTodos = updateItemInArray(
 	state.todos, 
 	action.id, 

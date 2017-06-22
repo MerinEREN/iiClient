@@ -34,8 +34,8 @@ const mapStateToProps = state => {
 	} = state
 	return {
 		isFetching,
-		acc: accounts.byId[accounts.allIds[0]], 
-		user: users.byId[users.allIds[0]]
+		acc: accounts.byID[accounts.allIDs[0]], 
+		user: users.byID[users.allIDs[0]]
 	}
 }
 

@@ -20,23 +20,23 @@ function getItemsFromEntities(pagination, entities) {
 	} = entities
 	let tds = []
 	if(pds) {
-		for (let id of pds.ids) {
-			demands[id].type = 'demand'
-			tds.push(demands[id])
+		for (let ID of pds.IDs) {
+			demands.byID[ID].type = 'demand'
+			tds.push(demands[ID])
 		}
 	}
 	let tos = []
 	if(pos) {
-		for (let id of pos.ids) {
-			offers[id].type = 'offer'
-			tos.push(offers[id])
+		for (let ID of pos.IDs) {
+			offers.byID[ID].type = 'offer'
+			tos.push(offers[ID])
 		}
 	}
 	let tsps = []
 	if(psps) {
-		for (let id of psps.ids) {
-			servicePacks[id].type = 'servicePack'
-			tsps.push(servicePacks[id])
+		for (let ID of psps.IDs) {
+			servicePacks.byID[ID].type = 'servicePack'
+			tsps.push(servicePacks[ID])
 		}
 	}
 	return sortByLastModified([...tds, ...tos, ...tsps])
