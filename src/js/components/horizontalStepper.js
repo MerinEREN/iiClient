@@ -41,8 +41,11 @@ class HorizontalStepper extends Component {
 		}
 	}
 	handleForm(v) {
+		const {setInputErrorMessage, save, cancel} = this.props
+		const {stepIndex} = this.state
+		if(v !== 'c' && setInputErrorMessage(stepIndex))
+			return
 		this.setState({stepIndex: 0})
-		const {save, cancel} = this.props
 		switch (v) {
 			case 's':
 				if(save) {

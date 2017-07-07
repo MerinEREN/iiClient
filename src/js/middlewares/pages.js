@@ -5,7 +5,7 @@ import {
 	pagesFailure
 } from '../actions/pages'
 
-const loadPages = makeLoader({
+const getPages = makeLoader({
 	defaults: {
 		URL: '/pages/', 
 		paginationID: 'pages'
@@ -17,4 +17,4 @@ const loadPages = makeLoader({
 	}
 	})
 
-export default loadPages
+export default getPages

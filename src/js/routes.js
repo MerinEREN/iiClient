@@ -3,6 +3,7 @@ import {Route, IndexRoute} from 'react-router'
 import Body  from './containers/body'
 import Timeline  from './components/timeline'
 import Dashboard  from './components/dashboard'
+import Languages  from './containers/languages'
 import Pages  from './containers/pages'
 import Account  from './components/account'
 import Demands  from './components/demands'
@@ -17,6 +18,7 @@ const routes = (
 	<Route path="/" component={Body}>
 		<IndexRoute component={Timeline} />
 		<Route path="dashboard" component={Dashboard} />
+		<Route path="languages" component={Languages} />
 		<Route path="pages" component={Pages} />
 		<Route path="demands" component={Demands} />
 		<Route path="offers" component={Offers} />

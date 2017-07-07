@@ -43,7 +43,7 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 		let {returnedURL, groupID, body} = args
 		if (body) {
 			switch (body.type) {
-				case 'blob':
+				case 'Blob':
 					init.body = new Blob(
 						Object.values(body.data).map(v => {
 							const {ID, ...rest} = v
@@ -51,6 +51,25 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 						}), 
 						{type : body.contentType}
 					)
+					break
+				case 'FormData':
+					let fd = new FormData()
+					Object.values(body.data).forEach(v => {
+						Object.entries(v).forEach(
+							a => {
+								if (
+									a[0] !== "ID" 
+									|| 
+									a[0] !== "file"
+								)
+									fd.set(a[0], a[1])
+								if (a[0] === "file")
+									fd.set(a[0], a[1], a[1].name)
+							}
+						) 
+					})
+					init.body = fd
+					break
 			}
 		}
 		if(args.headers)

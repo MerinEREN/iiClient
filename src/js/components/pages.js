@@ -33,7 +33,7 @@ class Pages extends Component {
 		super(props)
 		this.state = {
 			dapb: true, 
-			title: '', 
+			title: "", 
 			inputErrText: {}
 		}
 		this.handleAddPage = this.handleAddPage.bind(this)
@@ -70,7 +70,7 @@ class Pages extends Component {
 		const name = target.name
 		const value = target.value
 		this.setState({
-			[name]: value, 
+			title: value, 
 			inputErrText: {[name]: ''}
 		})
 	}
@@ -80,13 +80,14 @@ class Pages extends Component {
 		this.handleAddPage()
 		postPage({
 			body: {
-				type: 'blob', 
-				contentType: 'appliceation/json', 
+				type: 'FormData', 
+				// Use 'contentType' for 'Blob' type.
+				// contentType: 'appliceation/json', 
 				data: {
 					[trimSpace(title)]: {
 						ID: trimSpace(title), 
 						title: title, 
-						path: this.fileName.value 
+						file: this.file.files[0] 
 					}
 				}
 			}
@@ -96,7 +97,7 @@ class Pages extends Component {
 		const {dapb} = this.state
 		this.setState({
 			dapb: !dapb, 
-			title: ''
+			title: ""
 		})
 	}
 	renderGridTile(ID, p) {
@@ -116,7 +117,7 @@ class Pages extends Component {
 						/> 
 				}
 			>
-				<img src={p.path || 'img/adele.jpg'} />
+				<img src={p.link || 'img/adele.jpg'} />
 			</GridTile>
 		)
 	}
@@ -139,8 +140,8 @@ class Pages extends Component {
 						/>, 
 						<input 
 							type='file'
-							name='Path' 
-							ref={i => this.fileName = i}
+							name='file' 
+							ref={i => this.file = i}
 						/>
 					]}
 					save={this.handlePostPage}
@@ -188,7 +189,7 @@ class Pages extends Component {
 							</GridTile>
 							<GridTile 
 								cols={4}
-								style={{display: !dapb ? 'block' : 'none', ...styles.gridList}}
+								style={{display: !dapb ? 'block' : 'none', ...styles.gridTile.style}}
 							>
 								{this.renderAddPageForm()}
 							</GridTile>

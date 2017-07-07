@@ -17,8 +17,8 @@ import FlatButton from 'material-ui/FlatButton'
  To use the vertical stepper with the contained content as seen in spec examples, 
  you must use the `<StepContent>` component inside the `<Step>`.
  **
- <small>(The vertical stepper can also be used without `<StepContent>` to display 
- a basic stepper.)</small>
+ (The vertical stepper can also be used without `<StepContent>` to display 
+ a basic stepper.)
  **/
 class VerticalStepper extends Component {
 	constructor(props) {
@@ -45,8 +45,11 @@ class VerticalStepper extends Component {
 		}
 	}
 	handleForm(v) {
+		const {setInputErrorMessage, save, cancel} = this.props
+		const {stepIndex} = this.state
+		if(v !== 'c' && setInputErrorMessage(stepIndex))
+			return
 		this.setState({stepIndex: 0})
-		const {save, cancel} = this.props
 		switch (v) {
 			case 's':
 				if(save) {

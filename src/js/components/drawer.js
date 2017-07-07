@@ -189,6 +189,21 @@ const drawer = ({cookies, acc, user, open, changeTheme, toggleDrawer}) => (
 				<ListItem 
 					containerElement={
 						<Link
+							to="/languages/"
+							activeStyle={styles.link.activeStyle}
+						/>
+					}
+					primaryText='Languages'
+					leftIcon={<EditContent />}
+				/>
+			}
+			{
+				// Also chack account type here.
+				(isContentEditor(user.roles) || isAdmin(user.roles))
+				&&
+				<ListItem 
+					containerElement={
+						<Link
 							to="/pages/"
 							activeStyle={styles.link.activeStyle}
 						/>

@@ -105,7 +105,7 @@ class Body extends Component {
 					/>
 				}
 				<AppBar
-					title={user.name || "Ince Is"}
+					title={user.email || "Ince Is"}
 					style={this.styles.appBar}
 					showMenuIconButton={this.session !== undefined}
 					onLeftIconButtonTouchTap={() => toggleDrawer()}
