@@ -1,8 +1,6 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import {Link} from 'react-router'
 import {GridList, GridTile} from 'material-ui/GridList'
-import VerticalStepper from './verticalStepper'
 import TextField from 'material-ui/TextField'
 import {trimSpace} from '../middlewares/utilities'
 
@@ -28,7 +26,7 @@ const styles = {
 	}
 }
 
-class Pages extends Component {
+class Contents extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -36,17 +34,17 @@ class Pages extends Component {
 			title: "", 
 			inputErrText: {}
 		}
-		this.handleAddPage = this.handleAddPage.bind(this)
-		this.handlePostPage = this.handlePostPage.bind(this)
+		this.handleAddContent = this.handleAddContent.bind(this)
+		this.handlePostContent = this.handlePostContent.bind(this)
 		this.handleRequiredInput = this.handleRequiredInput.bind(this)
 		this.handleInputChange = this.handleInputChange.bind(this)
 	}
 	componentWillMount() {
-		this.props.getPages()
+		this.props.getContents()
 		/* this.setState({pages: {
 			...this.state.pages, 
-			'Add Page': {
-				title: 'Add Page', 
+			'Add Content': {
+				title: 'Add Content', 
 				src: '/img/1075699_472676169493047_514880014_n.jpg'
 			}
 		}}) */
@@ -57,7 +55,7 @@ class Pages extends Component {
 				if(!this.state.title) {
 					this.setState({
 						inputErrText:{
-							title: 'Page name is required'
+							title: 'Content name is required'
 						}
 					})
 					return true
@@ -74,11 +72,11 @@ class Pages extends Component {
 			inputErrText: {[name]: ''}
 		})
 	}
-	handlePostPage() {
+	handlePostContent() {
 		const {title} = this.state
-		const {postPage} = this.props
-		this.handleAddPage()
-		postPage({
+		const {postContent} = this.props
+		this.handleAddContent()
+		postContent({
 			body: {
 				type: 'FormData', 
 				// Use 'contentType' for 'Blob' type.
@@ -93,7 +91,7 @@ class Pages extends Component {
 			}
 		})
 	}
-	handleAddPage() {
+	handleAddContent() {
 		const {dapb} = this.state
 		this.setState({
 			dapb: !dapb, 
@@ -112,7 +110,7 @@ class Pages extends Component {
 				style={styles.gridTile.style} 
 				containerElement={
 						<Link 
-							to=`${p.ID}/contents` 
+							to={p.ID} 
 							activeStyle={styles.link.activeStyle} 
 						/> 
 				}
@@ -121,20 +119,20 @@ class Pages extends Component {
 			</GridTile>
 		)
 	}
-	renderAddPageForm() {
+	renderAddContentForm() {
 		const {inputErrText, title} = this.state
 		return (
 			<form>
 				<VerticalStepper 
 					stepLabels={[
-						'Page Title', 
-						'Page Thumbnail'
+						'Content Title', 
+						'Content Thumbnail'
 					]} 
 					stepContents={[
 						<TextField 
 							name='title' 
 							value={title}
-							floatingLabelText="Page Title" 
+							floatingLabelText="Content Title" 
 							errorText={inputErrText.title}
 							onChange={this.handleInputChange}
 						/>, 
@@ -144,8 +142,8 @@ class Pages extends Component {
 							ref={i => this.file = i}
 						/>
 					]}
-					save={this.handlePostPage}
-					cancel={this.handleAddPage}
+					save={this.handlePostContent}
+					cancel={this.handleAddContent}
 					setInputErrorMessage={this.handleRequiredInput}
 				/>
 			</form>
@@ -153,7 +151,7 @@ class Pages extends Component {
 	}
 	render() {
 		const {dapb} = this.state
-		const {pages} = this.props
+		const {contents} = this.props
 		return (
 			<div style={styles.root}>
 				<GridList 
@@ -173,7 +171,7 @@ class Pages extends Component {
 								Object.entries(pages).map(a => this.renderGridTile(...a))
 							}
 							<GridTile  
-								title={'Add Page'}
+								title={'Add Content'}
 								titleBackground={styles.gridTile.titleBackground} 
 								style={{
 									display: dapb
@@ -183,7 +181,7 @@ class Pages extends Component {
 									'none', 
 									...styles.gridTile.style
 								}}
-								onTouchTap={this.handleAddPage}
+								onTouchTap={this.handleAddContent}
 							>
 								<img src='/img/1075699_472676169493047_514880014_n.jpg' />
 							</GridTile>
@@ -191,7 +189,7 @@ class Pages extends Component {
 								cols={4}
 								style={{display: !dapb ? 'block' : 'none', ...styles.gridTile.style}}
 							>
-								{this.renderAddPageForm()}
+								{this.renderAddContentForm()}
 							</GridTile>
 						</GridList>
 					</GridTile>
@@ -202,10 +200,11 @@ class Pages extends Component {
 	}
 }
 
-Pages.propType = {
-	getPages: PropTypes.func.isRequired, 
+Contents.propType = {
+	getContents: PropTypes.func.isRequired, 
 	pages: PropTypes.object.isRequired, 
-	postPage: PropTypes.func.isRequired
+	postContent: PropTypes.func.isRequired
 }
 
-export default Pages
+export default Contents
+

@@ -5,6 +5,7 @@ import Timeline  from './components/timeline'
 import Dashboard  from './components/dashboard'
 import Languages  from './containers/languages'
 import Pages  from './containers/pages'
+import Contents  from './containers/contents'
 import Account  from './components/account'
 import Demands  from './components/demands'
 import Offers  from './components/offers'
@@ -19,7 +20,9 @@ const routes = (
 		<IndexRoute component={Timeline} />
 		<Route path="dashboard" component={Dashboard} />
 		<Route path="languages" component={Languages} />
-		<Route path="pages" component={Pages} />
+		<Route path="pages" component={Pages}>
+			<Route path="/:page/contents" component={Contents} />
+		</Route>
 		<Route path="demands" component={Demands} />
 		<Route path="offers" component={Offers} />
 		<Route path="servicePacks" component={ServicePacks} />
