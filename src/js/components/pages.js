@@ -112,7 +112,7 @@ class Pages extends Component {
 				style={styles.gridTile.style} 
 				containerElement={
 						<Link 
-							to=`${p.ID}/contents` 
+							to="`${p.ID}/contents`" 
 							activeStyle={styles.link.activeStyle} 
 						/> 
 				}

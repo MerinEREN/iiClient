@@ -77,7 +77,7 @@ export const paginate = ({types, mapActionToKey}) => {
 					:
 					{
 						...state,
-						IDs: removeFromArray(state.IDs, action), 
+						IDs: removeFromArray(state.IDs, action)
 					}
 			default:
 				return state
@@ -108,7 +108,8 @@ function setValue(r){
 }
 
 export const mergeKeysIntoArray = (a, o) => {
-	if (!o)
+	// if (!o)
+	if (typeof o !== "object")
 		return a
 	const IDs = Object.keys(o).map(k => k)
 	return [...a, ...IDs]

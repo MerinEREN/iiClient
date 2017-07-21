@@ -15,6 +15,6 @@ const getLanguages = makeLoader({
 		actionsSuccess: [languagesSuccess],
 		actionsFailure: [languagesFailure]
 	}
-	})
+})
 
 export default getLanguages

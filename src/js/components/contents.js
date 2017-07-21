@@ -40,9 +40,11 @@ class Contents extends Component {
 		this.handleInputChange = this.handleInputChange.bind(this)
 	}
 	componentWillMount() {
-		this.props.getContents()
-		/* this.setState({pages: {
-			...this.state.pages, 
+		const {getContents, getLanguagesCount} = this.props
+		getLanguagesCount()
+		getContents()
+		/* this.setState({contents: {
+			...this.state.contents, 
 			'Add Content': {
 				title: 'Add Content', 
 				src: '/img/1075699_472676169493047_514880014_n.jpg'
@@ -168,7 +170,7 @@ class Contents extends Component {
 							cellHeight={333}
 						>
 							{ 
-								Object.entries(pages).map(a => this.renderGridTile(...a))
+								Object.entries(contents).map(a => this.renderGridTile(...a))
 							}
 							<GridTile  
 								title={'Add Content'}
@@ -202,8 +204,10 @@ class Contents extends Component {
 
 Contents.propType = {
 	getContents: PropTypes.func.isRequired, 
-	pages: PropTypes.object.isRequired, 
-	postContent: PropTypes.func.isRequired
+	contents: PropTypes.object.isRequired, 
+	getLanguagesCount: PropTypes.func.isRequired, 
+	langCount: PropTypes.object.isRequired, 
+	postContents: PropTypes.func.isRequired
 }
 
 export default Contents

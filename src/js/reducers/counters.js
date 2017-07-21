@@ -1,17 +1,9 @@
-import {paginate} from './utilities'
-import {
-	COUNTER_REQUEST, 
-	COUNTER_SUCCESS, 
-	COUNTER_FAILURE
-} from '../actions/types'
+import {combineReducers} from 'redux'
+import timeline from './countersTimeline'
+import languages from './countersLanguages'
 
-const counters = paginate({
-	mapActionToKey: action => action.groupID, 
-	types: [
-		COUNTER_REQUEST, 
-		COUNTER_SUCCESS, 
-		COUNTER_FAILURE
-	]
+const counters = combineReducers({
+	timeline, 
+	languages
 })
-
 export default counters

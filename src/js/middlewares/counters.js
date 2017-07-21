@@ -1,9 +1,12 @@
 import {makeLoader} from './utilities'
 import {generateURL} from './utilities'
 import {
-	counterRequest, 
-	counterSuccess, 
-	counterFailure 
+	counterTimelineRequest, 
+	counterTimelineSuccess, 
+	counterTimelineFailure, 
+	counterLanguagesRequest, 
+	counterLanguagesSuccess, 
+	counterLanguagesFailure 
 } from '../actions/counters'
 
 export const getURL = (groupID, returnedURL) => (dispatch, getState) => {
@@ -21,15 +24,30 @@ export const getURL = (groupID, returnedURL) => (dispatch, getState) => {
 	return generateURL(groupID, returnedURL, dURL, oURL, spURL)
 }
 
+export const getLanguagesCount = makeLoader({
+	defaults: {
+		URL: '/languages/', 
+		paginationID: 'counters'
+	},
+	actionCreators: {
+		actionsRequest: [counterLanguagesRequest],
+		actionsSuccess: [counterLanguagesSuccess],
+		actionsFailure: [counterLanguagesFailure]
+	}, 
+	options: {
+		hideFetching: true
+	}
+})
+
 const loadCount = makeLoader({
 	defaults: {
 		URL: '/timeline', 
 		paginationID: 'counters'
 	}, 
 	actionCreators: {
-		actionsRequest: [counterRequest],
-		actionsSuccess: [counterSuccess],
-		actionsFailure: [counterFailure]
+		actionsRequest: [counterTimelineRequest],
+		actionsSuccess: [counterTimelineSuccess],
+		actionsFailure: [counterFTimelineailure]
 	},
 	options: {
 		hideFetching: true
