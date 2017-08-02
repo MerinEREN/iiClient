@@ -8,7 +8,7 @@ export const postPage = makeLoader({
 	defaults: {
 		URL: '/pages/', 
 		method: 'POST', 
-		paginationID: 'pages'
+		path: ['pages']
 	},
 	actionCreators: {
 		actionsSuccess: [pagesSuccess],

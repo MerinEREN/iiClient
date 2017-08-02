@@ -10,7 +10,8 @@ export default function fetchDomainDataIfNeeded(args) {
 	// a cached value is already available.
 	return (dispatch, getState) => {
 		const state = getState()
-		if(shouldFetchDomainData(state, args)) {
+		// if(shouldFetchDomainData(state, args)) {
+		if(!args.isCached) {
 			// Dispatch a thunk from thunk.
 			return dispatch(fetchDomainData(args))
 		} else {
@@ -23,9 +24,7 @@ export default function fetchDomainDataIfNeeded(args) {
 // MODIFY THIS CHECK !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 function shouldFetchDomainData(state, args) {
 	const {isCached} = args
-	if(!isCached)
-		return true
-	return isCached(state) ? false : true
+	return isCached
 	/* const item = args.isCached(state)
 	if(!item) {
 		return true

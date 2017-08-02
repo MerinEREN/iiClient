@@ -9,7 +9,7 @@ export const postContents = makeLoader({
 	defaults: {
 		URL: '/contents/', 
 		method: 'POST', 
-		paginationID: 'contents'
+		path: ['contents']
 	},
 	actionCreators: {
 		actionsSuccess: [contentsSuccess],
@@ -24,7 +24,7 @@ export const postContents = makeLoader({
 const getContents = makeLoader({
 	defaults: {
 		URL: '/contents/', 
-		paginationID: 'contents'
+		path: ['contents']
 	},
 	actionCreators: {
 		actionsRequest: [contentsRequest],

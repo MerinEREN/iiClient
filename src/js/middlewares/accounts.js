@@ -10,7 +10,7 @@ import {
 const loadAccounts = makeLoader({
 	defaults: {
 		URL: '/accounts/', 
-		paginationID: 'accounts'
+		path: ['accounts']
 	}, 
 	actionCreators: {
 		actionsRequest: [accountsRequest],

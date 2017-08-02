@@ -10,7 +10,9 @@ class CounterChip extends Component {
 	}
 	componentWillMount() {
 		// Get timeline items count every 5 minutes.
-		this.loadDataInterval = setInterval(() => this.getCount(), 600000)
+		this.loadDataInterval = setInterval(
+			() =>this.getCount(), 60000
+		)
 	}
 	componentWillReceiveProps(nextProps) {
 		if(nextProps.counter.value) {
@@ -23,8 +25,7 @@ class CounterChip extends Component {
 	getCount() {
 		const {loadCount, getURL} = this.props
 		loadCount({
-			URL: getURL('timeline', 'nextPageURL'), 
-			groupID: 'timeline'
+			URL: getURL('timeline', 'nextPageURL')
 		})
 	}
 	getData() {

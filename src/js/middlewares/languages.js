@@ -8,7 +8,7 @@ import {
 const getLanguages = makeLoader({
 	defaults: {
 		URL: '/languages/', 
-		paginationID: 'languages'
+		path: ['languages']
 	},
 	actionCreators: {
 		actionsRequest: [languagesRequest],

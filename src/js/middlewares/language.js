@@ -8,7 +8,7 @@ export const postLanguage = makeLoader({
 	defaults: {
 		URL: '/languages/', 
 		method: 'POST', 
-		paginationID: 'languages'
+		path: ['languages']
 	},
 	actionCreators: {
 		actionsSuccess: [languagesSuccess],

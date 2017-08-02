@@ -1,8 +1,8 @@
-import fetchDomainDataIfNeeded from './fetch'
+import fetchDomainDataIfNeeded from "./fetch"
 
 export const generateURL = (groupID, returnedURL, ...pageURLs) => {
 	let URL = (groupID ? "/" + groupID : "/") + "?"
-	URL += returnedURL === 'nextPageURL' ? 'd=next' : 'd=prev'
+	URL += returnedURL === "nextPageURL" ? "d=next" : "d=prev"
 	let domainAndParams
 	let params
 	pageURLs.forEach((v, i) => {
@@ -27,23 +27,23 @@ export const generateURL = (groupID, returnedURL, ...pageURLs) => {
 // isCached" is a bool or a function that takes the store 
 // and returns a slice of sore to allow or prevent API call.
 export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) => { 
-	let {paginationID, method, URL} = defaults
+	let {path, method, URL} = defaults
 	let {hideFetching, isCached, showSnackbar} = options
-	paginationID = paginationID || 'all'
+	// path = path || ["all"]
 	hideFetching = hideFetching || false
-	let headers = new Headers({'Accept': 'text/plain'})
+	let headers = new Headers({"Accept": "text/plain"})
 	let init = {
-		method: method || 'GET',
+		method: method || "GET",
 		credentials: "same-origin",
 		headers: headers,
-		// referrer: '/MerinEREN',
-		// mode: 'no-cors'
+		// referrer: "/MerinEREN",
+		// mode: "no-cors"
 	}
 	return (args = {}) => {
 		let {returnedURL, groupID, body} = args
 		if (body) {
 			switch (body.type) {
-				case 'Blob':
+				case "Blob":
 					init.body = new Blob(
 						Object.values(body.data).map(v => {
 							const {ID, ...rest} = v
@@ -52,7 +52,7 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 						{type : body.contentType}
 					)
 					break
-				case 'FormData':
+				case "FormData":
 					let fd = new FormData()
 					Object.values(body.data).forEach(v => {
 						Object.entries(v).forEach(
@@ -74,47 +74,65 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 		}
 		if(args.headers)
 			Object.entries(args.headers).forEach(a => init.headers.set(a))
-		returnedURL = returnedURL || 'prevPageURL'
-		groupID = groupID || 'all'
+		returnedURL = returnedURL || "prevPageURL"
+		// groupID = groupID || "all"
 		return (dispatch, getState) => {
-			if(method !== 'POST') {
-				URL = args.URL 
-					|| 
-					(
-						getState().pagination[paginationID] 
-						? 
-						(
-							getState().pagination[paginationID][groupID]
-							? 
-							getState().pagination[paginationID][groupID][returnedURL] 
-							:
-							URL
-						)
-						:
-						'/'
-					)
+			if (path) {
+				var pagObj = getState().pagination
+				path.forEach(v => {
+					pagObj = pagObj[v]
+				})
 			}
-			isCached = paginationID !== 'all' 
-				? 
-				(
-					getState().pagination[paginationID][groupID]
+			if(method !== "POST") {
+				if (args.URL) {
+					// Use from args object
+					URL = args.URL 
+				} else {
+					// Use returned URL
+					if (pagObj !== undefined && pagObj !== {}) {
+						if (groupID) {
+							if (pagObj[groupID]) {
+								URL = pagObj[groupID][returnedURL] 
+							} else {
+								URL = URL || "/"
+							}
+						} else {
+							if (pagObj[returnedURL]) {
+								URL = pagObj[returnedURL] 
+							} else {
+								URL = URL || "/"
+							}
+						}
+					} else {
+						// Use from defaults object or assign "/"
+						URL = URL || "/"
+					}
+				}
+				if (pagObj !== undefined && pagObj !== {}) {
+					if (groupID) {
+						if (pagObj[groupID]) {
+							isCached = pagObj[groupID].isFetching
+						} else {
+							isCached = false
+						}
+					} else {
+						isCached = pagObj.isFetching
+					}
+				} else {
+					isCached
 					?
-					getState().pagination[paginationID][groupID].isFetching
+					(
+						typeof isCached !== "string" 
+						?
+						isCached(getState())
+						:
+						isCached
+					)
 					:
 					false
-				)
-				: 
-				isCached
-				?
-				(
-					typeof isCached !== 'string' 
-					?
-					isCached(getState())
-					:
-					isCached
-				)
-				:
-				false
+				}
+			}
+			console.log(URL, init, groupID, hideFetching, isCached)
 			return dispatch(fetchDomainDataIfNeeded({
 				request: new Request(URL, init),
 				bodyData: body && body.data, 
@@ -129,10 +147,10 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 }
 
 export const trimSpace = (s) => {
-	let str = ''
+	let str = ""
 	s = s.trim()
 	for(let ch of s) {
-		if (ch !== ' ')
+		if (ch !== " ")
 			str = str.concat(ch)
 	}
 	return str

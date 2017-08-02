@@ -8,7 +8,7 @@ import {
 const loadUsers = makeLoader({
 	defaults: {
 		URL: '/users/', 
-		paginationID: 'users'
+		path: ['users']
 	}, 
 	actionCreators: {
 		actionsRequest: [usersRequest],

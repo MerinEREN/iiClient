@@ -19,5 +19,6 @@ export const demandsSuccess = makeActionCreator(
 export const demandsFailure = makeActionCreator(
 	DEMANDS_FAILURE, 
 	'error', 
-	'groupID'
+	'groupID', 
+	'response'
 )

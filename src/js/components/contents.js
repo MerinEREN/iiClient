@@ -31,16 +31,16 @@ class Contents extends Component {
 		super(props)
 		this.state = {
 			dapb: true, 
-			title: "", 
-			inputErrText: {}
+			title: ""
+			// inputErrText: {}
 		}
 		this.handleAddContent = this.handleAddContent.bind(this)
 		this.handlePostContent = this.handlePostContent.bind(this)
-		this.handleRequiredInput = this.handleRequiredInput.bind(this)
+		// this.handleRequiredInput = this.handleRequiredInput.bind(this)
 		this.handleInputChange = this.handleInputChange.bind(this)
 	}
 	componentWillMount() {
-		const {getContents, getLanguagesCount} = this.props
+		const {params, getContents, getLanguagesCount} = this.props
 		getLanguagesCount()
 		getContents()
 		/* this.setState({contents: {
@@ -51,7 +51,7 @@ class Contents extends Component {
 			}
 		}}) */
 	}
-	handleRequiredInput(i) {
+	/* handleRequiredInput(i) {
 		switch (i) {
 			case 0:
 				if(!this.state.title) {
@@ -64,14 +64,14 @@ class Contents extends Component {
 				}
 				return false
 		}
-	}
+	} */
 	handleInputChange(event) {
 		const target = event.target
 		const name = target.name
 		const value = target.value
 		this.setState({
-			title: value, 
-			inputErrText: {[name]: ''}
+			title: value
+			// inputErrText: {[name]: ''}
 		})
 	}
 	handlePostContent() {
@@ -152,9 +152,9 @@ class Contents extends Component {
 		)
 	}
 	render() {
-		const {dapb} = this.state
-		const {contents} = this.props
-		return (
+		//const {dapb} = this.state
+		const {params, contents} = this.props
+		/* return (
 			<div style={styles.root}>
 				<GridList 
 					cols={4} 
@@ -198,7 +198,8 @@ class Contents extends Component {
 					<GridTile cols={1} />  
 				</GridList>
 			</div>
-		)
+		) */
+		return <h1>The page of the contents is {params.page}... </h1>
 	}
 }
 

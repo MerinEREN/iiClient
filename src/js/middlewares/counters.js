@@ -26,8 +26,8 @@ export const getURL = (groupID, returnedURL) => (dispatch, getState) => {
 
 export const getLanguagesCount = makeLoader({
 	defaults: {
-		URL: '/languages/', 
-		paginationID: 'counters'
+		URL: '/languages/?action=getCount', 
+		path: ["counters", "languages"]
 	},
 	actionCreators: {
 		actionsRequest: [counterLanguagesRequest],
@@ -42,12 +42,12 @@ export const getLanguagesCount = makeLoader({
 const loadCount = makeLoader({
 	defaults: {
 		URL: '/timeline', 
-		paginationID: 'counters'
+		path: ["counters", "timeline"]
 	}, 
 	actionCreators: {
 		actionsRequest: [counterTimelineRequest],
 		actionsSuccess: [counterTimelineSuccess],
-		actionsFailure: [counterFTimelineailure]
+		actionsFailure: [counterTimelineFailure]
 	},
 	options: {
 		hideFetching: true

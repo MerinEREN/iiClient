@@ -8,7 +8,7 @@ import {
 const getPages = makeLoader({
 	defaults: {
 		URL: '/pages/', 
-		paginationID: 'pages'
+		path: ['pages']
 	},
 	actionCreators: {
 		actionsRequest: [pagesRequest],

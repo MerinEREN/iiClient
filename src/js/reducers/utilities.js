@@ -90,12 +90,14 @@ export const paginate = ({types, mapActionToKey}) => {
 			case successType:
 			case failureType:
 				const key = mapActionToKey(action)
-				if (typeof key !== 'string') {
-					throw new Error('Expected key to be a string.')
-				}
-				return {
-					...state,
-					[key]: updatePagination(state[key], action)
+				console.log(key)
+				if (key) {
+					return {
+						...state,
+						[key]: updatePagination(state[key], action)
+					}
+				} else {
+					updatePagination(state, action)
 				}
 			default:
 				return state
@@ -124,7 +126,7 @@ export const pushIDs = (state, action) => {
 }
 
 export const removeFromObject = (state, action) => {
-	const {result} = acltion.response
+	const {result} = action.response
 	if (!result)
 		return state
 	let newState = {}
@@ -141,7 +143,7 @@ export const removeFromArray = (state, action) => {
 		...state.slice(action.ID.index + 1)
 	] */
 	// return state.filter( (item, index) => index !== action.response.result.ID.index)
-	const {result} = acltion.response
+	const {result} = action.response
 	if (!result)
 		return state
 	let map = []

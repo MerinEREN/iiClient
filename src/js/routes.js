@@ -20,9 +20,8 @@ const routes = (
 		<IndexRoute component={Timeline} />
 		<Route path="dashboard" component={Dashboard} />
 		<Route path="languages" component={Languages} />
-		<Route path="pages" component={Pages}>
-			<Route path="/:page/contents" component={Contents} />
-		</Route>
+		<Route path="pages" component={Pages} />
+		<Route path="pages/:page/contents" component={Contents} />
 		<Route path="demands" component={Demands} />
 		<Route path="offers" component={Offers} />
 		<Route path="servicePacks" component={ServicePacks} />
@@ -31,10 +30,10 @@ const routes = (
 		<Route path="userSettings" component={Settings} />
 		<Route path="feedback" component={Feedback} />
 		<Route path="help" component={Help} />
-		<Route path="accounts/(:acc)" component={Account} />
-		<Route path="accounts/(:acc)/Demands" component={Demands} />
-		<Route path="accounts/(:acc)/Offers" component={Offers} />
-		<Route path="accounts/(:acc)/ServicePacks" component={ServicePacks} />
+		<Route path="accounts/:acc" component={Account} />
+		<Route path="accounts/:acc/Demands" component={Demands} />
+		<Route path="accounts/:acc/Offers" component={Offers} />
+		<Route path="accounts/:acc/ServicePacks" component={ServicePacks} />
 	</Route>
 )
 
