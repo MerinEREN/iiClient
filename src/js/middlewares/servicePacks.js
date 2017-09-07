@@ -8,7 +8,7 @@ import {
 const loadServicePacks = makeLoader({
 	defaults: {
 		URL: '/servicePacks/', 
-		path: ['servicePacks'] 
+		path: ['servicePacksByAccount'] 
 	},
 	actionCreators: {
 		actionsRequest: [servicePacksRequest],

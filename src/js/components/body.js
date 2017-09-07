@@ -14,7 +14,7 @@ import Login from '../containers/login'
 import LoginUrls  from '../containers/loginUrls'
 import Logged  from '../containers/logged'
 import Drawer from '../containers/drawer'
-import Snackbar  from '../containers/snackbar'
+import Snackbar from 'material-ui/Snackbar'
 
 class Body extends Component {
 	constructor(props) {
@@ -62,6 +62,7 @@ class Body extends Component {
 		const {
 			muiTheme, 
 			isFetching, 
+			snackbar, 
 			acc, 
 			user, 
 			toggleDrawer, 
@@ -137,7 +138,17 @@ class Body extends Component {
 				</AppBar>
 				{this.session && <Drawer {...this.props} />}
 				{this.session ? children : <Login />}
-				{<Snackbar />}
+				{
+					Object.keys(snackbar).length > 0
+					&&
+					<Snackbar
+						open 
+						message={snackbar.message}
+						autoHideDuration={snackbar.duration || 5000}
+						action={snackbar.action}
+						onActionTouchTap={snackbar.onActionClick}
+					/>
+				}
 			</div>
 		)
 	}
@@ -161,7 +172,8 @@ Body.propTypes = {
 	user: PropTypes.object,
 	loadData: PropTypes.func.isRequired,
 	toggleDrawer: PropTypes.func.isRequired,
-	children: PropTypes.node.isRequired
+	children: PropTypes.node.isRequired, 
+	snackbar: PropTypes.object
 }
 
 export default withCookies(muiThemeable()(Body))

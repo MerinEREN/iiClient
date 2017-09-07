@@ -26,7 +26,6 @@ function loginUrlsFailure(state, action) {
 	return {
 		...state,
 		isFetching: false,
-		didInvalidate: true,
 		items: {},
 		error: action.error,
 		lastUpdated: action.receivedAt

@@ -1,11 +1,11 @@
 import {combineReducers} from 'redux'
 import {isFetching} from './fetchingProgres'
-import snackbarMessage from './snackbar'
+import snackbar from './snackbar'
 
 // Higher-Order Reducer
 const appState = combineReducers({
 	isFetching, 
-	snackbarMessage
+	snackbar
 })
 
 export default appState

@@ -2,6 +2,12 @@ import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import {Link} from 'react-router'
 import {GridList, GridTile} from 'material-ui/GridList'
+import IconButton from 'material-ui/IconButton'
+import Delete from 'material-ui/svg-icons/action/delete'
+import FloatingActionButton from 'material-ui/FloatingActionButton'
+import ContentAdd from 'material-ui/svg-icons/content/add'
+import Dialog from 'material-ui/Dialog'
+import FlatButton from 'material-ui/FlatButton'
 import VerticalStepper from './verticalStepper'
 import TextField from 'material-ui/TextField'
 import {trimSpace} from '../middlewares/utilities'
@@ -25,6 +31,11 @@ const styles = {
 		style: {
 			cursor: 'pointer'
 		}
+	}, 
+	floatingActionButton: {
+		position: 'fixed',
+		bottom: 32, 
+		right: 48
 	}
 }
 
@@ -32,32 +43,26 @@ class Pages extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			dapb: true, 
+			showDialog: false, 
 			title: "", 
 			inputErrText: {}
 		}
-		this.handleAddPage = this.handleAddPage.bind(this)
+		this.toggleDialog = this.toggleDialog.bind(this)
 		this.handlePostPage = this.handlePostPage.bind(this)
 		this.handleRequiredInput = this.handleRequiredInput.bind(this)
 		this.handleInputChange = this.handleInputChange.bind(this)
 	}
 	componentWillMount() {
 		this.props.getPages()
-		/* this.setState({pages: {
-			...this.state.pages, 
-			'Add Page': {
-				title: 'Add Page', 
-				src: '/img/1075699_472676169493047_514880014_n.jpg'
-			}
-		}}) */
 	}
+	// Make dynamic
 	handleRequiredInput(i) {
 		switch (i) {
 			case 0:
 				if(!this.state.title) {
 					this.setState({
 						inputErrText:{
-							title: 'Page name is required'
+							title: 'Required filed'
 						}
 					})
 					return true
@@ -75,53 +80,57 @@ class Pages extends Component {
 		})
 	}
 	handlePostPage() {
+		this.toggleDialog()
 		const {title} = this.state
 		const {postPage} = this.props
-		this.handleAddPage()
 		postPage({
 			body: {
 				type: 'FormData', 
 				// Use 'contentType' for 'Blob' type.
-				// contentType: 'appliceation/json', 
+				// contentType: 'application/json', 
 				data: {
 					[trimSpace(title)]: {
 						ID: trimSpace(title), 
-						title: title, 
+						title: title.trim(), 
 						file: this.file.files[0] 
 					}
 				}
 			}
 		})
+		this.setState({title: ""})
 	}
-	handleAddPage() {
-		const {dapb} = this.state
-		this.setState({
-			dapb: !dapb, 
-			title: ""
-		})
+	toggleDialog() {
+		const {showDialog} = this.state
+		this.setState({showDialog: !showDialog})
 	}
-	renderGridTile(ID, p) {
-		const {dapb} = this.state
+	gridTile(ID, p) {
 		return (
 			<GridTile  
 				key={ID}
 				title={p.title}
 				titleBackground={styles.gridTile.titleBackground} 
-				cols={ID === 'Body' ? 2 : 1} 
-				rows={ID === 'Body' ? 1 : 1}
+				cols={ID === 'Root' ? 2 : 1} 
+				rows={ID === 'Root' ? 1 : 1}
 				style={styles.gridTile.style} 
+				actionIcon={
+					<IconButton 
+						onTouchTap={() => alert('delete !!!!!!!!')}
+					>
+						<Delete />
+					</IconButton>
+				}
 				containerElement={
-						<Link 
-							to={`/pages/${p.ID}/contents`} 
-							activeStyle={styles.link.activeStyle} 
-						/> 
+					<Link 
+						to={`/pages/${p.ID}/contents`} 
+						activeStyle={styles.link.activeStyle} 
+					/> 
 				}
 			>
 				<img src={p.link || 'img/adele.jpg'} />
 			</GridTile>
 		)
 	}
-	renderAddPageForm() {
+	addPageForm() {
 		const {inputErrText, title} = this.state
 		return (
 			<form>
@@ -141,19 +150,29 @@ class Pages extends Component {
 						<input 
 							type='file'
 							name='file' 
-							ref={i => this.file = i}
+							ref={input => this.file = input}
 						/>
 					]}
-					save={this.handlePostPage}
-					cancel={this.handleAddPage}
 					setInputErrorMessage={this.handleRequiredInput}
 				/>
 			</form>
 		)
 	}
 	render() {
-		const {dapb} = this.state
+		const {showDialog} = this.state
 		const {pages} = this.props
+		const actions = [
+			<FlatButton
+				label="Close"
+				primary={true}
+				onClick={this.toggleDialog}
+			/>, 
+			<FlatButton
+				label="Save"
+				primary={true}
+				onClick={this.handlePostPage}
+			/>
+		]
 		return (
 			<div style={styles.root}>
 				<GridList 
@@ -170,39 +189,35 @@ class Pages extends Component {
 							cellHeight={333}
 						>
 							{ 
-								Object.entries(pages).map(a => this.renderGridTile(...a))
+								Object.entries(pages).map(a => this.gridTile(...a))
 							}
-							<GridTile  
-								title={'Add Page'}
-								titleBackground={styles.gridTile.titleBackground} 
+							<FloatingActionButton 
+								secondary={true}
 								style={{
-									display: dapb
-									? 
-									'block' 
-									: 
-									'none', 
-									...styles.gridTile.style
+									...styles.floatingActionButton, 
+									display: showDialog ? 'none' : 'inline-block'
 								}}
-								onTouchTap={this.handleAddPage}
+								onClick={this.toggleDialog}
 							>
-								<img src='/img/1075699_472676169493047_514880014_n.jpg' />
-							</GridTile>
-							<GridTile 
-								cols={4}
-								style={{display: !dapb ? 'block' : 'none', ...styles.gridTile.style}}
-							>
-								{this.renderAddPageForm()}
-							</GridTile>
+								<ContentAdd />
+							</FloatingActionButton>
 						</GridList>
 					</GridTile>
 					<GridTile cols={1} />  
 				</GridList>
+				<Dialog
+					title="Add New Page"
+					children={this.addPageForm()}
+					actions={actions}
+					modal={true}
+					open={showDialog} 
+				/>
 			</div>
 		)
 	}
 }
 
-Pages.propType = {
+Pages.propTypes = {
 	getPages: PropTypes.func.isRequired, 
 	pages: PropTypes.object.isRequired, 
 	postPage: PropTypes.func.isRequired

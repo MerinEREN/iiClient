@@ -1,4 +1,4 @@
-export default function makeActionCreator(type, ...argNames) {
+/* export default function makeActionCreator(type, ...argNames) {
 	let action = {type}
 	return (...args) => {
 		// let action = {type}
@@ -6,5 +6,12 @@ export default function makeActionCreator(type, ...argNames) {
 			action[v] = args[i]
 		})
 		return action
+	}
+} */
+
+export default function makeActionCreator(type) {
+	let action = {type}
+	return (args) => {
+		return {...action, ...args}
 	}
 }

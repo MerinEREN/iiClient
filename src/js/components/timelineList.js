@@ -10,15 +10,15 @@ class TimelineList extends Component {
 		this.props.loadData( 
 			{
 				dArgs: {
-					URL: '/demands', 
+					// URL: '/demands/', 
 					groupID: 'timeline'
 				}, 
 				oArgs: {
-					URL: '/offers', 
+					// URL: '/offers/', 
 					groupID: 'timeline'
 				}, 
 				spArgs: {
-					URL: '/servicePacks', 
+					// URL: '/servicePacks/', 
 					groupID: 'timeline'
 				}
 			}

@@ -14,6 +14,9 @@ const getPages = makeLoader({
 		actionsRequest: [pagesRequest],
 		actionsSuccess: [pagesSuccess],
 		actionsFailure: [pagesFailure]
+	}, 
+	options: {
+		didInvalidate: false
 	}
 	})
 

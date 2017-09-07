@@ -1,6 +1,7 @@
-import {combineReducers} from 'redux'
-import createReducer, {mergeKeysIntoArray} from './utilities'
-import {paginate} from './utilities'
+import createReducer, {
+	paginate, 
+	mergeIntoOrRemoveFromObject
+} from './utilities'
 import {
 	USERS_REQUEST,
 	USERS_SUCCESS,
@@ -15,26 +16,14 @@ function mergeByID(state, action) {
 		return {...state, ...result.user}
 	return {...state, ...result}
 }
-function pushIDs(state, action) {
-	const {result} = action.response
-	if(result.user) 
-		return mergeKeysIntoArray(state, result.user)
-	return mergeKeysIntoArray(state, result)
-}
 
 // Slice Reducers
-const byID = createReducer(
+const users = createReducer(
 	{}, 
 	{
 		USER_ACCOUNT_SUCCESS: mergeByID, 
-		USERS_SUCCESS: mergeByID
-	}
-)
-const allIDs = createReducer(
-	[], 
-	{
-		USER_ACCOUNT_SUCCESS: pushIDs, 
-		USERS_SUCCESS: pushIDs
+		USERS_SUCCESS: mergeByID, 
+		USERS_FAILURE: mergeIntoOrRemoveFromObject
 	}
 )
 export const paginationUsers = paginate({
@@ -44,12 +33,6 @@ export const paginationUsers = paginate({
 		USERS_SUCCESS, 
 		USERS_FAILURE
 	]
-})
-
-// Higher-Order Reducer
-const users = combineReducers({
-	byID,
-	allIDs
 })
 
 export default users

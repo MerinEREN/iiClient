@@ -4,30 +4,30 @@ import {
 	counterTimelineRequest, 
 	counterTimelineSuccess, 
 	counterTimelineFailure, 
-	counterLanguagesRequest, 
+	/* counterLanguagesRequest, 
 	counterLanguagesSuccess, 
-	counterLanguagesFailure 
+	counterLanguagesFailure */
 } from '../actions/counters'
 
 export const getURL = (groupID, returnedURL) => (dispatch, getState) => {
 	const {
-		demands: {
+		demandsByAccount: {
 			timeline: {[returnedURL]: dURL}
 		}, 
-		offers: {
+		offersByAccount: {
 			timeline: {[returnedURL]: oURL}
 		}, 
-		servicePacks: {
+		servicePacksByAccount: {
 			timeline: {[returnedURL]: spURL}
 		}
 	} = getState().pagination
 	return generateURL(groupID, returnedURL, dURL, oURL, spURL)
 }
 
-export const getLanguagesCount = makeLoader({
+/* export const getLanguagesCount = makeLoader({
 	defaults: {
 		URL: '/languages/?action=getCount', 
-		path: ["counters", "languages"]
+		path: ["countersByComponent", "languages"]
 	},
 	actionCreators: {
 		actionsRequest: [counterLanguagesRequest],
@@ -37,12 +37,12 @@ export const getLanguagesCount = makeLoader({
 	options: {
 		hideFetching: true
 	}
-})
+}) */
 
 const loadCount = makeLoader({
 	defaults: {
 		URL: '/timeline', 
-		path: ["counters", "timeline"]
+		path: ["countersByComponent", "timeline"]
 	}, 
 	actionCreators: {
 		actionsRequest: [counterTimelineRequest],

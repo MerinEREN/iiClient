@@ -14,6 +14,9 @@ const getLanguages = makeLoader({
 		actionsRequest: [languagesRequest],
 		actionsSuccess: [languagesSuccess],
 		actionsFailure: [languagesFailure]
+	}, 
+	options: {
+		didInvalidate: false
 	}
 })
 

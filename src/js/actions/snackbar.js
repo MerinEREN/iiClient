@@ -1,7 +1,6 @@
 import makeActionCreator from './creator'
-import {SET_SNACKBAR_MESSAGE} from './types'
+import {SET_SNACKBAR} from './types'
 
-export const setSnackbarMessage = makeActionCreator(
-	SET_SNACKBAR_MESSAGE, 
-	"msg"
+export const setSnackbar = makeActionCreator(
+	SET_SNACKBAR
 )

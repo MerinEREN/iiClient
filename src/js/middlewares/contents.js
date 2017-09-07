@@ -24,12 +24,15 @@ export const postContents = makeLoader({
 const getContents = makeLoader({
 	defaults: {
 		URL: '/contents/', 
-		path: ['contents']
+		path: ['contentsByPage']
 	},
 	actionCreators: {
 		actionsRequest: [contentsRequest],
 		actionsSuccess: [contentsSuccess],
 		actionsFailure: [contentsFailure]
+	}, 
+	options: {
+		didInvalidate: false
 	}
 })
 

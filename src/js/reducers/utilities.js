@@ -32,9 +32,9 @@ export const paginate = ({types, mapActionToKey}) => {
 		pageCount: 0,
 		// error: false, 
 		isFetching: false,
-		// didInvalidate: true
+		didInvalidate: true
 	}, action) => {
-		const {type, response} = action
+		const {method, type, response, didInvalidate} = action
 		switch (type) {
 			case requestType:
 				return {
@@ -43,7 +43,7 @@ export const paginate = ({types, mapActionToKey}) => {
 				}
 			case successType:
 				// First one is for GET request only.
-				return (response.nextPageURL || response.prevPageURL) 
+				return method === "GET"
 					? 
 					{
 						...state,
@@ -57,15 +57,20 @@ export const paginate = ({types, mapActionToKey}) => {
 						nextPageURL: response.nextPageURL,
 						prevPageURL: response.prevPageURL,
 						pageCount: state.pageCount + 1, 
-						isFetching: false
+						isFetching: false, 
+						didInvalidate: typeof didInvalidate === "undefined"
 					}
 					: 
 					{
 						...state,
-						IDs: mergeKeysIntoArray(
+						IDs: method === "POST" 
+						? 
+						mergeKeysIntoArray(
 							state.IDs, 
 							response.result
 						)
+						:
+						removeFromArray(state.IDs, action)
 					}
 			case failureType:
 				return !response 
@@ -77,27 +82,29 @@ export const paginate = ({types, mapActionToKey}) => {
 					:
 					{
 						...state,
-						IDs: removeFromArray(state.IDs, action)
+						IDs: method === "DELETE" 
+						? 
+						mergeKeysIntoArray(
+							state.IDs, 
+							response.result
+						)
+						:
+						removeFromArray(state.IDs, action)
 					}
 			default:
 				return state
 		}
 	}
-
+	// USE action.receivedAt !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	return (state = {}, action) => {
 		switch (action.type) {
 			case requestType:
 			case successType:
 			case failureType:
 				const key = mapActionToKey(action)
-				console.log(key)
-				if (key) {
-					return {
-						...state,
-						[key]: updatePagination(state[key], action)
-					}
-				} else {
-					updatePagination(state, action)
+				return {
+					...state,
+					[key]: updatePagination(state[key], action)
 				}
 			default:
 				return state
@@ -109,32 +116,17 @@ function setValue(r){
 	return typeof r === "object" ? null : r
 }
 
-export const mergeKeysIntoArray = (a, o) => {
+const mergeKeysIntoArray = (a, o) => {
 	// if (!o)
 	if (typeof o !== "object")
 		return a
-	const IDs = Object.keys(o).map(k => k)
-	return [...a, ...IDs]
-}
-
-export const mergeObjectIntoObject = (state, action) => {
-	return {...state, ...action.response.result}
-}
-
-export const pushIDs = (state, action) => {
-	return mergeKeysIntoArray(state, action.response.result)
-}
-
-export const removeFromObject = (state, action) => {
-	const {result} = action.response
-	if (!result)
-		return state
-	let newState = {}
-	Object.entries(state).every(([k, v]) => {
-		if(!result.hasOwnProperty(k))
-			newState[k] = v
+	// const IDs = Object.keys(o).map(k => k)
+	// return [...a, ...IDs]
+	Object.keys(o).forEach(k => {
+		if(a.indexOf(k) === -1)
+			a.push(k)
 	})
-	return newState
+	return a
 }
 
 export const removeFromArray = (state, action) => {
@@ -147,11 +139,37 @@ export const removeFromArray = (state, action) => {
 	if (!result)
 		return state
 	let map = []
-	for(var id of state) {
+	for(let id of state) {
 		if(!result.hasOwnProperty(id))
 			map.push(id)
 	}
 	return map
+}
+
+export const mergeIntoOrRemoveFromObject = (state, action) => {
+	if(action.method === "DELETE")
+		return removeFromObject(state, action)
+	return mergeObjectIntoObject(state, action)
+}
+
+const mergeObjectIntoObject = (state, action) => {
+	return {...state, ...action.response.result}
+}
+
+const removeFromObject = (state, action) => {
+	const {result} = action.response
+	if (!result)
+		return state
+	let newState = {}
+	Object.entries(state).forEach(([k, v]) => {
+		if(!result.hasOwnProperty(k))
+			newState[k] = v
+	})
+	return newState
+}
+
+export const pushIDs = (state, action) => {
+	return mergeKeysIntoArray(state, action.response.result)
 }
 
 export const updateObject = (oldObject, newValues) => {

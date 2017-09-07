@@ -1,6 +1,8 @@
-import {combineReducers} from 'redux'
-import createReducer, {mergeKeysIntoArray} from './utilities'
-import {paginate} from './utilities'
+// import {combineReducers} from 'redux'
+import createReducer, {
+	paginate, 
+	mergeIntoOrRemoveFromObject
+} from './utilities'
 import {
 	ACCOUNTS_REQUEST,
 	ACCOUNTS_SUCCESS,
@@ -15,7 +17,7 @@ function mergeByID(state, action) {
 		return {...state, ...result.account}
 	return {...state, ...result}
 }
-function pushIDs(state, action) {
+/* function pushIDs(state, action) {
 	const {result} = action.response
 	if(result.account) 
 		return mergeKeysIntoArray(state, result.account)
@@ -36,8 +38,8 @@ const allIDs = createReducer(
 		USER_ACCOUNT_SUCCESS: pushIDs, 
 		ACCOUNTS_SUCCESS: pushIDs
 	}
-)
-export const accountsInPagination = paginate({
+) */
+export const paginationAccounts = paginate({
 	mapActionToKey: action => action.groupID, 
 	types: [
 		ACCOUNTS_REQUEST, 
@@ -47,10 +49,19 @@ export const accountsInPagination = paginate({
 })
 
 //Higher-Order Reducer
-const accounts = combineReducers({
+/* const accounts = combineReducers({
 	byID,
 	allIDs
-})
+}) */
+
+const accounts = createReducer(
+	{}, 
+	{
+		USER_ACCOUNT_SUCCESS: mergeByID, 
+		ACCOUNTS_SUCCESS: mergeByID, 
+		ACCOUNTS_FAILURE: mergeIntoOrRemoveFromObject
+	}
+)
 
 export default accounts
 

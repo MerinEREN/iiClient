@@ -20,3 +20,18 @@ export const postLanguage = makeLoader({
 	}
 })
 
+export const deleteLanguage = makeLoader({
+	defaults: {
+		URL: '/languages/', 
+		method: 'DELETE', 
+		path: ['languages']
+	},
+	actionCreators: {
+		actionsSuccess: [languagesSuccess],
+		actionsFailure: [languagesFailure]
+	}, 
+	options: {
+		hideFetching: true, 
+		showSnackbar: true
+	}
+})

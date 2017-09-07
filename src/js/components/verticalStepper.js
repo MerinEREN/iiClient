@@ -9,7 +9,14 @@ import {
 import RaisedButton from 'material-ui/RaisedButton'
 import FlatButton from 'material-ui/FlatButton'
 
-// ADD 'styles' AND CHANGE DEFAULT STYLES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+const styles = {
+	stepActionsContainer: {
+		margin: '12px 0'
+	}, 
+	raisedButton: {
+		marginRight: 12
+	}
+}
 
 /**
  Vertical steppers are designed for narrow screen sizes. They are ideal for mobile.
@@ -40,9 +47,7 @@ class VerticalStepper extends Component {
 	}
 	handlePrev() {
 		const {stepIndex} = this.state
-		if (stepIndex > 0) {
-			this.setState({stepIndex: stepIndex - 1})
-		}
+		this.setState({stepIndex: stepIndex - 1})
 	}
 	handleForm(v) {
 		const {setInputErrorMessage, save, cancel} = this.props
@@ -52,51 +57,56 @@ class VerticalStepper extends Component {
 		this.setState({stepIndex: 0})
 		switch (v) {
 			case 's':
-				if(save) {
-					return save()
-				}
-				return
+				return save()
 
 			case 'c':
-				if(cancel)
-					cancel()
-				return
+				return cancel()
 		}
 	}
-	renderStepActions() {
-		const {stepContents, cancel} = this.props
+	stepActions() {
+		const {stepContents, save, cancel} = this.props
 		const {stepIndex} = this.state
 		return (
-			<div style={{margin: '12px 0'}}>
-				<RaisedButton
-					label={stepIndex === stepContents.length - 1 
-							? 
-							'Save' 
-							: 
-							'Next'
-					}
-					disableTouchRipple={true}
-					disableFocusRipple={true}
-					primary={true}
-					onTouchTap={stepIndex === stepContents.length - 1 
-							? 
-							() => this.handleForm('s')
-							: 
-							this.handleNext
-					}
-					style={{marginRight: 12}}
-				/>
-				{(cancel && stepIndex === stepContents.length - 1) && (
+			<div style={styles.stepActionsContainer}>
+				{
+					(save && stepIndex === stepContents.length - 1) 
+					&& 
+					<RaisedButton
+						label={'Save'}
+						disableTouchRipple={true}
+						disableFocusRipple={true}
+						primary={true}
+						onTouchTap={() => this.handleForm('s')}
+						style={styles.raisedButton}
+					/>
+				}
+				{
+					stepIndex !== stepContents.length - 1 
+					&& 
+					<RaisedButton
+						label={'Next'}
+						disableTouchRipple={true}
+						disableFocusRipple={true}
+						primary={true}
+						onTouchTap={this.handleNext}
+						style={styles.raisedButton}
+					/>
+				}
+				{
+					(cancel && stepIndex === stepContents.length - 1) 
+					&& 
 					<RaisedButton
 						label='Cancel'
 						disableTouchRipple={true}
 						disableFocusRipple={true}
 						secondary={true}
 						onTouchTap={() => this.handleForm('c')}
-						style={{marginRight: 12}}
+						style={styles.raisedButton}
 					/>
-				)}
-				{stepIndex > 0 && (
+				}
+				{
+					stepIndex > 0 
+					&& 
 					<FlatButton
 						label="Back"
 						disabled={stepIndex === 0}
@@ -104,30 +114,29 @@ class VerticalStepper extends Component {
 						disableFocusRipple={true}
 						onTouchTap={this.handlePrev}
 					/>
-				)}
+				}
 			</div>
 		)
 	}
-	renderSteps() {
+	steps() {
 		const {stepLabels, stepContents} = this.props
 		return stepContents.map((v, i) => (
 			<Step key={i}>
 				<StepLabel>{stepLabels[i]}</StepLabel>
 				<StepContent>
 					{v}
-					{this.renderStepActions()}
+					{this.stepActions()}
 				</StepContent>
 			</Step>
 		))
 	}
 	render() {
 		const {stepIndex} = this.state
-		const contentStyle = {margin: '0 16px'}
 		return (
 			<Stepper 
 				orientation='vertical'
 				activeStep={stepIndex}
-				children={this.renderSteps()}
+				children={this.steps()}
 			/>
 		)
 	}

@@ -6,7 +6,7 @@ import {
 } from './types'
 
 // Action Creators
-export const languagesRequest = makeActionCreator(
+/* export const languagesRequest = makeActionCreator(
 	LANGUAGES_REQUEST, 
 	'groupID'
 )
@@ -14,13 +14,22 @@ export const languagesSuccess = makeActionCreator(
 	LANGUAGES_SUCCESS, 
 	'response', 
 	'receivedAt', 
-	'groupID'
+	'groupID', 
+	'didInvalidate'
 )
 export const languagesFailure = makeActionCreator(
 	LANGUAGES_FAILURE, 
 	'error', 
 	'groupID', 
 	'response'
+) */
+
+export const languagesRequest = makeActionCreator(
+	LANGUAGES_REQUEST
 )
-
-
+export const languagesSuccess = makeActionCreator(
+	LANGUAGES_SUCCESS
+)
+export const languagesFailure = makeActionCreator(
+	LANGUAGES_FAILURE
+)

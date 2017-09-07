@@ -7,7 +7,7 @@ import loadItems from '../middlewares/timelineList'
 // Can use ownProps here.
 const mapStateToProps = state => {
 	return {
-		counter: state.pagination.counters.timeline
+		counter: state.pagination.countersByComponent.timeline
 	}
 }
 

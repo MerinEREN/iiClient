@@ -7,7 +7,7 @@ import {postPage} from '../middlewares/page'
 // Can use ownProps here.
 const mapStateToProps = state => {
 	return {
-		pages: state.entities.pages.byID
+		pages: state.entities.pages
 	}
 }
 

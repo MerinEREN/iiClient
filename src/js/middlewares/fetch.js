@@ -1,6 +1,6 @@
 // import fetch from 'isomorphic-fetch'
 import {toggleFetching} from '../actions/fetchingProgres'
-import {setSnackbarMessage} from '../actions/snackbar'
+import {setSnackbar} from '../actions/snackbar'
 
 export default function fetchDomainDataIfNeeded(args) {
 	// Function also receives getState()
@@ -10,8 +10,7 @@ export default function fetchDomainDataIfNeeded(args) {
 	// a cached value is already available.
 	return (dispatch, getState) => {
 		const state = getState()
-		// if(shouldFetchDomainData(state, args)) {
-		if(!args.isCached) {
+		if(shouldFetchDomainData(state, args, dispatch)) {
 			// Dispatch a thunk from thunk.
 			return dispatch(fetchDomainData(args))
 		} else {
@@ -21,10 +20,39 @@ export default function fetchDomainDataIfNeeded(args) {
 	}
 }
 
-// MODIFY THIS CHECK !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-function shouldFetchDomainData(state, args) {
-	const {isCached} = args
-	return isCached
+function shouldFetchDomainData(state, args, dispatch) {
+	const {
+		request: {method}, 
+		groupID, 
+		pagObj, 
+		isCached, 
+		didInvalidate
+	} = args
+	if(method !== "GET") {
+		if(method === "DELETE") {
+			return !shouldCancelFetch(state.appState.snackbar, args, dispatch)
+		} else {
+			return true
+		}
+	}
+	if(isCached) {
+		// For root object
+		return isCached(state)
+	} else if(pagObj !== undefined && Object.keys(pagObj).length !== 0) {
+		// The first check above is only for preventing "Object.keys(pagObj)" error
+		// For pagination object
+		if (pagObj[groupID]) {
+			return !pagObj[groupID].isFetching 
+				&& 
+				pagObj[groupID].didInvalidate
+		} else {
+			return !pagObj.isFetching
+				&& 
+				pagObj.didInvalidate
+		}
+	} else {
+		return true
+	}
 	/* const item = args.isCached(state)
 	if(!item) {
 		return true
@@ -35,6 +63,52 @@ function shouldFetchDomainData(state, args) {
 	} */
 }
 
+// Delete from store first, and if undoed add the object back to 
+// store again. Otherwise send the request.
+const shouldCancelFetch = (snackbar, args, dispatch) => {
+	const {
+		actionsSuccess, 
+		request: {method}, 
+		bodyData, 
+		groupID
+	} = args
+	actionsSuccess.forEach(ac => dispatch(ac({
+		method, 
+		response: {result: bodyData}, 
+		groupID
+	})))
+	// Set snackbar
+	dispatch(setSnackbar({
+		props: {
+			message: `${Object.keys(bodyData).map(k => k)} deleted`,
+			duration: 10000, 
+			action: 'Undo', 
+			onActionClick: cancelFetch(snackbar, args, dispatch), 
+			clicked: false
+		}
+	}))
+	return setTimeout(() => snackbar.clicked, 11000)
+}
+// Add deleted object back to the store.
+const cancelFetch = (snackbar, args, dispatch) => {
+	const {
+		actionsFailure, 
+		request: {method}, 
+		bodyData, 
+		groupID
+	} = args
+	actionsFailure.forEach(ac => dispatch(ac({
+		method, 
+		response: {result: bodyData}, 
+		groupID
+	})))
+	dispatch(setSnackbar({
+		props: {
+			clicked: true
+		}
+	}))
+}
+
 const fetchDomainData = args => dispatch => {
 	const {
 		actionsRequest, 
@@ -43,14 +117,19 @@ const fetchDomainData = args => dispatch => {
 		request, 
 		bodyData, 
 		groupID, 
+		didInvalidate, 
 		hideFetching, 
 		showSnackbar
 	} = args
-	if (request.method !== 'GET') {
-		actionsSuccess.every(ac => dispatch(ac({result: bodyData}, Date.now(), groupID)))
+	if (request.method === 'POST' || request.method === 'PUT') {
+		actionsSuccess.forEach(ac => dispatch(ac({
+			method: request.method, 
+			response: {result: bodyData}, 
+			groupID
+		})))
 	}
 	if (actionsRequest)
-		actionsRequest.every(ac => dispatch(ac(groupID)))
+		actionsRequest.forEach(ac => dispatch(ac({groupID})))
 	if(!hideFetching)
 		dispatch(toggleFetching())
 	// REMOVE IF STATEMENT BELOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -72,15 +151,15 @@ const fetchDomainData = args => dispatch => {
 					if (
 						contentType
 						&&
-						contentType.indexOf('text/html')
-						!==
-						-1
+						contentType.indexOf('text/html') !== -1
 					) {
 						response.text()
 							.then(body => 
-								actionsSuccess.every(ac => 
-									dispatch(ac(body, 
-										Date.now()))))
+								actionsSuccess.forEach(ac => dispatch(ac({
+									response: {result: body}, 
+									receivedAt: Date.now()
+								})))
+							)
 					} else if (
 						contentType
 						&&
@@ -110,11 +189,14 @@ const fetchDomainData = args => dispatch => {
 							.then(body => {
 								const json = 
 									JSON.parse(body)
-								actionsSuccess.every(ac => 
-									dispatch(ac(json, 
-										Date.now(), groupID)))
-							}
-							)
+								actionsSuccess.forEach(ac => dispatch(ac({
+									method: request.method, 
+									response: {...json}, 
+									receivedAt: Date.now(), 
+									groupID, 
+									didInvalidate
+								})))
+							})
 					}
 				}
 			} else {
@@ -123,10 +205,25 @@ const fetchDomainData = args => dispatch => {
 					'Response code is not between 199 and '
 					+
 					'300')
+				if (request.method === 'POST' || request.method === 'PUT') {
+					// DID NOT USE error RIGHTNOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+					actionsFailure.forEach(ac => dispatch(ac({
+						method: request.method, 
+						error: "use error code here", 
+						response: {
+							result: bodyData
+						}, 
+						groupID
+					})))
+				}
 			}
 			// USE Response.status HERE TO HANDLE RESPONSE STATUSES !!!!!!!!!!!
 			if(showSnackbar)
-				dispatch(setSnackbarMessage(response.headers.get('Date')))
+				dispatch(setSnackbar({
+					props: {
+						message: response.headers.get('Date')
+					}
+				}))
 		})
 		.catch(err => {
 			if(!hideFetching)
@@ -135,12 +232,20 @@ const fetchDomainData = args => dispatch => {
 				`There has been a problem with my fetch
 					operation: ${err.message}`
 			)
-			const rslt = {result: bodyData}
-			actionsFailure.every(ac => dispatch(ac(
-				err.message, 
-				groupID, 
-				rslt
-			)))
-			dispatch(setSnackbarMessage(err.message))
+			if (request.method === 'POST' || request.method === 'PUT') {
+				// DID NOT USE error RIGHTNOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				actionsFailure.forEach(ac => dispatch(ac({
+					method: request.method, 
+					error: err.message, 
+					response: {
+						result: bodyData
+					}, 
+					groupID
+				})))
+			}
+			dispatch(setSnackbar({
+				props: {
+					message: err.message}
+			}))
 		})
 }

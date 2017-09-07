@@ -1,8 +1,11 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import {GridList, GridTile} from 'material-ui/GridList'
-import TextField from 'material-ui/TextField'
-import {trimSpace} from '../middlewares/utilities'
+import FloatingActionButton from 'material-ui/FloatingActionButton'
+import ContentAdd from 'material-ui/svg-icons/content/add'
+import Dialog from 'material-ui/Dialog'
+import FlatButton from 'material-ui/FlatButton'
+import Content from '../containers/content'
 
 const styles = {
 	root: {
@@ -13,16 +16,121 @@ const styles = {
 	gridList: {
 		margin: 0
 	}, 
-	link: {
-		activeStyle: {
-			color: '#0097a7'
-		}
+	floatingActionButton: {
+		position: 'fixed',
+		bottom: 32, 
+		right: 48
+	}
+}
+
+const contents = {
+	book: {
+		ID: 'book', 
+		en: 'book', 
+		tr: 'kitap', 
+		de: '', 
+		pt: '', 
+		ru: '', 
+		pages: ['Adele', 'MerinEREN']
 	}, 
-	gridTile: {
-		titleBackground: "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.3) 70%,rgba(0,0,0,0) 100%)", 
-		style: {
-			cursor: 'pointer'
-		}
+	pen: {
+		ID: 'pen', 
+		en: 'pen', 
+		tr: 'kalem', 
+		de: 'bilmem ne', 
+		pt: '', 
+		ru: '', 
+		pages: ['TheMan', 'MerinEREN']
+	}, 
+	clock: {
+		ID: 'clock', 
+		en: 'clock', 
+		tr: 'saat', 
+		de: '', 
+		pt: '', 
+		ru: '', 
+		pages: ['Adele', 'MerinEREN']
+	}, 
+	table: {
+		ID: 'table', 
+		en: 'table', 
+		tr: 'masa', 
+		de: 'bilmem ne', 
+		pt: '', 
+		ru: '', 
+		pages: ['TheMan', 'MerinEREN']
+	}, 
+	success: {
+		ID: 'success', 
+		en: 'success', 
+		tr: 'basari', 
+		de: '', 
+		pt: '', 
+		ru: '', 
+		pages: ['Adele', 'MerinEREN']
+	}, 
+	love: {
+		ID: 'love', 
+		en: 'love', 
+		tr: 'ask', 
+		de: 'bilmem ne', 
+		pt: '', 
+		ru: '', 
+		pages: ['TheMan', 'MerinEREN']
+	}, 
+	victory: {
+		ID: 'victory', 
+		en: 'victory', 
+		tr: 'zafer', 
+		de: '', 
+		pt: '', 
+		ru: '', 
+		pages: ['Adele', 'MerinEREN']
+	}, 
+	power: {
+		ID: 'power', 
+		en: 'power', 
+		tr: 'guc', 
+		de: 'bilmem ne', 
+		pt: '', 
+		ru: '', 
+		pages: ['TheMan', 'MerinEREN']
+	}, 
+	happyness: {
+		ID: 'happyness', 
+		en: 'happyness', 
+		tr: 'mutluluk', 
+		de: '', 
+		pt: '', 
+		ru: '', 
+		pages: ['Adele', 'MerinEREN']
+	}, 
+	IQ: {
+		ID: 'IQ', 
+		en: 'IQ', 
+		tr: 'IQ', 
+		de: 'IQ', 
+		pt: '', 
+		ru: '', 
+		pages: ['TheMan', 'MerinEREN']
+	}, 
+	humanity: {
+		ID: 'humanity', 
+		en: 'humanity', 
+		tr: 'insanlik', 
+		de: '', 
+		pt: '', 
+		ru: '', 
+		pages: ['Adele', 'MerinEREN']
+	}, 
+	justice: {
+		ID: 'justice', 
+		en: 'justice', 
+		tr: 'adalet', 
+		de: 'justice', 
+		pt: '', 
+		ru: '', 
+		pages: ['TheMan', 'MerinEREN']
 	}
 }
 
@@ -30,131 +138,195 @@ class Contents extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			dapb: true, 
-			title: ""
-			// inputErrText: {}
+			showDialog: false, 
+			// contents: props.contents, 
+			contents: contents, 
+			newContents: {}, 
+			inputErrTexts: {}
 		}
-		this.handleAddContent = this.handleAddContent.bind(this)
-		this.handlePostContent = this.handlePostContent.bind(this)
-		// this.handleRequiredInput = this.handleRequiredInput.bind(this)
-		this.handleInputChange = this.handleInputChange.bind(this)
+		this.handleCreateNewContents = this.handleCreateNewContents.bind(this)
+		this.handleContentChange = this.handleContentChange.bind(this)
+		this.toggleDialog = this.toggleDialog.bind(this)
+		this.handleAdd = this.handleAdd.bind(this)
+		this.handlePostContents = this.handlePostContents.bind(this)
 	}
 	componentWillMount() {
-		const {params, getContents, getLanguagesCount} = this.props
-		getLanguagesCount()
-		getContents()
-		/* this.setState({contents: {
-			...this.state.contents, 
-			'Add Content': {
-				title: 'Add Content', 
-				src: '/img/1075699_472676169493047_514880014_n.jpg'
-			}
-		}}) */
+		const {params, getContents} = this.props
+		getContents({
+			groupID: params.page
+		})
+		this.handleCreateNewContents()
 	}
-	/* handleRequiredInput(i) {
-		switch (i) {
-			case 0:
-				if(!this.state.title) {
-					this.setState({
-						inputErrText:{
-							title: 'Content name is required'
-						}
-					})
-					return true
-				}
-				return false
+	handleCreateNewContents() {
+		var {newContents} = this.state
+		var tempObj = {}
+		// MAKE THIS DYNAMIC !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		for(let i = Object.keys(newContents).length; i < Object.keys(newContents).length + 8; i++) {
+			tempObj[`newContent_${i}`] = {
+						ID: `newContent_${i}`, 
+						en: '', 
+						de: '', 
+						pt:'', 
+						tr: '', 
+						ru: '', 
+						pages: []
+					}
 		}
-	} */
-	handleInputChange(event) {
-		const target = event.target
-		const name = target.name
-		const value = target.value
 		this.setState({
-			title: value
-			// inputErrText: {[name]: ''}
+			newContents: {
+				...newContents, 
+				...tempObj
+			}
 		})
 	}
-	handlePostContent() {
-		const {title} = this.state
-		const {postContent} = this.props
-		this.handleAddContent()
-		postContent({
+	handleContentChange(ID, field, value) {
+		const {contents, newContents, inputErrTexts} = this.state
+		if(contents.hasOwnProperty(ID)) {
+			this.setState({
+				contents: {
+					...contents, 
+					[ID]: {
+						...contents[ID], 
+						[field]: value
+					}
+				}, 
+				inputErrTexts: {
+					...inputErrTexts, 
+					[ID]: {
+						...inputErrTexts[ID], 
+						[field]: ''
+					}
+				}
+			})
+		} else {
+			this.setState({
+				newContents: {
+					...newContents, 
+					[ID]: {
+						...newContents[ID], 
+						[field]: value
+					}
+				}, 
+				inputErrTexts: {
+					...inputErrTexts, 
+					[ID]: {
+						...inputErrTexts[ID], 
+						[field]: ''
+					}
+				}
+			})
+		}
+	}
+	toggleDialog() {
+		this.setState({showDialog: !this.state.showDialog})
+	}
+	handleAdd() {
+		this.toggleDialog()
+		const {contents, newContents} = this.state
+		var tempObj = {}
+		Object.entries(newContents).forEach( a => {
+			// if(a[1].en !== '' && a[1].tr !== '')
+			if(a[1].en !== '')
+				tempObj[a[0]] = a[1]
+		})
+		this.setState({
+			contents: {
+				...contents, 
+				...tempObj
+			}, 
+			newContents: {}
+		})
+	}
+	handleRequiredInput() {
+		const {contents, inputErrTexts} = this.state
+		Object.entries(contents).forEach(a => {
+			if(a[1].en === '') {
+				this.setState({
+					inputErrTexts: {
+						...inputErrTexts, 
+						[a[0]]: {
+							...inputErrTexts[a[0]], 
+							en: "Required field"
+						}
+					}
+				})
+				return false
+			}
+			if(a[1].pages.length === 0) {
+				this.setState({
+					inputErrTexts: {
+						...inputErrTexts, 
+						[a[0]]: {
+							...inputErrTexts[a[0]], 
+							pages: "Required field"
+						}
+					}
+				})
+				return false
+			}
+		})
+		return true
+	}
+	handlePostContents() {
+		if(!this.handleRequiredInput())
+			return
+		this.props.postContent({
 			body: {
 				type: 'FormData', 
 				// Use 'contentType' for 'Blob' type.
-				// contentType: 'appliceation/json', 
-				data: {
-					[trimSpace(title)]: {
-						ID: trimSpace(title), 
-						title: title, 
-						file: this.file.files[0] 
-					}
-				}
+				// contentType: 'application/json', 
+				data: this.state.contents
 			}
 		})
 	}
-	handleAddContent() {
-		const {dapb} = this.state
-		this.setState({
-			dapb: !dapb, 
-			title: ""
-		})
-	}
-	renderGridTile(ID, p) {
-		const {dapb} = this.state
-		return (
-			<GridTile  
-				key={ID}
-				title={p.title}
-				titleBackground={styles.gridTile.titleBackground} 
-				cols={ID === 'Body' ? 2 : 1} 
-				rows={ID === 'Body' ? 1 : 1}
-				style={styles.gridTile.style} 
-				containerElement={
-						<Link 
-							to={p.ID} 
-							activeStyle={styles.link.activeStyle} 
-						/> 
-				}
-			>
-				<img src={p.link || 'img/adele.jpg'} />
-			</GridTile>
-		)
-	}
-	renderAddContentForm() {
-		const {inputErrText, title} = this.state
-		return (
-			<form>
-				<VerticalStepper 
-					stepLabels={[
-						'Content Title', 
-						'Content Thumbnail'
-					]} 
-					stepContents={[
-						<TextField 
-							name='title' 
-							value={title}
-							floatingLabelText="Content Title" 
-							errorText={inputErrText.title}
-							onChange={this.handleInputChange}
-						/>, 
-						<input 
-							type='file'
-							name='file' 
-							ref={i => this.file = i}
-						/>
-					]}
-					save={this.handlePostContent}
-					cancel={this.handleAddContent}
-					setInputErrorMessage={this.handleRequiredInput}
-				/>
-			</form>
+	contents(contents) {
+		const {
+			inputErrTexts 
+		} = this.state
+		return Object.values(contents).map(c => 
+			<Content 
+				key={c.ID}
+				content={c} 
+				inputErrTexts={inputErrTexts[c.ID]} 
+				handleContentChange={this.handleContentChange} 
+			/>
 		)
 	}
 	render() {
-		//const {dapb} = this.state
-		const {params, contents} = this.props
-		/* return (
+		const {
+			showDialog, 
+			contents, 
+			newContents
+		} = this.state
+		const {
+			params
+		} = this.props
+		const children = <GridList 
+					style={styles.gridList}
+					cols={4}
+					padding={10}
+					cellHeight={'auto'}
+				>
+					{this.contents(newContents)}
+				</GridList>
+		const actions = [
+			<FlatButton
+				label="Create New Contents"
+				primary={true}
+				onClick={this.handleCreateNewContents}
+			/>, 
+			<FlatButton
+				label="Close"
+				primary={true}
+				onClick={this.toggleDialog}
+			/>, 
+			<FlatButton
+				label="Add"
+				primary={true}
+				onClick={this.handleAdd}
+			/>
+		]
+		return (
 			<div style={styles.root}>
 				<GridList 
 					cols={4} 
@@ -167,49 +339,46 @@ class Contents extends Component {
 							style={styles.gridList}
 							cols={4}
 							padding={10}
-							cellHeight={333}
+							cellHeight={'auto'}
 						>
 							{ 
-								Object.entries(contents).map(a => this.renderGridTile(...a))
-							}
-							<GridTile  
-								title={'Add Content'}
-								titleBackground={styles.gridTile.titleBackground} 
-								style={{
-									display: dapb
+								Object.entries(contents).length > 0 
 									? 
-									'block' 
-									: 
-									'none', 
-									...styles.gridTile.style
+									this.contents(contents)
+									:
+									<h1>{params.page} page has no contents yet... </h1>
+							}
+							<FloatingActionButton 
+								secondary={true}
+								style={{
+									...styles.floatingActionButton, 
+									display: showDialog ? 'none' : 'inline-block'
 								}}
-								onTouchTap={this.handleAddContent}
+								onClick={this.toggleDialog}
 							>
-								<img src='/img/1075699_472676169493047_514880014_n.jpg' />
-							</GridTile>
-							<GridTile 
-								cols={4}
-								style={{display: !dapb ? 'block' : 'none', ...styles.gridTile.style}}
-							>
-								{this.renderAddContentForm()}
-							</GridTile>
+								<ContentAdd />
+							</FloatingActionButton>
 						</GridList>
 					</GridTile>
 					<GridTile cols={1} />  
 				</GridList>
+				<Dialog
+					title="Add New Contents"
+					children={children}
+					actions={actions}
+					modal={true}
+					open={showDialog} 
+					autoScrollBodyContent={true}
+				/>
 			</div>
-		) */
-		return <h1>The page of the contents is {params.page}... </h1>
+		)
 	}
 }
 
-Contents.propType = {
+Contents.propTypes = {
 	getContents: PropTypes.func.isRequired, 
 	contents: PropTypes.object.isRequired, 
-	getLanguagesCount: PropTypes.func.isRequired, 
-	langCount: PropTypes.object.isRequired, 
 	postContents: PropTypes.func.isRequired
 }
 
 export default Contents
-

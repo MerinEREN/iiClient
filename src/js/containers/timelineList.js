@@ -10,9 +10,9 @@ const sortByLastModified = (is) => {
 }
 
 function getItemsFromEntities(pagination, entities) {
-	const pds = pagination.demands.timeline
-	const pos = pagination.offers.timeline
-	const psps = pagination.servicePacks.timeline
+	const pds = pagination.demandsByAccount.timeline
+	const pos = pagination.offersByAccount.timeline
+	const psps = pagination.servicePacksByAccount.timeline
 	const {
 		demands, 
 		offers, 
@@ -21,21 +21,21 @@ function getItemsFromEntities(pagination, entities) {
 	let tds = []
 	if(pds) {
 		for (let ID of pds.IDs) {
-			demands.byID[ID].type = 'demand'
+			demands[ID].type = 'demand'
 			tds.push(demands[ID])
 		}
 	}
 	let tos = []
 	if(pos) {
 		for (let ID of pos.IDs) {
-			offers.byID[ID].type = 'offer'
+			offers[ID].type = 'offer'
 			tos.push(offers[ID])
 		}
 	}
 	let tsps = []
 	if(psps) {
 		for (let ID of psps.IDs) {
-			servicePacks.byID[ID].type = 'servicePack'
+			servicePacks[ID].type = 'servicePack'
 			tsps.push(servicePacks[ID])
 		}
 	}

@@ -1,6 +1,12 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import {GridList, GridTile} from 'material-ui/GridList'
+import IconButton from 'material-ui/IconButton'
+import Delete from 'material-ui/svg-icons/action/delete'
+import FloatingActionButton from 'material-ui/FloatingActionButton'
+import ContentAdd from 'material-ui/svg-icons/content/add'
+import Dialog from 'material-ui/Dialog'
+import FlatButton from 'material-ui/FlatButton'
 import VerticalStepper from './verticalStepper'
 import SelectField from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
@@ -19,9 +25,13 @@ const styles = {
 		style: {
 			cursor: 'pointer'
 		}
+	}, 
+	floatingActionButton: {
+		position: 'fixed',
+		bottom: 32, 
+		right: 48
 	}
 }
-
 const items = [
 	<MenuItem key={1} value="tr" primaryText="Turkish" />,
 	<MenuItem key={2} value="en" primaryText="English" />,
@@ -35,18 +45,19 @@ class Languages extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			dalb: true, 
+			showDialog: false, 
 			code: "",    
 			inputErrText: {}
 		}
-		this.handleAddLanguage = this.handleAddLanguage.bind(this)
-		this.handlePostLanguage = this.handlePostLanguage.bind(this)
+		this.toggleDialog = this.toggleDialog.bind(this)
+		this.handlePost = this.handlePost.bind(this)
 		this.handleRequiredInput = this.handleRequiredInput.bind(this)
 		this.handleInputChange = this.handleInputChange.bind(this)
 	}
 	componentWillMount() {
 		this.props.getLanguages()
 	}
+	// Make dynamic
 	handleRequiredInput(i) {
 		switch (i) {
 			case 1:
@@ -76,25 +87,32 @@ class Languages extends Component {
 	handleInputChange(event, index, value) {
 		const target = event.target
 		const name = target.name
+		const {inputErrText} = this.state
 		if(name !== "file") {
 			this.setState({
 				code: value, 
-				inputErrText: {code: ''}
+				inputErrText: {
+					...inputErrText, 
+					code: ''
+				}
 			})
 		}
 		this.setState({
-			inputErrText: {file: ''}
+			inputErrText: {
+				...inputErrText, 
+				file: ''
+			}
 		})
 	}
-	handlePostLanguage() {
+	handlePost() {
+		this.toggleDialog()
 		const {code} = this.state
 		const {postLanguage} = this.props
-		this.handleAddLanguage()
 		postLanguage({
 			body: {
 				type: 'FormData', 
 				// Use 'contentType' for 'Blob' type.
-				// contentType: 'appliceation/json', 
+				// contentType: 'application/json', 
 				data: {
 					[code]: {
 						code: code, 
@@ -103,28 +121,39 @@ class Languages extends Component {
 				}
 			}
 		})
+		this.setState({code: ""})
 	}
-	handleAddLanguage() {
-		const {dalb} = this.state
-		this.setState({
-			dalb: !dalb, 
-			code: ""
+	handleDelete(langObj) {
+		this.props.deleteLanguage({
+			body: {
+				data: langObj
+			}
 		})
 	}
-	renderGridTile(ID, language) {
-		const {dalb} = this.state
+	toggleDialog() {
+		const {showDialog} = this.state
+		this.setState({showDialog: !showDialog})
+	}
+	gridTile(ID, language) {
 		return (
 			<GridTile  
 				key={ID}
 				title={language.code}
 				titleBackground={styles.gridTile.titleBackground} 
 				style={styles.gridTile.style} 
+				actionIcon={
+					<IconButton 
+						onTouchTap={() => this.handleDelete({[ID]: language})}
+					>
+						<Delete />
+					</IconButton>
+				}
 			>
 				<img src={language.link || 'img/adele.jpg'} />
 			</GridTile>
 		)
 	}
-	renderAddLanguageForm() {
+	addLanguageForm() {
 		const {inputErrText, code} = this.state
 		return (
 			<form>
@@ -149,24 +178,34 @@ class Languages extends Component {
 						<input 
 							type='file'
 							name='file' 
-							ref={i => this.file = i}
+							ref={input => this.file = input}
 							onChange={this.handleInputChange}
 						/>
 					]}
-					save={this.handlePostLanguage}
-					cancel={this.handleAddLanguage}
 					setInputErrorMessage={this.handleRequiredInput}
 				/>
 			</form>
 		)
 	}
 	render() {
-		const {dalb} = this.state
+		const {showDialog} = this.state
 		const {languages} = this.props
+		const actions = [
+			<FlatButton
+				label="Close"
+				primary={true}
+				onTouchTap={this.toggleDialog}
+			/>, 
+			<FlatButton
+				label="Save"
+				primary={true}
+				onTouchTap={this.handlePost}
+			/>
+		]
 		return (
 			<div style={styles.root}>
 				<GridList 
-					cols={3} 
+					cols={4} 
 					cellHeight='auto'
 					style={styles.gridList}
 				>
@@ -179,43 +218,39 @@ class Languages extends Component {
 							cellHeight={333}
 						>
 							{ 
-								Object.entries(languages).map(a => this.renderGridTile(...a))
+								Object.entries(languages).map(a => this.gridTile(...a))
 							}
-							<GridTile  
-								title={'Add Language'}
-								titleBackground={styles.gridTile.titleBackground} 
+							<FloatingActionButton 
+								secondary={true}
 								style={{
-									display: dalb
-									? 
-									'block' 
-									: 
-									'none', 
-									...styles.gridTile.style
+									...styles.floatingActionButton, 
+									display: showDialog ? 'none' : 'inline-block'
 								}}
-								onTouchTap={this.handleAddLanguage}
+								onTouchTap={this.toggleDialog}
 							>
-								<img src='/img/1075699_472676169493047_514880014_n.jpg' />
-							</GridTile>
-							<GridTile 
-								cols={4}
-								style={{display: !dalb ? 'block' : 'none', ...styles.gridTile.style}}
-							>
-								{this.renderAddLanguageForm()}
-							</GridTile>
+								<ContentAdd />
+							</FloatingActionButton>
 						</GridList>
 					</GridTile>
 					<GridTile cols={1} />  
 				</GridList>
+				<Dialog
+					title="Add New Language"
+					children={this.addLanguageForm()}
+					actions={actions}
+					modal={true}
+					open={showDialog} 
+				/>
 			</div>
 		)
 	}
 }
 
-Languages.propType = {
+Languages.propTypes = {
 	getLanguages: PropTypes.func.isRequired, 
 	languages: PropTypes.object.isRequired, 
-	postLanguage: PropTypes.func.isRequired
+	postLanguage: PropTypes.func.isRequired, 
+	deleteLanguage: PropTypes.func.isRequired
 }
 
 export default Languages
-

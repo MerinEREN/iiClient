@@ -26,7 +26,6 @@ function signOutURLFailure(state, action) {
 	return {
 		...state,
 		isFetching: false,
-		didInvalidate: true,
 		value: null,
 		error: action.error,
 		lastUpdated: action.receivedAt

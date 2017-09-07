@@ -1,8 +1,6 @@
-import {combineReducers} from 'redux'
 import createReducer, {
 	paginate, 
-	mergeObjectIntoObject, 
-	pushIDs
+	mergeIntoOrRemoveFromObject 
 } from './utilities'
 import {
 	DEMANDS_REQUEST, 
@@ -10,17 +8,11 @@ import {
 	DEMANDS_FAILURE
 } from '../actions/types'
 
-// Slice Reducers
-const byID = createReducer(
+const demands = createReducer(
 	{}, 
 	{
-		DEMANDS_SUCCESS: mergeObjectIntoObject
-	}
-)
-const allIDs = createReducer(
-	[], 
-	{
-		DEMANDS_SUCCESS: pushIDs
+		DEMANDS_SUCCESS: mergeIntoOrRemoveFromObject, 
+		DEMANDS_FAILURE: mergeIntoOrRemoveFromObject
 	}
 )
 export const paginationDemands = paginate({
@@ -30,12 +22,6 @@ export const paginationDemands = paginate({
 		DEMANDS_SUCCESS, 
 		DEMANDS_FAILURE
 	]
-})
-
-// Higher-Order Reducer
-const demands = combineReducers({
-	byID,
-	allIDs
 })
 
 export default demands

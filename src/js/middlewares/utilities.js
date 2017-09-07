@@ -1,10 +1,10 @@
 import fetchDomainDataIfNeeded from "./fetch"
 
 export const generateURL = (groupID, returnedURL, ...pageURLs) => {
-	let URL = (groupID ? "/" + groupID : "/") + "?"
+	var URL = (groupID ? "/" + groupID : "/") + "?"
 	URL += returnedURL === "nextPageURL" ? "d=next" : "d=prev"
-	let domainAndParams
-	let params
+	var domainAndParams
+	var params
 	pageURLs.forEach((v, i) => {
 		domainAndParams = v.split("?")
 		params = domainAndParams[1].split("&c")
@@ -27,12 +27,12 @@ export const generateURL = (groupID, returnedURL, ...pageURLs) => {
 // isCached" is a bool or a function that takes the store 
 // and returns a slice of sore to allow or prevent API call.
 export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) => { 
-	let {path, method, URL} = defaults
-	let {hideFetching, isCached, showSnackbar} = options
+	var {path, method, URL} = defaults
+	var {hideFetching, isCached, didInvalidate, showSnackbar} = options
 	// path = path || ["all"]
 	hideFetching = hideFetching || false
-	let headers = new Headers({"Accept": "text/plain"})
-	let init = {
+	var headers = new Headers({"Accept": "text/plain"})
+	var init = {
 		method: method || "GET",
 		credentials: "same-origin",
 		headers: headers,
@@ -40,8 +40,8 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 		// mode: "no-cors"
 	}
 	return (args = {}) => {
-		let {returnedURL, groupID, body} = args
-		if (body) {
+		var {returnedURL, groupID, body} = args
+		if (body && method !== "DELETE") {
 			switch (body.type) {
 				case "Blob":
 					init.body = new Blob(
@@ -63,8 +63,13 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 									a[0] !== "file"
 								)
 									fd.set(a[0], a[1])
-								if (a[0] === "file")
-									fd.set(a[0], a[1], a[1].name)
+								if (a[0] === "file"){
+									if(a[1] !== undefined) {
+										fd.set(a[0], a[1], a[1].name)
+									} else {
+										fd.set(a[0], a[1])
+									}
+								}
 							}
 						) 
 					})
@@ -75,7 +80,7 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 		if(args.headers)
 			Object.entries(args.headers).forEach(a => init.headers.set(a))
 		returnedURL = returnedURL || "prevPageURL"
-		// groupID = groupID || "all"
+		groupID = groupID || "all"
 		return (dispatch, getState) => {
 			if (path) {
 				var pagObj = getState().pagination
@@ -83,63 +88,36 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 					pagObj = pagObj[v]
 				})
 			}
-			if(method !== "POST") {
+			// CHANGE URL ASSERTION CONTROL
+			// Because POST and PUT methods also can have dynamic URLs
+			// Get and Delete methods have dynamic URLs
+			if(method !== "POST" || method !== "PUT") {
 				if (args.URL) {
 					// Use from args object
 					URL = args.URL 
 				} else {
 					// Use returned URL
 					if (pagObj !== undefined && pagObj !== {}) {
-						if (groupID) {
-							if (pagObj[groupID]) {
-								URL = pagObj[groupID][returnedURL] 
-							} else {
-								URL = URL || "/"
-							}
+						if (pagObj[groupID]) {
+							URL = pagObj[groupID][returnedURL] 
 						} else {
-							if (pagObj[returnedURL]) {
-								URL = pagObj[returnedURL] 
-							} else {
-								URL = URL || "/"
-							}
+							URL = URL || "/"
 						}
 					} else {
 						// Use from defaults object or assign "/"
 						URL = URL || "/"
 					}
 				}
-				if (pagObj !== undefined && pagObj !== {}) {
-					if (groupID) {
-						if (pagObj[groupID]) {
-							isCached = pagObj[groupID].isFetching
-						} else {
-							isCached = false
-						}
-					} else {
-						isCached = pagObj.isFetching
-					}
-				} else {
-					isCached
-					?
-					(
-						typeof isCached !== "string" 
-						?
-						isCached(getState())
-						:
-						isCached
-					)
-					:
-					false
-				}
 			}
-			console.log(URL, init, groupID, hideFetching, isCached)
 			return dispatch(fetchDomainDataIfNeeded({
 				request: new Request(URL, init),
 				bodyData: body && body.data, 
+				pagObj, 
 				groupID, 
 				...actionCreators, 
-				hideFetching, 
 				isCached, 
+				didInvalidate, 
+				hideFetching, 
 				showSnackbar
 			}))
 		}
@@ -147,7 +125,7 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 }
 
 export const trimSpace = (s) => {
-	let str = ""
+	var str = ""
 	s = s.trim()
 	for(let ch of s) {
 		if (ch !== " ")

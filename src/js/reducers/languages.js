@@ -1,10 +1,6 @@
-import {combineReducers} from 'redux'
 import createReducer, {
 	paginate, 
-	mergeObjectIntoObject, 
-	pushIDs, 
-	removeFromObject, 
-	removeFromArray
+	mergeIntoOrRemoveFromObject
 } from './utilities'
 import {
 	LANGUAGES_REQUEST, 
@@ -13,18 +9,11 @@ import {
 } from '../actions/types'
 
 // Slice Reducers
-const byID = createReducer(
+const languages = createReducer(
 	{}, 
 	{
-		LANGUAGES_SUCCESS: mergeObjectIntoObject, 
-		LANGUAGES_FAILURE: removeFromObject
-	}
-)
-const allIDs = createReducer(
-	[], 
-	{
-		LANGUAGES_SUCCESS: pushIDs,
-		LANGUAGES_FAILURE: removeFromArray
+		LANGUAGES_SUCCESS: mergeIntoOrRemoveFromObject, 
+		LANGUAGES_FAILURE: mergeIntoOrRemoveFromObject
 	}
 )
 export const paginationLanguages = paginate({
@@ -36,12 +25,4 @@ export const paginationLanguages = paginate({
 	]
 })
 
-// Higher-Order Reducer
-const languages = combineReducers({
-	byID,
-	allIDs
-})
-
 export default languages
-
-

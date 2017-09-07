@@ -1,14 +1,14 @@
 import createReducer from './utilities'
-import {SET_SNACKBAR_MESSAGE} from '../actions/types'
+import {SET_SNACKBAR} from '../actions/types'
 
 // Case Reducers
-function setSnackbarMessage(state, action) {
-	return action.msg
+function setSnackbar(state, action) {
+	return action.props
 }
 
 // Slice Reducers
-const snackbarMessage = createReducer('dummy message', {
-	SET_SNACKBAR_MESSAGE: setSnackbarMessage
+const snackbar = createReducer({}, {
+	SET_SNACKBAR: setSnackbar
 })
 
-export default snackbarMessage
+export default snackbar

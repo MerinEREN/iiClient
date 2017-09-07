@@ -8,7 +8,17 @@ import {
 import RaisedButton from 'material-ui/RaisedButton'
 import FlatButton from 'material-ui/FlatButton'
 
-// ADD 'styles' AND CHANGE DEFAULT STYLES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+const styles = {
+	stepActionsContainer: {
+		margin: '12px 0'
+	}, 
+	raisedButton: {
+		marginRight: 12
+	}, 
+	contentStyle: {
+		margin: '0 16px'
+	}
+}
 
 /**
  Horizontal steppers are ideal when the contents of one step depend on an earlier step.
@@ -36,9 +46,7 @@ class HorizontalStepper extends Component {
 	}
 	handlePrev() {
 		const {stepIndex} = this.state
-		if (stepIndex > 0) {
-			this.setState({stepIndex: stepIndex - 1})
-		}
+		this.setState({stepIndex: stepIndex - 1})
 	}
 	handleForm(v) {
 		const {setInputErrorMessage, save, cancel} = this.props
@@ -48,67 +56,87 @@ class HorizontalStepper extends Component {
 		this.setState({stepIndex: 0})
 		switch (v) {
 			case 's':
-				if(save) {
-					return save()
-				}
-				return
+				return save()
 
 			case 'c':
-				if(cancel)
-					cancel()
-				return
+				return cancel()
 		}
 	}
-	renderStepLabels(ls) {
-		return ls.map((l, i) => <Step key={i}><StepLabel>{l}</StepLabel></Step>)
+	stepActions() {
+		const {stepContents, save, cancel} = this.props
+		const {stepIndex} = this.state
+		return (
+			<div style={styles.stepActionsContainer}>
+				{
+					(save && stepIndex === stepContents.length - 1) 
+					&& 
+					<RaisedButton
+						label={'Save'}
+						disableTouchRipple={true}
+						disableFocusRipple={true}
+						primary={true}
+						onTouchTap={() => this.handleForm('s')}
+						style={styles.raisedButton}
+					/>
+				}
+				{
+					stepIndex !== stepContents.length - 1 
+					&& 
+					<RaisedButton
+						label={'Next'}
+						disableTouchRipple={true}
+						disableFocusRipple={true}
+						primary={true}
+						onTouchTap={this.handleNext}
+						style={styles.raisedButton}
+					/>
+				}
+				{
+					(cancel && stepIndex === stepContents.length - 1) 
+					&& 
+					<RaisedButton
+						label='Cancel'
+						disableTouchRipple={true}
+						disableFocusRipple={true}
+						secondary={true}
+						onTouchTap={() => this.handleForm('c')}
+						style={styles.raisedButton}
+					/>
+				}
+				{
+					stepIndex > 0 
+					&& 
+					<FlatButton
+						label="Back"
+						disabled={stepIndex === 0}
+						disableTouchRipple={true}
+						disableFocusRipple={true}
+						onTouchTap={this.handlePrev}
+					/>
+				}
+			</div>
+		)
 	}
-	getStepContent(stepIndex) {
-		const {stepContents, cancel} = this.props
+	stepContent(stepIndex) {
+		const {stepContents} = this.props
 		return stepContents[stepIndex]
+	}
+	stepLabels(ls) {
+		return ls.map((l, i) => <Step key={i}><StepLabel>{l}</StepLabel></Step>)
 	}
 	render() {
 		const {stepIndex} = this.state
 		const {stepLabels} = this.props
-		const contentStyle = {margin: '0 16px'}
 		return (
 			<div>
 				<Stepper 
 					activeStep={stepIndex}
 				>
-					{this.renderStepLabels(stepLabels)}
+					{this.stepLabels(stepLabels)}
 				</Stepper>
-				<div style={contentStyle}>
-					{this.getStepContent(stepIndex)}
-					<div style={{marginTop: 12}}>
-						<FlatButton
-							label="Back"
-							disabled={stepIndex === 0}
-							onTouchTap={this.handlePrev}
-							style={{marginRight: 12}}
-						/>
-						{(cancel && stepIndex === stepLabels.length - 1) && (
-							<RaisedButton
-								label='Cancel'
-								secondary={true}
-								onTouchTap={() => this.handleForm('c')}
-							/>
-						)}
-						<RaisedButton
-							label={stepIndex === stepLabels.length - 1  
-									? 
-									'Save' 
-									: 
-									'Next'
-							}
-							primary={true}
-							onTouchTap={stepIndex === stepContents.length - 1 
-									? 
-									() => this.handleForm('s')
-									: 
-									this.handleNext
-							}
-						/>
-					</div>
+				<div style={styles.contentStyle}>
+					{this.stepContent(stepIndex)}
+					{this.stepActions()}
 				</div>
 			</div>
 		)
