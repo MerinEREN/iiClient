@@ -47,7 +47,7 @@ export const paginate = ({types, mapActionToKey}) => {
 					? 
 					{
 						...state,
-						// For timeline count only.
+						// For counts only.
 						value: setValue(response.result), 
 						// IDs: union(state.IDs, response.result),
 						IDs: mergeKeysIntoArray(
@@ -63,7 +63,7 @@ export const paginate = ({types, mapActionToKey}) => {
 					: 
 					{
 						...state,
-						IDs: method === "POST" 
+						IDs: method !== "DELETE" 
 						? 
 						mergeKeysIntoArray(
 							state.IDs, 
@@ -73,7 +73,8 @@ export const paginate = ({types, mapActionToKey}) => {
 						removeFromArray(state.IDs, action)
 					}
 			case failureType:
-				return !response 
+				// return !response 
+				return method === "GET"
 					?
 					{
 						...state,
@@ -116,20 +117,20 @@ function setValue(r){
 	return typeof r === "object" ? null : r
 }
 
-const mergeKeysIntoArray = (a, o) => {
-	// if (!o)
-	if (typeof o !== "object")
-		return a
+const mergeKeysIntoArray = (IDs, result) => {
+	// if (!result)
+	if (typeof result !== "object")
+		return IDs
 	// const IDs = Object.keys(o).map(k => k)
 	// return [...a, ...IDs]
-	Object.keys(o).forEach(k => {
-		if(a.indexOf(k) === -1)
-			a.push(k)
+	Object.keys(result).forEach(k => {
+		if(IDs.indexOf(k) === -1)
+			IDs.push(k)
 	})
-	return a
+	return IDs
 }
 
-export const removeFromArray = (state, action) => {
+export const removeFromArray = (IDs, action) => {
 	/* return [
 		...state.slice(0, action.ID.index),
 		...state.slice(action.ID.index + 1)
@@ -137,20 +138,27 @@ export const removeFromArray = (state, action) => {
 	// return state.filter( (item, index) => index !== action.response.result.ID.index)
 	const {result} = action.response
 	if (!result)
-		return state
+		return IDs
 	let map = []
-	for(let id of state) {
+	for(let id of IDs) {
 		if(!result.hasOwnProperty(id))
 			map.push(id)
 	}
 	return map
 }
 
-export const mergeIntoOrRemoveFromObject = (state, action) => {
+export const mergeIntoOrRemoveFromObjectSuccess = (state, action) => {
 	if(action.method === "DELETE")
 		return removeFromObject(state, action)
 	return mergeObjectIntoObject(state, action)
 }
+
+export const mergeIntoOrRemoveFromObjectFailure = (state, action) => {
+	if(action.method === "DELETE")
+		return mergeObjectIntoObject(state, action)
+	return removeFromObject(state, action)
+}
+
 
 const mergeObjectIntoObject = (state, action) => {
 	return {...state, ...action.response.result}
@@ -158,7 +166,7 @@ const mergeObjectIntoObject = (state, action) => {
 
 const removeFromObject = (state, action) => {
 	const {result} = action.response
-	if (!result)
+	if (!result) // for GET method
 		return state
 	let newState = {}
 	Object.entries(state).forEach(([k, v]) => {
@@ -166,10 +174,6 @@ const removeFromObject = (state, action) => {
 			newState[k] = v
 	})
 	return newState
-}
-
-export const pushIDs = (state, action) => {
-	return mergeKeysIntoArray(state, action.response.result)
 }
 
 export const updateObject = (oldObject, newValues) => {

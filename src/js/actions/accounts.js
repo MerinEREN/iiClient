@@ -7,17 +7,11 @@ import {
 
 // Action Creators
 export const accountsRequest = makeActionCreator(
-	ACCOUNTS_REQUEST, 
-	'groupID'
+	ACCOUNTS_REQUEST
 )
 export const accountsSuccess = makeActionCreator(
-	ACCOUNTS_SUCCESS,
-	'response',
-	'receivedAt', 
-	'groupID'
+	ACCOUNTS_SUCCESS
 )
 export const accountsFailure = makeActionCreator(
-	ACCOUNTS_FAILURE,
-	'error', 
-	'groupID'
+	ACCOUNTS_FAILURE
 )

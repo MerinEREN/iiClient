@@ -2,6 +2,8 @@
 import {toggleFetching} from '../actions/fetchingProgres'
 import {setSnackbar} from '../actions/snackbar'
 
+var timer
+
 export default function fetchDomainDataIfNeeded(args) {
 	// Function also receives getState()
 	// which lets us choose what to dispatch next.
@@ -9,35 +11,34 @@ export default function fetchDomainDataIfNeeded(args) {
 	// This is useful for avoiding a network request if
 	// a cached value is already available.
 	return (dispatch, getState) => {
-		const state = getState()
-		if(shouldFetchDomainData(state, args, dispatch)) {
-			// Dispatch a thunk from thunk.
-			return dispatch(fetchDomainData(args))
-		} else {
-			// Let the calling code know there's nothing to wait for.
-			return Promise.resolve()
+		switch(args.request.method) {
+			case "GET":
+				if(shouldFetchDomainData(getState(), args)) {
+					// Dispatch a thunk from thunk.
+					return dispatch(fetchDomainData(args))
+				} else {
+					// Let the calling code know there's nothing to wait for.
+					return Promise.resolve()
+				}
+			case "DELETE":
+				return dispatch(shouldFetchAfterTimeout(getState, args, 10000))
+			default:
+				// Covers "POST" and "PUT" methods
+				return dispatch(fetchDomainData(args))
 		}
 	}
 }
 
-function shouldFetchDomainData(state, args, dispatch) {
+function shouldFetchDomainData(state, args) {
 	const {
-		request: {method}, 
 		groupID, 
 		pagObj, 
 		isCached, 
 		didInvalidate
 	} = args
-	if(method !== "GET") {
-		if(method === "DELETE") {
-			return !shouldCancelFetch(state.appState.snackbar, args, dispatch)
-		} else {
-			return true
-		}
-	}
 	if(isCached) {
 		// For root object
-		return isCached(state)
+		return !isCached(state)
 	} else if(pagObj !== undefined && Object.keys(pagObj).length !== 0) {
 		// The first check above is only for preventing "Object.keys(pagObj)" error
 		// For pagination object
@@ -63,15 +64,14 @@ function shouldFetchDomainData(state, args, dispatch) {
 	} */
 }
 
-// Delete from store first, and if undoed add the object back to 
-// store again. Otherwise send the request.
-const shouldCancelFetch = (snackbar, args, dispatch) => {
+const shouldFetchAfterTimeout = (getState, args, duration) => dispatch => {
 	const {
 		actionsSuccess, 
 		request: {method}, 
 		bodyData, 
 		groupID
 	} = args
+	// Delte the object from store
 	actionsSuccess.forEach(ac => dispatch(ac({
 		method, 
 		response: {result: bodyData}, 
@@ -81,22 +81,25 @@ const shouldCancelFetch = (snackbar, args, dispatch) => {
 	dispatch(setSnackbar({
 		props: {
 			message: `${Object.keys(bodyData).map(k => k)} deleted`,
-			duration: 10000, 
+			duration, 
 			action: 'Undo', 
-			onActionClick: cancelFetch(snackbar, args, dispatch), 
+			onActionClick: () => dispatch(cancelFetch(getState, args)), 
 			clicked: false
 		}
 	}))
-	return setTimeout(() => snackbar.clicked, 11000)
+	// CHECK DELETE, DELETE/CANCEL, DELETE SCENARIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	// setTimeout returns a number not a promise, so this return does nothing actually.
+	return timer = setTimeout(function() {
+		if(getState().appState.snackbar.clicked)
+			return Promise.resolve()
+		return dispatch(fetchDomainData(args))
+	}, duration + 1000)
 }
+
 // Add deleted object back to the store.
-const cancelFetch = (snackbar, args, dispatch) => {
-	const {
-		actionsFailure, 
-		request: {method}, 
-		bodyData, 
-		groupID
-	} = args
+const cancelFetch = (getState, {actionsFailure, request: {method}, bodyData, groupID}) => dispatch => {
+	const {snackbar} = getState().appState
+	console.log(method, bodyData, groupID)
 	actionsFailure.forEach(ac => dispatch(ac({
 		method, 
 		response: {result: bodyData}, 
@@ -104,9 +107,15 @@ const cancelFetch = (snackbar, args, dispatch) => {
 	})))
 	dispatch(setSnackbar({
 		props: {
+			...snackbar, 
+			// Prevent more than one click (open: !clicked, so this control
+			// is NOT NECESSARY actually.
+			onActionClick: undefined, 
 			clicked: true
 		}
 	}))
+	// So imported to prevent previously canceled API calls.
+	clearTimeout(timer)
 }
 
 const fetchDomainData = args => dispatch => {
@@ -201,21 +210,20 @@ const fetchDomainData = args => dispatch => {
 				}
 			} else {
 				// response code is not between 199 and 300
-				console.log(
-					'Response code is not between 199 and '
-					+
-					'300')
-				if (request.method === 'POST' || request.method === 'PUT') {
-					// DID NOT USE error RIGHTNOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					actionsFailure.forEach(ac => dispatch(ac({
-						method: request.method, 
-						error: "use error code here", 
-						response: {
-							result: bodyData
-						}, 
-						groupID
-					})))
-				}
+				console.log('Response code is not between 199 and 300')
+				// DID NOT USE error RIGHTNOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				actionsFailure.forEach(ac => dispatch(ac({
+					method: request.method, 
+					error: "use error code here", 
+					response: {
+						result: (request.method !== 'GET') 
+						? 
+						bodyData 
+						: 
+						null
+					}, 
+					groupID
+				})))
 			}
 			// USE Response.status HERE TO HANDLE RESPONSE STATUSES !!!!!!!!!!!
 			if(showSnackbar)
@@ -232,17 +240,19 @@ const fetchDomainData = args => dispatch => {
 				`There has been a problem with my fetch
 					operation: ${err.message}`
 			)
-			if (request.method === 'POST' || request.method === 'PUT') {
-				// DID NOT USE error RIGHTNOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-				actionsFailure.forEach(ac => dispatch(ac({
-					method: request.method, 
-					error: err.message, 
-					response: {
-						result: bodyData
-					}, 
-					groupID
-				})))
-			}
+			// DID NOT USE error RIGHTNOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			actionsFailure.forEach(ac => dispatch(ac({
+				method: request.method, 
+				error: err.message, 
+				response: {
+					result: (request.method !== 'GET') 
+					? 
+					bodyData 
+					: 
+					null
+				}, 
+				groupID
+			})))
 			dispatch(setSnackbar({
 				props: {
 					message: err.message}

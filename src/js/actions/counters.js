@@ -9,33 +9,21 @@ import {
 } from './types'
 
 export const counterTimelineRequest = makeActionCreator(
-	COUNTER_TIMELINE_REQUEST, 
-	'groupID'
+	COUNTER_TIMELINE_REQUEST
 )
 export const counterTimelineSuccess = makeActionCreator(
-	COUNTER_TIMELINE_SUCCESS, 
-	'response', 
-	'receivedAt', 
-	'groupID'
+	COUNTER_TIMELINE_SUCCESS
 )
 export const counterTimelineFailure = makeActionCreator(
-	COUNTER_TIMELINE_FAILURE, 
-	'error',  
-	'groupID'
+	COUNTER_TIMELINE_FAILURE
 )
 
 /* export const counterLanguagesRequest = makeActionCreator(
-	COUNTER_LANGUAGES_REQUEST, 
-	'groupID'
+	COUNTER_LANGUAGES_REQUEST
 )
 export const counterLanguagesSuccess = makeActionCreator(
-	COUNTER_LANGUAGES_SUCCESS, 
-	'response', 
-	'receivedAt', 
-	'groupID'
+	COUNTER_LANGUAGES_SUCCESS
 )
 export const counterLanguagesFailure = makeActionCreator(
-	COUNTER_LANGUAGES_FAILURE, 
-	'error',  
-	'groupID'
+	COUNTER_LANGUAGES_FAILURE
 ) */

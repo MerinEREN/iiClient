@@ -1,6 +1,7 @@
 import createReducer, {
 	paginate, 
-	mergeIntoOrRemoveFromObject 
+	mergeIntoOrRemoveFromObjectSuccess, 
+	mergeIntoOrRemoveFromObjectFailure
 } from './utilities'
 import {
 	DEMANDS_REQUEST, 
@@ -11,8 +12,8 @@ import {
 const demands = createReducer(
 	{}, 
 	{
-		DEMANDS_SUCCESS: mergeIntoOrRemoveFromObject, 
-		DEMANDS_FAILURE: mergeIntoOrRemoveFromObject
+		DEMANDS_SUCCESS: mergeIntoOrRemoveFromObjectSuccess, 
+		DEMANDS_FAILURE: mergeIntoOrRemoveFromObjectFailure
 	}
 )
 export const paginationDemands = paginate({

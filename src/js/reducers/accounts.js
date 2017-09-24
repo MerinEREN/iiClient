@@ -1,7 +1,7 @@
 // import {combineReducers} from 'redux'
 import createReducer, {
 	paginate, 
-	mergeIntoOrRemoveFromObject
+	mergeIntoOrRemoveFromObjectFailure
 } from './utilities'
 import {
 	ACCOUNTS_REQUEST,
@@ -59,7 +59,7 @@ const accounts = createReducer(
 	{
 		USER_ACCOUNT_SUCCESS: mergeByID, 
 		ACCOUNTS_SUCCESS: mergeByID, 
-		ACCOUNTS_FAILURE: mergeIntoOrRemoveFromObject
+		ACCOUNTS_FAILURE: mergeIntoOrRemoveFromObjectFailure
 	}
 )
 

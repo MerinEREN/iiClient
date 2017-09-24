@@ -7,20 +7,12 @@ import {
 
 // Action Creators
 export const pagesRequest = makeActionCreator(
-	PAGES_REQUEST, 
-	'groupID'
+	PAGES_REQUEST
 )
 export const pagesSuccess = makeActionCreator(
-	PAGES_SUCCESS, 
-	'response', 
-	'receivedAt', 
-	'groupID', 
-	'didInvalidate'
+	PAGES_SUCCESS
 )
 export const pagesFailure = makeActionCreator(
-	PAGES_FAILURE, 
-	'error', 
-	'groupID', 
-	'response'
+	PAGES_FAILURE
 )
 

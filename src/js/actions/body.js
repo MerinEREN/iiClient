@@ -11,12 +11,9 @@ export const userAccountRequest = makeActionCreator(
 	USER_ACCOUNT_REQUEST
 )
 export const userAccountSuccess = makeActionCreator(
-	USER_ACCOUNT_SUCCESS, 
-	'response', 
-	'receivedAt'
+	USER_ACCOUNT_SUCCESS
 )
 // Don't effect anything for now.
 export const userAccountFailure = makeActionCreator(
-	USER_ACCOUNT_FAILURE, 
-	'error'
+	USER_ACCOUNT_FAILURE
 )

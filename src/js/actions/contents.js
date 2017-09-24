@@ -7,18 +7,11 @@ import {
 
 // Action Creators
 export const contentsRequest = makeActionCreator(
-	CONTENTS_REQUEST, 
-	'groupID'
+	CONTENTS_REQUEST
 )
 export const contentsSuccess = makeActionCreator(
-	CONTENTS_SUCCESS, 
-	'response', 
-	'receivedAt', 
-	'groupID'
+	CONTENTS_SUCCESS
 )
 export const contentsFailure = makeActionCreator(
-	CONTENTS_FAILURE, 
-	'error', 
-	'groupID', 
-	'response'
+	CONTENTS_FAILURE
 )

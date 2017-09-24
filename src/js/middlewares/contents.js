@@ -8,8 +8,7 @@ import {
 export const postContents = makeLoader({
 	defaults: {
 		URL: '/contents/', 
-		method: 'POST', 
-		path: ['contents']
+		method: 'POST'
 	},
 	actionCreators: {
 		actionsSuccess: [contentsSuccess],

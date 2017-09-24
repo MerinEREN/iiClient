@@ -1,6 +1,6 @@
 import createReducer, {
 	paginate, 
-	mergeIntoOrRemoveFromObject
+	mergeIntoOrRemoveFromObjectFailure
 } from './utilities'
 import {
 	USERS_REQUEST,
@@ -23,7 +23,7 @@ const users = createReducer(
 	{
 		USER_ACCOUNT_SUCCESS: mergeByID, 
 		USERS_SUCCESS: mergeByID, 
-		USERS_FAILURE: mergeIntoOrRemoveFromObject
+		USERS_FAILURE: mergeIntoOrRemoveFromObjectFailure
 	}
 )
 export const paginationUsers = paginate({

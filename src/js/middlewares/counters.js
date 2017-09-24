@@ -42,7 +42,7 @@ export const getURL = (groupID, returnedURL) => (dispatch, getState) => {
 const loadCount = makeLoader({
 	defaults: {
 		URL: '/timeline', 
-		path: ["countersByComponent", "timeline"]
+		// path: ["countersByComponent", "timeline"]
 	}, 
 	actionCreators: {
 		actionsRequest: [counterTimelineRequest],

@@ -7,17 +7,11 @@ import {
 
 // Action Creators
 export const offersRequest = makeActionCreator(
-	OFFERS_REQUEST, 
-	'groupID'
+	OFFERS_REQUEST
 )
 export const offersSuccess = makeActionCreator(
-	OFFERS_SUCCESS, 
-	'response', 
-	'receivedAt', 
-	'groupID'
+	OFFERS_SUCCESS
 )
 export const offersFailure = makeActionCreator(
-	OFFERS_FAILURE, 
-	'error', 
-	'groupID'
+	OFFERS_FAILURE
 )

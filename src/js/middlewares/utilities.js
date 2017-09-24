@@ -24,8 +24,9 @@ export const generateURL = (groupID, returnedURL, ...pageURLs) => {
 }
 
 // "hideFetching" is to hide fetching progress component.
-// isCached" is a bool or a function that takes the store 
-// and returns a slice of sore to allow or prevent API call.
+// "isCached" is a bool or a function that takes the store 
+// and returns a slice of store to allow or prevent API call for root store objects.
+// "didInvalidate" if it is not undefined prevents the API call.
 export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) => { 
 	var {path, method, URL} = defaults
 	var {hideFetching, isCached, didInvalidate, showSnackbar} = options
@@ -41,6 +42,8 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 	}
 	return (args = {}) => {
 		var {returnedURL, groupID, body} = args
+		returnedURL = returnedURL || "prevPageURL"
+		// Parse request body for "POST" and "PUT" methods
 		if (body && method !== "DELETE") {
 			switch (body.type) {
 				case "Blob":
@@ -79,7 +82,6 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 		}
 		if(args.headers)
 			Object.entries(args.headers).forEach(a => init.headers.set(a))
-		returnedURL = returnedURL || "prevPageURL"
 		groupID = groupID || "all"
 		return (dispatch, getState) => {
 			if (path) {
@@ -88,23 +90,21 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 					pagObj = pagObj[v]
 				})
 			}
-			// CHANGE URL ASSERTION CONTROL
-			// Because POST and PUT methods also can have dynamic URLs
-			// Get and Delete methods have dynamic URLs
-			if(method !== "POST" || method !== "PUT") {
-				if (args.URL) {
-					// Use from args object
-					URL = args.URL 
-				} else {
-					// Use returned URL
-					if (pagObj !== undefined && pagObj !== {}) {
-						if (pagObj[groupID]) {
-							URL = pagObj[groupID][returnedURL] 
-						} else {
-							URL = URL || "/"
-						}
+			// BE CAREFUL
+			// IF THE METHOD IS "GET" OVERWRITES args.URL !!!!!!!!!!!!!!!!!!!!!
+			if (args.URL) {
+				// Use from args object
+				URL = args.URL 
+			} else {
+				// Use from defaults object or assign "/"
+				URL = URL || "/"
+			}
+			if(method === "GET") {
+				// Use returned URL
+				if (pagObj !== undefined && pagObj !== {}) {
+					if (pagObj[groupID]) {
+						URL = pagObj[groupID][returnedURL] 
 					} else {
-						// Use from defaults object or assign "/"
 						URL = URL || "/"
 					}
 				}

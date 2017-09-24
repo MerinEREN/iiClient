@@ -1,6 +1,7 @@
 import createReducer, {
 	paginate, 
-	mergeIntoOrRemoveFromObject
+	mergeIntoOrRemoveFromObjectSuccess, 
+	mergeIntoOrRemoveFromObjectFailure
 } from './utilities'
 import {
 	SERVICE_PACKS_REQUEST, 
@@ -11,8 +12,8 @@ import {
 const servicePacks = createReducer(
 	{}, 
 	{
-		SERVICE_PACKS_SUCCESS: mergeIntoOrRemoveFromObject, 
-		SERVICE_PACKS_FAILURE: mergeIntoOrRemoveFromObject
+		SERVICE_PACKS_SUCCESS: mergeIntoOrRemoveFromObjectSuccess, 
+		SERVICE_PACKS_FAILURE: mergeIntoOrRemoveFromObjectFailure
 	}
 )
 export const paginationServicePacks = paginate({

@@ -6,13 +6,12 @@ import {
 } from './types'
 
 // Action Creators
-export const loginUrlsRequest = makeActionCreator(LOGIN_URLS_REQUEST)
+export const loginUrlsRequest = makeActionCreator(
+	LOGIN_URLS_REQUEST
+)
 export const loginUrlsSuccess = makeActionCreator(
-	LOGIN_URLS_SUCCESS,
-	'response',
-	'receivedAt'
+	LOGIN_URLS_SUCCESS
 )
 export const loginUrlsFailure = makeActionCreator(
-	LOGIN_URLS_FAILURE,
-	'error'
+	LOGIN_URLS_FAILURE
 )

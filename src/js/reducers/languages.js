@@ -1,6 +1,7 @@
 import createReducer, {
 	paginate, 
-	mergeIntoOrRemoveFromObject
+	mergeIntoOrRemoveFromObjectSuccess, 
+	mergeIntoOrRemoveFromObjectFailure
 } from './utilities'
 import {
 	LANGUAGES_REQUEST, 
@@ -12,8 +13,8 @@ import {
 const languages = createReducer(
 	{}, 
 	{
-		LANGUAGES_SUCCESS: mergeIntoOrRemoveFromObject, 
-		LANGUAGES_FAILURE: mergeIntoOrRemoveFromObject
+		LANGUAGES_SUCCESS: mergeIntoOrRemoveFromObjectSuccess, 
+		LANGUAGES_FAILURE: mergeIntoOrRemoveFromObjectFailure
 	}
 )
 export const paginationLanguages = paginate({

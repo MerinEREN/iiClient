@@ -142,7 +142,7 @@ class Body extends Component {
 					Object.keys(snackbar).length > 0
 					&&
 					<Snackbar
-						open 
+						open={!snackbar.clicked} 
 						message={snackbar.message}
 						autoHideDuration={snackbar.duration || 5000}
 						action={snackbar.action}
