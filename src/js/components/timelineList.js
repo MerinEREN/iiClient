@@ -57,7 +57,7 @@ class TimelineList extends Component {
 							}
 						})
 						:
-						<div>No Item</div>
+						<h3>No Item</h3>
 				}
 			</List>
 		)

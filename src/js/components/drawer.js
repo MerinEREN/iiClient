@@ -82,7 +82,7 @@ const drawer = ({cookies, acc, user, open, changeTheme, toggleDrawer}) => (
 						/>
 					}
 				>
-					<img src={acc.photo.path || 'img/matrix.gif'} />
+					<img src={acc.photo.path || '/img/matrix.gif'} />
 				</CardMedia>
 			</CardTitle>
 			<CardText expandable={true}>
@@ -174,7 +174,7 @@ const drawer = ({cookies, acc, user, open, changeTheme, toggleDrawer}) => (
 			/>
 			<ListItem 
 				containerElement={
-					<IndexLink
+					<Link
 						to="/dashboard"
 						activeStyle={styles.link.activeStyle}
 					/>
@@ -227,7 +227,7 @@ const drawer = ({cookies, acc, user, open, changeTheme, toggleDrawer}) => (
 					<Link
 						// add if at accounts page control to
 						// attribute 'to'
-						// to={condition ? '/Demands/' : `/${acc.ID}/Demands`}
+						// to={condition ? '/demands' : `/${acc.ID}/demands`}
 						to="/demands"
 						activeStyle={styles.link.activeStyle}
 					/>
@@ -262,7 +262,7 @@ const drawer = ({cookies, acc, user, open, changeTheme, toggleDrawer}) => (
 				primaryText='Night Mode'
 				rightToggle={
 					<Toggle
-						defaultToggled={cookies.get('theme') === 'dark'}
+						toggled={cookies.get('theme') === 'dark'}
 						onToggle={() => changeTheme(cookies)}
 					/>
 				}

@@ -3,6 +3,7 @@ import {bindActionCreators} from 'redux'
 import BodyComponent from '../components/body'
 import loadData from '../middlewares/body'
 import {toggleDrawer} from '../actions/drawer'
+import {resetSnackbar} from '../actions/snackbar'
 // Needed for onTouchTap, REMOVE WHEN REACT HAS THIS FEATURE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // It's a mobile friendly onClick() alternative for all components in Material-UI 
 // http://stackoverflow.com/a/34015469/988941
@@ -61,7 +62,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
 		loadData,
-		toggleDrawer
+		toggleDrawer, 
+		resetSnackbar
 	},
 	dispatch
 )

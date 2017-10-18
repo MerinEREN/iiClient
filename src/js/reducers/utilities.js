@@ -34,7 +34,12 @@ export const paginate = ({types, mapActionToKey}) => {
 		isFetching: false,
 		didInvalidate: true
 	}, action) => {
-		const {method, type, response, didInvalidate} = action
+		const {
+			type, 
+			method, 
+			response, 
+			didInvalidate
+		} = action
 		switch (type) {
 			case requestType:
 				return {
@@ -54,8 +59,9 @@ export const paginate = ({types, mapActionToKey}) => {
 							state.IDs, 
 							response.result
 						), 
-						nextPageURL: response.nextPageURL,
-						prevPageURL: response.prevPageURL,
+						// The below check is for count requests, they don't return next and previous pagination URLs.
+						nextPageURL: response.nextPageURL ? response.nextPageURL : state.nextPageURL, 
+						prevPageURL: response.prevPageURL ? response.prevPageURL : state.prevPageURL,
 						pageCount: state.pageCount + 1, 
 						isFetching: false, 
 						didInvalidate: typeof didInvalidate === "undefined"
@@ -63,10 +69,15 @@ export const paginate = ({types, mapActionToKey}) => {
 					: 
 					{
 						...state,
+						nextPageURL: response.reset ? response.nextPageURL : state.nextPageURL, 
+						prevPageURL: response.reset ? response.prevPageURL : state.prevPageURL,
+						pageCount: response.reset ? 0 : state.pageCount, 
+						isFetching: false, 
+						didInvalidate: response.reset ? true : false, 
 						IDs: method !== "DELETE" 
 						? 
 						mergeKeysIntoArray(
-							state.IDs, 
+							response.reset ? [] : state.IDs, 
 							response.result
 						)
 						:
@@ -83,6 +94,7 @@ export const paginate = ({types, mapActionToKey}) => {
 					:
 					{
 						...state,
+						isFetching: false, 
 						IDs: method === "DELETE" 
 						? 
 						mergeKeysIntoArray(
@@ -121,13 +133,12 @@ const mergeKeysIntoArray = (IDs, result) => {
 	// if (!result)
 	if (typeof result !== "object")
 		return IDs
-	// const IDs = Object.keys(o).map(k => k)
-	// return [...a, ...IDs]
-	Object.keys(result).forEach(k => {
-		if(IDs.indexOf(k) === -1)
-			IDs.push(k)
-	})
-	return IDs
+	let array = []
+	for(let ID of Object.keys(result).map(k => k)) {
+		if (IDs.indexOf(ID) === -1)
+			array.push(ID)
+	}
+	return [...IDs, ...array]
 }
 
 export const removeFromArray = (IDs, action) => {
@@ -161,7 +172,13 @@ export const mergeIntoOrRemoveFromObjectFailure = (state, action) => {
 
 
 const mergeObjectIntoObject = (state, action) => {
-	return {...state, ...action.response.result}
+	const {
+		response: {
+			result, 
+			reset
+		}
+	}= action
+	return reset ? {...result} : {...state, ...result}
 }
 
 const removeFromObject = (state, action) => {

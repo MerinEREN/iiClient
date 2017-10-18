@@ -11,7 +11,7 @@ class CounterChip extends Component {
 	componentWillMount() {
 		// Get timeline items count every 5 minutes.
 		this.loadDataInterval = setInterval(
-			() => this.getCount(), 60000
+			() => this.getCount(), 300000
 		)
 	}
 	componentWillReceiveProps(nextProps) {

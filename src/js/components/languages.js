@@ -123,9 +123,11 @@ class Languages extends Component {
 		})
 		this.setState({code: ""})
 	}
-	handleDelete(langObj) {
+	handleDelete(ID, langObj) {
 		this.props.deleteLanguage({
+			URL: `/languages/?code=${ID}`, 
 			body: {
+				type: 'FormData', 
 				data: langObj
 			}
 		})
@@ -143,17 +145,17 @@ class Languages extends Component {
 				style={styles.gridTile.style} 
 				actionIcon={
 					<IconButton 
-						onTouchTap={() => this.handleDelete({[ID]: language})}
+						onTouchTap={() => this.handleDelete(ID, {[ID]: language})}
 					>
 						<Delete />
 					</IconButton>
 				}
 			>
-				<img src={language.link || 'img/adele.jpg'} />
+				<img src={language.link || '/img/adele.jpg'} />
 			</GridTile>
 		)
 	}
-	addLanguageForm() {
+	addForm() {
 		const {inputErrText, code} = this.state
 		return (
 			<form>
@@ -218,7 +220,11 @@ class Languages extends Component {
 							cellHeight={333}
 						>
 							{ 
-								Object.entries(languages).map(a => this.gridTile(...a))
+								Object.entries(languages).length !== 0 
+									? 
+									Object.entries(languages).map(a => this.gridTile(...a))
+									:
+									<h3>No Languages</h3>
 							}
 							<FloatingActionButton 
 								secondary={true}
@@ -236,7 +242,7 @@ class Languages extends Component {
 				</GridList>
 				<Dialog
 					title="Add New Language"
-					children={this.addLanguageForm()}
+					children={this.addForm()}
 					actions={actions}
 					modal={true}
 					open={showDialog} 
@@ -252,5 +258,7 @@ Languages.propTypes = {
 	postLanguage: PropTypes.func.isRequired, 
 	deleteLanguage: PropTypes.func.isRequired
 }
+
+Languages.muiName = 'GridList'
 
 export default Languages

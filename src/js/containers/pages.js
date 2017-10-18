@@ -1,8 +1,7 @@
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import PagesComponent from '../components/pages'
-import getPages from '../middlewares/pages'
-import {postPage} from '../middlewares/page'
+import getPages, {postPage}  from '../middlewares/pages'
 
 // Can use ownProps here.
 const mapStateToProps = state => {

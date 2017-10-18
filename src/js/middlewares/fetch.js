@@ -21,9 +21,11 @@ export default function fetchDomainDataIfNeeded(args) {
 					return Promise.resolve()
 				}
 			case "DELETE":
-				return dispatch(shouldFetchAfterTimeout(getState, args, 10000))
+				// Dispatch a thunk from thunk.
+				return dispatch(shouldFetchAfterTimeout(args, 10000))
 			default:
 				// Covers "POST" and "PUT" methods
+				// Dispatch a thunk from thunk.
 				return dispatch(fetchDomainData(args))
 		}
 	}
@@ -64,26 +66,26 @@ function shouldFetchDomainData(state, args) {
 	} */
 }
 
-const shouldFetchAfterTimeout = (getState, args, duration) => dispatch => {
+const shouldFetchAfterTimeout = (args, duration) => (dispatch, getState) => {
 	const {
 		actionsSuccess, 
 		request: {method}, 
-		bodyData, 
+		dataBody, 
 		groupID
 	} = args
-	// Delte the object from store
+	// Delete the object from store
 	actionsSuccess.forEach(ac => dispatch(ac({
 		method, 
-		response: {result: bodyData}, 
+		response: {result: dataBody}, 
 		groupID
 	})))
 	// Set snackbar
 	dispatch(setSnackbar({
 		props: {
-			message: `${Object.keys(bodyData).map(k => k)} deleted`,
+			message: `${Object.keys(dataBody).map(k => k)} deleted`,
 			duration, 
 			action: 'Undo', 
-			onActionClick: () => dispatch(cancelFetch(getState, args)), 
+			onActionClick: () => dispatch(cancelFetch(args)), 
 			clicked: false
 		}
 	}))
@@ -97,12 +99,11 @@ const shouldFetchAfterTimeout = (getState, args, duration) => dispatch => {
 }
 
 // Add deleted object back to the store.
-const cancelFetch = (getState, {actionsFailure, request: {method}, bodyData, groupID}) => dispatch => {
+const cancelFetch = ({actionsFailure, request: {method}, dataBody, groupID}) => (dispatch, getState) => {
 	const {snackbar} = getState().appState
-	console.log(method, bodyData, groupID)
 	actionsFailure.forEach(ac => dispatch(ac({
 		method, 
-		response: {result: bodyData}, 
+		response: {result: dataBody}, 
 		groupID
 	})))
 	dispatch(setSnackbar({
@@ -124,16 +125,18 @@ const fetchDomainData = args => dispatch => {
 		actionsSuccess, 
 		actionsFailure, 
 		request, 
-		bodyData, 
+		dataBody, 
+		dataOld, 
 		groupID, 
 		didInvalidate, 
 		hideFetching, 
 		showSnackbar
 	} = args
+	// Add the new or modified data to the store temporarily.
 	if (request.method === 'POST' || request.method === 'PUT') {
 		actionsSuccess.forEach(ac => dispatch(ac({
 			method: request.method, 
-			response: {result: bodyData}, 
+			response: {result: dataBody}, 
 			groupID
 		})))
 	}
@@ -154,7 +157,7 @@ const fetchDomainData = args => dispatch => {
 			if(!hideFetching)
 				dispatch(toggleFetching())
 			if (response.ok) {
-				if (request.method === 'GET') {
+				if (request.method !== 'DELETE') {
 					const contentType = response.headers
 						.get('content-type')
 					if (
@@ -169,22 +172,22 @@ const fetchDomainData = args => dispatch => {
 									receivedAt: Date.now()
 								})))
 							)
-					} else if (
+					} /* else if (
 						contentType
 						&&
 						contentType.indexOf('application/json')
 						!==
 						-1
 					) {
-						/* response.json()
+						response.json()
 							.then(body => 
 								dispatch(args[1](body.data.
 									children.
 									map(child => child.
 										data), 
 									Date.now()))
-							) */
-					}
+							)
+					} */
 					// Backand sending JSON data as Marshald form.
 					// So the Content-Type is "text/plain".
 					else if (
@@ -211,14 +214,21 @@ const fetchDomainData = args => dispatch => {
 			} else {
 				// response code is not between 199 and 300
 				console.log('Response code is not between 199 and 300')
-				// DID NOT USE error RIGHTNOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				// DID NOT USE error RIGHTNOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				// Remove the temporarily added new data (POST), 
+				// add the temporarily removed old data (DELETE) or 
+				// replace old data with modified data (PUT) from the store
 				actionsFailure.forEach(ac => dispatch(ac({
 					method: request.method, 
-					error: "use error code here", 
+					error: "use error code and message here", 
 					response: {
-						result: (request.method !== 'GET') 
+						result: request.method !== 'GET' 
 						? 
-						bodyData 
+						request.method === 'PUT'
+						?
+						dataOld
+						:
+						dataBody 
 						: 
 						null
 					}, 
@@ -241,13 +251,20 @@ const fetchDomainData = args => dispatch => {
 					operation: ${err.message}`
 			)
 			// DID NOT USE error RIGHTNOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			// Remove the temporarily added new data (POST), 
+			// add the temporarily removed old data (DELETE) or 
+			// replace old data with modified data (PUT) from the store.
 			actionsFailure.forEach(ac => dispatch(ac({
 				method: request.method, 
 				error: err.message, 
 				response: {
-					result: (request.method !== 'GET') 
+					result: request.method !== 'GET' 
 					? 
-					bodyData 
+					request.method === 'PUT' 
+					?
+					dataOld
+					:
+					dataBody 
 					: 
 					null
 				}, 

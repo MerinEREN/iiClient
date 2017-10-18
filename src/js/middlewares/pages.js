@@ -7,7 +7,7 @@ import {
 
 const getPages = makeLoader({
 	defaults: {
-		URL: '/pages/', 
+		URL: '/pages', 
 		path: ['pages']
 	},
 	actionCreators: {
@@ -16,8 +16,23 @@ const getPages = makeLoader({
 		actionsFailure: [pagesFailure]
 	}, 
 	options: {
-		didInvalidate: false
+		hideFetching: true
 	}
-	})
+})
+export const postPage = makeLoader({
+	defaults: {
+		URL: '/pages', 
+		method: 'POST', 
+		path: ['pages']
+	},
+	actionCreators: {
+		actionsSuccess: [pagesSuccess],
+		actionsFailure: [pagesFailure]
+	}, 
+	options: {
+		hideFetching: true, 
+		showSnackbar: true
+	}
+})
 
 export default getPages

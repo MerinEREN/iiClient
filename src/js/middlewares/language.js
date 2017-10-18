@@ -6,7 +6,7 @@ import {
 
 export const postLanguage = makeLoader({
 	defaults: {
-		URL: '/languages/', 
+		URL: '/languages', 
 		method: 'POST', 
 		path: ['languages']
 	},
@@ -22,7 +22,6 @@ export const postLanguage = makeLoader({
 
 export const deleteLanguage = makeLoader({
 	defaults: {
-		URL: '/languages/', 
 		method: 'DELETE', 
 		path: ['languages']
 	},

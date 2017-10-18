@@ -112,21 +112,14 @@ class Pages extends Component {
 				cols={ID === 'Root' ? 2 : 1} 
 				rows={ID === 'Root' ? 1 : 1}
 				style={styles.gridTile.style} 
-				actionIcon={
-					<IconButton 
-						onTouchTap={() => alert('delete !!!!!!!!')}
-					>
-						<Delete />
-					</IconButton>
-				}
 				containerElement={
 					<Link 
-						to={`/pages/${p.ID}/contents`} 
+						to={`/pages/${p.ID}`} 
 						activeStyle={styles.link.activeStyle} 
 					/> 
 				}
 			>
-				<img src={p.link || 'img/adele.jpg'} />
+				<img src={p.link || '/img/adele.jpg'} />
 			</GridTile>
 		)
 	}
@@ -189,7 +182,11 @@ class Pages extends Component {
 							cellHeight={333}
 						>
 							{ 
-								Object.entries(pages).map(a => this.gridTile(...a))
+								Object.entries(pages).length !== 0 
+									? 
+									Object.entries(pages).map(a => this.gridTile(...a))
+									:
+									<h3>No Pages</h3>
 							}
 							<FloatingActionButton 
 								secondary={true}
@@ -222,5 +219,7 @@ Pages.propTypes = {
 	pages: PropTypes.object.isRequired, 
 	postPage: PropTypes.func.isRequired
 }
+
+Pages.muiName = 'GridList'
 
 export default Pages

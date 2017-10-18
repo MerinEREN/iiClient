@@ -6,14 +6,18 @@ import createReducer, {
 import {
 	PAGES_REQUEST, 
 	PAGES_SUCCESS, 
-	PAGES_FAILURE
+	PAGES_FAILURE, 
+	PAGE_SUCCESS, 
+	PAGE_FAILURE
 } from '../actions/types'
 
 const pages = createReducer(
 	{}, 
 	{
 		PAGES_SUCCESS: mergeIntoOrRemoveFromObjectSuccess, 
-		PAGES_FAILURE: mergeIntoOrRemoveFromObjectFailure
+		PAGES_FAILURE: mergeIntoOrRemoveFromObjectFailure, 
+		PAGE_SUCCESS: mergeIntoOrRemoveFromObjectSuccess, 
+		PAGE_FAILURE: mergeIntoOrRemoveFromObjectSuccess
 	}
 )
 export const paginationPages = paginate({

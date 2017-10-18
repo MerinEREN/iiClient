@@ -30,4 +30,6 @@ const Timeline = () =>  (
 	</div>
 )
 
+Timeline.muiName = 'GridList'
+
 export default Timeline

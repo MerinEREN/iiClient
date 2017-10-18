@@ -7,7 +7,7 @@ import {
 
 const getLanguages = makeLoader({
 	defaults: {
-		URL: '/languages/', 
+		URL: '/languages', 
 		path: ['languages']
 	},
 	actionCreators: {
@@ -16,6 +16,7 @@ const getLanguages = makeLoader({
 		actionsFailure: [languagesFailure]
 	}, 
 	options: {
+		// CAN BE PROBLEMATIC FOR PAGINATION IN NEAR FUTURE !!!!!!!!!!!!!!!!!!!!!!!
 		didInvalidate: false
 	}
 })

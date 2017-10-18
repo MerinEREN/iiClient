@@ -27,6 +27,7 @@ export const generateURL = (groupID, returnedURL, ...pageURLs) => {
 // "isCached" is a bool or a function that takes the store 
 // and returns a slice of store to allow or prevent API call for root store objects.
 // "didInvalidate" if it is not undefined prevents the API call.
+// "dataOld" is for recovery if PUT fails.
 export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) => { 
 	var {path, method, URL} = defaults
 	var {hideFetching, isCached, didInvalidate, showSnackbar} = options
@@ -60,13 +61,10 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 					Object.values(body.data).forEach(v => {
 						Object.entries(v).forEach(
 							a => {
-								if (
-									a[0] !== "ID" 
-									|| 
-									a[0] !== "file"
-								)
+								// if (a[0] !== "file" || a[0] !== "ID")
+								if (a[0] !== "file")
 									fd.set(a[0], a[1])
-								if (a[0] === "file"){
+								if (a[0] === "file") {
 									if(a[1] !== undefined) {
 										fd.set(a[0], a[1], a[1].name)
 									} else {
@@ -111,7 +109,8 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 			}
 			return dispatch(fetchDomainDataIfNeeded({
 				request: new Request(URL, init),
-				bodyData: body && body.data, 
+				dataBody: body && body.data, 
+				dataOld: body && body.dataOld, 
 				pagObj, 
 				groupID, 
 				...actionCreators, 

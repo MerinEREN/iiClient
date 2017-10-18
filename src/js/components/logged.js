@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {Component}  from "react"
 import PropTypes from 'prop-types'
 import {Link} from 'react-router'
 import IconMenu from 'material-ui/IconMenu'
@@ -36,55 +36,72 @@ const styles = {
 	}
 }
 
-const Logged = ({acc, user, signOutURL}) => (
-	<IconMenu
-		iconButtonElement={
-			<IconButton 
-				style= {styles.iconButton}
+class Logged  extends Component {
+	componentWillMount() {
+		this.props.getLanguages()
+	}
+	render() {
+		const {
+			acc, 
+			user, 
+			languages, 
+			signOutURL
+		} = this.props
+		return (
+			<IconMenu
+				iconButtonElement={
+					<IconButton 
+						style= {styles.iconButton}
+					>
+						<Avatar src={user.photo.path || '/img/adele.jpg'} />
+					</IconButton>
+				}
+				targetOrigin={{horizontal: 'right', vertical: 'top'}}
+				anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+				listStyle={styles.iconMenu.listStyle}
 			>
-				<Avatar src={user.photo.path || 'img/adele.jpg'} />
-			</IconButton>
-		}
-		targetOrigin={{horizontal: 'right', vertical: 'top'}}
-		anchorOrigin={{horizontal: 'right', vertical: 'top'}}
-		listStyle={styles.iconMenu.listStyle}
-	>
-		<Card style={styles.card}>
-			<CardHeader
-				title={acc.ID}
-				subtitle={user.email}
-				textStyle={styles.cardHeader.textStyle}
-				avatar={user.photo.path || 'img/adele.jpg'}
-			/>
-		</Card>
-		<Divider style={styles.divider} />
-		<MenuItem 
-			primaryText="Language" 
-			leftIcon={<ChevronLeft />}
-			rightIcon={<Language />}
-			menuItems={[
-				<MenuItem primaryText="Turkish" />, 
-				<MenuItem primaryText="English" />, 
-				<MenuItem primaryText="German" />
-			]}
-		/>
-		<a 
-			href={signOutURL.value}
-			style={styles.a}
-		>
-			<MenuItem 
-				primaryText="Sign Out"
-				insetChildren={true}
-				rightIcon={<SignOut />}
-			/>
-		</a>
-	</IconMenu>
-)
+				<Card style={styles.card}>
+					<CardHeader
+						title={acc.ID}
+						subtitle={user.email}
+						textStyle={styles.cardHeader.textStyle}
+						avatar={user.photo.path || '/img/adele.jpg'}
+					/>
+				</Card>
+				<Divider style={styles.divider} />
+				{
+					Object.values(languages).length !== 0 && 
+						<MenuItem 
+							primaryText="Language" 
+							leftIcon={<ChevronLeft />}
+							rightIcon={<Language />}
+							menuItems={
+								Object.values(languages).
+									map(l => <MenuItem primaryText={l.code} />)
+							}
+						/>
+				}
+				<a 
+					href={signOutURL.value}
+					style={styles.a}
+				>
+					<MenuItem 
+						primaryText="Sign Out"
+						insetChildren={true}
+						rightIcon={<SignOut />}
+					/>
+				</a>
+			</IconMenu>
+		)
+	}
+}
 
 Logged.propTypes = {
 	user: PropTypes.object.isRequired, 
 	acc: PropTypes.object.isRequired, 
-	signOutURL: PropTypes.object.isRequired
+	languages: PropTypes.object.isRequired, 
+	signOutURL: PropTypes.object.isRequired, 
+	getLanguages: PropTypes.func.isRequired
 }
 
 // My custom 'Logged' component acts like 'IconMenu' mui component !!!!!!!!!!!!!!!!!!!!!!!

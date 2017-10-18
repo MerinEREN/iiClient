@@ -66,7 +66,8 @@ class Body extends Component {
 			acc, 
 			user, 
 			toggleDrawer, 
-			children
+			children, 
+			resetSnackbar
 		} = this.props
 		this.styles = {
 			div: {
@@ -147,6 +148,7 @@ class Body extends Component {
 						autoHideDuration={snackbar.duration || 5000}
 						action={snackbar.action}
 						onActionTouchTap={snackbar.onActionClick}
+						onRequestClose={resetSnackbar}
 					/>
 				}
 			</div>
@@ -173,7 +175,8 @@ Body.propTypes = {
 	loadData: PropTypes.func.isRequired,
 	toggleDrawer: PropTypes.func.isRequired,
 	children: PropTypes.node.isRequired, 
-	snackbar: PropTypes.object
+	snackbar: PropTypes.object, 
+	resetSnackbar: PropTypes.func.isRequired
 }
 
 export default withCookies(muiThemeable()(Body))

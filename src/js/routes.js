@@ -5,6 +5,7 @@ import Timeline  from './components/timeline'
 import Dashboard  from './components/dashboard'
 import Languages  from './containers/languages'
 import Pages  from './containers/pages'
+import Page  from './containers/page'
 import Contents from './containers/contents'
 import Account  from './components/account'
 import Demands  from './components/demands'
@@ -18,22 +19,23 @@ import Help  from './components/help'
 const routes = (
 	<Route path="/" component={Body}>
 		<IndexRoute component={Timeline} />
-		<Route path="dashboard" component={Dashboard} />
-		<Route path="languages" component={Languages} />
-		<Route path="pages" component={Pages} />
-		<Route path="pages/:page/contents" component={Contents} />
-		<Route path="demands" component={Demands} />
-		<Route path="offers" component={Offers} />
-		<Route path="servicePacks" component={ServicePacks} />
-		<Route path="settings" component={Settings} />
-		<Route path="accountSettings" component={Settings} />
-		<Route path="userSettings" component={Settings} />
-		<Route path="feedback" component={Feedback} />
-		<Route path="help" component={Help} />
-		<Route path="accounts/:acc" component={Account} />
-		<Route path="accounts/:acc/Demands" component={Demands} />
-		<Route path="accounts/:acc/Offers" component={Offers} />
-		<Route path="accounts/:acc/ServicePacks" component={ServicePacks} />
+		<Route path="/dashboard" component={Dashboard} />
+		<Route path="/languages" component={Languages} />
+		<Route path="/pages" component={Pages} />
+		<Route path="/pages/:ID" component={Page} />
+		<Route path="/pages/:ID/contents" component={Contents} />
+		<Route path="/demands" component={Demands} />
+		<Route path="/offers" component={Offers} />
+		<Route path="/servicePacks" component={ServicePacks} />
+		<Route path="/settings" component={Settings} />
+		<Route path="/accountSettings" component={Settings} />
+		<Route path="/userSettings" component={Settings} />
+		<Route path="/feedback" component={Feedback} />
+		<Route path="/help" component={Help} />
+		<Route path="/accounts/:ID" component={Account} />
+		<Route path="/accounts/:ID/Demands" component={Demands} />
+		<Route path="/accounts/:ID/Offers" component={Offers} />
+		<Route path="/accounts/:ID/ServicePacks" component={ServicePacks} />
 	</Route>
 )
 
