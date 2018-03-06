@@ -158,12 +158,12 @@ class Pages extends Component {
 			<FlatButton
 				label="Close"
 				primary={true}
-				onClick={this.toggleDialog}
+				onTouchTap={this.toggleDialog}
 			/>, 
 			<FlatButton
 				label="Save"
 				primary={true}
-				onClick={this.handlePostPage}
+				onTouchTap={this.handlePostPage}
 			/>
 		]
 		return (
@@ -194,7 +194,7 @@ class Pages extends Component {
 									...styles.floatingActionButton, 
 									display: showDialog ? 'none' : 'inline-block'
 								}}
-								onClick={this.toggleDialog}
+								onTouchTap={this.toggleDialog}
 							>
 								<ContentAdd />
 							</FloatingActionButton>

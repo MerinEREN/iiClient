@@ -15,7 +15,7 @@ class Login extends Component {
 	render() {
 		return (
 			<div>
-				Get them here tiger =)
+				Get them here.
 			</div>
 		)
 	}

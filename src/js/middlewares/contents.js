@@ -5,25 +5,10 @@ import {
 	contentsFailure
 } from '../actions/contents'
 
-export const postContents = makeLoader({
-	defaults: {
-		URL: '/contents/', 
-		method: 'POST'
-	},
-	actionCreators: {
-		actionsSuccess: [contentsSuccess],
-		actionsFailure: [contentsFailure]
-	}, 
-	options: {
-		// hideFetching: true, 
-		showSnackbar: true
-	}
-})
-
 const getContents = makeLoader({
 	defaults: {
-		URL: '/contents/', 
-		path: ['contentsByPage']
+		URL: '/contents', 
+		path: ['contents']
 	},
 	actionCreators: {
 		actionsRequest: [contentsRequest],
@@ -32,6 +17,21 @@ const getContents = makeLoader({
 	}, 
 	options: {
 		didInvalidate: false
+	}
+})
+
+export const postContents = makeLoader({
+	defaults: {
+		URL: '/contents', 
+		method: 'POST'
+	},
+	actionCreators: {
+		actionsSuccess: [contentsSuccess],
+		actionsFailure: [contentsFailure]
+	}, 
+	options: {
+		hideFetching: true, 
+		showSnackbar: true
 	}
 })
 

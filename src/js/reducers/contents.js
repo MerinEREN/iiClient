@@ -4,16 +4,21 @@ import createReducer, {
 	mergeIntoOrRemoveFromObjectFailure
 } from './utilities'
 import {
+	contentUpdate 
+} from './content'
+import {
 	CONTENTS_REQUEST, 
 	CONTENTS_SUCCESS, 
-	CONTENTS_FAILURE
+	CONTENTS_FAILURE, 
+	CONTENT_UPDATE
 } from '../actions/types'
 
 const contents = createReducer(
 	{}, 
 	{
 		CONTENTS_SUCCESS: mergeIntoOrRemoveFromObjectSuccess, 
-		CONTENTS_FAILURE: mergeIntoOrRemoveFromObjectFailure
+		CONTENTS_FAILURE: mergeIntoOrRemoveFromObjectFailure, 
+		CONTENT_UPDATE: contentUpdate
 	}
 )
 export const paginationContents = paginate({

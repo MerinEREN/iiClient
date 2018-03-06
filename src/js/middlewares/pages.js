@@ -16,6 +16,7 @@ const getPages = makeLoader({
 		actionsFailure: [pagesFailure]
 	}, 
 	options: {
+		didInvalidate: false, 
 		hideFetching: true
 	}
 })

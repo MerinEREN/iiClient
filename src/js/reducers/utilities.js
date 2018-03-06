@@ -73,7 +73,7 @@ export const paginate = ({types, mapActionToKey}) => {
 						prevPageURL: response.reset ? response.prevPageURL : state.prevPageURL,
 						pageCount: response.reset ? 0 : state.pageCount, 
 						isFetching: false, 
-						didInvalidate: response.reset ? true : false, 
+						// didInvalidate: response.reset ? true : false, 
 						IDs: method !== "DELETE" 
 						? 
 						mergeKeysIntoArray(

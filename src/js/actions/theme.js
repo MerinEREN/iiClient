@@ -4,4 +4,7 @@ import {
 } from './types'
 
 // Action Creators
-export const changeTheme = makeActionCreator(CHANGE_THEME, 'cookies')
+export const changeTheme = makeActionCreator(
+	CHANGE_THEME, 
+	'cookies'
+)

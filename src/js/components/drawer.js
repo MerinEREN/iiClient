@@ -63,7 +63,8 @@ const drawer = ({cookies, acc, user, open, changeTheme, toggleDrawer}) => (
 			onLeftIconButtonTouchTap={() => 
 					toggleDrawer()}
 		/>
-		{/*ADD ALL NECESSARY ACCOUNT INFO IN CARD !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/}
+		{/*ADD ALL NECESSARY ACCOUNT INFO IN CARD !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		ALSO ADD THE ACCOUNT RANK AS SUBTITLE OF CardTitle !!!!!!!!!!!!!!!!!!!!!*/}
 		<Card
 			containerStyle={styles.card.containerStyle}
 		>
@@ -77,8 +78,7 @@ const drawer = ({cookies, acc, user, open, changeTheme, toggleDrawer}) => (
 				<CardMedia
 					overlay={
 						<CardTitle 
-							title={acc.ID} 
-							subtitle={'Score: 4'} 
+							title={'Score: 4'} 
 						/>
 					}
 				>
@@ -209,6 +209,21 @@ const drawer = ({cookies, acc, user, open, changeTheme, toggleDrawer}) => (
 						/>
 					}
 					primaryText='Pages'
+					leftIcon={<EditContent />}
+				/>
+			}
+			{
+				// Also chack account type here.
+				(isContentEditor(user.roles) || isAdmin(user.roles))
+				&&
+				<ListItem 
+					containerElement={
+						<Link
+							to="/contents"
+							activeStyle={styles.link.activeStyle}
+						/>
+					}
+					primaryText='Contents'
 					leftIcon={<EditContent />}
 				/>
 			}

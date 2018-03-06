@@ -1,8 +1,7 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import {GridList, GridTile} from 'material-ui/GridList'
-import IconButton from 'material-ui/IconButton'
-import Delete from 'material-ui/svg-icons/action/delete'
+import Language from './language'
 import FloatingActionButton from 'material-ui/FloatingActionButton'
 import ContentAdd from 'material-ui/svg-icons/content/add'
 import Dialog from 'material-ui/Dialog'
@@ -19,12 +18,6 @@ const styles = {
 	}, 
 	gridList: {
 		margin: 0
-	}, 
-	gridTile: {
-		titleBackground: "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.3) 70%,rgba(0,0,0,0) 100%)", 
-		style: {
-			cursor: 'pointer'
-		}
 	}, 
 	floatingActionButton: {
 		position: 'fixed',
@@ -123,37 +116,9 @@ class Languages extends Component {
 		})
 		this.setState({code: ""})
 	}
-	handleDelete(ID, langObj) {
-		this.props.deleteLanguage({
-			URL: `/languages/?code=${ID}`, 
-			body: {
-				type: 'FormData', 
-				data: langObj
-			}
-		})
-	}
 	toggleDialog() {
 		const {showDialog} = this.state
 		this.setState({showDialog: !showDialog})
-	}
-	gridTile(ID, language) {
-		return (
-			<GridTile  
-				key={ID}
-				title={language.code}
-				titleBackground={styles.gridTile.titleBackground} 
-				style={styles.gridTile.style} 
-				actionIcon={
-					<IconButton 
-						onTouchTap={() => this.handleDelete(ID, {[ID]: language})}
-					>
-						<Delete />
-					</IconButton>
-				}
-			>
-				<img src={language.link || '/img/adele.jpg'} />
-			</GridTile>
-		)
 	}
 	addForm() {
 		const {inputErrText, code} = this.state
@@ -189,6 +154,14 @@ class Languages extends Component {
 			</form>
 		)
 	}
+	languages(languages) {
+		return Object.entries(languages).map(a => 
+			<Language 
+				key={a[0]} 
+				ID={a[0]} 
+				language={a[1]} 
+			/>)
+	}
 	render() {
 		const {showDialog} = this.state
 		const {languages} = this.props
@@ -213,18 +186,19 @@ class Languages extends Component {
 				>
 					<GridTile cols={1} />  
 					<GridTile cols={2}>  
-						<GridList 
-							style={styles.gridList}
-							cols={4}
-							padding={10}
-							cellHeight={333}
-						>
-							{ 
-								Object.entries(languages).length !== 0 
-									? 
-									Object.entries(languages).map(a => this.gridTile(...a))
-									:
-									<h3>No Languages</h3>
+					{ 
+						Object.entries(languages).length !== 0 
+							? 
+							<GridList 
+								style={styles.gridList}
+								cols={4}
+								padding={10}
+								cellHeight={333}
+							>
+								{this.languages(languages)}
+							</GridList>
+							:
+								<h3>No Languages</h3>
 							}
 							<FloatingActionButton 
 								secondary={true}
@@ -236,7 +210,6 @@ class Languages extends Component {
 							>
 								<ContentAdd />
 							</FloatingActionButton>
-						</GridList>
 					</GridTile>
 					<GridTile cols={1} />  
 				</GridList>
@@ -255,8 +228,7 @@ class Languages extends Component {
 Languages.propTypes = {
 	getLanguages: PropTypes.func.isRequired, 
 	languages: PropTypes.object.isRequired, 
-	postLanguage: PropTypes.func.isRequired, 
-	deleteLanguage: PropTypes.func.isRequired
+	postLanguage: PropTypes.func.isRequired
 }
 
 Languages.muiName = 'GridList'

@@ -7,22 +7,7 @@ import ServicePack from "../components/servicePack"
 
 class TimelineList extends Component {
 	componentWillMount() {
-		this.props.loadData( 
-			{
-				dArgs: {
-					// URL: '/demands/', 
-					groupID: 'timeline'
-				}, 
-				oArgs: {
-					// URL: '/offers/', 
-					groupID: 'timeline'
-				}, 
-				spArgs: {
-					// URL: '/servicePacks/', 
-					groupID: 'timeline'
-				}
-			}
-		)
+		this.props.loadData()
 	}
 	render() {
 		const {items} =  this.props 

@@ -134,6 +134,7 @@ const fetchDomainData = args => dispatch => {
 	} = args
 	// Add the new or modified data to the store temporarily.
 	if (request.method === 'POST' || request.method === 'PUT') {
+		console.log(request, dataBody)
 		actionsSuccess.forEach(ac => dispatch(ac({
 			method: request.method, 
 			response: {result: dataBody}, 
@@ -199,28 +200,34 @@ const fetchDomainData = args => dispatch => {
 					) {
 						response.text()
 							.then(body => {
-								const json = 
-									JSON.parse(body)
-								actionsSuccess.forEach(ac => dispatch(ac({
-									method: request.method, 
-									response: {...json}, 
-									receivedAt: Date.now(), 
-									groupID, 
-									didInvalidate
-								})))
+								// Body check is for POST 
+								// and PUT requests which 
+								// does not need response
+								// body.
+								if (body !== '') {
+									const json = 
+										JSON.parse(body)
+									actionsSuccess.forEach(ac => dispatch(ac({
+										method: request.method, 
+										response: {...json}, 
+										receivedAt: Date.now(), 
+										groupID, 
+										didInvalidate
+									})))
+								}
 							})
 					}
 				}
 			} else {
 				// response code is not between 199 and 300
 				console.log('Response code is not between 199 and 300')
-				// DID NOT USE error RIGHTNOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-				// Remove the temporarily added new data (POST), 
-				// add the temporarily removed old data (DELETE) or 
-				// replace old data with modified data (PUT) from the store
+				// Removing the temporarily added new data (POST), 
+				// adding the temporarily removed old data (DELETE) or 
+				// replacing old data with modified data (PUT) 
+				// from the store.
 				actionsFailure.forEach(ac => dispatch(ac({
 					method: request.method, 
-					error: "use error code and message here", 
+					error: "USE ERROR CODE AND MESSAGE HERE", 
 					response: {
 						result: request.method !== 'GET' 
 						? 

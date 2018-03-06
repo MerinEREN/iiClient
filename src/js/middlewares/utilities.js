@@ -50,9 +50,10 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 				case "Blob":
 					init.body = new Blob(
 						Object.values(body.data).map(v => {
-							const {ID, ...rest} = v
-							return JSON.stringify(rest)
-						}), 
+							// const {ID, ...rest} = v
+							// return JSON.stringify(rest)
+							return JSON.stringify(v)
+						}),
 						{type : body.contentType}
 					)
 					break

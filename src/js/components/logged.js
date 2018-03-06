@@ -62,8 +62,8 @@ class Logged  extends Component {
 			>
 				<Card style={styles.card}>
 					<CardHeader
-						title={acc.ID}
-						subtitle={user.email}
+						title={user.email}
+						subtitle={'Score: 4'}
 						textStyle={styles.cardHeader.textStyle}
 						avatar={user.photo.path || '/img/adele.jpg'}
 					/>

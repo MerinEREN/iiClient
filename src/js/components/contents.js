@@ -23,154 +23,35 @@ const styles = {
 	}
 }
 
-const contents = {
-	book: {
-		ID: 'book', 
-		en: 'book', 
-		tr: 'kitap', 
-		de: '', 
-		pt: '', 
-		ru: '', 
-		pages: ['Adele', 'MerinEREN']
-	}, 
-	pen: {
-		ID: 'pen', 
-		en: 'pen', 
-		tr: 'kalem', 
-		de: 'bilmem ne', 
-		pt: '', 
-		ru: '', 
-		pages: ['TheMan', 'MerinEREN']
-	}, 
-	clock: {
-		ID: 'clock', 
-		en: 'clock', 
-		tr: 'saat', 
-		de: '', 
-		pt: '', 
-		ru: '', 
-		pages: ['Adele', 'MerinEREN']
-	}, 
-	table: {
-		ID: 'table', 
-		en: 'table', 
-		tr: 'masa', 
-		de: 'bilmem ne', 
-		pt: '', 
-		ru: '', 
-		pages: ['TheMan', 'MerinEREN']
-	}, 
-	success: {
-		ID: 'success', 
-		en: 'success', 
-		tr: 'basari', 
-		de: '', 
-		pt: '', 
-		ru: '', 
-		pages: ['Adele', 'MerinEREN']
-	}, 
-	love: {
-		ID: 'love', 
-		en: 'love', 
-		tr: 'ask', 
-		de: 'bilmem ne', 
-		pt: '', 
-		ru: '', 
-		pages: ['TheMan', 'MerinEREN']
-	}, 
-	victory: {
-		ID: 'victory', 
-		en: 'victory', 
-		tr: 'zafer', 
-		de: '', 
-		pt: '', 
-		ru: '', 
-		pages: ['Adele', 'MerinEREN']
-	}, 
-	power: {
-		ID: 'power', 
-		en: 'power', 
-		tr: 'guc', 
-		de: 'bilmem ne', 
-		pt: '', 
-		ru: '', 
-		pages: ['TheMan', 'MerinEREN']
-	}, 
-	happyness: {
-		ID: 'happyness', 
-		en: 'happyness', 
-		tr: 'mutluluk', 
-		de: '', 
-		pt: '', 
-		ru: '', 
-		pages: ['Adele', 'MerinEREN']
-	}, 
-	IQ: {
-		ID: 'IQ', 
-		en: 'IQ', 
-		tr: 'IQ', 
-		de: 'IQ', 
-		pt: '', 
-		ru: '', 
-		pages: ['TheMan', 'MerinEREN']
-	}, 
-	humanity: {
-		ID: 'humanity', 
-		en: 'humanity', 
-		tr: 'insanlik', 
-		de: '', 
-		pt: '', 
-		ru: '', 
-		pages: ['Adele', 'MerinEREN']
-	}, 
-	justice: {
-		ID: 'justice', 
-		en: 'justice', 
-		tr: 'adalet', 
-		de: 'justice', 
-		pt: '', 
-		ru: '', 
-		pages: ['TheMan', 'MerinEREN']
-	}
-}
-
 class Contents extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
 			showDialog: false, 
-			// contents: props.contents, 
-			contents: contents, 
+			initNewContents: true, 
 			newContents: {}, 
 			inputErrTexts: {}
 		}
 		this.handleCreateNewContents = this.handleCreateNewContents.bind(this)
 		this.handleContentChange = this.handleContentChange.bind(this)
 		this.toggleDialog = this.toggleDialog.bind(this)
-		this.handleAdd = this.handleAdd.bind(this)
-		this.handlePostContents = this.handlePostContents.bind(this)
+		this.handleSave = this.handleSave.bind(this)
 	}
 	componentWillMount() {
-		const {params, getContents} = this.props
-		getContents({
-			groupID: params.page
-		})
-		this.handleCreateNewContents()
+		this.props.getContents()
 	}
 	handleCreateNewContents() {
 		var {newContents} = this.state
 		var tempObj = {}
-		// MAKE THIS DYNAMIC !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		for(let i = Object.keys(newContents).length; i < Object.keys(newContents).length + 8; i++) {
 			tempObj[`newContent_${i}`] = {
 						ID: `newContent_${i}`, 
-						en: '', 
-						de: '', 
-						pt:'', 
-						tr: '', 
-						ru: '', 
+						values: {}, 
 						pages: []
 					}
+			this.props.languageIDs.forEach(
+				v => tempObj[`newContent_${i}`].values[v] = ''
+			)
 		}
 		this.setState({
 			newContents: {
@@ -180,67 +61,75 @@ class Contents extends Component {
 		})
 	}
 	handleContentChange(ID, field, value) {
-		const {contents, newContents, inputErrTexts} = this.state
-		if(contents.hasOwnProperty(ID)) {
-			this.setState({
-				contents: {
-					...contents, 
-					[ID]: {
-						...contents[ID], 
-						[field]: value
+		const {newContents, inputErrTexts} = this.state
+		const {contents} = this.props
+		if (ID.indexOf('newContent') !== -1) {
+			if (Array.isArray(value)) {
+				this.setState({
+					newContents: {
+						...newContents, 
+						[ID]: {
+							...newContents[ID], 
+							pages: value
+						}
 					}
-				}, 
-				inputErrTexts: {
-					...inputErrTexts, 
-					[ID]: {
-						...inputErrTexts[ID], 
-						[field]: ''
+				})
+			} else {
+				this.setState({
+					newContents: {
+						...newContents, 
+						[ID]: {
+							...newContents[ID], 
+							values: {
+								...newContents[ID].values, 
+								[field]: value
+							}
+						}
 					}
-				}
-			})
-		} else {
-			this.setState({
-				newContents: {
-					...newContents, 
-					[ID]: {
-						...newContents[ID], 
-						[field]: value
-					}
-				}, 
-				inputErrTexts: {
-					...inputErrTexts, 
-					[ID]: {
-						...inputErrTexts[ID], 
-						[field]: ''
-					}
-				}
-			})
+				})
+			}
 		}
+		this.setState({
+			inputErrTexts: {
+				...inputErrTexts, 
+				[ID]: {
+					...inputErrTexts[ID], 
+					[field]: ''
+				}
+			}
+		})
 	}
 	toggleDialog() {
 		this.setState({showDialog: !this.state.showDialog})
+		if(this.state.initNewContents) {
+			this.handleCreateNewContents()
+			this.setState({initNewContents: false})
+		}
 	}
-	handleAdd() {
-		this.toggleDialog()
-		const {contents, newContents} = this.state
+	handleSave() {
 		var tempObj = {}
-		Object.entries(newContents).forEach( a => {
+		Object.entries(this.state.newContents).forEach( a => {
 			// if(a[1].en !== '' && a[1].tr !== '')
-			if(a[1].en !== '')
+			if(a[1].values.en !== '')
 				tempObj[a[0]] = a[1]
 		})
+		if(Object.keys(tempObj).length === 0) {
+			this.toggleDialog()
+			return
+		}
+		if(!this.handleRequiredInput(tempObj))
+			return
+		this.toggleDialog()
 		this.setState({
-			contents: {
-				...contents, 
-				...tempObj
-			}, 
+			initNewContents: true, 
 			newContents: {}
 		})
+		this.handlePostContents(tempObj)
 	}
-	handleRequiredInput() {
-		const {contents, inputErrTexts} = this.state
-		Object.entries(contents).forEach(a => {
-			if(a[1].en === '') {
+	handleRequiredInput(contents) {
+		const {inputErrTexts} = this.state
+		return Object.entries(contents).every(a => {
+			if(a[1].values.en === '') {
 				this.setState({
 					inputErrTexts: {
 						...inputErrTexts, 
@@ -264,18 +153,17 @@ class Contents extends Component {
 				})
 				return false
 			}
+			return true
 		})
-		return true
 	}
-	handlePostContents() {
-		if(!this.handleRequiredInput())
+	handlePostContents(contents) {
+		if(!this.handleRequiredInput(contents))
 			return
-		this.props.postContent({
+		this.props.postContents({
 			body: {
-				type: 'FormData', 
-				// Use 'contentType' for 'Blob' type.
-				// contentType: 'application/json', 
-				data: this.state.contents
+				type: 'Blob', 
+				contentType: 'application/json', 
+				data: contents
 			}
 		})
 	}
@@ -286,6 +174,7 @@ class Contents extends Component {
 		return Object.values(contents).map(c => 
 			<Content 
 				key={c.ID}
+				languageIDs={this.props.languageIDs}
 				content={c} 
 				inputErrTexts={inputErrTexts[c.ID]} 
 				handleContentChange={this.handleContentChange} 
@@ -295,11 +184,11 @@ class Contents extends Component {
 	render() {
 		const {
 			showDialog, 
-			contents, 
 			newContents
 		} = this.state
 		const {
-			params
+			contents, 
+			languageIDs
 		} = this.props
 		const children = <GridList 
 					style={styles.gridList}
@@ -313,17 +202,17 @@ class Contents extends Component {
 			<FlatButton
 				label="Create New Contents"
 				primary={true}
-				onClick={this.handleCreateNewContents}
+				onTouchTap={this.handleCreateNewContents}
 			/>, 
 			<FlatButton
 				label="Close"
 				primary={true}
-				onClick={this.toggleDialog}
+				onTouchTap={this.toggleDialog}
 			/>, 
 			<FlatButton
-				label="Add"
+				label="Save"
 				primary={true}
-				onClick={this.handleAdd}
+				onTouchTap={this.handleSave}
 			/>
 		]
 		return (
@@ -335,30 +224,43 @@ class Contents extends Component {
 				>
 					<GridTile cols={1} />  
 					<GridTile cols={2}>  
-						<GridList 
-							style={styles.gridList}
-							cols={4}
-							padding={10}
-							cellHeight={'auto'}
-						>
-							{ 
-								Object.entries(contents).length > 0 
-									? 
-									this.contents(contents)
-									:
-									<h1>{params.page} page has no contents yet... </h1>
-							}
+					{ 
+						Object.keys(contents).length > 0 
+							? 
+							<GridList 
+								style={styles.gridList}
+								cols={4}
+								padding={10}
+								cellHeight={'auto'}
+							>
+								{this.contents(contents)}
+							</GridList>
+							:
+							<h1>No contents yet... </h1>
+					}
+					{
+						Object.keys(contents).length > 0
+							&& 
+							<FlatButton
+								label="Save"
+								primary={true}
+								onTouchTap={() => this.handlePostContents(contents)}
+							/>
+					}
+					{ 
+						languageIDs.length > 0 
+							&&
 							<FloatingActionButton 
 								secondary={true}
 								style={{
 									...styles.floatingActionButton, 
 									display: showDialog ? 'none' : 'inline-block'
 								}}
-								onClick={this.toggleDialog}
+								onTouchTap={this.toggleDialog}
 							>
 								<ContentAdd />
 							</FloatingActionButton>
-						</GridList>
+					}
 					</GridTile>
 					<GridTile cols={1} />  
 				</GridList>
@@ -376,6 +278,7 @@ class Contents extends Component {
 }
 
 Contents.propTypes = {
+	languageIDs: PropTypes.array.isRequired, 
 	getContents: PropTypes.func.isRequired, 
 	contents: PropTypes.object.isRequired, 
 	postContents: PropTypes.func.isRequired

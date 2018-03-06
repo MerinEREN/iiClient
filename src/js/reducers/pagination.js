@@ -4,10 +4,10 @@ import {paginationAccounts as accounts} from './accounts'
 import {paginationUsers as usersByAccount} from './users'
 import {paginationLanguages as languages} from './languages'
 import {paginationPages as pages} from './pages'
-import {paginationContents as contentsByPage} from './contents'
-import {paginationDemands as demandsByAccount} from './demands'
-import {paginationOffers as offersByAccount} from './offers'
-import {paginationServicePacks as servicePacksByAccount} from './servicePacks'
+import {paginationContents as contents} from './contents'
+import {paginationDemands as demands} from './demands'
+import {paginationOffers as offers} from './offers'
+import {paginationServicePacks as servicePacks} from './servicePacks'
 // import * as ActionTypes from './types'
 
 // Higher-Order Reducer
@@ -17,10 +17,10 @@ const pagination = combineReducers({
 	usersByAccount,
 	languages, 
 	pages, 
-	contentsByPage, 
-	demandsByAccount,
-	offersByAccount, 
-	servicePacksByAccount
+	contents, 
+	demands,
+	offers, 
+	servicePacks
 })
 
 export default pagination

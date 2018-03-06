@@ -7,7 +7,6 @@ import {List, ListItem} from 'material-ui/List'
 import FloatingActionButton from 'material-ui/FloatingActionButton'
 import ContentCreate from 'material-ui/svg-icons/content/create'
 import Dialog from 'material-ui/Dialog'
-import RaisedButton from 'material-ui/RaisedButton'
 import FlatButton from 'material-ui/FlatButton'
 import VerticalStepper from './verticalStepper'
 import TextField from 'material-ui/TextField'
@@ -169,15 +168,6 @@ class Page extends Component {
 						</List>
 					</CardText>
 					<CardActions>
-						<RaisedButton 
-							label="Page Contents" 
-							containerElement={
-								<Link 
-									to={`/pages/${ID}/contents`}
-									activeStyle={styles.link.activeStyle} 
-								/> 
-							}
-						/>
 						<FlatButton 
 							label="Delete" 
 							onTouchTap={() => this.handleDelete(ID, {[ID]: page})} 

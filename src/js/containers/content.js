@@ -1,21 +1,22 @@
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import ContentComponent from '../components/content'
-import getLanguages from '../middlewares/languages'
 import getPages from '../middlewares/pages'
+import {contentUpdate as contentChange} from '../actions/content'
+import {deleteContent} from '../middlewares/content'
 
 // Can use ownProps here.
 const mapStateToProps = state => {
 	return {
-		allPages: state.entities.pages, 
-		languageIDs: state.pagination.languages.all.IDs
+		allPages: state.entities.pages
 	}
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
-		getLanguages, 
-		getPages
+		getPages, 
+		contentChange, 
+		deleteContent
 	},
 	dispatch
 )

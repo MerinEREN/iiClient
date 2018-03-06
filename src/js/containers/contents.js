@@ -6,7 +6,8 @@ import getContents, {postContents} from '../middlewares/contents'
 // Can use ownProps here.
 const mapStateToProps = state => {
 	return {
-		contents: state.entities.contents
+		contents: state.entities.contents, 
+		languageIDs: state.pagination.languages.all.IDs
 	}
 }
 

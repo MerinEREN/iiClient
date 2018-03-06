@@ -23,7 +23,7 @@ const routes = (
 		<Route path="/languages" component={Languages} />
 		<Route path="/pages" component={Pages} />
 		<Route path="/pages/:ID" component={Page} />
-		<Route path="/pages/:ID/contents" component={Contents} />
+		<Route path="/contents" component={Contents} />
 		<Route path="/demands" component={Demands} />
 		<Route path="/offers" component={Offers} />
 		<Route path="/servicePacks" component={ServicePacks} />
