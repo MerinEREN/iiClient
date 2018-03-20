@@ -3,6 +3,7 @@ import {toggleFetching} from '../actions/fetchingProgres'
 import {setSnackbar} from '../actions/snackbar'
 
 var timer
+var deletedObjects
 
 export default function fetchDomainDataIfNeeded(args) {
 	// Function also receives getState()
@@ -67,38 +68,47 @@ function shouldFetchDomainData(state, args) {
 }
 
 const shouldFetchAfterTimeout = (args, duration) => (dispatch, getState) => {
+	// Cancel previous api delete request
+	clearTimeout(timer)
 	const {
 		actionsSuccess, 
 		request: {method}, 
-		dataBody, 
 		groupID
 	} = args
 	// Delete the object from store
 	actionsSuccess.forEach(ac => dispatch(ac({
 		method, 
-		response: {result: dataBody}, 
+		response: {result: args.dataBody}, 
 		groupID
 	})))
+	// Add new object(s) to deletedObjects and assign them to the arg's dataBody
+	deletedObjects = {
+		...deletedObjects, 
+		...args.dataBody
+	}
+	args.dataBody = {...deletedObjects}
 	// Set snackbar
 	dispatch(setSnackbar({
 		props: {
-			message: `${Object.keys(dataBody).map(k => k)} deleted`,
+			message: `${Object.keys(args.dataBody).map(k => k)} deleted`,
 			duration, 
 			action: 'Undo', 
 			onActionClick: () => dispatch(cancelFetch(args)), 
 			clicked: false
 		}
 	}))
-	// CHECK DELETE, DELETE/CANCEL, DELETE SCENARIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	// setTimeout returns a number not a promise, so this return does nothing actually.
-	return timer = setTimeout(function() {
-		if(getState().appState.snackbar.clicked)
-			return Promise.resolve()
-		return dispatch(fetchDomainData(args))
+	/* setTimeout returns a number not a promise, so this return does nothing actually.
+	return timer = setTimeout(function() { */
+	timer = setTimeout(function() {
+		if(!getState().appState.snackbar.clicked) {
+			dispatch(fetchDomainData(args))
+			// Reset deletedObjects
+			deletedObjects = {}
+		}
 	}, duration + 1000)
 }
 
-// Add deleted object back to the store.
+// Add deleted object(s) back to the store.
 const cancelFetch = ({actionsFailure, request: {method}, dataBody, groupID}) => (dispatch, getState) => {
 	const {snackbar} = getState().appState
 	actionsFailure.forEach(ac => dispatch(ac({
@@ -109,14 +119,12 @@ const cancelFetch = ({actionsFailure, request: {method}, dataBody, groupID}) => 
 	dispatch(setSnackbar({
 		props: {
 			...snackbar, 
-			// Prevent more than one click (open: !clicked, so this control
-			// is NOT NECESSARY actually.
 			onActionClick: undefined, 
 			clicked: true
 		}
 	}))
-	// So imported to prevent previously canceled API calls.
-	clearTimeout(timer)
+	// Reset deletedObjects
+	deletedObjects = {}
 }
 
 const fetchDomainData = args => dispatch => {
