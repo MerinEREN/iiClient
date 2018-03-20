@@ -67,6 +67,7 @@ function shouldFetchDomainData(state, args) {
 	} */
 }
 
+// Only on new branch......................................................................
 const shouldFetchAfterTimeout = (args, duration) => (dispatch, getState) => {
 	// Cancel previous api delete request
 	clearTimeout(timer)
