@@ -2,8 +2,6 @@ import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import {Link} from 'react-router'
 import {GridList, GridTile} from 'material-ui/GridList'
-import IconButton from 'material-ui/IconButton'
-import Delete from 'material-ui/svg-icons/action/delete'
 import FloatingActionButton from 'material-ui/FloatingActionButton'
 import ContentAdd from 'material-ui/svg-icons/content/add'
 import Dialog from 'material-ui/Dialog'
@@ -157,7 +155,6 @@ class Pages extends Component {
 		const actions = [
 			<FlatButton
 				label="Close"
-				primary={true}
 				onTouchTap={this.toggleDialog}
 			/>, 
 			<FlatButton

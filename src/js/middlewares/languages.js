@@ -5,6 +5,22 @@ import {
 	languagesFailure
 } from '../actions/languages'
 
+const getLanguages = makeLoader({
+	defaults: {
+		URL: '/languages', 
+		path: ['languages']
+	},
+	actionCreators: {
+		actionsRequest: [languagesRequest],
+		actionsSuccess: [languagesSuccess],
+		actionsFailure: [languagesFailure]
+	}, 
+	options: {
+		// CAN BE PROBLEMATIC FOR PAGINATION IN NEAR FUTURE !!!!!!!!!!!!!!!!!!!!!!!
+		didInvalidate: false
+	}
+})
+
 export const postLanguage = makeLoader({
 	defaults: {
 		URL: '/languages', 
@@ -21,19 +37,18 @@ export const postLanguage = makeLoader({
 	}
 })
 
-const getLanguages = makeLoader({
+export const deleteLanguages = makeLoader({
 	defaults: {
-		URL: '/languages', 
+		method: 'DELETE', 
 		path: ['languages']
 	},
 	actionCreators: {
-		actionsRequest: [languagesRequest],
 		actionsSuccess: [languagesSuccess],
 		actionsFailure: [languagesFailure]
 	}, 
 	options: {
-		// CAN BE PROBLEMATIC FOR PAGINATION IN NEAR FUTURE !!!!!!!!!!!!!!!!!!!!!!!
-		didInvalidate: false
+		hideFetching: true, 
+		showSnackbar: true
 	}
 })
 

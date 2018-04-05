@@ -5,7 +5,9 @@ import FloatingActionButton from 'material-ui/FloatingActionButton'
 import ContentAdd from 'material-ui/svg-icons/content/add'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
+import RaisedButton from 'material-ui/RaisedButton'
 import Content from '../containers/content'
+import {generateURLVariableFromIDs} from './utilities'
 
 const styles = {
 	root: {
@@ -15,6 +17,9 @@ const styles = {
 	}, 
 	gridList: {
 		margin: 0
+	}, 
+	raisedButton: {
+		marginLeft: 12
 	}, 
 	floatingActionButton: {
 		position: 'fixed',
@@ -33,9 +38,11 @@ class Contents extends Component {
 			inputErrTexts: {}
 		}
 		this.handleCreateNewContents = this.handleCreateNewContents.bind(this)
-		this.handleContentChange = this.handleContentChange.bind(this)
+		this.handleUpdate = this.handleUpdate.bind(this)
 		this.toggleDialog = this.toggleDialog.bind(this)
 		this.handleSave = this.handleSave.bind(this)
+		this.handlePost = this.handlePost.bind(this)
+		this.handleDelete = this.handleDelete.bind(this)
 	}
 	componentWillMount() {
 		this.props.getContents()
@@ -60,9 +67,8 @@ class Contents extends Component {
 			}
 		})
 	}
-	handleContentChange(ID, field, value) {
+	handleUpdate(ID, field, value) {
 		const {newContents, inputErrTexts} = this.state
-		const {contents} = this.props
 		if (ID.indexOf('newContent') !== -1) {
 			if (Array.isArray(value)) {
 				this.setState({
@@ -124,7 +130,7 @@ class Contents extends Component {
 			initNewContents: true, 
 			newContents: {}
 		})
-		this.handlePostContents(tempObj)
+		this.handlePost()
 	}
 	handleRequiredInput(contents) {
 		const {inputErrTexts} = this.state
@@ -156,10 +162,11 @@ class Contents extends Component {
 			return true
 		})
 	}
-	handlePostContents(contents) {
+	handlePost() {
+		const {contents, postContents} = this.props
 		if(!this.handleRequiredInput(contents))
 			return
-		this.props.postContents({
+		postContents({
 			body: {
 				type: 'Blob', 
 				contentType: 'application/json', 
@@ -167,32 +174,51 @@ class Contents extends Component {
 			}
 		})
 	}
+	handleDelete() {
+		const {contentsSelected, deleteContents, buttonSet}= this.props
+		deleteContents({
+			URL: `/contents/?IDs=${generateURLVariableFromIDs(contentsSelected)}`, 
+			body: {
+				type: "FormData", 
+				data: contentsSelected
+			}
+		})
+		buttonSet("contentsDelete")
+	}
 	contents(contents) {
-		const {
-			inputErrTexts 
-		} = this.state
-		return Object.values(contents).map(c => 
-			<Content 
-				key={c.ID}
-				languageIDs={this.props.languageIDs}
-				content={c} 
-				inputErrTexts={inputErrTexts[c.ID]} 
-				handleContentChange={this.handleContentChange} 
+		const {inputErrTexts} = this.state
+		const {languageIDs, contentsSelected} = this.props
+		return Object.values(contents).map(v => {
+			return <Content 
+				key={v.ID}
+				languageIDs={languageIDs}
+				content={v} 
+				inputErrTexts={inputErrTexts[v.ID]} 
+				isChecked={Object.keys(contentsSelected).indexOf(v.ID) !== -1}
+				handleUpdate={this.handleUpdate} 
 			/>
-		)
+		})
 	}
 	render() {
+		const {
+			root, 
+			gridList, 
+			raisedButton, 
+			floatingActionButton
+		} = styles
 		const {
 			showDialog, 
 			newContents
 		} = this.state
 		const {
 			contents, 
-			languageIDs
+			contentsSelected, 
+			languageIDs, 
+			deleteClicked
 		} = this.props
 		const children = <GridList 
-					style={styles.gridList}
 					cols={4}
+					style={gridList}
 					padding={10}
 					cellHeight={'auto'}
 				>
@@ -201,12 +227,10 @@ class Contents extends Component {
 		const actions = [
 			<FlatButton
 				label="Create New Contents"
-				primary={true}
 				onTouchTap={this.handleCreateNewContents}
 			/>, 
 			<FlatButton
 				label="Close"
-				primary={true}
 				onTouchTap={this.toggleDialog}
 			/>, 
 			<FlatButton
@@ -216,11 +240,11 @@ class Contents extends Component {
 			/>
 		]
 		return (
-			<div style={styles.root}>
+			<div style={root}>
 				<GridList 
 					cols={4} 
+					style={gridList}
 					cellHeight='auto'
-					style={styles.gridList}
 				>
 					<GridTile cols={1} />  
 					<GridTile cols={2}>  
@@ -228,8 +252,8 @@ class Contents extends Component {
 						Object.keys(contents).length > 0 
 							? 
 							<GridList 
-								style={styles.gridList}
 								cols={4}
+								style={gridList}
 								padding={10}
 								cellHeight={'auto'}
 							>
@@ -241,10 +265,21 @@ class Contents extends Component {
 					{
 						Object.keys(contents).length > 0
 							&& 
-							<FlatButton
+							<RaisedButton
 								label="Save"
+								style={raisedButton}
 								primary={true}
-								onTouchTap={() => this.handlePostContents(contents)}
+								onTouchTap={this.handlePost}
+							/>
+					}
+					{
+						(!deleteClicked && Object.keys(contentsSelected).length > 0)
+							&& 
+							<RaisedButton
+								label="Delete"
+								style={raisedButton}
+								secondary={true}
+								onTouchTap={this.handleDelete}
 							/>
 					}
 					{ 
@@ -253,7 +288,7 @@ class Contents extends Component {
 							<FloatingActionButton 
 								secondary={true}
 								style={{
-									...styles.floatingActionButton, 
+									...floatingActionButton, 
 									display: showDialog ? 'none' : 'inline-block'
 								}}
 								onTouchTap={this.toggleDialog}
@@ -277,11 +312,19 @@ class Contents extends Component {
 	}
 }
 
+Contents.defaultProps = {
+	deleteClicked: false
+}
+
 Contents.propTypes = {
 	languageIDs: PropTypes.array.isRequired, 
 	getContents: PropTypes.func.isRequired, 
 	contents: PropTypes.object.isRequired, 
-	postContents: PropTypes.func.isRequired
+	postContents: PropTypes.func.isRequired, 
+	contentsSelected: PropTypes.object.isRequired, 
+	deleteContents: PropTypes.func.isRequired, 
+	deleteClicked: PropTypes.bool.isRequired, 
+	buttonSet: PropTypes.func.isRequired
 }
 
 export default Contents

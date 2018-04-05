@@ -35,4 +35,19 @@ export const postContents = makeLoader({
 	}
 })
 
+export const deleteContents = makeLoader({
+	defaults: {
+		method: 'DELETE', 
+		path: ['contents']
+	},
+	actionCreators: {
+		actionsSuccess: [contentsSuccess],
+		actionsFailure: [contentsFailure]
+	}, 
+	options: {
+		hideFetching: true, 
+		showSnackbar: true
+	}
+})
+
 export default getContents

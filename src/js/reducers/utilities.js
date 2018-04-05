@@ -125,6 +125,46 @@ export const paginate = ({types, mapActionToKey}) => {
 	}
 }
 
+export const addDynamicKeySetResetResetAll = ({types, mapActionToKey}) => {
+	if (!Array.isArray(types) || types.length !== 3) {
+		throw new Error('Expected types to be an array of two elements.')
+	}
+	if (!types.every(t => typeof t === 'string')) {
+		throw new Error('Expected types to be strings.')
+	}
+	if (typeof mapActionToKey !== 'function') {
+		throw new Error('Expected mapActionToKey to be a function.')
+	}
+
+	const [setType, resetType, resetAllType] = types
+
+	const updateState = (state, action) => {
+		switch (action.type) {
+			case setType:
+				return true
+			case resetType:
+				return false
+			default:
+				return state
+		}
+	}
+	return (state = {}, action) => {
+		switch (action.type) {
+			case setType:
+			case resetType:
+				const key = mapActionToKey(action)
+				return {
+					...state, 
+					[key]: updateState(state[key], action)
+				}
+			case resetAllType:
+				return {}
+			default:
+				return state
+		}
+	}
+}
+
 function setValue(r){
 	return typeof r === "object" ? null : r
 }
@@ -134,10 +174,10 @@ const mergeKeysIntoArray = (IDs, result) => {
 	if (typeof result !== "object")
 		return IDs
 	let array = []
-	for(let ID of Object.keys(result).map(k => k)) {
-		if (IDs.indexOf(ID) === -1)
-			array.push(ID)
-	}
+	Object.keys(result).forEach(k => {
+		if (IDs.indexOf(k) === -1)
+			array.push(k)
+	})
 	return [...IDs, ...array]
 }
 
@@ -190,6 +230,26 @@ const removeFromObject = (state, action) => {
 		if(!result.hasOwnProperty(k))
 			newState[k] = v
 	})
+	return newState
+}
+
+export const mergeIntoOrRemoveFromObject = (state, action) => {
+	const {obj} = action
+	let hasOwnProperty = true
+	let newState = {}
+	Object.entries(obj).forEach(([k, v]) => {
+		if(!state.hasOwnProperty(k)) {
+			newState[k] = v
+			hasOwnProperty = false
+		}
+	})
+	if (!hasOwnProperty)
+		return {...state, ...newState}
+	Object.entries(state).forEach(([k, v]) => {
+		if(!obj.hasOwnProperty(k))
+			newState[k] = v
+	})
+	console.log(newState)
 	return newState
 }
 

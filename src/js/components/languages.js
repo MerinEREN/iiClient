@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import {GridList, GridTile} from 'material-ui/GridList'
-import Language from './language'
+import RaisedButton from 'material-ui/RaisedButton'
 import FloatingActionButton from 'material-ui/FloatingActionButton'
 import ContentAdd from 'material-ui/svg-icons/content/add'
 import Dialog from 'material-ui/Dialog'
@@ -9,6 +9,8 @@ import FlatButton from 'material-ui/FlatButton'
 import VerticalStepper from './verticalStepper'
 import SelectField from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
+import Language from './language'
+import {generateURLVariableFromIDs} from './utilities'
 
 const styles = {
 	root: {
@@ -18,6 +20,9 @@ const styles = {
 	}, 
 	gridList: {
 		margin: 0
+	}, 
+	raisedButton: {
+		marginLeft: 12
 	}, 
 	floatingActionButton: {
 		position: 'fixed',
@@ -39,13 +44,14 @@ class Languages extends Component {
 		super(props)
 		this.state = {
 			showDialog: false, 
-			code: "",    
+			ID: "",    
 			inputErrText: {}
 		}
 		this.toggleDialog = this.toggleDialog.bind(this)
 		this.handlePost = this.handlePost.bind(this)
 		this.handleRequiredInput = this.handleRequiredInput.bind(this)
 		this.handleInputChange = this.handleInputChange.bind(this)
+		this.handleDelete = this.handleDelete.bind(this)
 	}
 	componentWillMount() {
 		this.props.getLanguages()
@@ -54,10 +60,10 @@ class Languages extends Component {
 	handleRequiredInput(i) {
 		switch (i) {
 			case 1:
-				if(!this.state.code) {
+				if(!this.state.ID) {
 					this.setState({
 						inputErrText:{
-							code: 'Required field'
+							ID: 'Required field'
 						}
 					})
 					return true
@@ -83,10 +89,10 @@ class Languages extends Component {
 		const {inputErrText} = this.state
 		if(name !== "file") {
 			this.setState({
-				code: value, 
+				ID: value, 
 				inputErrText: {
 					...inputErrText, 
-					code: ''
+					ID: ''
 				}
 			})
 		}
@@ -99,29 +105,28 @@ class Languages extends Component {
 	}
 	handlePost() {
 		this.toggleDialog()
-		const {code} = this.state
-		const {postLanguage} = this.props
-		postLanguage({
+		const {ID} = this.state
+		this.props.postLanguage({
 			body: {
 				type: 'FormData', 
 				// Use 'contentType' for 'Blob' type.
 				// contentType: 'application/json', 
 				data: {
-					[code]: {
-						code: code, 
+					[ID]: {
+						ID: ID, 
 						file: this.file.files[0] 
 					}
 				}
 			}
 		})
-		this.setState({code: ""})
+		this.setState({ID: ""})
 	}
 	toggleDialog() {
 		const {showDialog} = this.state
 		this.setState({showDialog: !showDialog})
 	}
 	addForm() {
-		const {inputErrText, code} = this.state
+		const {inputErrText, ID} = this.state
 		return (
 			<form>
 				<VerticalStepper 
@@ -135,9 +140,9 @@ class Languages extends Component {
 							Select a language from the select field.
 						</p>, 
 						<SelectField 
-							value={code}
+							value={ID}
 							floatingLabelText="Language" 
-							errorText={inputErrText.code}
+							errorText={inputErrText.ID}
 							onChange={this.handleInputChange}
 						>
 							{items}
@@ -154,21 +159,42 @@ class Languages extends Component {
 			</form>
 		)
 	}
+	handleDelete() {
+		const {languagesSelected, deleteLanguages, buttonSet} = this.props
+		deleteLanguages({
+			URL: `/languages/?IDs=${generateURLVariableFromIDs(languagesSelected)}`, 
+			body: {
+				type: "FormData", 
+				data: languagesSelected
+			}
+		})
+		buttonSet("languagesDelete")
+	}
 	languages(languages) {
-		return Object.entries(languages).map(a => 
+		const {languagesSelected} = this.props
+		return Object.values(languages).map(v => 
 			<Language 
-				key={a[0]} 
-				ID={a[0]} 
-				language={a[1]} 
+				key={v.ID} 
+				language={v} 
+				isChecked={!(Object.keys(languagesSelected).indexOf(v.ID) === -1)}
 			/>)
 	}
 	render() {
+		const {
+			root, 
+			gridList, 
+			raisedButton, 
+			floatingActionButton
+		} = styles
 		const {showDialog} = this.state
-		const {languages} = this.props
+		const {
+			languages, 
+			languagesSelected, 
+			deleteClicked
+		} = this.props
 		const actions = [
 			<FlatButton
 				label="Close"
-				primary={true}
 				onTouchTap={this.toggleDialog}
 			/>, 
 			<FlatButton
@@ -178,11 +204,11 @@ class Languages extends Component {
 			/>
 		]
 		return (
-			<div style={styles.root}>
+			<div style={root}>
 				<GridList 
 					cols={4} 
 					cellHeight='auto'
-					style={styles.gridList}
+					style={gridList}
 				>
 					<GridTile cols={1} />  
 					<GridTile cols={2}>  
@@ -190,7 +216,7 @@ class Languages extends Component {
 						Object.entries(languages).length !== 0 
 							? 
 							<GridList 
-								style={styles.gridList}
+								style={gridList}
 								cols={4}
 								padding={10}
 								cellHeight={333}
@@ -198,12 +224,22 @@ class Languages extends Component {
 								{this.languages(languages)}
 							</GridList>
 							:
-								<h3>No Languages</h3>
-							}
+							<h3>No Languages</h3>
+					}
+					{
+						(!deleteClicked && Object.keys(languagesSelected).length > 0)
+							&& 
+							<RaisedButton
+								label="Delete"
+								style={raisedButton}
+								secondary={true}
+								onTouchTap={this.handleDelete}
+							/>
+					}
 							<FloatingActionButton 
 								secondary={true}
 								style={{
-									...styles.floatingActionButton, 
+									...floatingActionButton, 
 									display: showDialog ? 'none' : 'inline-block'
 								}}
 								onTouchTap={this.toggleDialog}
@@ -225,10 +261,18 @@ class Languages extends Component {
 	}
 }
 
+Languages.defaultProps = {
+	deleteClicked: false
+}
+
 Languages.propTypes = {
 	getLanguages: PropTypes.func.isRequired, 
 	languages: PropTypes.object.isRequired, 
-	postLanguage: PropTypes.func.isRequired
+	postLanguage: PropTypes.func.isRequired, 
+	languagesSelected: PropTypes.object.isRequired, 
+	deleteLanguages: PropTypes.func.isRequired,
+	deleteClicked: PropTypes.bool.isRequired, 
+	buttonSet: PropTypes.func.isRequired
 }
 
 Languages.muiName = 'GridList'

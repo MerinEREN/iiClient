@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import {browserHistory} from 'react-router'
-import {Link} from 'react-router'
 import {Card, CardActions, CardMedia, CardTitle, CardText} from 'material-ui/Card'
 import {List, ListItem} from 'material-ui/List'
 import FloatingActionButton from 'material-ui/FloatingActionButton'
@@ -145,7 +144,6 @@ class Page extends Component {
 		const actions = [
 			<FlatButton
 				label="Close"
-				primary={true}
 				onClick={this.toggleDialog}
 			/>, 
 			<FlatButton
@@ -170,6 +168,7 @@ class Page extends Component {
 					<CardActions>
 						<FlatButton 
 							label="Delete" 
+							secondary={true}
 							onTouchTap={() => this.handleDelete(ID, {[ID]: page})} 
 						/>
 					</CardActions>

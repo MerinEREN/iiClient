@@ -1,17 +1,20 @@
-import React, {Component} from 'react'
-import PropTypes from 'prop-types'
-import {GridTile} from 'material-ui/GridList'
-import IconButton from 'material-ui/IconButton'
-import Delete from 'material-ui/svg-icons/action/delete'
-import TextField from 'material-ui/TextField'
-import SelectField from 'material-ui/SelectField'
-import MenuItem from 'material-ui/MenuItem'
+import React, {Component} from "react"
+import PropTypes from "prop-types"
+import {GridTile} from "material-ui/GridList"
+import Checkbox from "material-ui/Checkbox"
+import TextField from "material-ui/TextField"
+import SelectField from "material-ui/SelectField"
+import MenuItem from "material-ui/MenuItem"
 
 const styles = {
 	gridTile: {
-		style: {
-			marginBottom: 60
-		}
+		paddingTop: 40, 
+		marginTop: 30, 
+		marginBottom: 30, 
+		titleBackground: "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.3) 70%,rgba(0,0,0,0) 100%)"
+	}, 
+	checkbox: {
+		marginLeft: 12
 	}
 }
 
@@ -28,22 +31,13 @@ class Content extends Component {
 	}
 	// INDEX AND VALUES ARE FOR SELECT FIELD ONLY
 	handleFieldChange(event, index, values) {
-		const {content: {ID}, handleContentChange, contentChange} = this.props
+		const {content: {ID}, handleUpdate, contentUpdate} = this.props
 		const target = event.target
 		const name = target.name || "pages"
 		const value = target.value || values
-		if (ID.indexOf('newContent') === -1)
-			contentChange(ID, name, value)
-		handleContentChange(ID, name, value)
-	}
-	handleDelete(ID, obj) {
-		this.props.deleteContent({
-			URL: `/contents/?ID=${ID}`, 
-			body: {
-				type: 'FormData', 
-				data: obj
-			}
-		})
+		if (ID.indexOf("newContent") === -1)
+			contentUpdate(ID, name, value)
+		handleUpdate(ID, name, value)
 	}
 	menuItems(pages){
 		const {allPages} = this.props
@@ -83,19 +77,46 @@ class Content extends Component {
 		)
 	}
 	render() {
-		const {content} = this.props
+		const {
+			gridTile: {
+				paddingTop, 
+				marginTop, 
+				marginBottom, 
+				titleBackground
+			}, 
+			checkbox
+		} = styles
+		const {
+			content, 
+			isChecked, 
+			selectedContentsAddRemove, 
+			buttonReset
+		} = this.props
 		const {ID} = content
 		return (
 			<GridTile  
-				style={styles.gridTile.style} 
-				title={ID.indexOf('newContent') === -1 && ID}
+				style={{
+					paddingTop, 
+					marginTop, 
+					marginBottom, 
+					opacity: isChecked ? 0.5 : 1
+				}} 
+				title={ID.indexOf("newContent") === -1 && ID}
+				titlePosition="top"
+				titleBackground={titleBackground} 
 				actionIcon={
-					<IconButton 
-						onTouchTap={() => this.handleDelete(ID, {[ID]: content})}
-					>
-						<Delete />
-					</IconButton>
+					<Checkbox
+						style={checkbox} 
+						checked={isChecked}
+						onCheck={() => {
+							buttonReset("contentsDelete")
+							selectedContentsAddRemove(
+								{[ID]: content}
+							)
+						}}
+					/>
 				}
+				actionPosition="left"
 			>
 				{this.textFields()}
 				{this.selectField()}
@@ -110,11 +131,13 @@ Content.propTypes = {
 	allPages: PropTypes.object.isRequired, 
 	content: PropTypes.object.isRequired, 
 	inputErrTexts: PropTypes.object, 
-	handleContentChange: PropTypes.func.isRequired, 
-	contentChange: PropTypes.func.isRequired, 
-	deleteContent: PropTypes.func.isRequired
+	isChecked: PropTypes.bool.isRequired, 
+	handleUpdate: PropTypes.func.isRequired, 
+	contentUpdate: PropTypes.func.isRequired, 
+	selectedContentsAddRemove: PropTypes.func.isRequired, 
+	buttonReset: PropTypes.func.isRequired
 }
 
-Content.muiName = "GridTile"
+// Content.muiName = "GridTile"
 
 export default Content

@@ -112,6 +112,7 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 				request: new Request(URL, init),
 				dataBody: body && body.data, 
 				dataOld: body && body.dataOld, 
+				path, 
 				pagObj, 
 				groupID, 
 				...actionCreators, 

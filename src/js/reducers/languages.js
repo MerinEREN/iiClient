@@ -1,12 +1,14 @@
 import createReducer, {
 	paginate, 
 	mergeIntoOrRemoveFromObjectSuccess, 
-	mergeIntoOrRemoveFromObjectFailure
+	mergeIntoOrRemoveFromObjectFailure, 
+	mergeIntoOrRemoveFromObject
 } from './utilities'
 import {
 	LANGUAGES_REQUEST, 
 	LANGUAGES_SUCCESS, 
-	LANGUAGES_FAILURE
+	LANGUAGES_FAILURE, 
+	LANGUAGES_SELECTED_ADD_REMOVE
 } from '../actions/types'
 
 // Slice Reducers
@@ -25,5 +27,11 @@ export const paginationLanguages = paginate({
 		LANGUAGES_FAILURE
 	]
 })
+
+export const languagesSelected = createReducer( {},  
+	{
+		LANGUAGES_SELECTED_ADD_REMOVE: mergeIntoOrRemoveFromObject
+	}
+)
 
 export default languages

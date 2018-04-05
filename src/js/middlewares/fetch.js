@@ -1,9 +1,9 @@
 // import fetch from 'isomorphic-fetch'
 import {toggleFetching} from '../actions/fetchingProgres'
 import {setSnackbar} from '../actions/snackbar'
+import {buttonResetAll} from '../actions/buttons'
 
 var timer
-var deletedObjects
 
 export default function fetchDomainDataIfNeeded(args) {
 	// Function also receives getState()
@@ -67,44 +67,45 @@ function shouldFetchDomainData(state, args) {
 	} */
 }
 
-// Only on new branch......................................................................
 const shouldFetchAfterTimeout = (args, duration) => (dispatch, getState) => {
 	// Cancel previous api delete request
 	clearTimeout(timer)
 	const {
 		actionsSuccess, 
 		request: {method}, 
+		dataBody, 
+		path, 
 		groupID
 	} = args
-	// Delete the object from store
+	// Delete the object(s) from store
 	actionsSuccess.forEach(ac => dispatch(ac({
 		method, 
-		response: {result: args.dataBody}, 
+		response: {result: dataBody}, 
 		groupID
 	})))
-	// Add new object(s) to deletedObjects and assign them to the arg's dataBody
-	deletedObjects = {
-		...deletedObjects, 
-		...args.dataBody
-	}
-	args.dataBody = {...deletedObjects}
 	// Set snackbar
 	dispatch(setSnackbar({
 		props: {
-			message: `${Object.keys(args.dataBody).map(k => k)} deleted`,
+			message: `${Object.keys(dataBody).map(k => k)} deleted`,
 			duration, 
 			action: 'Undo', 
-			onActionClick: () => dispatch(cancelFetch(args)), 
+			onActionClick: () => {
+				dispatch(buttonResetAll())
+				dispatch(cancelFetch(args))
+			}, 
 			clicked: false
 		}
 	}))
-	/* setTimeout returns a number not a promise, so this return does nothing actually.
-	return timer = setTimeout(function() { */
+	// setTimeout returns a number not a promise, so this return does nothing actually.
+	// return timer = setTimeout(function() { 
 	timer = setTimeout(function() {
-		if(!getState().appState.snackbar.clicked) {
+		const {appState} = getState()
+		if(!appState.snackbar.clicked) {
 			dispatch(fetchDomainData(args))
-			// Reset deletedObjects
-			deletedObjects = {}
+			// Reset deleted objects from appState
+			path.forEach(v => {
+				appState[v] = {}
+			})
 		}
 	}, duration + 1000)
 }
@@ -117,6 +118,7 @@ const cancelFetch = ({actionsFailure, request: {method}, dataBody, groupID}) => 
 		response: {result: dataBody}, 
 		groupID
 	})))
+	// Reset snackbar properties
 	dispatch(setSnackbar({
 		props: {
 			...snackbar, 
@@ -124,8 +126,6 @@ const cancelFetch = ({actionsFailure, request: {method}, dataBody, groupID}) => 
 			clicked: true
 		}
 	}))
-	// Reset deletedObjects
-	deletedObjects = {}
 }
 
 const fetchDomainData = args => dispatch => {
