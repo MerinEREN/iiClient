@@ -8,7 +8,7 @@ import {
 const loadUsers = makeLoader({
 	defaults: {
 		URL: '/users/', 
-		path: ['users']
+		path: 'users'
 	}, 
 	actionCreators: {
 		actionsRequest: [usersRequest],

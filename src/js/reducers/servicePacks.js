@@ -16,6 +16,12 @@ const servicePacks = createReducer(
 		SERVICE_PACKS_FAILURE: mergeIntoOrRemoveFromObjectFailure
 	}
 )
+export const servicePacksFetched = createReducer(
+	{}, 
+	{
+		SERVICE_PACKS_SUCCESS: mergeIntoOrRemoveFromObjectSuccess
+	}
+)
 export const paginationServicePacks = paginate({
 	mapActionToKey: action => action.groupID, 
 	types: [

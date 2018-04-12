@@ -1,7 +1,7 @@
 import fetchDomainDataIfNeeded from "./fetch"
 
-export const generateURL = (groupID, returnedURL, ...pageURLs) => {
-	var URL = (groupID ? "/" + groupID : "/") + "?"
+export const generateURL = (key, returnedURL, ...pageURLs) => {
+	var URL = (key ? "/" + key : "/") + "?"
 	URL += returnedURL === "nextPageURL" ? "d=next" : "d=prev"
 	var domainAndParams
 	var params
@@ -27,7 +27,6 @@ export const generateURL = (groupID, returnedURL, ...pageURLs) => {
 // "isCached" is a bool or a function that takes the store 
 // and returns a slice of store to allow or prevent API call for root store objects.
 // "didInvalidate" if it is not undefined prevents the API call.
-// "dataOld" is for recovery if PUT fails.
 export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) => { 
 	var {path, method, URL} = defaults
 	var {hideFetching, isCached, didInvalidate, showSnackbar} = options
@@ -42,7 +41,7 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 		// mode: "no-cors"
 	}
 	return (args = {}) => {
-		var {returnedURL, groupID, body} = args
+		var {returnedURL, key, body} = args
 		returnedURL = returnedURL || "prevPageURL"
 		// Parse request body for "POST" and "PUT" methods
 		if (body && method !== "DELETE") {
@@ -81,14 +80,8 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 		}
 		if(args.headers)
 			Object.entries(args.headers).forEach(a => init.headers.set(a))
-		groupID = groupID || "all"
+		key = key || "all"
 		return (dispatch, getState) => {
-			if (path) {
-				var pagObj = getState().pagination
-				path.forEach(v => {
-					pagObj = pagObj[v]
-				})
-			}
 			// BE CAREFUL
 			// IF THE METHOD IS "GET" OVERWRITES args.URL !!!!!!!!!!!!!!!!!!!!!
 			if (args.URL) {
@@ -99,10 +92,12 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 				URL = URL || "/"
 			}
 			if(method === "GET") {
+				if (path)
+					var pagObj = getState().pagination.path
 				// Use returned URL
 				if (pagObj !== undefined && pagObj !== {}) {
-					if (pagObj[groupID]) {
-						URL = pagObj[groupID][returnedURL] 
+					if (pagObj[key]) {
+						URL = pagObj[key][returnedURL] 
 					} else {
 						URL = URL || "/"
 					}
@@ -111,10 +106,8 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 			return dispatch(fetchDomainDataIfNeeded({
 				request: new Request(URL, init),
 				dataBody: body && body.data, 
-				dataOld: body && body.dataOld, 
 				path, 
-				pagObj, 
-				groupID, 
+				key, 
 				...actionCreators, 
 				isCached, 
 				didInvalidate, 

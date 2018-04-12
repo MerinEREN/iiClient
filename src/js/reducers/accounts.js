@@ -1,7 +1,7 @@
 // import {combineReducers} from 'redux'
 import createReducer, {
 	paginate, 
-	mergeIntoOrRemoveFromObjectFailure
+	entitiesBufferedReset
 } from './utilities'
 import {
 	ACCOUNTS_REQUEST,
@@ -39,14 +39,6 @@ const allIDs = createReducer(
 		ACCOUNTS_SUCCESS: pushIDs
 	}
 ) */
-export const paginationAccounts = paginate({
-	mapActionToKey: action => action.groupID, 
-	types: [
-		ACCOUNTS_REQUEST, 
-		ACCOUNTS_SUCCESS, 
-		ACCOUNTS_FAILURE
-	]
-})
 
 //Higher-Order Reducer
 /* const accounts = combineReducers({
@@ -59,9 +51,25 @@ const accounts = createReducer(
 	{
 		USER_ACCOUNT_SUCCESS: mergeByID, 
 		ACCOUNTS_SUCCESS: mergeByID, 
-		ACCOUNTS_FAILURE: mergeIntoOrRemoveFromObjectFailure
 	}
 )
 
-export default accounts
+export const accountsBuffered = createReducer(
+	{}, 
+	{
+		USER_ACCOUNT_SUCCESS: mergeByID, 
+		ACCOUNTS_SUCCESS: mergeByID, 
+		ACCOUNTS_FAILURE: entitiesBufferedReset
+	}
+)
 
+export const paginationAccounts = paginate({
+	mapActionToKey: action => action.key, 
+	types: [
+		ACCOUNTS_REQUEST, 
+		ACCOUNTS_SUCCESS, 
+		ACCOUNTS_FAILURE
+	]
+})
+
+export default accounts

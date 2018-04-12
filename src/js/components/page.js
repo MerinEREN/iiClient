@@ -1,28 +1,28 @@
-import React, {Component} from 'react'
-import PropTypes from 'prop-types'
-import {browserHistory} from 'react-router'
-import {Card, CardActions, CardMedia, CardTitle, CardText} from 'material-ui/Card'
-import {List, ListItem} from 'material-ui/List'
-import FloatingActionButton from 'material-ui/FloatingActionButton'
-import ContentCreate from 'material-ui/svg-icons/content/create'
-import Dialog from 'material-ui/Dialog'
-import FlatButton from 'material-ui/FlatButton'
-import VerticalStepper from './verticalStepper'
-import TextField from 'material-ui/TextField'
+import React, {Component} from "react"
+import PropTypes from "prop-types"
+import {browserHistory} from "react-router"
+import {Card, CardActions, CardMedia, CardTitle, CardText} from "material-ui/Card"
+import {List, ListItem} from "material-ui/List"
+import FloatingActionButton from "material-ui/FloatingActionButton"
+import ContentCreate from "material-ui/svg-icons/content/create"
+import Dialog from "material-ui/Dialog"
+import FlatButton from "material-ui/FlatButton"
+import VerticalStepper from "./verticalStepper"
+import TextField from "material-ui/TextField"
 
 const styles = {
 	root: {
-		display: 'flex',
-		flexWrap: 'wrap', 
-		justifyContent: 'space-around'
+		display: "flex",
+		flexWrap: "wrap", 
+		justifyContent: "space-around"
 	}, 
 	link: {
 		activeStyle: {
-			color: '#0097a7'
+			color: "#0097a7"
 		}
 	}, 
 	floatingActionButton: {
-		position: 'fixed',
+		position: "fixed",
 		bottom: 32, 
 		right: 48
 	}
@@ -50,18 +50,19 @@ class Page extends Component {
 		})
 
 	}
-	// Make dynamic
 	handleRequiredInput(i) {
 		switch (i) {
-			case 0:
+			case 1:
 				if(!this.state.title) {
 					this.setState({
 						inputErrText:{
-							title: 'Required filed'
+							title: "Required filed"
 						}
 					})
 					return true
 				}
+				return false
+			default:
 				return false
 		}
 	}
@@ -71,28 +72,24 @@ class Page extends Component {
 		const value = target.value
 		this.setState({
 			title: value, 
-			inputErrText: {[name]: ''}
+			inputErrText: {[name]: ""}
 		})
 	}
 	handlePut() {
 		this.toggleDialog()
 		const {title} = this.state
 		const {putPage, params: {ID}, page} = this.props
-		// ADD ALSO ORIGINAL PAGE AS dataOld IF PUT FAILS !!!!!!!!!!!!!!!!!!!!!!!!!
 		putPage({
 			URL: `/pages/?ID=${ID}`, 
 			body: {
-				type: 'FormData', 
-				// Use 'contentType' for 'Blob' type.
-				// contentType: 'application/json', 
+				type: "FormData", 
+				// Use "contentType" for "Blob" type.
+				// contentType: "application/json", 
 				data: {
 					[ID]: {
 						title: title.trim(), 
 						file: this.file.files[0] 
 					}
-				}, 
-				dataOld: {
-					[ID]: page
 				}
 			}
 		})
@@ -102,7 +99,7 @@ class Page extends Component {
 		this.props.deletePage({
 			URL: `/pages/?ID=${ID}`, 
 			body: {
-				type: 'FormData', 
+				type: "FormData", 
 				data: pageObj
 			}
 		})
@@ -117,20 +114,23 @@ class Page extends Component {
 		return (
 			<VerticalStepper 
 				stepLabels={[
-					'Page Title', 
-					'Page Thumbnail'
+					"Description", 
+					"Page Title", 
+					"Page Thumbnail"
 				]} 
 				stepContents={[
+					<p>
+						Change page attributes.
+					</p>, 
 					<TextField 
-						name='title' 
+						name="title" 
 						value={title}
 						floatingLabelText="Page Title" 
 						errorText={inputErrText.title}
 						onChange={this.handleInputChange}
 					/>, 
 					<input 
-						type='file'
-						name='file' 
+						type="file"
 						ref={input => this.file = input}
 					/>
 				]}
@@ -156,7 +156,7 @@ class Page extends Component {
 			<div style={styles.root}>
 				<Card>
 					<CardMedia>
-						<img src={page.link || '/img/adele.jpg'} />
+						<img src={page.link || "/img/adele.jpg"} />
 					</CardMedia>
 					<CardTitle title={page.title} />
 					<CardText>
@@ -177,7 +177,7 @@ class Page extends Component {
 					secondary={true}
 					style={{
 						...styles.floatingActionButton, 
-						display: showDialog ? 'none' : 'inline-block'
+						display: showDialog ? "none" : "inline-block"
 					}}
 					onTouchTap={this.toggleDialog}
 				>
@@ -205,7 +205,5 @@ Page.propTypes = {
 	page: PropTypes.object.isRequired, 
 	putPage: PropTypes.func.isRequired
 }
-
-Page.muiName = 'GridList'
 
 export default Page

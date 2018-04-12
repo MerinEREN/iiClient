@@ -1,7 +1,7 @@
-// import fetch from 'isomorphic-fetch'
-import {toggleFetching} from '../actions/fetchingProgres'
-import {setSnackbar} from '../actions/snackbar'
-import {buttonResetAll} from '../actions/buttons'
+// import fetch from "isomorphic-fetch"
+import {toggleFetching} from "../actions/fetchingProgres"
+import {setSnackbar} from "../actions/snackbar"
+import {buttonResetAll} from "../actions/buttons"
 
 var timer
 
@@ -18,12 +18,12 @@ export default function fetchDomainDataIfNeeded(args) {
 					// Dispatch a thunk from thunk.
 					return dispatch(fetchDomainData(args))
 				} else {
-					// Let the calling code know there's nothing to wait for.
+					// Let the calling code know there"s nothing to wait for.
 					return Promise.resolve()
 				}
 			case "DELETE":
 				// Dispatch a thunk from thunk.
-				return dispatch(shouldFetchAfterTimeout(args, 10000))
+				dispatch(shouldFetchAfterTimeout(args, 10000))
 			default:
 				// Covers "POST" and "PUT" methods
 				// Dispatch a thunk from thunk.
@@ -34,25 +34,25 @@ export default function fetchDomainDataIfNeeded(args) {
 
 function shouldFetchDomainData(state, args) {
 	const {
-		groupID, 
-		pagObj, 
+		path, 
+		key, 
 		isCached, 
 		didInvalidate
 	} = args
-	if(isCached) {
+	if (isCached) {
 		// For root object
 		return !isCached(state)
-	} else if(pagObj !== undefined && Object.keys(pagObj).length !== 0) {
-		// The first check above is only for preventing "Object.keys(pagObj)" error
+	} else if (state.pagination.path !== undefined && Object.keys(state.pagination.path).length !== 0) {
+		// The first check above is only for preventing "Object.keys(state.pagination.path)" error
 		// For pagination object
-		if (pagObj[groupID]) {
-			return !pagObj[groupID].isFetching 
+		if (state.pagination.path[key]) {
+			return !state.pagination.path[key].isFetching 
 				&& 
-				pagObj[groupID].didInvalidate
+				state.pagination.path[key].didInvalidate
 		} else {
-			return !pagObj.isFetching
+			return !state.pagination.path.isFetching
 				&& 
-				pagObj.didInvalidate
+				state.pagination.path.didInvalidate
 		}
 	} else {
 		return true
@@ -71,24 +71,23 @@ const shouldFetchAfterTimeout = (args, duration) => (dispatch, getState) => {
 	// Cancel previous api delete request
 	clearTimeout(timer)
 	const {
-		actionsSuccess, 
+		actionsRequest, 
 		request: {method}, 
 		dataBody, 
-		path, 
-		groupID
+		key
 	} = args
-	// Delete the object(s) from store
-	actionsSuccess.forEach(ac => dispatch(ac({
+	// Delete the object(s) from entitiesBufferd.
+	actionsRequest.forEach(ac => dispatch(ac({
 		method, 
 		response: {result: dataBody}, 
-		groupID
+		key
 	})))
 	// Set snackbar
 	dispatch(setSnackbar({
 		props: {
 			message: `${Object.keys(dataBody).map(k => k)} deleted`,
 			duration, 
-			action: 'Undo', 
+			action: "Undo", 
 			onActionClick: () => {
 				dispatch(buttonResetAll())
 				dispatch(cancelFetch(args))
@@ -99,24 +98,22 @@ const shouldFetchAfterTimeout = (args, duration) => (dispatch, getState) => {
 	// setTimeout returns a number not a promise, so this return does nothing actually.
 	// return timer = setTimeout(function() { 
 	timer = setTimeout(function() {
-		const {appState} = getState()
-		if(!appState.snackbar.clicked) {
+		if(!getState().appState.snackbar.clicked) {
 			dispatch(fetchDomainData(args))
-			// Reset deleted objects from appState
-			path.forEach(v => {
-				appState[v] = {}
-			})
 		}
 	}, duration + 1000)
 }
 
-// Add deleted object(s) back to the store.
-const cancelFetch = ({actionsFailure, request: {method}, dataBody, groupID}) => (dispatch, getState) => {
-	const {snackbar} = getState().appState
+// Reset entitiesBuffered with entities.
+const cancelFetch = ({actionsFailure, request: {method}, key}) => (dispatch, getState) => {
+	const {appState: {snackbar}, entities} = getState()
 	actionsFailure.forEach(ac => dispatch(ac({
 		method, 
-		response: {result: dataBody}, 
-		groupID
+		response: {result: key ?
+			{...entities[path][key]} :
+			{...entities[path]}
+		}, 
+		key
 	})))
 	// Reset snackbar properties
 	dispatch(setSnackbar({
@@ -128,134 +125,117 @@ const cancelFetch = ({actionsFailure, request: {method}, dataBody, groupID}) => 
 	}))
 }
 
-const fetchDomainData = args => dispatch => {
+const fetchDomainData = args => (dispatch, getState) => {
 	const {
 		actionsRequest, 
 		actionsSuccess, 
 		actionsFailure, 
 		request, 
 		dataBody, 
-		dataOld, 
-		groupID, 
+		path, 
+		key, 
 		didInvalidate, 
 		hideFetching, 
 		showSnackbar
 	} = args
-	// Add the new or modified data to the store temporarily.
-	if (request.method === 'POST' || request.method === 'PUT') {
-		console.log(request, dataBody)
-		actionsSuccess.forEach(ac => dispatch(ac({
+	// Modifies contentsBuffer if the method is POST.
+	if (request.method !== "DELETE")
+		actionsRequest.forEach(ac => dispatch(ac({
 			method: request.method, 
-			response: {result: dataBody}, 
-			groupID
+			response: {result: request.method !== "PUT" && dataBody}, 
+			key
 		})))
-	}
-	if (actionsRequest)
-		actionsRequest.forEach(ac => dispatch(ac({groupID})))
-	if(!hideFetching)
+	if (!hideFetching)
 		dispatch(toggleFetching())
 	// REMOVE IF STATEMENT BELOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	/* if (self.fetch)
-			console.log('fetch is supported by the browser')
+			console.log("fetch is supported by the browser")
 		else
-			console.log('fetch is not supported by the browser,' + 
-				'use XMLHttpRequest instead') */
+			console.log("fetch is not supported by the browser," + 
+				"use XMLHttpRequest instead") */
 	// return fetch(`http://www.reddit.com/r/${subreddit}.json`)
 	return fetch(request)
 		.then(response => {
-			// throw new TypeError('Hello my funny TypeError =)')
+			// throw new TypeError("Hello my funny TypeError =)")
 			if(!hideFetching)
 				dispatch(toggleFetching())
 			if (response.ok) {
-				if (request.method !== 'DELETE') {
-					const contentType = response.headers
-						.get('content-type')
-					if (
-						contentType
-						&&
-						contentType.indexOf('text/html') !== -1
-					) {
-						response.text()
-							.then(body => 
-								actionsSuccess.forEach(ac => dispatch(ac({
-									response: {result: body}, 
-									receivedAt: Date.now()
-								})))
-							)
-					} /* else if (
-						contentType
-						&&
-						contentType.indexOf('application/json')
-						!==
-						-1
-					) {
-						response.json()
-							.then(body => 
-								dispatch(args[1](body.data.
-									children.
-									map(child => child.
-										data), 
-									Date.now()))
-							)
-					} */
-					// Backand sending JSON data as Marshald form.
-					// So the Content-Type is "text/plain".
-					else if (
-						contentType
-						&&
-						contentType.indexOf('text/plain')
-						!==
-						-1
-					) {
-						response.text()
-							.then(body => {
-								// Body check is for POST 
-								// and PUT requests which 
-								// does not need response
-								// body.
-								if (body !== '') {
-									const json = 
-										JSON.parse(body)
-									actionsSuccess.forEach(ac => dispatch(ac({
-										method: request.method, 
-										response: {...json}, 
-										receivedAt: Date.now(), 
-										groupID, 
-										didInvalidate
-									})))
-								}
-							})
-					}
+				const contentType = response.headers
+					.get("content-type")
+				/* if (
+					contentType
+					&&
+					contentType.indexOf("text/html") !== -1
+				) {
+					response.text()
+						.then(body => 
+							actionsSuccess.forEach(ac => dispatch(ac({
+								response: {result: body}, 
+								receivedAt: Date.now()
+							})))
+						)
+				} else if (
+					contentType
+					&&
+					contentType.indexOf("application/json")
+					!==
+					-1
+				) {
+					response.json()
+						.then(body => 
+							dispatch(args[1](body.data.
+								children.
+								map(child => child.
+									data), 
+								Date.now()))
+						)
+				}
+				else if ( */
+				// Backand sending JSON data as Marshald form.
+				// So the Content-Type is "text/plain".
+				if (
+					contentType
+					&&
+					contentType.indexOf("text/plain")
+					!==
+					-1
+				) {
+					response.text()
+						.then(body => {
+							const json = JSON.parse(body)
+							actionsSuccess.forEach(ac => dispatch(ac({
+								method: request.method, 
+								response: body !== "" ? 
+								{...json} : 
+								{result: key ?
+									{...getState().entitiesBufferd[path][key]} :
+									{...getState().entitiesBufferd[path]}
+								}, 
+								key, 
+								receivedAt: Date.now(), 
+								didInvalidate
+							})))
+						})
 				}
 			} else {
 				// response code is not between 199 and 300
-				console.log('Response code is not between 199 and 300')
-				// Removing the temporarily added new data (POST), 
-				// adding the temporarily removed old data (DELETE) or 
-				// replacing old data with modified data (PUT) 
-				// from the store.
+				console.log("Response code is not between 199 and 300")
 				actionsFailure.forEach(ac => dispatch(ac({
 					method: request.method, 
 					error: "USE ERROR CODE AND MESSAGE HERE", 
 					response: {
-						result: request.method !== 'GET' 
-						? 
-						request.method === 'PUT'
-						?
-						dataOld
-						:
-						dataBody 
-						: 
-						null
+						result: key ?
+						{...getState().entities[path][key]} :
+						{...getState().entities[path]}
 					}, 
-					groupID
+					key
 				})))
 			}
 			// USE Response.status HERE TO HANDLE RESPONSE STATUSES !!!!!!!!!!!
 			if(showSnackbar)
 				dispatch(setSnackbar({
 					props: {
-						message: response.headers.get('Date')
+						message: response.headers.get("Date")
 					}
 				}))
 		})
@@ -274,17 +254,11 @@ const fetchDomainData = args => dispatch => {
 				method: request.method, 
 				error: err.message, 
 				response: {
-					result: request.method !== 'GET' 
-					? 
-					request.method === 'PUT' 
-					?
-					dataOld
-					:
-					dataBody 
-					: 
-					null
+					result: key ?
+					{...getState().entities[path][key]} :
+					{...getState().entities[path]}
 				}, 
-				groupID
+				key
 			})))
 			dispatch(setSnackbar({
 				props: {

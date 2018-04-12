@@ -8,7 +8,7 @@ import {
 const loadOffers = makeLoader({
 	defaults: {
 		URL: '/offers', 
-		path: ['offers']
+		path: 'offers'
 	},
 	actionCreators: {
 		actionsRequest: [offersRequest],

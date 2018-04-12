@@ -45,11 +45,11 @@ function getItemsFromEntities(pagination, entities) {
 // Can use ownProps here.
 const mapStateToProps = state => {
 	const {
-		entities, 
+		entitiesBuffered, 
 		pagination
 	} = state
 	return {
-		items: getItemsFromEntities(pagination, entities)
+		items: getItemsFromEntities(pagination, entitiesBuffered)
 	}
 }
 

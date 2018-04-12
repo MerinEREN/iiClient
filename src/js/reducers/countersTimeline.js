@@ -6,7 +6,7 @@ import {
 } from '../actions/types'
 
 const timeline = paginate({
-	mapActionToKey: action => action.groupID, 
+	mapActionToKey: action => action.key, 
 	types: [
 		COUNTER_TIMELINE_REQUEST, 
 		COUNTER_TIMELINE_SUCCESS, 

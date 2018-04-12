@@ -1,37 +1,37 @@
-import React, {Component} from 'react'
-import PropTypes from 'prop-types'
-import {Link} from 'react-router'
-import {GridList, GridTile} from 'material-ui/GridList'
-import FloatingActionButton from 'material-ui/FloatingActionButton'
-import ContentAdd from 'material-ui/svg-icons/content/add'
-import Dialog from 'material-ui/Dialog'
-import FlatButton from 'material-ui/FlatButton'
-import VerticalStepper from './verticalStepper'
-import TextField from 'material-ui/TextField'
-import {trimSpace} from '../middlewares/utilities'
+import React, {Component} from "react"
+import PropTypes from "prop-types"
+import {Link} from "react-router"
+import {GridList, GridTile} from "material-ui/GridList"
+import FloatingActionButton from "material-ui/FloatingActionButton"
+import ContentAdd from "material-ui/svg-icons/content/add"
+import Dialog from "material-ui/Dialog"
+import FlatButton from "material-ui/FlatButton"
+import VerticalStepper from "./verticalStepper"
+import TextField from "material-ui/TextField"
+import {trimSpace} from "../middlewares/utilities"
 
 const styles = {
 	root: {
-		display: 'flex',
-		flexWrap: 'wrap', 
-		justifyContent: 'space-around'
+		display: "flex",
+		flexWrap: "wrap", 
+		justifyContent: "space-around"
 	}, 
 	gridList: {
 		margin: 0
 	}, 
 	link: {
 		activeStyle: {
-			color: '#0097a7'
+			color: "#0097a7"
 		}
 	}, 
 	gridTile: {
 		titleBackground: "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.3) 70%,rgba(0,0,0,0) 100%)", 
 		style: {
-			cursor: 'pointer'
+			cursor: "pointer"
 		}
 	}, 
 	floatingActionButton: {
-		position: 'fixed',
+		position: "fixed",
 		bottom: 32, 
 		right: 48
 	}
@@ -46,25 +46,26 @@ class Pages extends Component {
 			inputErrText: {}
 		}
 		this.toggleDialog = this.toggleDialog.bind(this)
-		this.handlePostPage = this.handlePostPage.bind(this)
+		this.handlePost = this.handlePost.bind(this)
 		this.handleRequiredInput = this.handleRequiredInput.bind(this)
 		this.handleInputChange = this.handleInputChange.bind(this)
 	}
 	componentWillMount() {
 		this.props.getPages()
 	}
-	// Make dynamic
 	handleRequiredInput(i) {
 		switch (i) {
-			case 0:
+			case 1:
 				if(!this.state.title) {
 					this.setState({
 						inputErrText:{
-							title: 'Required filed'
+							title: "Required filed"
 						}
 					})
 					return true
 				}
+				return false
+			default:
 				return false
 		}
 	}
@@ -74,18 +75,17 @@ class Pages extends Component {
 		const value = target.value
 		this.setState({
 			title: value, 
-			inputErrText: {[name]: ''}
+			inputErrText: {[name]: ""}
 		})
 	}
-	handlePostPage() {
+	handlePost() {
 		this.toggleDialog()
 		const {title} = this.state
-		const {postPage} = this.props
-		postPage({
+		this.props.postPage({
 			body: {
-				type: 'FormData', 
-				// Use 'contentType' for 'Blob' type.
-				// contentType: 'application/json', 
+				type: "FormData", 
+				// Use "contentType" for "Blob" type.
+				// contentType: "application/json", 
 				data: {
 					[trimSpace(title)]: {
 						ID: trimSpace(title), 
@@ -101,14 +101,14 @@ class Pages extends Component {
 		const {showDialog} = this.state
 		this.setState({showDialog: !showDialog})
 	}
-	gridTile(ID, p) {
+	page(ID, p) {
 		return (
 			<GridTile  
 				key={ID}
 				title={p.title}
 				titleBackground={styles.gridTile.titleBackground} 
-				cols={ID === 'Root' ? 2 : 1} 
-				rows={ID === 'Root' ? 1 : 1}
+				cols={ID === "Root" ? 2 : 1} 
+				rows={ID === "Root" ? 1 : 1}
 				style={styles.gridTile.style} 
 				containerElement={
 					<Link 
@@ -117,7 +117,7 @@ class Pages extends Component {
 					/> 
 				}
 			>
-				<img src={p.link || '/img/adele.jpg'} />
+				<img src={p.link || "/img/adele.jpg"} />
 			</GridTile>
 		)
 	}
@@ -127,20 +127,25 @@ class Pages extends Component {
 			<form>
 				<VerticalStepper 
 					stepLabels={[
-						'Page Title', 
-						'Page Thumbnail'
+						"Description", 
+						"Page Title", 
+						"Page Thumbnail"
 					]} 
 					stepContents={[
+						<p>
+							Create a new page with a name.
+							Uploading a file as a page foto is 
+							not required.
+						</p>, 
 						<TextField 
-							name='title' 
+							name="title" 
 							value={title}
 							floatingLabelText="Page Title" 
 							errorText={inputErrText.title}
 							onChange={this.handleInputChange}
 						/>, 
 						<input 
-							type='file'
-							name='file' 
+							type="file"
 							ref={input => this.file = input}
 						/>
 					]}
@@ -160,14 +165,14 @@ class Pages extends Component {
 			<FlatButton
 				label="Save"
 				primary={true}
-				onTouchTap={this.handlePostPage}
+				onTouchTap={this.handlePost}
 			/>
 		]
 		return (
 			<div style={styles.root}>
 				<GridList 
 					cols={4} 
-					cellHeight='auto'
+					cellHeight="auto"
 					style={styles.gridList}
 				>
 					<GridTile cols={1} />  
@@ -181,7 +186,7 @@ class Pages extends Component {
 							{ 
 								Object.entries(pages).length !== 0 
 									? 
-									Object.entries(pages).map(a => this.gridTile(...a))
+									Object.entries(pages).map(a => this.page(...a))
 									:
 									<h3>No Pages</h3>
 							}
@@ -189,7 +194,7 @@ class Pages extends Component {
 								secondary={true}
 								style={{
 									...styles.floatingActionButton, 
-									display: showDialog ? 'none' : 'inline-block'
+									display: showDialog ? "none" : "inline-block"
 								}}
 								onTouchTap={this.toggleDialog}
 							>
@@ -217,6 +222,6 @@ Pages.propTypes = {
 	postPage: PropTypes.func.isRequired
 }
 
-Pages.muiName = 'GridList'
+Pages.muiName = "GridList"
 
 export default Pages

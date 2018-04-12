@@ -26,6 +26,13 @@ const users = createReducer(
 		USERS_FAILURE: mergeIntoOrRemoveFromObjectFailure
 	}
 )
+export const usersFetched = createReducer(
+	{}, 
+	{
+		USER_ACCOUNT_SUCCESS: mergeByID, 
+		USERS_SUCCESS: mergeByID
+	}
+)
 export const paginationUsers = paginate({
 	mapActionToKey: action => action.groupID, 
 	types: [

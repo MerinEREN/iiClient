@@ -1,3 +1,4 @@
+// Case Reducers
 export const contentUpdate = (state, action) => {
 	const {ID, fieldName, value} = action
 	if (Array.isArray(value)) {

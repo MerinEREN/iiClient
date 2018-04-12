@@ -8,7 +8,7 @@ import {
 const getLanguages = makeLoader({
 	defaults: {
 		URL: '/languages', 
-		path: ['languages']
+		path: 'languages'
 	},
 	actionCreators: {
 		actionsRequest: [languagesRequest],
@@ -21,26 +21,10 @@ const getLanguages = makeLoader({
 	}
 })
 
-export const postLanguage = makeLoader({
-	defaults: {
-		URL: '/languages', 
-		method: 'POST', 
-		path: ['languages']
-	},
-	actionCreators: {
-		actionsSuccess: [languagesSuccess],
-		actionsFailure: [languagesFailure]
-	}, 
-	options: {
-		hideFetching: true, 
-		showSnackbar: true
-	}
-})
-
 export const deleteLanguages = makeLoader({
 	defaults: {
 		method: 'DELETE', 
-		path: ['languages']
+		path: 'languages'
 	},
 	actionCreators: {
 		actionsSuccess: [languagesSuccess],

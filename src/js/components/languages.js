@@ -1,22 +1,22 @@
-import React, {Component} from 'react'
-import PropTypes from 'prop-types'
-import {GridList, GridTile} from 'material-ui/GridList'
-import RaisedButton from 'material-ui/RaisedButton'
-import FloatingActionButton from 'material-ui/FloatingActionButton'
-import ContentAdd from 'material-ui/svg-icons/content/add'
-import Dialog from 'material-ui/Dialog'
-import FlatButton from 'material-ui/FlatButton'
-import VerticalStepper from './verticalStepper'
-import SelectField from 'material-ui/SelectField'
-import MenuItem from 'material-ui/MenuItem'
-import Language from './language'
-import {generateURLVariableFromIDs} from './utilities'
+import React, {Component} from "react"
+import PropTypes from "prop-types"
+import {GridList, GridTile} from "material-ui/GridList"
+import RaisedButton from "material-ui/RaisedButton"
+import FloatingActionButton from "material-ui/FloatingActionButton"
+import ContentAdd from "material-ui/svg-icons/content/add"
+import Dialog from "material-ui/Dialog"
+import FlatButton from "material-ui/FlatButton"
+import VerticalStepper from "./verticalStepper"
+import SelectField from "material-ui/SelectField"
+import MenuItem from "material-ui/MenuItem"
+import Language from "./language"
+import {generateURLVariableFromIDs} from "./utilities"
 
 const styles = {
 	root: {
-		display: 'flex',
-		flexWrap: 'wrap', 
-		justifyContent: 'space-around'
+		display: "flex",
+		flexWrap: "wrap", 
+		justifyContent: "space-around"
 	}, 
 	gridList: {
 		margin: 0
@@ -25,7 +25,7 @@ const styles = {
 		marginLeft: 12
 	}, 
 	floatingActionButton: {
-		position: 'fixed',
+		position: "fixed",
 		bottom: 32, 
 		right: 48
 	}
@@ -56,24 +56,13 @@ class Languages extends Component {
 	componentWillMount() {
 		this.props.getLanguages()
 	}
-	// Make dynamic
 	handleRequiredInput(i) {
 		switch (i) {
 			case 1:
 				if(!this.state.ID) {
 					this.setState({
 						inputErrText:{
-							ID: 'Required field'
-						}
-					})
-					return true
-				}
-				return false
-			case 2:
-				if(!this.file.files[0]) {
-					this.setState({
-						inputErrText:{
-							file: 'Required field'
+							ID: "Required field"
 						}
 					})
 					return true
@@ -84,22 +73,12 @@ class Languages extends Component {
 		}
 	}
 	handleInputChange(event, index, value) {
-		const target = event.target
-		const name = target.name
 		const {inputErrText} = this.state
-		if(name !== "file") {
-			this.setState({
-				ID: value, 
-				inputErrText: {
-					...inputErrText, 
-					ID: ''
-				}
-			})
-		}
 		this.setState({
+			ID: value, 
 			inputErrText: {
 				...inputErrText, 
-				file: ''
+				ID: ""
 			}
 		})
 	}
@@ -108,9 +87,9 @@ class Languages extends Component {
 		const {ID} = this.state
 		this.props.postLanguage({
 			body: {
-				type: 'FormData', 
-				// Use 'contentType' for 'Blob' type.
-				// contentType: 'application/json', 
+				type: "FormData", 
+				// Use "contentType" for "Blob" type.
+				// contentType: "application/json", 
 				data: {
 					[ID]: {
 						ID: ID, 
@@ -131,9 +110,9 @@ class Languages extends Component {
 			<form>
 				<VerticalStepper 
 					stepLabels={[
-						'Description', 
-						'Language', 
-						'Thumbnail'
+						"Description", 
+						"Language", 
+						"Thumbnail"
 					]} 
 					stepContents={[
 						<p>
@@ -148,10 +127,8 @@ class Languages extends Component {
 							{items}
 						</SelectField>, 
 						<input 
-							type='file'
-							name='file' 
+							type="file"
 							ref={input => this.file = input}
-							onChange={this.handleInputChange}
 						/>
 					]}
 					setInputErrorMessage={this.handleRequiredInput}
@@ -207,7 +184,7 @@ class Languages extends Component {
 			<div style={root}>
 				<GridList 
 					cols={4} 
-					cellHeight='auto'
+					cellHeight="auto"
 					style={gridList}
 				>
 					<GridTile cols={1} />  
@@ -240,7 +217,7 @@ class Languages extends Component {
 								secondary={true}
 								style={{
 									...floatingActionButton, 
-									display: showDialog ? 'none' : 'inline-block'
+									display: showDialog ? "none" : "inline-block"
 								}}
 								onTouchTap={this.toggleDialog}
 							>
@@ -275,6 +252,6 @@ Languages.propTypes = {
 	buttonSet: PropTypes.func.isRequired
 }
 
-Languages.muiName = 'GridList'
+Languages.muiName = "GridList"
 
 export default Languages

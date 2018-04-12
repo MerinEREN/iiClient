@@ -1,8 +1,10 @@
 import createReducer, {
 	paginate, 
-	mergeIntoOrRemoveFromObjectSuccess, 
-	mergeIntoOrRemoveFromObjectFailure, 
-	mergeIntoOrRemoveFromObject
+	mergeIntoOrRemoveFromObjectFetch, 
+	mergeIntoOrResetObject, 
+	entitiesBufferedReset, 
+	mergeIntoOrRemoveFromObject, 
+	resetObject
 } from './utilities'
 import {
 	LANGUAGES_REQUEST, 
@@ -15,21 +17,28 @@ import {
 const languages = createReducer(
 	{}, 
 	{
-		LANGUAGES_SUCCESS: mergeIntoOrRemoveFromObjectSuccess, 
-		LANGUAGES_FAILURE: mergeIntoOrRemoveFromObjectFailure
+		LANGUAGES_SUCCESS: mergeIntoOrResetObject
+	}
+)
+export const languagesBuffered = createReducer(
+	{}, 
+	{
+		LANGUAGES_REQUEST: mergeIntoOrRemoveFromObjectFetch, 
+		LANGUAGES_SUCCESS: mergeIntoOrResetObject, 
+		LANGUAGES_FAILURE: entitiesBufferedReset
 	}
 )
 export const paginationLanguages = paginate({
-	mapActionToKey: action => action.groupID, 
+	mapActionToKey: action => action.key, 
 	types: [
 		LANGUAGES_REQUEST, 
 		LANGUAGES_SUCCESS, 
 		LANGUAGES_FAILURE
 	]
 })
-
 export const languagesSelected = createReducer( {},  
 	{
+		LANGUAGES_SUCCESS: resetObject, 
 		LANGUAGES_SELECTED_ADD_REMOVE: mergeIntoOrRemoveFromObject
 	}
 )

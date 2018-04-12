@@ -6,7 +6,7 @@ import {
 } from '../actions/types'
 
 const languages = paginate({
-	mapActionToKey: action => action.groupID, 
+	mapActionToKey: action => action.key, 
 	types: [
 		COUNTER_LANGUAGES_REQUEST, 
 		COUNTER_LANGUAGES_SUCCESS, 

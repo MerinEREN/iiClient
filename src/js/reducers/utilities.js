@@ -1,4 +1,4 @@
-// import union from 'lodash/union'
+// import union from "lodash/union"
 
 // Returns slice reducer for given action type/function pairs in handlers
 export default function createReducer(initialState, handlers) {
@@ -13,13 +13,13 @@ export default function createReducer(initialState, handlers) {
 // and a function telling how to extract the key from an action.
 export const paginate = ({types, mapActionToKey}) => {
 	if (!Array.isArray(types) || types.length !== 3) {
-		throw new Error('Expected types to be an array of three elements.')
+		throw new Error("Expected types to be an array of three elements.")
 	}
-	if (!types.every(t => typeof t === 'string')) {
-		throw new Error('Expected types to be strings.')
+	if (!types.every(t => typeof t === "string")) {
+		throw new Error("Expected types to be strings.")
 	}
-	/* if (typeof mapActionToKey !== 'function') {
-		throw new Error('Expected mapActionToKey to be a function.')
+	/* if (typeof mapActionToKey !== "function") {
+		throw new Error("Expected mapActionToKey to be a function.")
 	} */
 
 	const [requestType, successType, failureType] = types
@@ -47,63 +47,50 @@ export const paginate = ({types, mapActionToKey}) => {
 					isFetching: true
 				}
 			case successType:
-				// First one is for GET request only.
-				return method === "GET"
-					? 
+				return method === "GET" ? 
 					{
 						...state,
 						// For counts only.
-						value: setValue(response.result), 
+						value: typeof response.result !== "object" ? 
+						response.result :
+						null, 
 						// IDs: union(state.IDs, response.result),
-						IDs: mergeKeysIntoArray(
+						IDs: typeof response.result !== "object" ? 
+						state.IDs : 
+						pushIntoArrayIfNotPresent(
 							state.IDs, 
-							response.result
+							action.response.result
 						), 
-						// The below check is for count requests, they don't return next and previous pagination URLs.
-						nextPageURL: response.nextPageURL ? response.nextPageURL : state.nextPageURL, 
-						prevPageURL: response.prevPageURL ? response.prevPageURL : state.prevPageURL,
-						pageCount: state.pageCount + 1, 
+						nextPageURL: response.nextPageURL || 
+						state.nextPageURL, 
+						prevPageURL: response.prevPageURL || 
+						state.prevPageURL,
+						pageCount: Object.keys(response.result).length ?
+						state.pageCount + 1 : 
+						state.pageCount, 
 						isFetching: false, 
-						didInvalidate: typeof didInvalidate === "undefined"
-					}
-					: 
+						didInvalidate: typeof didInvalidate === 
+						"undefined"
+					} : 
 					{
 						...state,
-						nextPageURL: response.reset ? response.nextPageURL : state.nextPageURL, 
-						prevPageURL: response.reset ? response.prevPageURL : state.prevPageURL,
-						pageCount: response.reset ? 0 : state.pageCount, 
-						isFetching: false, 
-						// didInvalidate: response.reset ? true : false, 
-						IDs: method !== "DELETE" 
-						? 
-						mergeKeysIntoArray(
-							response.reset ? [] : state.IDs, 
-							response.result
-						)
-						:
-						removeFromArray(state.IDs, action)
+						IDs: Object.keys(response.result), 
+						nextPageURL: response.nextPageURL || 
+						state.nextPageURL, 
+						prevPageURL: response.prevPageURL || 
+						state.prevPageURL,
+						pageCount: response.reset ? 
+						1 : 
+						(Object.keys(response.result).length - 1) / 10, 
+						isFetching: false
+						// didInvalidate: response.reset ? 
+						// true : false
 					}
 			case failureType:
-				// return !response 
-				return method === "GET"
-					?
-					{
-						...state,
-						isFetching: false
-					}
-					:
-					{
-						...state,
-						isFetching: false, 
-						IDs: method === "DELETE" 
-						? 
-						mergeKeysIntoArray(
-							state.IDs, 
-							response.result
-						)
-						:
-						removeFromArray(state.IDs, action)
-					}
+				return {
+					...state,
+					isFetching: false
+				}
 			default:
 				return state
 		}
@@ -127,13 +114,13 @@ export const paginate = ({types, mapActionToKey}) => {
 
 export const addDynamicKeySetResetResetAll = ({types, mapActionToKey}) => {
 	if (!Array.isArray(types) || types.length !== 3) {
-		throw new Error('Expected types to be an array of two elements.')
+		throw new Error("Expected types to be an array of two elements.")
 	}
-	if (!types.every(t => typeof t === 'string')) {
-		throw new Error('Expected types to be strings.')
+	if (!types.every(t => typeof t === "string")) {
+		throw new Error("Expected types to be strings.")
 	}
-	if (typeof mapActionToKey !== 'function') {
-		throw new Error('Expected mapActionToKey to be a function.')
+	if (typeof mapActionToKey !== "function") {
+		throw new Error("Expected mapActionToKey to be a function.")
 	}
 
 	const [setType, resetType, resetAllType] = types
@@ -165,73 +152,72 @@ export const addDynamicKeySetResetResetAll = ({types, mapActionToKey}) => {
 	}
 }
 
-function setValue(r){
-	return typeof r === "object" ? null : r
-}
-
-const mergeKeysIntoArray = (IDs, result) => {
-	// if (!result)
-	if (typeof result !== "object")
-		return IDs
-	let array = []
-	Object.keys(result).forEach(k => {
-		if (IDs.indexOf(k) === -1)
-			array.push(k)
+const pushIntoArrayIfNotPresent = (array, obj) => {
+	let IDs = []
+	Object.keys(obj).forEach(v => {
+		if (array.indexOf(v) === -1)
+			IDs.push(v)
 	})
-	return [...IDs, ...array]
+	return [...array, ...IDs]
 }
 
-export const removeFromArray = (IDs, action) => {
-	/* return [
-		...state.slice(0, action.ID.index),
-		...state.slice(action.ID.index + 1)
-	] */
+// COULD BE USED EXTERNALLY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/* export const removeFromArray = (IDs, action) => {
+	// return [
+	//...state.slice(0, action.ID.index),
+	//...state.slice(action.ID.index + 1)
+	// ]
 	// return state.filter( (item, index) => index !== action.response.result.ID.index)
 	const {result} = action.response
 	if (!result)
 		return IDs
 	let map = []
-	for(let id of IDs) {
-		if(!result.hasOwnProperty(id))
+	for (let id of IDs) {
+		if (!result.hasOwnProperty(id))
 			map.push(id)
 	}
 	return map
-}
+} */
 
-export const mergeIntoOrRemoveFromObjectSuccess = (state, action) => {
-	if(action.method === "DELETE")
-		return removeFromObject(state, action)
-	return mergeObjectIntoObject(state, action)
-}
-
-export const mergeIntoOrRemoveFromObjectFailure = (state, action) => {
-	if(action.method === "DELETE")
-		return mergeObjectIntoObject(state, action)
-	return removeFromObject(state, action)
-}
-
-
-const mergeObjectIntoObject = (state, action) => {
+export const mergeIntoOrRemoveFromObjectFetch = (state, action) => {
 	const {
+		method, 
 		response: {
-			result, 
-			reset
+			result
 		}
-	}= action
-	return reset ? {...result} : {...state, ...result}
+	} = action
+	if (method === "DELETE")
+		return removeFromObject(state, action)
+	return result ? {...state, ...result} : state
+}
+
+export const mergeIntoOrResetObject = (state, action) => {
+	const {
+		method, 
+		response: {
+			result
+		}
+	} = action
+	if (action.method !== "GET")
+		return entitiesReset(action)
+	// NESTED VALUES WILL CAUSE PROBLEMS FOR GET SUCCESS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	return result ? {...state, ...result} : state
 }
 
 const removeFromObject = (state, action) => {
-	const {result} = action.response
-	if (!result) // for GET method
-		return state
 	let newState = {}
 	Object.entries(state).forEach(([k, v]) => {
-		if(!result.hasOwnProperty(k))
+		if(!action.response.result.hasOwnProperty(k))
 			newState[k] = v
 	})
 	return newState
 }
+
+const entitiesReset = (action) => action.response.result
+
+export const entitiesBufferedReset = (state, action) => action.method === "GET" ? 
+	state : 
+	action.response.result
 
 export const mergeIntoOrRemoveFromObject = (state, action) => {
 	const {obj} = action
@@ -249,8 +235,13 @@ export const mergeIntoOrRemoveFromObject = (state, action) => {
 		if(!obj.hasOwnProperty(k))
 			newState[k] = v
 	})
-	console.log(newState)
 	return newState
+}
+
+export const resetObject = (state, action) => {
+	if (action.method === "DELETE" || action.method === "POST")
+		return {}
+	return state
 }
 
 export const updateObject = (oldObject, newValues) => {

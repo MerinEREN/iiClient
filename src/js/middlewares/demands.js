@@ -8,7 +8,7 @@ import {
 const loadDemands = makeLoader({
 	defaults: {
 		URL: '/demands', 
-		path: ['demands']
+		path: 'demands'
 	},
 	actionCreators: {
 		actionsRequest: [demandsRequest],

@@ -1,13 +1,14 @@
 import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
 import LanguagesComponent from "../components/languages"
-import getLanguages, {postLanguage, deleteLanguages}  from "../middlewares/languages"
+import getLanguages, {deleteLanguages}  from "../middlewares/languages"
+import {postLanguage}  from "../middlewares/language"
 import {buttonSet} from "../actions/buttons"
 
 // Can use ownProps here.
 const mapStateToProps = state => {
 	return {
-		languages: state.entities.languages, 
+		languages: state.entitiesBuffered.languages, 
 		languagesSelected: state.appState.languages, 
 		deleteClicked: state.appState.buttons.clicked.languagesDelete
 	}

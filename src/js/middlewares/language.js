@@ -4,10 +4,11 @@ import {
 	languagesFailure
 } from '../actions/languages'
 
-export const deleteLanguage = makeLoader({
+export const postLanguage = makeLoader({
 	defaults: {
-		method: 'DELETE', 
-		path: ['languages']
+		URL: '/languages', 
+		method: 'POST', 
+		path: 'languages'
 	},
 	actionCreators: {
 		actionsSuccess: [languagesSuccess],

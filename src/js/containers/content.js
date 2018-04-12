@@ -9,7 +9,7 @@ import {buttonReset} from "../actions/buttons"
 // Can use ownProps here.
 const mapStateToProps = state => {
 	return {
-		allPages: state.entities.pages
+		allPages: state.entitiesBuffered.pages
 	}
 }
 

@@ -5,7 +5,7 @@ import getPage, {deletePage, putPage} from '../middlewares/page'
 
 const mapStateToProps = (state, ownProps) => {
 	return {
-		page: state.entities.pages[ownProps.params.ID]
+		page: state.entitiesBuffered.pages[ownProps.params.ID]
 	}
 }
 

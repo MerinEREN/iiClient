@@ -40,8 +40,8 @@ class Contents extends Component {
 		this.handleCreateNewContents = this.handleCreateNewContents.bind(this)
 		this.handleUpdate = this.handleUpdate.bind(this)
 		this.toggleDialog = this.toggleDialog.bind(this)
-		this.handleSave = this.handleSave.bind(this)
 		this.handlePost = this.handlePost.bind(this)
+		this.handlePut = this.handlePut.bind(this)
 		this.handleDelete = this.handleDelete.bind(this)
 	}
 	componentWillMount() {
@@ -112,10 +112,9 @@ class Contents extends Component {
 			this.setState({initNewContents: false})
 		}
 	}
-	handleSave() {
+	handlePost() {
 		var tempObj = {}
 		Object.entries(this.state.newContents).forEach( a => {
-			// if(a[1].en !== '' && a[1].tr !== '')
 			if(a[1].values.en !== '')
 				tempObj[a[0]] = a[1]
 		})
@@ -130,11 +129,18 @@ class Contents extends Component {
 			initNewContents: true, 
 			newContents: {}
 		})
-		this.handlePost()
+		this.props.postContents({
+			body: {
+				type: 'Blob', 
+				contentType: 'application/json', 
+				data: tempObj
+			}
+		})
 	}
 	handleRequiredInput(contents) {
 		const {inputErrTexts} = this.state
 		return Object.entries(contents).every(a => {
+			// Not necessary for newContents but necessary for contents
 			if(a[1].values.en === '') {
 				this.setState({
 					inputErrTexts: {
@@ -162,11 +168,11 @@ class Contents extends Component {
 			return true
 		})
 	}
-	handlePost() {
-		const {contents, postContents} = this.props
+	handlePut() {
+		const {contents, putContents} = this.props
 		if(!this.handleRequiredInput(contents))
 			return
-		postContents({
+		putContents({
 			body: {
 				type: 'Blob', 
 				contentType: 'application/json', 
@@ -179,7 +185,6 @@ class Contents extends Component {
 		deleteContents({
 			URL: `/contents/?IDs=${generateURLVariableFromIDs(contentsSelected)}`, 
 			body: {
-				type: "FormData", 
 				data: contentsSelected
 			}
 		})
@@ -236,7 +241,7 @@ class Contents extends Component {
 			<FlatButton
 				label="Save"
 				primary={true}
-				onTouchTap={this.handleSave}
+				onTouchTap={this.handlePost}
 			/>
 		]
 		return (
@@ -269,7 +274,7 @@ class Contents extends Component {
 								label="Save"
 								style={raisedButton}
 								primary={true}
-								onTouchTap={this.handlePost}
+								onTouchTap={this.handlePut}
 							/>
 					}
 					{
@@ -321,6 +326,7 @@ Contents.propTypes = {
 	getContents: PropTypes.func.isRequired, 
 	contents: PropTypes.object.isRequired, 
 	postContents: PropTypes.func.isRequired, 
+	putContents: PropTypes.func.isRequired, 
 	contentsSelected: PropTypes.object.isRequired, 
 	deleteContents: PropTypes.func.isRequired, 
 	deleteClicked: PropTypes.bool.isRequired, 

@@ -1,13 +1,13 @@
-import {makeLoader} from './utilities'
+import {makeLoader} from "./utilities"
 import {
 	pagesRequest, 
 	pagesSuccess, 
 	pagesFailure
-} from '../actions/pages'
+} from "../actions/pages"
 import {
 	pageSuccess, 
 	pageFailure
-} from '../actions/page'
+} from "../actions/page"
 
 const getPage = makeLoader({
 	actionCreators: {
@@ -19,8 +19,8 @@ const getPage = makeLoader({
 })
 export const deletePage = makeLoader({
 	defaults: {
-		method: 'DELETE', 
-		path: ['pages']
+		method: "DELETE", 
+		path: "pages"
 	},
 	actionCreators: {
 		actionsSuccess: [pagesSuccess],
@@ -33,7 +33,8 @@ export const deletePage = makeLoader({
 })
 export const putPage = makeLoader({
 	defaults: {
-		method: 'PUT', 
+		method: "PUT", 
+		path: "pages"
 	},
 	actionCreators: {
 		actionsSuccess: [pageSuccess],

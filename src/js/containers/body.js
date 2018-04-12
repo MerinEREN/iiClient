@@ -49,7 +49,7 @@ const mapStateToProps = state => {
 		    } */
 	const {
 		appState: {snackbar, isFetching}, 
-		entities: {accounts, users}
+		entitiesBuffered: {accounts, users}
 	} = state
 	return {
 		isFetching,

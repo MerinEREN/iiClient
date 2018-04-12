@@ -5,7 +5,7 @@ import getLanguages from '../middlewares/languages'
 
 const mapStateToProps = state => {
 	return {
-		languages: state.entities.languages, 
+		languages: state.entitiesBuffered.languages, 
 		signOutURL: state.signOutURL
 	}
 }

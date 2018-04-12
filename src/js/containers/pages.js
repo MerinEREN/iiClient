@@ -6,7 +6,7 @@ import getPages, {postPage}  from '../middlewares/pages'
 // Can use ownProps here.
 const mapStateToProps = state => {
 	return {
-		pages: state.entities.pages
+		pages: state.entitiesBuffered.pages
 	}
 }
 

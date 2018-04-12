@@ -8,7 +8,7 @@ import {
 const getPages = makeLoader({
 	defaults: {
 		URL: '/pages', 
-		path: ['pages']
+		path: 'pages'
 	},
 	actionCreators: {
 		actionsRequest: [pagesRequest],
@@ -24,7 +24,7 @@ export const postPage = makeLoader({
 	defaults: {
 		URL: '/pages', 
 		method: 'POST', 
-		path: ['pages']
+		path: 'pages'
 	},
 	actionCreators: {
 		actionsSuccess: [pagesSuccess],
