@@ -1,29 +1,8 @@
 import makeActionCreator from './creator'
 import {
-	COUNTER_TIMELINE_REQUEST, 
-	COUNTER_TIMELINE_SUCCESS, 
-	COUNTER_TIMELINE_FAILURE, 
-	/* COUNTER_LANGUAGES_REQUEST, 
-	COUNTER_LANGUAGES_SUCCESS, 
-	COUNTER_LANGUAGES_FAILURE */
+	COUNTER_SUCCESS
 } from './types'
 
-export const counterTimelineRequest = makeActionCreator(
-	COUNTER_TIMELINE_REQUEST
+export const counterSuccess = makeActionCreator(
+	COUNTER_SUCCESS
 )
-export const counterTimelineSuccess = makeActionCreator(
-	COUNTER_TIMELINE_SUCCESS
-)
-export const counterTimelineFailure = makeActionCreator(
-	COUNTER_TIMELINE_FAILURE
-)
-
-/* export const counterLanguagesRequest = makeActionCreator(
-	COUNTER_LANGUAGES_REQUEST
-)
-export const counterLanguagesSuccess = makeActionCreator(
-	COUNTER_LANGUAGES_SUCCESS
-)
-export const counterLanguagesFailure = makeActionCreator(
-	COUNTER_LANGUAGES_FAILURE
-) */

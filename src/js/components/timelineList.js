@@ -7,7 +7,7 @@ import ServicePack from "../components/servicePack"
 
 class TimelineList extends Component {
 	componentWillMount() {
-		this.props.loadData()
+		this.props.getItems({key: "timeline"})
 	}
 	render() {
 		const {items} =  this.props 
@@ -63,7 +63,7 @@ TimelineList.propTypes = {
 		}))
 	})), */
 	items: PropTypes.array, 
-	loadData: PropTypes.func.isRequired, 
+	getItems: PropTypes.func.isRequired, 
 }
 
 TimelineList.muiName = 'List'

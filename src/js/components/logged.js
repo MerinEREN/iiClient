@@ -42,7 +42,7 @@ class Logged  extends Component {
 	}
 	render() {
 		const {
-			acc, 
+			account, 
 			user, 
 			languages, 
 			signOutURL
@@ -77,12 +77,12 @@ class Logged  extends Component {
 							rightIcon={<Language />}
 							menuItems={
 								Object.values(languages).
-									map(l => <MenuItem primaryText={l.code} />)
+									map(l => <MenuItem primaryText={l.ID} />)
 							}
 						/>
 				}
 				<a 
-					href={signOutURL.value}
+					href={signOutURL}
 					style={styles.a}
 				>
 					<MenuItem 
@@ -98,9 +98,9 @@ class Logged  extends Component {
 
 Logged.propTypes = {
 	user: PropTypes.object.isRequired, 
-	acc: PropTypes.object.isRequired, 
+	account: PropTypes.object.isRequired, 
 	languages: PropTypes.object.isRequired, 
-	signOutURL: PropTypes.object.isRequired, 
+	signOutURL: PropTypes.string.isRequired, 
 	getLanguages: PropTypes.func.isRequired
 }
 

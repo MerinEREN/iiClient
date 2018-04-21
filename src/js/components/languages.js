@@ -9,7 +9,7 @@ import FlatButton from "material-ui/FlatButton"
 import VerticalStepper from "./verticalStepper"
 import SelectField from "material-ui/SelectField"
 import MenuItem from "material-ui/MenuItem"
-import Language from "./language"
+import LanguageTile from "./languageTile"
 import {generateURLVariableFromIDs} from "./utilities"
 
 const styles = {
@@ -48,9 +48,9 @@ class Languages extends Component {
 			inputErrText: {}
 		}
 		this.toggleDialog = this.toggleDialog.bind(this)
-		this.handlePost = this.handlePost.bind(this)
 		this.handleRequiredInput = this.handleRequiredInput.bind(this)
 		this.handleInputChange = this.handleInputChange.bind(this)
+		this.handlePost = this.handlePost.bind(this)
 		this.handleDelete = this.handleDelete.bind(this)
 	}
 	componentWillMount() {
@@ -104,56 +104,24 @@ class Languages extends Component {
 		const {showDialog} = this.state
 		this.setState({showDialog: !showDialog})
 	}
-	addForm() {
-		const {inputErrText, ID} = this.state
-		return (
-			<form>
-				<VerticalStepper 
-					stepLabels={[
-						"Description", 
-						"Language", 
-						"Thumbnail"
-					]} 
-					stepContents={[
-						<p>
-							Select a language from the select field.
-						</p>, 
-						<SelectField 
-							value={ID}
-							floatingLabelText="Language" 
-							errorText={inputErrText.ID}
-							onChange={this.handleInputChange}
-						>
-							{items}
-						</SelectField>, 
-						<input 
-							type="file"
-							ref={input => this.file = input}
-						/>
-					]}
-					setInputErrorMessage={this.handleRequiredInput}
-				/>
-			</form>
-		)
-	}
 	handleDelete() {
-		const {languagesSelected, deleteLanguages, buttonSet} = this.props
+		const {languageIDsSelected, deleteLanguages, buttonSet} = this.props
 		deleteLanguages({
-			URL: `/languages/?IDs=${generateURLVariableFromIDs(languagesSelected)}`, 
+			URL: `/languages?IDs=${generateURLVariableFromIDs(languageIDsSelected)}`, 
 			body: {
 				type: "FormData", 
-				data: languagesSelected
+				data: languageIDsSelected
 			}
 		})
 		buttonSet("languagesDelete")
 	}
-	languages(languages) {
-		const {languagesSelected} = this.props
+	languageTiles(languages) {
+		const {languageIDsSelected} = this.props
 		return Object.values(languages).map(v => 
-			<Language 
+			<LanguageTile 
 				key={v.ID} 
 				language={v} 
-				isChecked={!(Object.keys(languagesSelected).indexOf(v.ID) === -1)}
+				isChecked={languageIDsSelected.indexOf(v.ID) !== -1}
 			/>)
 	}
 	render() {
@@ -163,12 +131,41 @@ class Languages extends Component {
 			raisedButton, 
 			floatingActionButton
 		} = styles
-		const {showDialog} = this.state
+		const {
+			showDialog, 
+			inputErrText, 
+			ID
+		} = this.state
 		const {
 			languages, 
-			languagesSelected, 
+			languageIDsSelected, 
 			deleteClicked
 		} = this.props
+		const children = <VerticalStepper 
+			stepLabels={[
+				"Description", 
+				"Language", 
+				"Thumbnail"
+			]} 
+			stepContents={[
+				<p>
+					Select a language from the select field.
+				</p>, 
+				<SelectField 
+					value={ID}
+					floatingLabelText="Language" 
+					errorText={inputErrText.ID}
+					onChange={this.handleInputChange}
+				>
+					{items}
+				</SelectField>, 
+				<input 
+					type="file"
+					ref={input => this.file = input}
+				/>
+			]}
+			setInputErrorMessage={this.handleRequiredInput}
+		/>
 		const actions = [
 			<FlatButton
 				label="Close"
@@ -198,13 +195,13 @@ class Languages extends Component {
 								padding={10}
 								cellHeight={333}
 							>
-								{this.languages(languages)}
+								{this.languageTiles(languages)}
 							</GridList>
 							:
 							<h3>No Languages</h3>
 					}
 					{
-						(!deleteClicked && Object.keys(languagesSelected).length > 0)
+						(!deleteClicked && languageIDsSelected.length > 0)
 							&& 
 							<RaisedButton
 								label="Delete"
@@ -228,7 +225,7 @@ class Languages extends Component {
 				</GridList>
 				<Dialog
 					title="Add New Language"
-					children={this.addForm()}
+					children={children}
 					actions={actions}
 					modal={true}
 					open={showDialog} 
@@ -246,7 +243,7 @@ Languages.propTypes = {
 	getLanguages: PropTypes.func.isRequired, 
 	languages: PropTypes.object.isRequired, 
 	postLanguage: PropTypes.func.isRequired, 
-	languagesSelected: PropTypes.object.isRequired, 
+	languageIDsSelected: PropTypes.array.isRequired, 
 	deleteLanguages: PropTypes.func.isRequired,
 	deleteClicked: PropTypes.bool.isRequired, 
 	buttonSet: PropTypes.func.isRequired

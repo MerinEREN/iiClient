@@ -1,19 +1,19 @@
 import {makeLoader} from "./utilities"
 import {
-	pageSuccess
-} from "../actions/page"
+	userSuccess
+} from "../actions/user"
 
-const getPage = makeLoader({
+const getUser = makeLoader({
 	actionCreators: {
-		actionsSuccess: [pageSuccess]
+		actionsSuccess: [userSuccess]
 	}
 })
-export const putPage = makeLoader({
+export const putUser = makeLoader({
 	defaults: {
 		method: "PUT"
 	},
 	actionCreators: {
-		actionsSuccess: [pageSuccess]
+		actionsSuccess: [userSuccess]
 	}, 
 	options: {
 		showSnackbar: true, 
@@ -21,4 +21,4 @@ export const putPage = makeLoader({
 	}
 })
 
-export default getPage
+export default getUser

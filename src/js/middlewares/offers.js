@@ -1,20 +1,51 @@
-import {makeLoader} from './utilities'
+import {makeLoader} from "./utilities"
 import {
 	offersRequest, 
 	offersSuccess, 
 	offersFailure
-} from '../actions/offers'
+} from "../actions/offers"
 
-const loadOffers = makeLoader({
+const getOffers = makeLoader({
 	defaults: {
-		URL: '/offers', 
-		path: 'offers'
+		URL: "/offers", 
+		kind: "offers"
 	},
 	actionCreators: {
 		actionsRequest: [offersRequest],
 		actionsSuccess: [offersSuccess],
 		actionsFailure: [offersFailure]
 	}
-	})
+})
+export const deleteOffers = makeLoader({
+	defaults: {
+		method: "DELETE", 
+		kind: "offers"
+	},
+	actionCreators: {
+		actionsRequest: [offersRequest],
+		actionsSuccess: [offersSuccess],
+		actionsFailure: [offersFailure]
+	}, 
+	options: {
+		hideFetching: true, 
+		showSnackbar: true
+	}
+})
+export const postOffer = makeLoader({
+	defaults: {
+		method: "POST", 
+		URL: "/offers", 
+		kind: "offers"
+	},
+	actionCreators: {
+		actionsRequest: [offersRequest],
+		actionsSuccess: [offersSuccess],
+		actionsFailure: [offersFailure]
+	}, 
+	options: {
+		hideFetching: true, 
+		showSnackbar: true
+	}
+})
 
-export default loadOffers
+export default getOffers

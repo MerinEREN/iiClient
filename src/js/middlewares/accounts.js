@@ -1,16 +1,15 @@
-import {makeLoader} from './utilities'
+import {makeLoader} from "./utilities"
 import {
 	accountsRequest, 
 	accountsSuccess, 
 	accountsFailure
-} from '../actions/accounts'
+} from "../actions/accounts"
 
-// Should be loadAccountsByTags in the future !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // Get tags as args to filter result.
-const loadAccounts = makeLoader({
+const getAccounts = makeLoader({
 	defaults: {
-		URL: '/accounts/', 
-		path: 'accounts'
+		URL: "/accounts", 
+		kind: "accounts"
 	}, 
 	actionCreators: {
 		actionsRequest: [accountsRequest],
@@ -19,4 +18,4 @@ const loadAccounts = makeLoader({
 	}
 	})
 
-export default loadAccounts
+export default getAccounts

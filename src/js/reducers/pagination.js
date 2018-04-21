@@ -1,7 +1,6 @@
 import {combineReducers} from 'redux'
-import countersByComponent from './counters'
 import {paginationAccounts as accounts} from './accounts'
-import {paginationUsers as usersByAccount} from './users'
+import {paginationUsers as users} from './users'
 import {paginationLanguages as languages} from './languages'
 import {paginationPages as pages} from './pages'
 import {paginationContents as contents} from './contents'
@@ -12,9 +11,8 @@ import {paginationServicePacks as servicePacks} from './servicePacks'
 
 // Higher-Order Reducer
 const pagination = combineReducers({
-	countersByComponent, 
 	accounts, 
-	usersByAccount,
+	users,
 	languages, 
 	pages, 
 	contents, 

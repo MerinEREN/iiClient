@@ -40,13 +40,14 @@ class Page extends Component {
 		}
 		this.toggleDialog = this.toggleDialog.bind(this)
 		this.handlePut = this.handlePut.bind(this)
+		this.handleDelete = this.handleDelete.bind(this)
 		this.handleRequiredInput = this.handleRequiredInput.bind(this)
 		this.handleInputChange = this.handleInputChange.bind(this)
 	}
 	componentWillMount() {
 		const {getPage, params: {ID}} = this.props
 		getPage({
-			URL: `/pages/?ID=${ID}`
+			URL: `/pages/${ID}`
 		})
 
 	}
@@ -80,7 +81,7 @@ class Page extends Component {
 		const {title} = this.state
 		const {putPage, params: {ID}, page} = this.props
 		putPage({
-			URL: `/pages/?ID=${ID}`, 
+			URL: `/pages/${ID}`, 
 			body: {
 				type: "FormData", 
 				// Use "contentType" for "Blob" type.
@@ -95,12 +96,12 @@ class Page extends Component {
 		})
 		this.setState({title: ""})
 	}
-	handleDelete(ID, pageObj) {
-		this.props.deletePage({
-			URL: `/pages/?ID=${ID}`, 
+	handleDelete() {
+		const {params: {ID}, deletePages} = this.props
+		deletePages({
+			URL: `/pages/${ID}`, 
 			body: {
-				type: "FormData", 
-				data: pageObj
+				data: [ID]
 			}
 		})
 		browserHistory.goBack()
@@ -140,7 +141,7 @@ class Page extends Component {
 	}
 	render() {
 		const {showDialog} = this.state
-		const {page, params: {ID}} = this.props
+		const {page} = this.props
 		const actions = [
 			<FlatButton
 				label="Close"
@@ -169,7 +170,7 @@ class Page extends Component {
 						<FlatButton 
 							label="Delete" 
 							secondary={true}
-							onTouchTap={() => this.handleDelete(ID, {[ID]: page})} 
+							onTouchTap={this.handleDelete} 
 						/>
 					</CardActions>
 				</Card>
@@ -201,9 +202,10 @@ Page.defaultProps = {
 }
 
 Page.propTypes = {
-	getPage: PropTypes.func.isRequired, 
 	page: PropTypes.object.isRequired, 
-	putPage: PropTypes.func.isRequired
+	getPage: PropTypes.func.isRequired, 
+	putPage: PropTypes.func.isRequired, 
+	deletePages: PropTypes.func.isRequired
 }
 
 export default Page

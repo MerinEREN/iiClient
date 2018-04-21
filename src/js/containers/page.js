@@ -1,7 +1,8 @@
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import PageComponent from '../components/page'
-import getPage, {deletePage, putPage} from '../middlewares/page'
+import getPage, {putPage} from '../middlewares/page'
+import {deletePages} from '../middlewares/pages'
 
 const mapStateToProps = (state, ownProps) => {
 	return {
@@ -12,8 +13,8 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
 		getPage, 
-		deletePage, 
-		putPage
+		putPage, 
+		deletePages
 	},
 	dispatch
 )

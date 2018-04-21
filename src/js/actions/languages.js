@@ -1,10 +1,10 @@
-import makeActionCreator from './creator'
+import makeActionCreator from "./creator"
 import {
 	LANGUAGES_REQUEST, 
 	LANGUAGES_SUCCESS, 
 	LANGUAGES_FAILURE, 
-	LANGUAGES_SELECTED_ADD_REMOVE
-} from './types'
+	LANGUAGEIDS_SELECTED_ADD_REMOVE
+} from "./types"
 
 // Action Creators
 export const languagesRequest = makeActionCreator(
@@ -16,7 +16,7 @@ export const languagesSuccess = makeActionCreator(
 export const languagesFailure = makeActionCreator(
 	LANGUAGES_FAILURE
 )
-export const selectedLanguagesAddRemove = makeActionCreator(
-	LANGUAGES_SELECTED_ADD_REMOVE, 
-	'obj'
+export const selectedLanguageIDsAddRemove = makeActionCreator(
+	LANGUAGEIDS_SELECTED_ADD_REMOVE, 
+	"ID"
 )

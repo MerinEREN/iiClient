@@ -53,7 +53,7 @@ const styles = {
 	}
 }
 
-const drawer = ({cookies, acc, user, open, changeTheme, toggleDrawer}) => (
+const drawer = ({cookies, account, user, open, changeTheme, toggleDrawer}) => (
 	<Drawer 
 		open={open}
 		containerStyle={styles.drawer.containerStyle}
@@ -82,7 +82,9 @@ const drawer = ({cookies, acc, user, open, changeTheme, toggleDrawer}) => (
 						/>
 					}
 				>
-					<img src={acc.photo.path || '/img/matrix.gif'} />
+					<img 
+						src={account.photo.path || '/img/matrix.gif'} 
+					/>
 				</CardMedia>
 			</CardTitle>
 			<CardText expandable={true}>
@@ -230,7 +232,7 @@ const drawer = ({cookies, acc, user, open, changeTheme, toggleDrawer}) => (
 			<ListItem 
 				containerElement={
 					<Link
-						to={"/accounts/" + acc.ID}
+						to={"/accounts/" + account.ID}
 						activeStyle={styles.link.activeStyle}
 					/>
 				} 
@@ -242,7 +244,7 @@ const drawer = ({cookies, acc, user, open, changeTheme, toggleDrawer}) => (
 					<Link
 						// add if at accounts page control to
 						// attribute 'to'
-						// to={condition ? '/demands' : `/${acc.ID}/demands`}
+						// to={condition ? '/demands' : `/${account.ID}/demands`}
 						to="/demands"
 						activeStyle={styles.link.activeStyle}
 					/>
@@ -357,7 +359,7 @@ const drawer = ({cookies, acc, user, open, changeTheme, toggleDrawer}) => (
 drawer.propTypes = {
 	cookies: instanceOf(Cookies).isRequired, 
 	open: PropTypes.bool.isRequired,
-	acc: PropTypes.object,
+	account: PropTypes.object,
 	user: PropTypes.object,
 	changeTheme: PropTypes.func.isRequired,
 	toggleDrawer: PropTypes.func.isRequired,

@@ -1,9 +1,9 @@
 import makeActionCreator from './creator'
 import {
-	PAGE_SUCCESS
+	DEMAND_SUCCESS
 } from './types'
 
 // Action Creators
-export const pageSuccess = makeActionCreator(
-	PAGE_SUCCESS
+export const demandSuccess = makeActionCreator(
+	DEMAND_SUCCESS
 )

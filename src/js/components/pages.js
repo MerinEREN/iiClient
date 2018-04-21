@@ -1,14 +1,16 @@
 import React, {Component} from "react"
 import PropTypes from "prop-types"
-import {Link} from "react-router"
 import {GridList, GridTile} from "material-ui/GridList"
 import FloatingActionButton from "material-ui/FloatingActionButton"
 import ContentAdd from "material-ui/svg-icons/content/add"
 import Dialog from "material-ui/Dialog"
 import FlatButton from "material-ui/FlatButton"
+import RaisedButton from 'material-ui/RaisedButton'
 import VerticalStepper from "./verticalStepper"
 import TextField from "material-ui/TextField"
 import {trimSpace} from "../middlewares/utilities"
+import PageTile from "./pageTile"
+import {generateURLVariableFromIDs} from './utilities'
 
 const styles = {
 	root: {
@@ -19,16 +21,8 @@ const styles = {
 	gridList: {
 		margin: 0
 	}, 
-	link: {
-		activeStyle: {
-			color: "#0097a7"
-		}
-	}, 
-	gridTile: {
-		titleBackground: "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.3) 70%,rgba(0,0,0,0) 100%)", 
-		style: {
-			cursor: "pointer"
-		}
+	raisedButton: {
+		marginLeft: 12
 	}, 
 	floatingActionButton: {
 		position: "fixed",
@@ -46,9 +40,10 @@ class Pages extends Component {
 			inputErrText: {}
 		}
 		this.toggleDialog = this.toggleDialog.bind(this)
-		this.handlePost = this.handlePost.bind(this)
 		this.handleRequiredInput = this.handleRequiredInput.bind(this)
 		this.handleInputChange = this.handleInputChange.bind(this)
+		this.handlePost = this.handlePost.bind(this)
+		this.handleDelete = this.handleDelete.bind(this)
 	}
 	componentWillMount() {
 		this.props.getPages()
@@ -101,62 +96,73 @@ class Pages extends Component {
 		const {showDialog} = this.state
 		this.setState({showDialog: !showDialog})
 	}
-	page(ID, p) {
-		return (
-			<GridTile  
-				key={ID}
-				title={p.title}
-				titleBackground={styles.gridTile.titleBackground} 
-				cols={ID === "Root" ? 2 : 1} 
-				rows={ID === "Root" ? 1 : 1}
-				style={styles.gridTile.style} 
-				containerElement={
-					<Link 
-						to={`/pages/${p.ID}`} 
-						activeStyle={styles.link.activeStyle} 
-					/> 
-				}
-			>
-				<img src={p.link || "/img/adele.jpg"} />
-			</GridTile>
-		)
+	handleDelete() {
+		const {
+			pageIDsSelected, 
+			deletePages, 
+			buttonSet
+		}= this.props
+		deletePages({
+			URL: `/pages?IDs=${generateURLVariableFromIDs(pageIDsSelected)}`, 
+			body: {
+				data: pageIDsSelected
+			}
+		})
+		buttonSet("pagesDelete")
 	}
-	addPageForm() {
-		const {inputErrText, title} = this.state
-		return (
-			<form>
-				<VerticalStepper 
-					stepLabels={[
-						"Description", 
-						"Page Title", 
-						"Page Thumbnail"
-					]} 
-					stepContents={[
-						<p>
-							Create a new page with a name.
-							Uploading a file as a page foto is 
-							not required.
-						</p>, 
-						<TextField 
-							name="title" 
-							value={title}
-							floatingLabelText="Page Title" 
-							errorText={inputErrText.title}
-							onChange={this.handleInputChange}
-						/>, 
-						<input 
-							type="file"
-							ref={input => this.file = input}
-						/>
-					]}
-					setInputErrorMessage={this.handleRequiredInput}
-				/>
-			</form>
-		)
+	pageTiles(pages) {
+		return Object.entries(pages).map(([k, v]) => {
+			console.log(this.props.pageIDsSelected.indexOf(k) !== -1)
+			return <PageTile
+				key={k} 
+				page={v} 
+				isChecked={this.props.pageIDsSelected.indexOf(k) !== -1}
+			/>
+		})
 	}
 	render() {
-		const {showDialog} = this.state
-		const {pages} = this.props
+		const {
+			root, 
+			gridList, 
+			raisedButton, 
+			floatingActionButton
+		} = styles
+		const {
+			showDialog, 
+			title, 
+			inputErrText
+		} = this.state
+		const {
+			pages, 
+			pageIDsSelected, 
+			deleteClicked
+		} = this.props
+		const children = <VerticalStepper 
+			stepLabels={[
+				"Description", 
+				"Page Title", 
+				"Page Thumbnail"
+			]} 
+			stepContents={[
+				<p>
+					Create a new page with a name.
+					Uploading a file as a page foto is 
+					not required.
+				</p>, 
+				<TextField 
+					name="title" 
+					value={title}
+					floatingLabelText="Page Title" 
+					errorText={inputErrText.title}
+					onChange={this.handleInputChange}
+				/>, 
+				<input 
+					type="file"
+					ref={input => this.file = input}
+				/>
+			]}
+			setInputErrorMessage={this.handleRequiredInput}
+		/>
 		const actions = [
 			<FlatButton
 				label="Close"
@@ -169,44 +175,54 @@ class Pages extends Component {
 			/>
 		]
 		return (
-			<div style={styles.root}>
+			<div style={root}>
 				<GridList 
 					cols={4} 
 					cellHeight="auto"
-					style={styles.gridList}
+					style={gridList}
 				>
 					<GridTile cols={1} />  
 					<GridTile cols={2}>  
-						<GridList 
-							style={styles.gridList}
-							cols={4}
-							padding={10}
-							cellHeight={333}
-						>
-							{ 
-								Object.entries(pages).length !== 0 
-									? 
-									Object.entries(pages).map(a => this.page(...a))
-									:
-									<h3>No Pages</h3>
-							}
-							<FloatingActionButton 
-								secondary={true}
-								style={{
-									...styles.floatingActionButton, 
-									display: showDialog ? "none" : "inline-block"
-								}}
-								onTouchTap={this.toggleDialog}
+						{ 
+							Object.entries(pages).length !== 0 
+							? 
+							<GridList 
+								style={gridList}
+								cols={4}
+								padding={10}
+								cellHeight={333}
 							>
-								<ContentAdd />
-							</FloatingActionButton>
-						</GridList>
+								{this.pageTiles(pages)}
+							</GridList>
+							:
+							<h3>No Pages</h3>
+						}
+						{
+							(!deleteClicked && pageIDsSelected.length > 0)
+								&& 
+								<RaisedButton
+									label="Delete"
+									style={raisedButton}
+									secondary={true}
+									onTouchTap={this.handleDelete}
+								/>
+						}
+						<FloatingActionButton 
+							secondary={true}
+							style={{
+								...floatingActionButton, 
+								display: showDialog ? "none" : "inline-block"
+							}}
+							onTouchTap={this.toggleDialog}
+						>
+							<ContentAdd />
+						</FloatingActionButton>
 					</GridTile>
 					<GridTile cols={1} />  
 				</GridList>
 				<Dialog
 					title="Add New Page"
-					children={this.addPageForm()}
+					children={children}
 					actions={actions}
 					modal={true}
 					open={showDialog} 
@@ -216,10 +232,18 @@ class Pages extends Component {
 	}
 }
 
+Pages.defaultProps = {
+	deleteClicked: false
+}
+
 Pages.propTypes = {
 	getPages: PropTypes.func.isRequired, 
 	pages: PropTypes.object.isRequired, 
-	postPage: PropTypes.func.isRequired
+	postPage: PropTypes.func.isRequired, 
+	pageIDsSelected: PropTypes.array.isRequired, 
+	deletePages: PropTypes.func.isRequired, 
+	deleteClicked: PropTypes.bool.isRequired, 
+	buttonSet: PropTypes.func.isRequired
 }
 
 Pages.muiName = "GridList"

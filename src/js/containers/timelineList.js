@@ -1,7 +1,7 @@
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import TimelineListComponent from '../components/timelineList'
-import loadData from '../middlewares/timelineList'
+import getItems from '../middlewares/timelineList'
 
 const sortByLastModified = (is) => {
 	// Return sorted items array here.
@@ -55,7 +55,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
-		loadData
+		getItems
 	},
 	dispatch
 )

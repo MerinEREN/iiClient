@@ -3,7 +3,7 @@ import {connect} from "react-redux"
 import PropTypes from "prop-types"
 import {GridTile} from "material-ui/GridList"
 import Checkbox from "material-ui/Checkbox"
-import {selectedLanguagesAddRemove} from "../actions/languages"
+import {selectedLanguageIDsAddRemove} from "../actions/languages"
 import {buttonReset} from "../actions/buttons"
 
 const styles = {
@@ -15,7 +15,7 @@ const styles = {
 	}
 }
 
-const Language = ({language, isChecked, dispatch}) => {
+const LanguageTile = ({language, isChecked, dispatch}) => {
 	const {
 		gridTile: {
 			marginTop, 
@@ -40,9 +40,7 @@ const Language = ({language, isChecked, dispatch}) => {
 					checked={isChecked}
 					onCheck={() => {
 						dispatch(buttonReset("languagesDelete"))
-						dispatch(selectedLanguagesAddRemove(
-							{[language.ID]: language}
-						))
+						dispatch(selectedLanguageIDsAddRemove(language.ID))
 					}}
 				/>
 			}
@@ -53,11 +51,11 @@ const Language = ({language, isChecked, dispatch}) => {
 	)
 }
 
-Language.propTypes = {
+LanguageTile.propTypes = {
 	language: PropTypes.object.isRequired, 
 	isChecked: PropTypes.bool.isRequired
 }
 
-// Language.muiName = "GridTile"
+// LanguageTile.muiName = "GridTile"
 
-export default connect()(Language)
+export default connect()(LanguageTile)

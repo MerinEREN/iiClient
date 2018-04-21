@@ -1,14 +1,14 @@
-import {makeLoader} from './utilities'
+import {makeLoader} from "./utilities"
 import {
 	demandsRequest, 
 	demandsSuccess, 
 	demandsFailure
-} from '../actions/demands'
+} from "../actions/demands"
 
-const loadDemands = makeLoader({
+const getDemands = makeLoader({
 	defaults: {
-		URL: '/demands', 
-		path: 'demands'
+		URL: "/demands", 
+		kind: "demands"
 	},
 	actionCreators: {
 		actionsRequest: [demandsRequest],
@@ -16,5 +16,20 @@ const loadDemands = makeLoader({
 		actionsFailure: [demandsFailure]
 	}
 	})
-
-export default loadDemands
+export const postDemand = makeLoader({
+	defaults: {
+		method: "POST", 
+		URL: "/demands", 
+		kind: "demands"
+	},
+	actionCreators: {
+		actionsRequest: [demandsRequest],
+		actionsSuccess: [demandsSuccess],
+		actionsFailure: [demandsFailure]
+	}, 
+	options: {
+		hideFetching: true, 
+		showSnackbar: true
+	}
+})
+export default getDemands

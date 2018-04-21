@@ -1,11 +1,10 @@
-import makeActionCreator from './creator'
+import makeActionCreator from "./creator"
 import {
 	CONTENTS_REQUEST, 
 	CONTENTS_SUCCESS, 
 	CONTENTS_FAILURE, 
-	CONTENTS_SELECTED_ADD_REMOVE, 
-	CONTENTS_SELECTED_RESET
-} from './types'
+	CONTENTIDS_SELECTED_ADD_REMOVE
+} from "./types"
 
 // Action Creators
 export const contentsRequest = makeActionCreator(
@@ -17,10 +16,7 @@ export const contentsSuccess = makeActionCreator(
 export const contentsFailure = makeActionCreator(
 	CONTENTS_FAILURE
 )
-export const selectedContentsAddRemove = makeActionCreator(
-	CONTENTS_SELECTED_ADD_REMOVE, 
-	'obj'
-)
-export const selectedContentsReset = makeActionCreator(
-	CONTENTS_SELECTED_RESET
+export const selectedContentIDsAddRemove = makeActionCreator(
+	CONTENTIDS_SELECTED_ADD_REMOVE, 
+	"ID"
 )

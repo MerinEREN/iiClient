@@ -21,7 +21,7 @@ class LoginUrls extends Component {
 		this.handleRequestClose = this.handleRequestClose.bind(this)
 	}
 	componentWillMount() {
-		this.props.loadLoginUrls()
+		this.props.getLoginUrls()
 	}
 	handleTouchTap(event) {
 		// This prevents ghost click.
@@ -53,14 +53,14 @@ class LoginUrls extends Component {
 				>
 					<Menu>
 						{
-							Object.keys(loginUrls.items).map(key => (
+							Object.entries(loginUrls).map(([k, v]) => (
 								<a 
-									key={key}
-									href={loginUrls.items[key]}
+									key={k}
+									href={v}
 									style={styles.a}
 								>
 									<MenuItem 
-										primaryText={key}
+										primaryText={k}
 									/>
 								</a>
 							)
@@ -75,7 +75,7 @@ class LoginUrls extends Component {
 
 LoginUrls.propTypes = {
 loginUrls: PropTypes.object.isRequired, 
-loadLoginUrls: PropTypes.func.isRequired
+getLoginUrls: PropTypes.func.isRequired
 }
 
 export default LoginUrls

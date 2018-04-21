@@ -1,4 +1,6 @@
 export const isAdmin = (roles) => {
+	if (!roles)
+		return false
 	for(let r of roles) {
 		if(r === 'admin')
 			return true
@@ -7,6 +9,8 @@ export const isAdmin = (roles) => {
 }
 
 export const isContentEditor = (roles) => {
+	if (!roles)
+		return false
 	for(let r of roles) {
 		if(r === 'contentEditor')
 			return true
@@ -15,12 +19,22 @@ export const isContentEditor = (roles) => {
 }
 
 // generateURLVariableFromIDs returns a string that established with provided object keys 
-// and each key seperated by comma.
-export const generateURLVariableFromIDs = (obj) => {
+// or array values and each value seperated by comma.
+export const generateURLVariableFromIDs = (arrayOrObject) => {
 	let URLVar = ""
-	Object.keys(obj).forEach((v, i) => {
-		i !== Object.keys(obj).length - 1 ? URLVar += v + "," : URLVar += v
-	})
+	if (Array.isArray(arrayOrObject)) {
+		arrayOrObject.forEach((v, i) => {
+			i !== arrayOrObject.length - 1 ? 
+				URLVar += v + "," : 
+				URLVar += v
+		})
+	} else {
+		Object.keys(arrayOrObject).forEach((v, i) => {
+			i !== Object.keys(arrayOrObject).length - 1 ? 
+				URLVar += v + "," : 
+				URLVar += v
+		})
+	}
 	return URLVar
 }
 

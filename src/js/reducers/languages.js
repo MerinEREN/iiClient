@@ -1,16 +1,16 @@
 import createReducer, {
 	paginate, 
-	mergeIntoOrRemoveFromObjectFetch, 
+	mergeIntoOrRemoveFromObjectRequest, 
 	mergeIntoOrResetObject, 
 	entitiesBufferedReset, 
-	mergeIntoOrRemoveFromObject, 
-	resetObject
+	addToOrRemoveFromArray, 
+	resetArrayOrObject
 } from './utilities'
 import {
 	LANGUAGES_REQUEST, 
 	LANGUAGES_SUCCESS, 
 	LANGUAGES_FAILURE, 
-	LANGUAGES_SELECTED_ADD_REMOVE
+	LANGUAGEIDS_SELECTED_ADD_REMOVE
 } from '../actions/types'
 
 // Slice Reducers
@@ -23,7 +23,7 @@ const languages = createReducer(
 export const languagesBuffered = createReducer(
 	{}, 
 	{
-		LANGUAGES_REQUEST: mergeIntoOrRemoveFromObjectFetch, 
+		LANGUAGES_REQUEST: mergeIntoOrRemoveFromObjectRequest, 
 		LANGUAGES_SUCCESS: mergeIntoOrResetObject, 
 		LANGUAGES_FAILURE: entitiesBufferedReset
 	}
@@ -36,10 +36,10 @@ export const paginationLanguages = paginate({
 		LANGUAGES_FAILURE
 	]
 })
-export const languagesSelected = createReducer( {},  
+export const languageIDsSelected = createReducer([], 
 	{
-		LANGUAGES_SUCCESS: resetObject, 
-		LANGUAGES_SELECTED_ADD_REMOVE: mergeIntoOrRemoveFromObject
+		LANGUAGES_SUCCESS: resetArrayOrObject, 
+		LANGUAGEIDS_SELECTED_ADD_REMOVE: addToOrRemoveFromArray
 	}
 )
 

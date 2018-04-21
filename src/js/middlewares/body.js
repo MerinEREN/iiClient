@@ -1,23 +1,10 @@
-import {makeLoader} from './utilities'
-import {toggleDrawer} from '../actions/drawer'
-import {
-	userAccountRequest, 
-	userAccountSuccess, 
-	userAccountFailure
-} from '../actions/body'
-import loadSignOutURL from './signOutURL'
-
-const loadUserAccount = makeLoader({
-	actionCreators: {
-		actionsRequest: [userAccountRequest],
-		actionsSuccess: [userAccountSuccess],
-		actionsFailure: [userAccountFailure]
-	}
-})
+import {toggleDrawer} from "../actions/drawer"
+import getSignOutURL from "./signOutURL"
+import getUserAccount from "./userAccount"
 
 export default function loadData() {
 	return dispatch => {
-		dispatch(loadUserAccount()).then(dispatch(toggleDrawer()))
-		dispatch(loadSignOutURL({URL: '/signout/'}))
+		dispatch(getUserAccount()).then(dispatch(toggleDrawer()))
+		dispatch(getSignOutURL({URL: "/signout"}))
 	}
 }

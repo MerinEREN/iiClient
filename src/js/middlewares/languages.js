@@ -1,14 +1,14 @@
-import {makeLoader} from './utilities'
+import {makeLoader} from "./utilities"
 import {
 	languagesRequest, 
 	languagesSuccess, 
 	languagesFailure
-} from '../actions/languages'
+} from "../actions/languages"
 
 const getLanguages = makeLoader({
 	defaults: {
-		URL: '/languages', 
-		path: 'languages'
+		URL: "/languages", 
+		kind: "languages"
 	},
 	actionCreators: {
 		actionsRequest: [languagesRequest],
@@ -16,17 +16,34 @@ const getLanguages = makeLoader({
 		actionsFailure: [languagesFailure]
 	}, 
 	options: {
-		// CAN BE PROBLEMATIC FOR PAGINATION IN NEAR FUTURE !!!!!!!!!!!!!!!!!!!!!!!
 		didInvalidate: false
+	}
+})
+
+export const postLanguage = makeLoader({
+	defaults: {
+		method: "POST", 
+		URL: "/languages", 
+		kind: "languages"
+	},
+	actionCreators: {
+		actionsRequest: [languagesRequest],
+		actionsSuccess: [languagesSuccess],
+		actionsFailure: [languagesFailure]
+	}, 
+	options: {
+		hideFetching: true, 
+		showSnackbar: true
 	}
 })
 
 export const deleteLanguages = makeLoader({
 	defaults: {
-		method: 'DELETE', 
-		path: 'languages'
+		method: "DELETE", 
+		kind: "languages"
 	},
 	actionCreators: {
+		actionsRequest: [languagesRequest],
 		actionsSuccess: [languagesSuccess],
 		actionsFailure: [languagesFailure]
 	}, 

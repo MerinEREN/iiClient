@@ -1,4 +1,7 @@
 import {combineReducers} from "redux"
+import loginUrls from './loginUrls'
+import signOutURL from './signOutURL'
+import userAccount from "./userAccount"
 import accounts from "./accounts"
 import users from "./users"
 import languages from "./languages"
@@ -10,6 +13,9 @@ import servicePacks from "./servicePacks"
 
 // Higher-Order Reducer
 const entities = combineReducers({
+	loginUrls,
+	signOutURL, 
+	userAccount, 
 	languages, 
 	pages, 
 	contents, 

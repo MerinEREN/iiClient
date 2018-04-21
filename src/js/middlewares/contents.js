@@ -2,14 +2,13 @@ import {makeLoader} from "./utilities"
 import {
 	contentsRequest, 
 	contentsSuccess, 
-	contentsFailure, 
-	selectedContentsReset
+	contentsFailure
 } from "../actions/contents"
 
 const getContents = makeLoader({
 	defaults: {
 		URL: "/contents", 
-		path: "contents"
+		kind: "contents"
 	},
 	actionCreators: {
 		actionsRequest: [contentsRequest],
@@ -23,8 +22,8 @@ const getContents = makeLoader({
 
 export const postContents = makeLoader({
 	defaults: {
-		URL: "/contents", 
-		method: "POST"
+		method: "POST", 
+		URL: "/contents"
 	},
 	actionCreators: {
 		actionsRequest: [contentsRequest],
@@ -39,9 +38,9 @@ export const postContents = makeLoader({
 
 export const putContents = makeLoader({
 	defaults: {
-		URL: "/contents", 
 		method: "PUT", 
-		path: "contents"
+		URL: "/contents", 
+		kind: "contents"
 	},
 	actionCreators: {
 		actionsSuccess: [contentsSuccess],
@@ -56,11 +55,11 @@ export const putContents = makeLoader({
 export const deleteContents = makeLoader({
 	defaults: {
 		method: "DELETE", 
-		path: "contents"
+		kind: "contents"
 	},
 	actionCreators: {
 		actionsRequest: [contentsRequest],
-		actionsSuccess: [contentsSuccess, selectedContentsReset],
+		actionsSuccess: [contentsSuccess],
 		actionsFailure: [contentsFailure]
 	}, 
 	options: {

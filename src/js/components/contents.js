@@ -6,7 +6,7 @@ import ContentAdd from 'material-ui/svg-icons/content/add'
 import Dialog from 'material-ui/Dialog'
 import FlatButton from 'material-ui/FlatButton'
 import RaisedButton from 'material-ui/RaisedButton'
-import Content from '../containers/content'
+import ContentTile from '../containers/contentTile'
 import {generateURLVariableFromIDs} from './utilities'
 
 const styles = {
@@ -48,8 +48,8 @@ class Contents extends Component {
 		this.props.getContents()
 	}
 	handleCreateNewContents() {
-		var {newContents} = this.state
-		var tempObj = {}
+		let {newContents} = this.state
+		let tempObj = {}
 		for(let i = Object.keys(newContents).length; i < Object.keys(newContents).length + 8; i++) {
 			tempObj[`newContent_${i}`] = {
 						ID: `newContent_${i}`, 
@@ -113,16 +113,16 @@ class Contents extends Component {
 		}
 	}
 	handlePost() {
-		var tempObj = {}
+		let newContents = {}
 		Object.entries(this.state.newContents).forEach( a => {
 			if(a[1].values.en !== '')
-				tempObj[a[0]] = a[1]
+				newContents[a[0]] = a[1]
 		})
-		if(Object.keys(tempObj).length === 0) {
+		if(Object.keys(newContents).length === 0) {
 			this.toggleDialog()
 			return
 		}
-		if(!this.handleRequiredInput(tempObj))
+		if(!this.handleRequiredInput(newContents))
 			return
 		this.toggleDialog()
 		this.setState({
@@ -133,7 +133,7 @@ class Contents extends Component {
 			body: {
 				type: 'Blob', 
 				contentType: 'application/json', 
-				data: tempObj
+				data: newContents
 			}
 		})
 	}
@@ -181,28 +181,26 @@ class Contents extends Component {
 		})
 	}
 	handleDelete() {
-		const {contentsSelected, deleteContents, buttonSet}= this.props
+		const {contentIDsSelected, deleteContents, buttonSet}= this.props
 		deleteContents({
-			URL: `/contents/?IDs=${generateURLVariableFromIDs(contentsSelected)}`, 
+			URL: `/contents?IDs=${generateURLVariableFromIDs(contentIDsSelected)}`, 
 			body: {
-				data: contentsSelected
+				data: contentIDsSelected
 			}
 		})
 		buttonSet("contentsDelete")
 	}
-	contents(contents) {
+	contentTiles(contents) {
 		const {inputErrTexts} = this.state
-		const {languageIDs, contentsSelected} = this.props
-		return Object.values(contents).map(v => {
-			return <Content 
-				key={v.ID}
-				languageIDs={languageIDs}
-				content={v} 
-				inputErrTexts={inputErrTexts[v.ID]} 
-				isChecked={Object.keys(contentsSelected).indexOf(v.ID) !== -1}
-				handleUpdate={this.handleUpdate} 
-			/>
-		})
+		const {languageIDs, contentIDsSelected} = this.props
+		return Object.values(contents).map(v => <ContentTile 
+			key={v.ID}
+			languageIDs={languageIDs}
+			content={v} 
+			inputErrTexts={inputErrTexts[v.ID]} 
+			isChecked={contentIDsSelected.indexOf(v.ID) !== -1}
+			handleUpdate={this.handleUpdate} 
+		/>)
 	}
 	render() {
 		const {
@@ -217,7 +215,7 @@ class Contents extends Component {
 		} = this.state
 		const {
 			contents, 
-			contentsSelected, 
+			contentIDsSelected, 
 			languageIDs, 
 			deleteClicked
 		} = this.props
@@ -227,7 +225,7 @@ class Contents extends Component {
 					padding={10}
 					cellHeight={'auto'}
 				>
-					{this.contents(newContents)}
+					{this.contentTiles(newContents)}
 				</GridList>
 		const actions = [
 			<FlatButton
@@ -248,8 +246,8 @@ class Contents extends Component {
 			<div style={root}>
 				<GridList 
 					cols={4} 
-					style={gridList}
 					cellHeight='auto'
+					style={gridList}
 				>
 					<GridTile cols={1} />  
 					<GridTile cols={2}>  
@@ -262,7 +260,7 @@ class Contents extends Component {
 								padding={10}
 								cellHeight={'auto'}
 							>
-								{this.contents(contents)}
+								{this.contentTiles(contents)}
 							</GridList>
 							:
 							<h1>No contents yet... </h1>
@@ -278,7 +276,7 @@ class Contents extends Component {
 							/>
 					}
 					{
-						(!deleteClicked && Object.keys(contentsSelected).length > 0)
+						(!deleteClicked && contentIDsSelected.length > 0)
 							&& 
 							<RaisedButton
 								label="Delete"
@@ -327,10 +325,12 @@ Contents.propTypes = {
 	contents: PropTypes.object.isRequired, 
 	postContents: PropTypes.func.isRequired, 
 	putContents: PropTypes.func.isRequired, 
-	contentsSelected: PropTypes.object.isRequired, 
+	contentIDsSelected: PropTypes.array.isRequired, 
 	deleteContents: PropTypes.func.isRequired, 
 	deleteClicked: PropTypes.bool.isRequired, 
 	buttonSet: PropTypes.func.isRequired
 }
+
+Contents.muiName = "GridList"
 
 export default Contents

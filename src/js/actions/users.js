@@ -2,7 +2,7 @@ import makeActionCreator from './creator'
 import {
 	USERS_REQUEST,
 	USERS_SUCCESS,
-	USERS_FAILURE,
+	USERS_FAILURE
 } from './types'
 
 // Action Creators

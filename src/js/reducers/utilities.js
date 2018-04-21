@@ -25,7 +25,6 @@ export const paginate = ({types, mapActionToKey}) => {
 	const [requestType, successType, failureType] = types
 
 	const updatePagination = (state = {
-		value: null, 
 		IDs: [],
 		nextPageURL: null,
 		prevPageURL: null,
@@ -50,16 +49,12 @@ export const paginate = ({types, mapActionToKey}) => {
 				return method === "GET" ? 
 					{
 						...state,
-						// For counts only.
-						value: typeof response.result !== "object" ? 
-						response.result :
-						null, 
 						// IDs: union(state.IDs, response.result),
 						IDs: typeof response.result !== "object" ? 
 						state.IDs : 
 						pushIntoArrayIfNotPresent(
 							state.IDs, 
-							action.response.result
+							response.result
 						), 
 						nextPageURL: response.nextPageURL || 
 						state.nextPageURL, 
@@ -79,12 +74,11 @@ export const paginate = ({types, mapActionToKey}) => {
 						state.nextPageURL, 
 						prevPageURL: response.prevPageURL || 
 						state.prevPageURL,
-						pageCount: response.reset ? 
+						pageCount: method === "POST" ? 
 						1 : 
 						(Object.keys(response.result).length - 1) / 10, 
 						isFetching: false
-						// didInvalidate: response.reset ? 
-						// true : false
+						// didInvalidate: response.reset
 					}
 			case failureType:
 				return {
@@ -114,7 +108,7 @@ export const paginate = ({types, mapActionToKey}) => {
 
 export const addDynamicKeySetResetResetAll = ({types, mapActionToKey}) => {
 	if (!Array.isArray(types) || types.length !== 3) {
-		throw new Error("Expected types to be an array of two elements.")
+		throw new Error("Expected types to be an array of three elements.")
 	}
 	if (!types.every(t => typeof t === "string")) {
 		throw new Error("Expected types to be strings.")
@@ -152,6 +146,41 @@ export const addDynamicKeySetResetResetAll = ({types, mapActionToKey}) => {
 	}
 }
 
+export const addDynamicKeyReturnResult = ({types, mapActionToKey}) => {
+	if (!Array.isArray(types) || types.length !== 1) {
+		throw new Error("Expected types to be an array of one elements.")
+	}
+	if (!types.every(t => typeof t === "string")) {
+		throw new Error("Expected types to be strings.")
+	}
+	if (typeof mapActionToKey !== "function") {
+		throw new Error("Expected mapActionToKey to be a function.")
+	}
+
+	const [setType] = types
+
+	const updateState = (state, action) => {
+		switch (action.type) {
+			case setType:
+				return action.response.result
+			default:
+				return state
+		}
+	}
+	return (state = {}, action) => {
+		switch (action.type) {
+			case setType:
+				const key = mapActionToKey(action)
+				return {
+					...state, 
+					[key]: updateState(state[key], action)
+				}
+			default:
+				return state
+		}
+	}
+}
+
 const pushIntoArrayIfNotPresent = (array, obj) => {
 	let IDs = []
 	Object.keys(obj).forEach(v => {
@@ -179,7 +208,7 @@ const pushIntoArrayIfNotPresent = (array, obj) => {
 	return map
 } */
 
-export const mergeIntoOrRemoveFromObjectFetch = (state, action) => {
+export const mergeIntoOrRemoveFromObjectRequest = (state, action) => {
 	const {
 		method, 
 		response: {
@@ -191,24 +220,35 @@ export const mergeIntoOrRemoveFromObjectFetch = (state, action) => {
 	return result ? {...state, ...result} : state
 }
 
+// "reset" is for search GET.
 export const mergeIntoOrResetObject = (state, action) => {
 	const {
 		method, 
 		response: {
-			result
-		}
+			result, 
+			reset
+		}, 
+		mergeIntoState
 	} = action
-	if (action.method !== "GET")
+	if (mergeIntoState) // If PUT request returns data merge it.
+		return {...state, ...result}
+	if (method !== "GET" || reset)
 		return entitiesReset(action)
-	// NESTED VALUES WILL CAUSE PROBLEMS FOR GET SUCCESS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	return result ? {...state, ...result} : state
 }
 
+// By array items or object keys.
+// TYPE OF ARRAY IS OLSO OBJECT !!!!!
 const removeFromObject = (state, action) => {
 	let newState = {}
 	Object.entries(state).forEach(([k, v]) => {
-		if(!action.response.result.hasOwnProperty(k))
-			newState[k] = v
+		if (Array.isArray(action.response.result)) {
+			if (action.response.result.indexOf(k) === -1)
+				newState[k] = v
+		} else {
+			if (!action.response.result.hasOwnProperty(k))
+				newState[k] = v
+		}
 	})
 	return newState
 }
@@ -219,29 +259,20 @@ export const entitiesBufferedReset = (state, action) => action.method === "GET" 
 	state : 
 	action.response.result
 
-export const mergeIntoOrRemoveFromObject = (state, action) => {
-	const {obj} = action
-	let hasOwnProperty = true
-	let newState = {}
-	Object.entries(obj).forEach(([k, v]) => {
-		if(!state.hasOwnProperty(k)) {
-			newState[k] = v
-			hasOwnProperty = false
-		}
-	})
-	if (!hasOwnProperty)
-		return {...state, ...newState}
-	Object.entries(state).forEach(([k, v]) => {
-		if(!obj.hasOwnProperty(k))
-			newState[k] = v
-	})
-	return newState
-}
-
-export const resetObject = (state, action) => {
+export const resetArrayOrObject = (state, action) => {
 	if (action.method === "DELETE" || action.method === "POST")
-		return {}
+		return Array.isArray(state) ? [] : {}
 	return state
+}
+export const addToOrRemoveFromArray = (state, action) => {
+	if (state.indexOf(action.ID) === -1)
+		return [...state, action.ID]
+	let array = []
+	for (let v of state) {
+		if (v !== action.ID)
+			array.push(v)
+	}
+	return array
 }
 
 export const updateObject = (oldObject, newValues) => {

@@ -1,11 +1,11 @@
-import loadDemands from './demands'
-import loadOffers from './offers'
-import loadServicePacks from './servicePacks'
+import getDemands from './demands'
+import getOffers from './offers'
+import getServicePacks from './servicePacks'
 
-export default function loadData() {
+export default function getItems(key) {
 	return dispatch => {
-		dispatch(loadDemands())
-		dispatch(loadOffers())
-		dispatch(loadServicePacks())
+		dispatch(getDemands(key))
+		dispatch(getOffers(key))
+		dispatch(getServicePacks(key))
 	}
 }

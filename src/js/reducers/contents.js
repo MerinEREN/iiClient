@@ -1,10 +1,10 @@
 import createReducer, {
 	paginate, 
-	mergeIntoOrRemoveFromObjectFetch, 
+	mergeIntoOrRemoveFromObjectRequest, 
 	mergeIntoOrResetObject, 
 	entitiesBufferedReset,
-	mergeIntoOrRemoveFromObject, 
-	resetObject
+	addToOrRemoveFromArray, 
+	resetArrayOrObject
 } from './utilities'
 import {contentUpdate} from './content'
 import {
@@ -12,7 +12,7 @@ import {
 	CONTENTS_SUCCESS, 
 	CONTENTS_FAILURE, 
 	CONTENT_UPDATE, 
-	CONTENTS_SELECTED_ADD_REMOVE
+	CONTENTIDS_SELECTED_ADD_REMOVE
 } from '../actions/types'
 
 const contents = createReducer(
@@ -24,7 +24,7 @@ const contents = createReducer(
 export const contentsBuffered = createReducer(
 	{}, 
 	{
-		CONTENTS_REQUEST: mergeIntoOrRemoveFromObjectFetch, 
+		CONTENTS_REQUEST: mergeIntoOrRemoveFromObjectRequest, 
 		CONTENTS_SUCCESS: mergeIntoOrResetObject, 
 		CONTENTS_FAILURE: entitiesBufferedReset, 
 		CONTENT_UPDATE: contentUpdate
@@ -38,10 +38,10 @@ export const paginationContents = paginate({
 		CONTENTS_FAILURE
 	]
 })
-export const contentsSelected = createReducer( {},  
+export const contentIDsSelected = createReducer([],   
 	{
-		CONTENTS_SUCCESS: resetObject, 
-		CONTENTS_SELECTED_ADD_REMOVE: mergeIntoOrRemoveFromObject
+		CONTENTS_SUCCESS: resetArrayOrObject, 
+		CONTENTIDS_SELECTED_ADD_REMOVE: addToOrRemoveFromArray
 	}
 )
 

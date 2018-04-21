@@ -1,20 +1,15 @@
-import {makeLoader} from './utilities'
+import {makeLoader} from "./utilities"
 import {
-	signOutURLRequest, 
-	signOutURLSuccess, 
-	signOutURLFailure 
-} from '../actions/signOutURL'
+	signOutURLSuccess
+} from "../actions/signOutURL"
 
-const loadSignOutURL = makeLoader({
+const getSignOutURL = makeLoader({
 	actionCreators: {
-			actionsRequest: [signOutURLRequest],
-			actionsSuccess: [signOutURLSuccess],
-			actionsFailure: [signOutURLFailure]
+			actionsSuccess: [signOutURLSuccess]
 	},
 	options: {
 		hideFetching: true
 	}
 	})
 
-export default loadSignOutURL
-
+export default getSignOutURL

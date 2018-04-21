@@ -1,20 +1,19 @@
-import {connect} from 'react-redux'
-import {bindActionCreators} from 'redux'
-import CounterChipComponent from '../components/counterChip'
-import loadCount, {getURL} from '../middlewares/counters'
-import loadItems from '../middlewares/timelineList'
+import {connect} from "react-redux"
+import {bindActionCreators} from "redux"
+import CounterChipComponent from "../components/counterChip"
+import getCount, {getURL} from "../middlewares/counters"
+import getItems from "../middlewares/timelineList"
 
-// Can use ownProps here.
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
 	return {
-		counter: state.pagination.countersByComponent.timeline
+		count: state.appState.counters[ownProps.id]
 	}
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
-		loadCount, 
-		loadItems, 
+		getCount, 
+		getItems, 
 		getURL
 	},
 	dispatch

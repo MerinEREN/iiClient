@@ -63,7 +63,7 @@ class Body extends Component {
 			muiTheme, 
 			isFetching, 
 			snackbar, 
-			acc, 
+			account, 
 			user, 
 			toggleDrawer, 
 			children, 
@@ -131,7 +131,7 @@ class Body extends Component {
 								<LoginUrls />
 								:
 								<Logged 
-									acc= {acc} 
+									account= {account} 
 									user={user} 
 								/>
 						}
@@ -157,7 +157,7 @@ class Body extends Component {
 }
 
 Body.defaultProps = {
-	acc: {
+	account: {
 		photo: {}
 	}, 
 	user: {
@@ -170,7 +170,7 @@ Body.propTypes = {
 	cookies: instanceOf(Cookies).isRequired, 
 	muiTheme: PropTypes.object.isRequired,
 	isFetching: PropTypes.bool.isRequired,
-	acc: PropTypes.object,
+	account: PropTypes.object,
 	user: PropTypes.object,
 	loadData: PropTypes.func.isRequired,
 	toggleDrawer: PropTypes.func.isRequired,

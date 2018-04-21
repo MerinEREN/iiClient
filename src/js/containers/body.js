@@ -10,24 +10,6 @@ import {resetSnackbar} from '../actions/snackbar'
 import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin()
 
-const getFirstAccount = as => {
-	var account
-	Object.values(as).forEach((v, i) => {
-		if(i === 0)
-			account = v
-	})
-	return account
-}
-
-const getFirstUser = us => {
-	var user
-	Object.values(us).forEach((v, i) => {
-		if(i === 0)
-			user = v
-	})
-	return user
-}
-
 // Can use "ownProps" here
 // For accessing params for example.
 const mapStateToProps = state => {
@@ -49,13 +31,13 @@ const mapStateToProps = state => {
 		    } */
 	const {
 		appState: {snackbar, isFetching}, 
-		entitiesBuffered: {accounts, users}
+		entitiesBuffered: {userAccount: {account, user}}
 	} = state
 	return {
 		isFetching,
 		snackbar, 
-		acc: getFirstAccount(accounts), 
-		user: getFirstUser(users)
+		account, 
+		user
 	}
 }
 

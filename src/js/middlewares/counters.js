@@ -1,57 +1,36 @@
-import {makeLoader} from './utilities'
-import {generateURL} from './utilities'
+import {makeLoader} from "./utilities"
+import {generateURL} from "./utilities"
 import {
-	counterTimelineRequest, 
-	counterTimelineSuccess, 
-	counterTimelineFailure, 
-	/* counterLanguagesRequest, 
-	counterLanguagesSuccess, 
-	counterLanguagesFailure */
-} from '../actions/counters'
+	counterSuccess
+} from "../actions/counters"
 
-export const getURL = (groupID, returnedURL) => (dispatch, getState) => {
-	const {
-		demandsByAccount: {
-			timeline: {[returnedURL]: dURL}
-		}, 
-		offersByAccount: {
-			timeline: {[returnedURL]: oURL}
-		}, 
-		servicePacksByAccount: {
-			timeline: {[returnedURL]: spURL}
-		}
-	} = getState().pagination
-	return generateURL(groupID, returnedURL, dURL, oURL, spURL)
+export const getURL = (key, returnedURL) => (dispatch, getState) => {
+	switch (key) {
+		case "something": 
+			break
+		default:
+			const {
+				demands: {
+					timeline: {[returnedURL]: dURL}
+				}, 
+				offers: {
+					timeline: {[returnedURL]: oURL}
+				}, 
+				servicePacks: {
+					timeline: {[returnedURL]: spURL}
+				}
+			} = getState().pagination
+			return generateURL(key, returnedURL, dURL, oURL, spURL)
+	}
 }
 
-/* export const getLanguagesCount = makeLoader({
-	defaults: {
-		URL: '/languages/?action=getCount', 
-		path: ["countersByComponent", "languages"]
-	},
+const getCount = makeLoader({
 	actionCreators: {
-		actionsRequest: [counterLanguagesRequest],
-		actionsSuccess: [counterLanguagesSuccess],
-		actionsFailure: [counterLanguagesFailure]
-	}, 
-	options: {
-		hideFetching: true
-	}
-}) */
-
-const loadCount = makeLoader({
-	defaults: {
-		URL: '/timeline', 
-		// path: ["countersByComponent", "timeline"]
-	}, 
-	actionCreators: {
-		actionsRequest: [counterTimelineRequest],
-		actionsSuccess: [counterTimelineSuccess],
-		actionsFailure: [counterTimelineFailure]
+		actionsSuccess: [counterSuccess]
 	},
 	options: {
 		hideFetching: true
 	}
 })
 
-export default loadCount
+export default getCount

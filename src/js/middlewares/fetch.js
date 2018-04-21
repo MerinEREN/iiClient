@@ -24,6 +24,7 @@ export default function fetchDomainDataIfNeeded(args) {
 			case "DELETE":
 				// Dispatch a thunk from thunk.
 				dispatch(shouldFetchAfterTimeout(args, 10000))
+				break
 			default:
 				// Covers "POST" and "PUT" methods
 				// Dispatch a thunk from thunk.
@@ -32,9 +33,10 @@ export default function fetchDomainDataIfNeeded(args) {
 	}
 }
 
+// CHANGE THIS
 function shouldFetchDomainData(state, args) {
 	const {
-		path, 
+		kind, 
 		key, 
 		isCached, 
 		didInvalidate
@@ -42,18 +44,14 @@ function shouldFetchDomainData(state, args) {
 	if (isCached) {
 		// For root object
 		return !isCached(state)
-	} else if (state.pagination.path !== undefined && Object.keys(state.pagination.path).length !== 0) {
-		// The first check above is only for preventing "Object.keys(state.pagination.path)" error
+	// Not all kinds paginated, that is the reason of the first check belove.
+	} else if (state.pagination[kind] !== undefined && state.pagination[kind] !== {}) {
 		// For pagination object
-		if (state.pagination.path[key]) {
-			return !state.pagination.path[key].isFetching 
+		if (state.pagination[kind][key])
+			return !state.pagination[kind][key].isFetching 
 				&& 
-				state.pagination.path[key].didInvalidate
-		} else {
-			return !state.pagination.path.isFetching
-				&& 
-				state.pagination.path.didInvalidate
-		}
+				state.pagination[kind][key].didInvalidate
+			return true
 	} else {
 		return true
 	}
@@ -85,7 +83,9 @@ const shouldFetchAfterTimeout = (args, duration) => (dispatch, getState) => {
 	// Set snackbar
 	dispatch(setSnackbar({
 		props: {
-			message: `${Object.keys(dataBody).map(k => k)} deleted`,
+			message: Array.isArray(dataBody) 
+			? `${dataBody.map(k => k)} deleted` 
+			: `${Object.keys(dataBody).map(k => k)} deleted`,
 			duration, 
 			action: "Undo", 
 			onActionClick: () => {
@@ -105,14 +105,11 @@ const shouldFetchAfterTimeout = (args, duration) => (dispatch, getState) => {
 }
 
 // Reset entitiesBuffered with entities.
-const cancelFetch = ({actionsFailure, request: {method}, key}) => (dispatch, getState) => {
+const cancelFetch = ({actionsFailure, request: {method}, kind, key}) => (dispatch, getState) => {
 	const {appState: {snackbar}, entities} = getState()
 	actionsFailure.forEach(ac => dispatch(ac({
 		method, 
-		response: {result: key ?
-			{...entities[path][key]} :
-			{...entities[path]}
-		}, 
+		response: {result: {...entities[kind]}}, 
 		key
 	})))
 	// Reset snackbar properties
@@ -132,14 +129,15 @@ const fetchDomainData = args => (dispatch, getState) => {
 		actionsFailure, 
 		request, 
 		dataBody, 
-		path, 
+		kind, 
 		key, 
 		didInvalidate, 
 		hideFetching, 
-		showSnackbar
+		showSnackbar, 
+		mergeIntoState
 	} = args
 	// Modifies contentsBuffer if the method is POST.
-	if (request.method !== "DELETE")
+	if (actionsRequest && request.method !== "DELETE")
 		actionsRequest.forEach(ac => dispatch(ac({
 			method: request.method, 
 			response: {result: request.method !== "PUT" && dataBody}, 
@@ -193,43 +191,45 @@ const fetchDomainData = args => (dispatch, getState) => {
 				else if ( */
 				// Backand sending JSON data as Marshald form.
 				// So the Content-Type is "text/plain".
-				if (
-					contentType
-					&&
-					contentType.indexOf("text/plain")
-					!==
-					-1
-				) {
-					response.text()
-						.then(body => {
-							const json = JSON.parse(body)
-							actionsSuccess.forEach(ac => dispatch(ac({
-								method: request.method, 
-								response: body !== "" ? 
-								{...json} : 
-								{result: key ?
-									{...getState().entitiesBufferd[path][key]} :
-									{...getState().entitiesBufferd[path]}
-								}, 
-								key, 
-								receivedAt: Date.now(), 
-								didInvalidate
-							})))
-						})
+				if (contentType) {
+					if (contentType.indexOf("text/plain") !== -1) {
+						response.text()
+							.then(body => {
+								const json = JSON.parse(body)
+								actionsSuccess.forEach(ac => dispatch(ac({
+									method: request.method, 
+									response: json, 
+									key, 
+									receivedAt: Date.now(), 
+									didInvalidate, 
+									mergeIntoState
+								})))
+							})
+					} else {
+						actionsSuccess.forEach(ac => dispatch(ac({
+							method: request.method, 
+							response: {result: 
+								{...getState().entitiesBufferd[kind]}
+							}, 
+							key, 
+							receivedAt: Date.now(), 
+							didInvalidate, 
+							mergeIntoState
+						})))
+					}
 				}
 			} else {
 				// response code is not between 199 and 300
 				console.log("Response code is not between 199 and 300")
-				actionsFailure.forEach(ac => dispatch(ac({
-					method: request.method, 
-					error: "USE ERROR CODE AND MESSAGE HERE", 
-					response: {
-						result: key ?
-						{...getState().entities[path][key]} :
-						{...getState().entities[path]}
-					}, 
-					key
-				})))
+				if (actionsFailure)
+					actionsFailure.forEach(ac => dispatch(ac({
+						method: request.method, 
+						error: "USE ERROR CODE AND MESSAGE HERE", 
+						response: {result: 
+							{...getState().entities[kind]}
+						}, 
+						key
+					})))
 			}
 			// USE Response.status HERE TO HANDLE RESPONSE STATUSES !!!!!!!!!!!
 			if(showSnackbar)
@@ -250,16 +250,13 @@ const fetchDomainData = args => (dispatch, getState) => {
 			// Remove the temporarily added new data (POST), 
 			// add the temporarily removed old data (DELETE) or 
 			// replace old data with modified data (PUT) from the store.
-			actionsFailure.forEach(ac => dispatch(ac({
-				method: request.method, 
-				error: err.message, 
-				response: {
-					result: key ?
-					{...getState().entities[path][key]} :
-					{...getState().entities[path]}
-				}, 
-				key
-			})))
+			if (actionsFailure)
+				actionsFailure.forEach(ac => dispatch(ac({
+					method: request.method, 
+					error: err.message, 
+					response: {result: {...getState().entities[kind]}}, 
+					key
+				})))
 			dispatch(setSnackbar({
 				props: {
 					message: err.message}

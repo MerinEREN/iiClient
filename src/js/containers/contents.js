@@ -12,7 +12,7 @@ import {buttonSet} from "../actions/buttons"
 const mapStateToProps = state => {
 	return {
 		contents: state.entitiesBuffered.contents, 
-		contentsSelected: state.appState.contents, 
+		contentIDsSelected: state.appState.contentIDs, 
 		languageIDs: state.pagination.languages.all.IDs, 
 		deleteClicked: state.appState.buttons.clicked.contentsDelete
 	}

@@ -18,7 +18,7 @@ const styles = {
 	}
 }
 
-class Content extends Component {
+class ContentTile extends Component {
 	constructor(props) {
 		super(props)
 		this.handleFieldChange = this.handleFieldChange.bind(this)
@@ -89,7 +89,7 @@ class Content extends Component {
 		const {
 			content, 
 			isChecked, 
-			selectedContentsAddRemove, 
+			selectedContentIDsAddRemove, 
 			buttonReset
 		} = this.props
 		const {ID} = content
@@ -110,9 +110,7 @@ class Content extends Component {
 						checked={isChecked}
 						onCheck={() => {
 							buttonReset("contentsDelete")
-							selectedContentsAddRemove(
-								{[ID]: content}
-							)
+							selectedContentIDsAddRemove(ID)
 						}}
 					/>
 				}
@@ -125,7 +123,7 @@ class Content extends Component {
 	}
 }
 
-Content.propTypes = {
+ContentTile.propTypes = {
 	getPages: PropTypes.func.isRequired, 
 	languageIDs: PropTypes.array.isRequired, 
 	allPages: PropTypes.object.isRequired, 
@@ -134,10 +132,10 @@ Content.propTypes = {
 	isChecked: PropTypes.bool.isRequired, 
 	handleUpdate: PropTypes.func.isRequired, 
 	contentUpdate: PropTypes.func.isRequired, 
-	selectedContentsAddRemove: PropTypes.func.isRequired, 
+	selectedContentIDsAddRemove: PropTypes.func.isRequired, 
 	buttonReset: PropTypes.func.isRequired
 }
 
-// Content.muiName = "GridTile"
+// ContentTile.muiName = "GridTile"
 
-export default Content
+export default ContentTile

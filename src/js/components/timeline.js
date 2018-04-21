@@ -21,7 +21,7 @@ const Timeline = () =>  (
 			style={styles.gridList}
 		>
 			<GridTile cols={2}>
-				<CounterChip/>
+				<CounterChip id={"timeline"} />
 			</GridTile>
 			<GridTile cols={2}>
 				<TimelineList/>
