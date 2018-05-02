@@ -6,7 +6,7 @@ export const contentUpdate = (state, action) => {
 			...state, 
 			[ID]: {
 				...state[ID], 
-				pages: value
+				pageIDs: value
 			}
 		}
 	} 

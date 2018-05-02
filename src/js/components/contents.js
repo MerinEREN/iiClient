@@ -46,6 +46,7 @@ class Contents extends Component {
 	}
 	componentWillMount() {
 		this.props.getContents()
+		this.props.getPages()
 	}
 	handleCreateNewContents() {
 		let {newContents} = this.state
@@ -54,7 +55,7 @@ class Contents extends Component {
 			tempObj[`newContent_${i}`] = {
 						ID: `newContent_${i}`, 
 						values: {}, 
-						pages: []
+						pageIDs: []
 					}
 			this.props.languageIDs.forEach(
 				v => tempObj[`newContent_${i}`].values[v] = ''
@@ -76,7 +77,7 @@ class Contents extends Component {
 						...newContents, 
 						[ID]: {
 							...newContents[ID], 
-							pages: value
+							pageIDs: value
 						}
 					}
 				})
@@ -112,6 +113,37 @@ class Contents extends Component {
 			this.setState({initNewContents: false})
 		}
 	}
+	handleRequiredInput(contents) {
+		const {inputErrTexts} = this.state
+		return Object.entries(contents).every(a => {
+			// Not necessary for newContents but necessary for contents
+			if(a[1].values.en === '') {
+				this.setState({
+					inputErrTexts: {
+						...inputErrTexts, 
+						[a[0]]: {
+							...inputErrTexts[a[0]], 
+							en: "Required field"
+						}
+					}
+				})
+				return false
+			}
+			if(a[1].pageIDs.length === 0) {
+				this.setState({
+					inputErrTexts: {
+						...inputErrTexts, 
+						[a[0]]: {
+							...inputErrTexts[a[0]], 
+							pageIDs: "Required field"
+						}
+					}
+				})
+				return false
+			}
+			return true
+		})
+	}
 	handlePost() {
 		let newContents = {}
 		Object.entries(this.state.newContents).forEach( a => {
@@ -135,37 +167,6 @@ class Contents extends Component {
 				contentType: 'application/json', 
 				data: newContents
 			}
-		})
-	}
-	handleRequiredInput(contents) {
-		const {inputErrTexts} = this.state
-		return Object.entries(contents).every(a => {
-			// Not necessary for newContents but necessary for contents
-			if(a[1].values.en === '') {
-				this.setState({
-					inputErrTexts: {
-						...inputErrTexts, 
-						[a[0]]: {
-							...inputErrTexts[a[0]], 
-							en: "Required field"
-						}
-					}
-				})
-				return false
-			}
-			if(a[1].pages.length === 0) {
-				this.setState({
-					inputErrTexts: {
-						...inputErrTexts, 
-						[a[0]]: {
-							...inputErrTexts[a[0]], 
-							pages: "Required field"
-						}
-					}
-				})
-				return false
-			}
-			return true
 		})
 	}
 	handlePut() {
@@ -192,10 +193,15 @@ class Contents extends Component {
 	}
 	contentTiles(contents) {
 		const {inputErrTexts} = this.state
-		const {languageIDs, contentIDsSelected} = this.props
+		const {
+			languageIDs, 
+			allPages, 
+			contentIDsSelected
+		} = this.props
 		return Object.values(contents).map(v => <ContentTile 
 			key={v.ID}
 			languageIDs={languageIDs}
+			allPages={allPages}
 			content={v} 
 			inputErrTexts={inputErrTexts[v.ID]} 
 			isChecked={contentIDsSelected.indexOf(v.ID) !== -1}
@@ -217,6 +223,7 @@ class Contents extends Component {
 			contents, 
 			contentIDsSelected, 
 			languageIDs, 
+			allPages, 
 			deleteClicked
 		} = this.props
 		const children = <GridList 
@@ -263,7 +270,10 @@ class Contents extends Component {
 								{this.contentTiles(contents)}
 							</GridList>
 							:
+						<div>
 							<h1>No contents yet... </h1>
+							<h2>Add page first to be able to add content.</h2>
+						</div>
 					}
 					{
 						Object.keys(contents).length > 0
@@ -286,7 +296,9 @@ class Contents extends Component {
 							/>
 					}
 					{ 
-						languageIDs.length > 0 
+						(languageIDs.length > 0 
+							&& 
+							Object.keys(allPages).length > 0)
 							&&
 							<FloatingActionButton 
 								secondary={true}
@@ -323,6 +335,8 @@ Contents.propTypes = {
 	languageIDs: PropTypes.array.isRequired, 
 	getContents: PropTypes.func.isRequired, 
 	contents: PropTypes.object.isRequired, 
+	getPages: PropTypes.func.isRequired, 
+	allPages: PropTypes.object.isRequired, 
 	postContents: PropTypes.func.isRequired, 
 	putContents: PropTypes.func.isRequired, 
 	contentIDsSelected: PropTypes.array.isRequired, 

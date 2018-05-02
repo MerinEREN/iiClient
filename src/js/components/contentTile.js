@@ -26,41 +26,38 @@ class ContentTile extends Component {
 		this.selectField = this.selectField.bind(this)
 		this.menuItems = this.menuItems.bind(this)
 	}
-	componentWillMount() {
-		this.props.getPages()
-	}
 	// INDEX AND VALUES ARE FOR SELECT FIELD ONLY
 	handleFieldChange(event, index, values) {
 		const {content: {ID}, handleUpdate, contentUpdate} = this.props
 		const target = event.target
-		const name = target.name || "pages"
+		const name = target.name || "pageIDs"
 		const value = target.value || values
 		if (ID.indexOf("newContent") === -1)
 			contentUpdate(ID, name, value)
 		handleUpdate(ID, name, value)
 	}
-	menuItems(pages){
+	menuItems(pageIDs){
 		const {allPages} = this.props
 		return Object.values(allPages).map(p => <MenuItem
 			key={p.ID}
 			value={p.ID}
 			primaryText={p.title}
-			checked={pages && pages.indexOf(p.ID) > -1}
+			checked={pageIDs && pageIDs.indexOf(p.ID) > -1}
 			insetChildren={true}
 		/>
 		)
 	}
 	selectField() {
-		const {content: {pages}, inputErrTexts} = this.props
+		const {content: {pageIDs}, inputErrTexts} = this.props
 		return (
 			<SelectField
 				multiple={true} 
 				hintText="select a page"
-				value={pages}
-				errorText={inputErrTexts && inputErrTexts.pages}
+				value={pageIDs}
+				errorText={inputErrTexts && inputErrTexts.pageIDs}
 				onChange={this.handleFieldChange}
 			>
-				{this.menuItems(pages)}
+				{this.menuItems(pageIDs)}
 			</SelectField>
 		)
 	}
@@ -124,7 +121,6 @@ class ContentTile extends Component {
 }
 
 ContentTile.propTypes = {
-	getPages: PropTypes.func.isRequired, 
 	languageIDs: PropTypes.array.isRequired, 
 	allPages: PropTypes.object.isRequired, 
 	content: PropTypes.object.isRequired, 

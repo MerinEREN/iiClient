@@ -148,7 +148,7 @@ class Body extends Component {
 						autoHideDuration={snackbar.duration || 5000}
 						action={snackbar.action}
 						onActionTouchTap={snackbar.onActionClick}
-						onRequestClose={resetSnackbar}
+						onRequestClose={() => resetSnackbar()}
 					/>
 				}
 			</div>

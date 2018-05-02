@@ -44,17 +44,35 @@ class Languages extends Component {
 		super(props)
 		this.state = {
 			showDialog: false, 
+			stepIndex: 0, 
 			ID: "",    
 			inputErrText: {}
 		}
 		this.toggleDialog = this.toggleDialog.bind(this)
-		this.handleRequiredInput = this.handleRequiredInput.bind(this)
+		this.handleStepIndex = this.handleStepIndex.bind(this)
 		this.handleInputChange = this.handleInputChange.bind(this)
 		this.handlePost = this.handlePost.bind(this)
 		this.handleDelete = this.handleDelete.bind(this)
 	}
 	componentWillMount() {
 		this.props.getLanguages()
+	}
+	handleStepIndex(direction) {
+		const {stepIndex} = this.state
+		switch (direction) {
+			case "next":
+				if(this.handleRequiredInput(stepIndex))
+					return
+				this.setState({
+					stepIndex: stepIndex + 1,
+				})
+				break
+			case "prev":
+				this.setState({
+					stepIndex: stepIndex - 1,
+				})
+				break
+		}
 	}
 	handleRequiredInput(i) {
 		switch (i) {
@@ -98,11 +116,10 @@ class Languages extends Component {
 				}
 			}
 		})
-		this.setState({ID: ""})
+		this.setState({ID: "", stepIndex: 0})
 	}
 	toggleDialog() {
-		const {showDialog} = this.state
-		this.setState({showDialog: !showDialog})
+		this.setState({showDialog: !this.state.showDialog})
 	}
 	handleDelete() {
 		const {languageIDsSelected, deleteLanguages, buttonSet} = this.props
@@ -133,6 +150,7 @@ class Languages extends Component {
 		} = styles
 		const {
 			showDialog, 
+			stepIndex, 
 			inputErrText, 
 			ID
 		} = this.state
@@ -141,42 +159,45 @@ class Languages extends Component {
 			languageIDsSelected, 
 			deleteClicked
 		} = this.props
+		const stepLabels = [
+			"Description", 
+			"Language", 
+			"Thumbnail"
+		]
+		const stepContents = [
+			<p>
+				Select a language from the select field.
+			</p>, 
+			<SelectField 
+				value={ID}
+				floatingLabelText="Language" 
+				errorText={inputErrText.ID}
+				onChange={this.handleInputChange}
+			>
+				{items}
+			</SelectField>, 
+			<input 
+				type="file"
+				ref={input => this.file = input}
+			/>
+		]
 		const children = <VerticalStepper 
-			stepLabels={[
-				"Description", 
-				"Language", 
-				"Thumbnail"
-			]} 
-			stepContents={[
-				<p>
-					Select a language from the select field.
-				</p>, 
-				<SelectField 
-					value={ID}
-					floatingLabelText="Language" 
-					errorText={inputErrText.ID}
-					onChange={this.handleInputChange}
-				>
-					{items}
-				</SelectField>, 
-				<input 
-					type="file"
-					ref={input => this.file = input}
-				/>
-			]}
-			setInputErrorMessage={this.handleRequiredInput}
+			stepLabels={stepLabels} 
+			stepContents={stepContents}
+			stepIndex={stepIndex}
+			updateStepIndex={this.handleStepIndex}
 		/>
 		const actions = [
 			<FlatButton
 				label="Close"
 				onTouchTap={this.toggleDialog}
-			/>, 
-			<FlatButton
-				label="Save"
-				primary={true}
-				onTouchTap={this.handlePost}
 			/>
 		]
+		stepContents.length - 1 === stepIndex && actions.push(<FlatButton
+			label="Save"
+			primary={true}
+			onTouchTap={this.handlePost}
+		/>)
 		return (
 			<div style={root}>
 				<GridList 
@@ -210,16 +231,17 @@ class Languages extends Component {
 								onTouchTap={this.handleDelete}
 							/>
 					}
+					{
+						!showDialog 
+							&& 
 							<FloatingActionButton 
 								secondary={true}
-								style={{
-									...floatingActionButton, 
-									display: showDialog ? "none" : "inline-block"
-								}}
+								style={floatingActionButton}
 								onTouchTap={this.toggleDialog}
 							>
 								<ContentAdd />
 							</FloatingActionButton>
+					}
 					</GridTile>
 					<GridTile cols={1} />  
 				</GridList>

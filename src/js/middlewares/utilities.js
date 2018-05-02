@@ -55,7 +55,7 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 							Object.values(method !== "PUT" ? 
 								body.data : 
 								getChanged(
-									getState().entities.kind, 
+									getState().entities[kind], 
 									body.data
 								)
 							).map(v => {
@@ -69,21 +69,18 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 					case "FormData":
 						let fd = new FormData()
 						Object.values(body.data).forEach(v => {
-							Object.entries(v).forEach(
-								a => {
-									// if (a[0] !== "file" || a[0] !== "ID")
-									if (a[0] !== "file")
+							Object.entries(v).forEach(a => {
+								if (a[0] !== "file")
+									fd.set(a[0], a[1])
+								if (a[0] === "file") {
+									if(a[1] !== undefined) {
+										fd.set(a[0], a[1], a[1].name)
+									} else {
 										fd.set(a[0], a[1])
-									if (a[0] === "file") {
-										if(a[1] !== undefined) {
-											fd.set(a[0], a[1], a[1].name)
-										} else {
-											fd.set(a[0], a[1])
-										}
 									}
 								}
-							) 
-						})
+							}) 
+						}) 
 						init.body = fd
 						break
 				}
@@ -98,7 +95,7 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 				// overwrite defaults with them.
 				if(method === "GET") {
 					if (kind)
-						var path = getState().pagination.kind
+						var path = getState().pagination[kind]
 					// Use returned URL
 					if (path !== undefined && path !== {}) {
 						if (path[key]) {
@@ -138,8 +135,8 @@ export const trimSpace = (s) => {
 const getChanged = (entities, entitiesBuffered) => {
 	let changedEntities = {}
 	Object.entries(entities).forEach(([k, v]) => {
-		if (v !== entitiesBufferd[k])
-			changedEntities[k] = entitiesBufferd[k]
+		if (v !== entitiesBuffered[k])
+			changedEntities[k] = entitiesBuffered[k]
 	})
-		return changedEntities
+	return changedEntities
 }

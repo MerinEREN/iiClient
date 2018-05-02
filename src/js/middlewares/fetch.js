@@ -160,18 +160,28 @@ const fetchDomainData = args => (dispatch, getState) => {
 			if (response.ok) {
 				const contentType = response.headers
 					.get("content-type")
-				/* if (
+				if (
 					contentType
 					&&
 					contentType.indexOf("text/html") !== -1
 				) {
-					response.text()
+					// When status code is 204 No Content
+					// like all DELETE requests and some PUT requests.
+					actionsSuccess.forEach(ac => dispatch(ac({
+						method: request.method, 
+						response: {result: 
+							{...getState().entitiesBuffered[kind]}
+						}, 
+						key
+						// receivedAt: Date.now()
+					})))
+					/* response.text()
 						.then(body => 
 							actionsSuccess.forEach(ac => dispatch(ac({
 								response: {result: body}, 
 								receivedAt: Date.now()
 							})))
-						)
+						) */
 				} else if (
 					contentType
 					&&
@@ -179,44 +189,33 @@ const fetchDomainData = args => (dispatch, getState) => {
 					!==
 					-1
 				) {
-					response.json()
+					/* response.json()
 						.then(body => 
 							dispatch(args[1](body.data.
 								children.
 								map(child => child.
 									data), 
 								Date.now()))
-						)
-				}
-				else if ( */
-				// Backand sending JSON data as Marshald form.
-				// So the Content-Type is "text/plain".
-				if (contentType) {
-					if (contentType.indexOf("text/plain") !== -1) {
-						response.text()
-							.then(body => {
-								const json = JSON.parse(body)
-								actionsSuccess.forEach(ac => dispatch(ac({
-									method: request.method, 
-									response: json, 
-									key, 
-									receivedAt: Date.now(), 
-									didInvalidate, 
-									mergeIntoState
-								})))
-							})
-					} else {
-						actionsSuccess.forEach(ac => dispatch(ac({
-							method: request.method, 
-							response: {result: 
-								{...getState().entitiesBufferd[kind]}
-							}, 
-							key, 
-							receivedAt: Date.now(), 
-							didInvalidate, 
-							mergeIntoState
-						})))
-					}
+						) */
+				} else if (
+					contentType
+					&&
+					contentType.indexOf("text/plain") !== -1
+				) {
+					// Backand sending JSON data as Marshald form.
+					// So the Content-Type is "text/plain".
+					response.text()
+						.then(body => {
+							const json = JSON.parse(body)
+							actionsSuccess.forEach(ac => dispatch(ac({
+								method: request.method, 
+								response: json, 
+								key, 
+								// receivedAt: Date.now(), 
+								didInvalidate, 
+								mergeIntoState
+							})))
+						})
 				}
 			} else {
 				// response code is not between 199 and 300
@@ -235,7 +234,8 @@ const fetchDomainData = args => (dispatch, getState) => {
 			if(showSnackbar)
 				dispatch(setSnackbar({
 					props: {
-						message: response.headers.get("Date")
+						// message: response.headers.get("Date")
+						message: response.statusText
 					}
 				}))
 		})

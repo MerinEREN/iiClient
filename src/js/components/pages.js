@@ -5,12 +5,12 @@ import FloatingActionButton from "material-ui/FloatingActionButton"
 import ContentAdd from "material-ui/svg-icons/content/add"
 import Dialog from "material-ui/Dialog"
 import FlatButton from "material-ui/FlatButton"
-import RaisedButton from 'material-ui/RaisedButton'
+import RaisedButton from "material-ui/RaisedButton"
 import VerticalStepper from "./verticalStepper"
 import TextField from "material-ui/TextField"
-import {trimSpace} from "../middlewares/utilities"
 import PageTile from "./pageTile"
-import {generateURLVariableFromIDs} from './utilities'
+import {generateURLVariableFromIDs} from "./utilities"
+import {trimSpace} from "../middlewares/utilities"
 
 const styles = {
 	root: {
@@ -36,17 +36,35 @@ class Pages extends Component {
 		super(props)
 		this.state = {
 			showDialog: false, 
+			stepIndex: 0, 
 			title: "", 
 			inputErrText: {}
 		}
 		this.toggleDialog = this.toggleDialog.bind(this)
-		this.handleRequiredInput = this.handleRequiredInput.bind(this)
+		this.handleStepIndex = this.handleStepIndex.bind(this)
 		this.handleInputChange = this.handleInputChange.bind(this)
 		this.handlePost = this.handlePost.bind(this)
 		this.handleDelete = this.handleDelete.bind(this)
 	}
 	componentWillMount() {
 		this.props.getPages()
+	}
+	handleStepIndex(direction) {
+		const {stepIndex} = this.state
+		switch (direction) {
+			case "next":
+				if(this.handleRequiredInput(stepIndex))
+					return
+				this.setState({
+					stepIndex: stepIndex + 1,
+				})
+				break
+			case "prev":
+				this.setState({
+					stepIndex: stepIndex - 1,
+				})
+				break
+		}
 	}
 	handleRequiredInput(i) {
 		switch (i) {
@@ -83,18 +101,16 @@ class Pages extends Component {
 				// contentType: "application/json", 
 				data: {
 					[trimSpace(title)]: {
-						ID: trimSpace(title), 
 						title: title.trim(), 
 						file: this.file.files[0] 
 					}
 				}
 			}
 		})
-		this.setState({title: ""})
+		this.setState({title: "", stepIndex: 0})
 	}
 	toggleDialog() {
-		const {showDialog} = this.state
-		this.setState({showDialog: !showDialog})
+		this.setState({showDialog: !this.state.showDialog})
 	}
 	handleDelete() {
 		const {
@@ -112,7 +128,6 @@ class Pages extends Component {
 	}
 	pageTiles(pages) {
 		return Object.entries(pages).map(([k, v]) => {
-			console.log(this.props.pageIDsSelected.indexOf(k) !== -1)
 			return <PageTile
 				key={k} 
 				page={v} 
@@ -129,6 +144,7 @@ class Pages extends Component {
 		} = styles
 		const {
 			showDialog, 
+			stepIndex, 
 			title, 
 			inputErrText
 		} = this.state
@@ -137,43 +153,46 @@ class Pages extends Component {
 			pageIDsSelected, 
 			deleteClicked
 		} = this.props
+		const stepLabels = [
+			"Description", 
+			"Page Title", 
+			"Page Thumbnail"
+		]
+		const stepContents = [
+			<p>
+				Create a new page with a name.
+				Uploading a file as a page foto is 
+				not required.
+			</p>, 
+			<TextField 
+				name="title" 
+				value={title}
+				floatingLabelText="Page Title" 
+				errorText={inputErrText.title}
+				onChange={this.handleInputChange}
+			/>, 
+			<input 
+				type="file"
+				ref={input => this.file = input}
+			/>
+		]
 		const children = <VerticalStepper 
-			stepLabels={[
-				"Description", 
-				"Page Title", 
-				"Page Thumbnail"
-			]} 
-			stepContents={[
-				<p>
-					Create a new page with a name.
-					Uploading a file as a page foto is 
-					not required.
-				</p>, 
-				<TextField 
-					name="title" 
-					value={title}
-					floatingLabelText="Page Title" 
-					errorText={inputErrText.title}
-					onChange={this.handleInputChange}
-				/>, 
-				<input 
-					type="file"
-					ref={input => this.file = input}
-				/>
-			]}
-			setInputErrorMessage={this.handleRequiredInput}
+			stepLabels={stepLabels} 
+			stepContents={stepContents}
+			stepIndex={stepIndex}
+			updateStepIndex={this.handleStepIndex}
 		/>
 		const actions = [
 			<FlatButton
 				label="Close"
 				onTouchTap={this.toggleDialog}
-			/>, 
-			<FlatButton
-				label="Save"
-				primary={true}
-				onTouchTap={this.handlePost}
 			/>
 		]
+		stepContents.length - 1 === stepIndex && actions.push(<FlatButton
+			label="Save"
+			primary={true}
+			onTouchTap={this.handlePost}
+		/>)
 		return (
 			<div style={root}>
 				<GridList 
@@ -184,7 +203,7 @@ class Pages extends Component {
 					<GridTile cols={1} />  
 					<GridTile cols={2}>  
 						{ 
-							Object.entries(pages).length !== 0 
+							Object.keys(pages).length !== 0 
 							? 
 							<GridList 
 								style={gridList}
@@ -207,16 +226,17 @@ class Pages extends Component {
 									onTouchTap={this.handleDelete}
 								/>
 						}
-						<FloatingActionButton 
-							secondary={true}
-							style={{
-								...floatingActionButton, 
-								display: showDialog ? "none" : "inline-block"
-							}}
-							onTouchTap={this.toggleDialog}
-						>
-							<ContentAdd />
-						</FloatingActionButton>
+						{
+							!showDialog 
+								&& 
+								<FloatingActionButton 
+									secondary={true}
+									style={floatingActionButton}
+									onTouchTap={this.toggleDialog}
+								>
+									<ContentAdd />
+								</FloatingActionButton>
+						}
 					</GridTile>
 					<GridTile cols={1} />  
 				</GridList>

@@ -35,14 +35,15 @@ class Page extends Component {
 		super(props)
 		this.state = {
 			showDialog: false, 
+			stepIndex: 0, 
 			title: "", 
 			inputErrText: {}
 		}
 		this.toggleDialog = this.toggleDialog.bind(this)
+		this.handleStepIndex = this.handleStepIndex.bind(this)
+		this.handleInputChange = this.handleInputChange.bind(this)
 		this.handlePut = this.handlePut.bind(this)
 		this.handleDelete = this.handleDelete.bind(this)
-		this.handleRequiredInput = this.handleRequiredInput.bind(this)
-		this.handleInputChange = this.handleInputChange.bind(this)
 	}
 	componentWillMount() {
 		const {getPage, params: {ID}} = this.props
@@ -50,6 +51,23 @@ class Page extends Component {
 			URL: `/pages/${ID}`
 		})
 
+	}
+	handleStepIndex(direction) {
+		const {stepIndex} = this.state
+		switch (direction) {
+			case "next":
+				if(this.handleRequiredInput(stepIndex))
+					return
+				this.setState({
+					stepIndex: stepIndex + 1,
+				})
+				break
+			case "prev":
+				this.setState({
+					stepIndex: stepIndex - 1,
+				})
+				break
+		}
 	}
 	handleRequiredInput(i) {
 		switch (i) {
@@ -94,7 +112,7 @@ class Page extends Component {
 				}
 			}
 		})
-		this.setState({title: ""})
+		this.setState({title: "", stepIndex: 0})
 	}
 	handleDelete() {
 		const {params: {ID}, deletePages} = this.props
@@ -107,52 +125,54 @@ class Page extends Component {
 		browserHistory.goBack()
 	}
 	toggleDialog() {
-		const {showDialog} = this.state
-		this.setState({showDialog: !showDialog})
-	}
-	updatePageForm() {
-		const {inputErrText, title} = this.state
-		return (
-			<VerticalStepper 
-				stepLabels={[
-					"Description", 
-					"Page Title", 
-					"Page Thumbnail"
-				]} 
-				stepContents={[
-					<p>
-						Change page attributes.
-					</p>, 
-					<TextField 
-						name="title" 
-						value={title}
-						floatingLabelText="Page Title" 
-						errorText={inputErrText.title}
-						onChange={this.handleInputChange}
-					/>, 
-					<input 
-						type="file"
-						ref={input => this.file = input}
-					/>
-				]}
-				setInputErrorMessage={this.handleRequiredInput}
-			/>
-		)
+		this.setState({showDialog: !this.state.showDialog})
 	}
 	render() {
-		const {showDialog} = this.state
+		const {
+			showDialog, 
+			stepIndex, 
+			title, 
+			inputErrText
+		} = this.state
 		const {page} = this.props
+		const stepLabels = [
+			"Description", 
+			"Page Title", 
+			"Page Thumbnail"
+		]
+		const stepContents = [
+			<p>
+				Change page attributes.
+			</p>, 
+			<TextField 
+				name="title" 
+				value={title}
+				floatingLabelText="Page Title" 
+				errorText={inputErrText.title}
+				onChange={this.handleInputChange}
+			/>, 
+			<input 
+				type="file"
+				ref={input => this.file = input}
+			/>
+		]
+		const children = <VerticalStepper 
+			stepLabels={stepLabels} 
+			stepContents={stepContents}
+			stepIndex={stepIndex}
+			updateStepIndex={this.handleStepIndex}
+		/>
 		const actions = [
 			<FlatButton
 				label="Close"
-				onClick={this.toggleDialog}
-			/>, 
-			<FlatButton
-				label="Save"
-				primary={true}
-				onClick={this.handlePut}
+				onTouchTap={this.toggleDialog}
 			/>
 		]
+		stepContents.length - 1 === stepIndex && actions.push(<FlatButton
+			label="Save"
+			primary={true}
+			onTouchTap={this.handlePut}
+		/>)
 		return (
 			<div style={styles.root}>
 				<Card>
@@ -174,19 +194,20 @@ class Page extends Component {
 						/>
 					</CardActions>
 				</Card>
-				<FloatingActionButton 
-					secondary={true}
-					style={{
-						...styles.floatingActionButton, 
-						display: showDialog ? "none" : "inline-block"
-					}}
-					onTouchTap={this.toggleDialog}
-				>
-					<ContentCreate />
-				</FloatingActionButton>
+				{
+					!showDialog 
+						&& 
+						<FloatingActionButton 
+							secondary={true}
+							style={styles.floatingActionButton}
+							onTouchTap={this.toggleDialog}
+						>
+							<ContentCreate />
+						</FloatingActionButton>
+				}
 				<Dialog
 					title="Update The Page"
-					children={this.updatePageForm()}
+					children={children}
 					actions={actions}
 					modal={true}
 					open={showDialog} 

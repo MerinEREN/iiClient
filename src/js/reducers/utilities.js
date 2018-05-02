@@ -50,12 +50,7 @@ export const paginate = ({types, mapActionToKey}) => {
 					{
 						...state,
 						// IDs: union(state.IDs, response.result),
-						IDs: typeof response.result !== "object" ? 
-						state.IDs : 
-						pushIntoArrayIfNotPresent(
-							state.IDs, 
-							response.result
-						), 
+						IDs: [...state.IDs, ...Object.keys(response.result)], 
 						nextPageURL: response.nextPageURL || 
 						state.nextPageURL, 
 						prevPageURL: response.prevPageURL || 
@@ -69,14 +64,20 @@ export const paginate = ({types, mapActionToKey}) => {
 					} : 
 					{
 						...state,
-						IDs: Object.keys(response.result), 
+						IDs: method === "PUT" ? 
+						state.IDs :
+						Object.keys(response.result), 
 						nextPageURL: response.nextPageURL || 
 						state.nextPageURL, 
 						prevPageURL: response.prevPageURL || 
 						state.prevPageURL,
-						pageCount: method === "POST" ? 
-						1 : 
-						(Object.keys(response.result).length - 1) / 10, 
+						pageCount: method === "PUT" ? 
+						state.pageCount : 
+						(
+							Object.keys(response.result).length % 20 ? 
+							Math.floor(Object.keys(response.result).length / 20) + 1 : 
+							Math.floor(Object.keys(response.result).length / 20)
+						), 
 						isFetching: false
 						// didInvalidate: response.reset
 					}
@@ -180,33 +181,6 @@ export const addDynamicKeyReturnResult = ({types, mapActionToKey}) => {
 		}
 	}
 }
-
-const pushIntoArrayIfNotPresent = (array, obj) => {
-	let IDs = []
-	Object.keys(obj).forEach(v => {
-		if (array.indexOf(v) === -1)
-			IDs.push(v)
-	})
-	return [...array, ...IDs]
-}
-
-// COULD BE USED EXTERNALLY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-/* export const removeFromArray = (IDs, action) => {
-	// return [
-	//...state.slice(0, action.ID.index),
-	//...state.slice(action.ID.index + 1)
-	// ]
-	// return state.filter( (item, index) => index !== action.response.result.ID.index)
-	const {result} = action.response
-	if (!result)
-		return IDs
-	let map = []
-	for (let id of IDs) {
-		if (!result.hasOwnProperty(id))
-			map.push(id)
-	}
-	return map
-} */
 
 export const mergeIntoOrRemoveFromObjectRequest = (state, action) => {
 	const {
