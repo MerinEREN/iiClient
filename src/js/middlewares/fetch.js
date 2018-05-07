@@ -23,8 +23,9 @@ export default function fetchDomainDataIfNeeded(args) {
 				}
 			case "DELETE":
 				// Dispatch a thunk from thunk.
-				dispatch(shouldFetchAfterTimeout(args, 10000))
-				break
+				return dispatch(shouldFetchAfterDelay(args, 7000)).
+					then(() => dispatch(fetchDomainData(args))).
+					catch(() => console.log("DELETE CANCELED"))
 			default:
 				// Covers "POST" and "PUT" methods
 				// Dispatch a thunk from thunk.
@@ -65,8 +66,8 @@ function shouldFetchDomainData(state, args) {
 	} */
 }
 
-const shouldFetchAfterTimeout = (args, duration) => (dispatch, getState) => {
-	// Cancel previous api delete request
+const shouldFetchAfterDelay = (args, duration) => (dispatch, getState) => {
+	// Cancel previous api DELETE request
 	clearTimeout(timer)
 	const {
 		actionsRequest, 
@@ -84,8 +85,12 @@ const shouldFetchAfterTimeout = (args, duration) => (dispatch, getState) => {
 	dispatch(setSnackbar({
 		props: {
 			message: Array.isArray(dataBody) 
-			? `${dataBody.map(k => k)} deleted` 
-			: `${Object.keys(dataBody).map(k => k)} deleted`,
+			? (dataBody.length === 1 ? 
+				`${dataBody.map(k => k)} deleted` : 
+				`${dataBody.length} items deleted`) 
+			: (Object.keys(dataBody).length === 1 ? 
+				`${Object.keys(dataBody).map(k => k)} deleted` : 
+				`${Object.keys(dataBody).length} items deleted`),
 			duration, 
 			action: "Undo", 
 			onActionClick: () => {
@@ -95,32 +100,38 @@ const shouldFetchAfterTimeout = (args, duration) => (dispatch, getState) => {
 			clicked: false
 		}
 	}))
-	// setTimeout returns a number not a promise, so this return does nothing actually.
-	// return timer = setTimeout(function() { 
-	timer = setTimeout(function() {
-		if(!getState().appState.snackbar.clicked) {
-			dispatch(fetchDomainData(args))
-		}
-	}, duration + 1000)
+	return new Promise((resolve, reject) => {
+		timer = setTimeout(function() {
+			if (getState().appState.snackbar.clicked) {
+				reject()
+			} else {
+				resolve()
+			}
+		}, duration + 1000)
+	})
 }
 
 // Reset entitiesBuffered with entities.
-const cancelFetch = ({actionsFailure, request: {method}, kind, key}) => (dispatch, getState) => {
-	const {appState: {snackbar}, entities} = getState()
-	actionsFailure.forEach(ac => dispatch(ac({
-		method, 
-		response: {result: {...entities[kind]}}, 
-		key
-	})))
-	// Reset snackbar properties
-	dispatch(setSnackbar({
-		props: {
-			...snackbar, 
-			onActionClick: undefined, 
-			clicked: true
-		}
-	}))
-}
+const cancelFetch = ({actionsFailure, request: {method}, kind, key}) => 
+	(dispatch, getState) => {
+		const {
+			appState: {snackbar}, 
+			entities
+		} = getState()
+		actionsFailure.forEach(ac => dispatch(ac({
+			method, 
+			response: {result: {...entities[kind]}}, 
+			key
+		})))
+		// Reset snackbar properties
+		dispatch(setSnackbar({
+			props: {
+				...snackbar, 
+				onActionClick: undefined, 
+				clicked: true
+			}
+		}))
+	}
 
 const fetchDomainData = args => (dispatch, getState) => {
 	const {
@@ -238,6 +249,7 @@ const fetchDomainData = args => (dispatch, getState) => {
 						message: response.statusText
 					}
 				}))
+			return response
 		})
 		.catch(err => {
 			if(!hideFetching)

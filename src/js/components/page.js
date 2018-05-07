@@ -115,12 +115,19 @@ class Page extends Component {
 		this.setState({title: "", stepIndex: 0})
 	}
 	handleDelete() {
-		const {params: {ID}, deletePages} = this.props
+		const {
+			params: {ID}, 
+			deletePages, 
+			removeUpdateContentsWithThatPage
+		} = this.props
 		deletePages({
 			URL: `/pages/${ID}`, 
 			body: {
 				data: [ID]
 			}
+		}).then(response => {
+			if (response.ok)
+				removeUpdateContentsWithThatPage(ID)
 		})
 		browserHistory.goBack()
 	}
@@ -226,7 +233,8 @@ Page.propTypes = {
 	page: PropTypes.object.isRequired, 
 	getPage: PropTypes.func.isRequired, 
 	putPage: PropTypes.func.isRequired, 
-	deletePages: PropTypes.func.isRequired
+	deletePages: PropTypes.func.isRequired, 
+	removeUpdateContentsWithThatPage: PropTypes.func.isRequired
 }
 
 export default Page

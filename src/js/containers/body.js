@@ -30,11 +30,12 @@ const mapStateToProps = state => {
 		      lastUpdated
 		    } */
 	const {
-		appState: {snackbar, isFetching}, 
+		appState: {dialog, snackbar, isFetching}, 
 		entitiesBuffered: {userAccount: {account, user}}
 	} = state
 	return {
 		isFetching,
+		dialog, 
 		snackbar, 
 		account, 
 		user
