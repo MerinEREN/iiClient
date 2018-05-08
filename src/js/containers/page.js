@@ -1,9 +1,9 @@
-import {connect} from 'react-redux'
-import {bindActionCreators} from 'redux'
-import PageComponent from '../components/page'
-import getPage, {putPage} from '../middlewares/page'
-import {deletePages} from '../middlewares/pages'
-import {removeUpdateContentsWithThatPage} from '../middlewares/contents'
+import {connect} from "react-redux"
+import {bindActionCreators} from "redux"
+import PageComponent from "../components/page"
+import getPage, {putPage} from "../middlewares/page"
+import {deletePages} from "../middlewares/pages"
+import {removeUpdateContentsWithThatPage} from "../middlewares/contents"
 
 const mapStateToProps = (state, ownProps) => {
 	return {

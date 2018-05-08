@@ -40,7 +40,7 @@ export const paginationContents = paginate({
 })
 export const contentIDsSelected = createReducer([],   
 	{
-		CONTENTS_SUCCESS: resetArrayOrObject, 
+		CONTENTS_REQUEST: resetArrayOrObject, 
 		CONTENTIDS_SELECTED_ADD_REMOVE: addToOrRemoveFromArray
 	}
 )

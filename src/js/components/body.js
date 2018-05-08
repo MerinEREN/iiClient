@@ -5,7 +5,6 @@ import muiThemeable from 'material-ui/styles/muiThemeable'
 import LinearProgress from 'material-ui/LinearProgress'
 import AppBar from 'material-ui/AppBar'
 import Snackbar from 'material-ui/Snackbar'
-import Dialog from 'material-ui/Dialog'
 import {ToolbarGroup} from 'material-ui/Toolbar'
 import IconButton from 'material-ui/IconButton'
 import Badge from 'material-ui/Badge'
@@ -62,7 +61,6 @@ class Body extends Component {
 			muiTheme, 
 			isFetching, 
 			snackbar, 
-			dialog, 
 			account, 
 			user, 
 			toggleDrawer, 
@@ -140,18 +138,6 @@ class Body extends Component {
 				{this.session && <Drawer {...this.props} />}
 				{this.session ? children : <Login />}
 				{
-					Object.keys(dialog).length > 0
-					&&
-					<Dialog
-						title={dialog.title}
-						children={dialog.children}
-						actions={dialog.actions}
-						modal={dialog.modal}
-						open={dialog.open} 
-						autoScrollBodyContent={dialog.autoScrollBodyContent}
-					/>
-				}
-				{
 					Object.keys(snackbar).length > 0
 					&&
 					<Snackbar
@@ -187,7 +173,6 @@ Body.propTypes = {
 	loadData: PropTypes.func.isRequired,
 	toggleDrawer: PropTypes.func.isRequired,
 	children: PropTypes.node.isRequired, 
-	dialog: PropTypes.object, 
 	snackbar: PropTypes.object, 
 	resetSnackbar: PropTypes.func.isRequired
 }

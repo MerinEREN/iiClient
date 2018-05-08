@@ -2,9 +2,6 @@ export const INIT_STORE = "INIT_STORE"
 
 export const CHANGE_THEME = "CHANGE_THEME"
 
-export const SET_DIALOG = "SET_DIALOG"
-export const RESET_DIALOG = "RESET_DIALOG"
-
 export const SET_SNACKBAR = "SET_SNACKBAR"
 export const RESET_SNACKBAR = "RESET_SNACKBAR"
 

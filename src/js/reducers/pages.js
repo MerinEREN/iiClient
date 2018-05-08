@@ -41,7 +41,7 @@ export const paginationPages = paginate({
 })
 export const pageIDsSelected = createReducer([], 
 	{
-		PAGES_SUCCESS: resetArrayOrObject, 
+		PAGES_REQUEST: resetArrayOrObject, 
 		PAGEIDS_SELECTED_ADD_REMOVE: addToOrRemoveFromArray
 	}
 )

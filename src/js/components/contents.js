@@ -1,19 +1,19 @@
-import React, {Component} from 'react'
-import PropTypes from 'prop-types'
-import {GridList, GridTile} from 'material-ui/GridList'
-import FloatingActionButton from 'material-ui/FloatingActionButton'
-import ContentAdd from 'material-ui/svg-icons/content/add'
-import Dialog from 'material-ui/Dialog'
-import FlatButton from 'material-ui/FlatButton'
-import RaisedButton from 'material-ui/RaisedButton'
-import ContentTile from '../containers/contentTile'
-import {generateURLVariableFromIDs} from './utilities'
+import React, {Component} from "react"
+import PropTypes from "prop-types"
+import {GridList, GridTile} from "material-ui/GridList"
+import FloatingActionButton from "material-ui/FloatingActionButton"
+import ContentAdd from "material-ui/svg-icons/content/add"
+import Dialog from "material-ui/Dialog"
+import FlatButton from "material-ui/FlatButton"
+import RaisedButton from "material-ui/RaisedButton"
+import ContentTile from "../containers/contentTile"
+import {generateURLVariableFromIDs} from "./utilities"
 
 const styles = {
 	root: {
-		display: 'flex',
-		flexWrap: 'wrap', 
-		justifyContent: 'space-around'
+		display: "flex",
+		flexWrap: "wrap", 
+		justifyContent: "space-around"
 	}, 
 	gridList: {
 		margin: 0
@@ -22,7 +22,7 @@ const styles = {
 		marginLeft: 12
 	}, 
 	floatingActionButton: {
-		position: 'fixed',
+		position: "fixed",
 		bottom: 32, 
 		right: 48
 	}
@@ -58,7 +58,7 @@ class Contents extends Component {
 						pageIDs: []
 					}
 			this.props.languageIDs.forEach(
-				v => tempObj[`newContent_${i}`].values[v] = ''
+				v => tempObj[`newContent_${i}`].values[v] = ""
 			)
 		}
 		this.setState({
@@ -70,7 +70,7 @@ class Contents extends Component {
 	}
 	handleUpdate(ID, field, value) {
 		const {newContents, inputErrTexts} = this.state
-		if (ID.indexOf('newContent') !== -1) {
+		if (ID.indexOf("newContent") !== -1) {
 			if (Array.isArray(value)) {
 				this.setState({
 					newContents: {
@@ -101,7 +101,7 @@ class Contents extends Component {
 				...inputErrTexts, 
 				[ID]: {
 					...inputErrTexts[ID], 
-					[field]: ''
+					[field]: ""
 				}
 			}
 		})
@@ -117,7 +117,7 @@ class Contents extends Component {
 		const {inputErrTexts} = this.state
 		return Object.entries(contents).every(a => {
 			// Not necessary for newContents but necessary for contents
-			if(a[1].values.en === '') {
+			if(a[1].values.en === "") {
 				this.setState({
 					inputErrTexts: {
 						...inputErrTexts, 
@@ -147,7 +147,7 @@ class Contents extends Component {
 	handlePost() {
 		let newContents = {}
 		Object.entries(this.state.newContents).forEach( a => {
-			if(a[1].values.en !== '')
+			if(a[1].values.en !== "")
 				newContents[a[0]] = a[1]
 		})
 		if(Object.keys(newContents).length === 0) {
@@ -163,8 +163,8 @@ class Contents extends Component {
 		})
 		this.props.postContents({
 			body: {
-				type: 'Blob', 
-				contentType: 'application/json', 
+				type: "Blob", 
+				contentType: "application/json", 
 				data: newContents
 			}
 		})
@@ -175,8 +175,8 @@ class Contents extends Component {
 			return
 		putContents({
 			body: {
-				type: 'Blob', 
-				contentType: 'application/json', 
+				type: "Blob", 
+				contentType: "application/json", 
 				data: contents
 			}
 		})
@@ -230,7 +230,7 @@ class Contents extends Component {
 					cols={4}
 					style={gridList}
 					padding={10}
-					cellHeight={'auto'}
+					cellHeight={"auto"}
 				>
 					{this.contentTiles(newContents)}
 				</GridList>
@@ -253,7 +253,7 @@ class Contents extends Component {
 			<div style={root}>
 				<GridList 
 					cols={4} 
-					cellHeight='auto'
+					cellHeight="auto"
 					style={gridList}
 				>
 					<GridTile cols={1} />  
@@ -265,7 +265,7 @@ class Contents extends Component {
 								cols={4}
 								style={gridList}
 								padding={10}
-								cellHeight={'auto'}
+								cellHeight={"auto"}
 							>
 								{this.contentTiles(contents)}
 							</GridList>
@@ -286,8 +286,10 @@ class Contents extends Component {
 							/>
 					}
 					{
-						(!deleteClicked && contentIDsSelected.length > 0)
-							&& 
+						(
+							!deleteClicked && 
+							contentIDsSelected.length > 0
+						) && 
 							<RaisedButton
 								label="Delete"
 								style={raisedButton}
@@ -296,16 +298,14 @@ class Contents extends Component {
 							/>
 					}
 					{ 
-						(languageIDs.length > 0 
-							&& 
-							Object.keys(allPages).length > 0)
-							&&
+						(
+							languageIDs.length > 0 && 
+							Object.keys(allPages).length > 0 && 
+							!showDialog
+						) &&
 							<FloatingActionButton 
 								secondary={true}
-								style={{
-									...floatingActionButton, 
-									display: showDialog ? 'none' : 'inline-block'
-								}}
+								style={floatingActionButton}
 								onTouchTap={this.toggleDialog}
 							>
 								<ContentAdd />

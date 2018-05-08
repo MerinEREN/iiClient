@@ -1,13 +1,13 @@
-import {connect} from 'react-redux'
-import {bindActionCreators} from 'redux'
-import BodyComponent from '../components/body'
-import loadData from '../middlewares/body'
-import {toggleDrawer} from '../actions/drawer'
-import {resetSnackbar} from '../actions/snackbar'
+import {connect} from "react-redux"
+import {bindActionCreators} from "redux"
+import BodyComponent from "../components/body"
+import loadData from "../middlewares/body"
+import {toggleDrawer} from "../actions/drawer"
+import {resetSnackbar} from "../actions/snackbar"
 // Needed for onTouchTap, REMOVE WHEN REACT HAS THIS FEATURE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// It's a mobile friendly onClick() alternative for all components in Material-UI 
+// It"s a mobile friendly onClick() alternative for all components in Material-UI 
 // http://stackoverflow.com/a/34015469/988941
-import injectTapEventPlugin from 'react-tap-event-plugin'
+import injectTapEventPlugin from "react-tap-event-plugin"
 injectTapEventPlugin()
 
 // Can use "ownProps" here
@@ -30,12 +30,11 @@ const mapStateToProps = state => {
 		      lastUpdated
 		    } */
 	const {
-		appState: {dialog, snackbar, isFetching}, 
+		appState: {snackbar, isFetching}, 
 		entitiesBuffered: {userAccount: {account, user}}
 	} = state
 	return {
 		isFetching,
-		dialog, 
 		snackbar, 
 		account, 
 		user

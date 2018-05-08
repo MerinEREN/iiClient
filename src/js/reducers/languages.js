@@ -38,7 +38,7 @@ export const paginationLanguages = paginate({
 })
 export const languageIDsSelected = createReducer([], 
 	{
-		LANGUAGES_SUCCESS: resetArrayOrObject, 
+		LANGUAGES_REQUEST: resetArrayOrObject, 
 		LANGUAGEIDS_SELECTED_ADD_REMOVE: addToOrRemoveFromArray
 	}
 )
