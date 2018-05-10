@@ -1,4 +1,5 @@
 import {
+	removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
 	mergeIntoOrResetObject
 } from "./utilities"
 import {
@@ -6,7 +7,7 @@ import {
 } from "../actions/types"
 
 const user = {
-	USER_SUCCESS: mergeIntoOrResetObject
+	USER_SUCCESS: removeFromObjectIfDeleteOrMergeIntoOrResetObject
 }
 export const userBuffered = {
 	USER_SUCCESS: mergeIntoOrResetObject

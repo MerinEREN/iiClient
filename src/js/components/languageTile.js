@@ -4,7 +4,6 @@ import PropTypes from "prop-types"
 import {GridTile} from "material-ui/GridList"
 import Checkbox from "material-ui/Checkbox"
 import {selectedLanguageIDsAddRemove} from "../actions/languages"
-import {buttonReset} from "../actions/buttons"
 
 const styles = {
 	gridTile: {
@@ -15,7 +14,7 @@ const styles = {
 	}
 }
 
-const LanguageTile = ({language, isChecked, dispatch}) => {
+const LanguageTile = ({language: {ID, link}, isChecked, dispatch}) => {
 	const {
 		gridTile: {
 			marginTop, 
@@ -31,22 +30,19 @@ const LanguageTile = ({language, isChecked, dispatch}) => {
 				marginBottom, 
 				opacity: isChecked ? 0.5 : 1
 			}}
-			title={language.ID}
+			title={ID}
 			titlePosition="top"
 			titleBackground={titleBackground} 
 			actionIcon={
 				<Checkbox
 					style={checkbox} 
 					checked={isChecked}
-					onCheck={() => {
-						dispatch(buttonReset("languagesDelete"))
-						dispatch(selectedLanguageIDsAddRemove(language.ID))
-					}}
+					onCheck={() => dispatch(selectedLanguageIDsAddRemove(ID))}
 				/>
 			}
 			actionPosition="left"
 		>
-			<img src={language.link || "/img/adele.jpg"} />
+			<img src={link || "/img/adele.jpg"} />
 		</GridTile>
 	)
 }

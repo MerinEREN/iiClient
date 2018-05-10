@@ -1,8 +1,9 @@
 import createReducer, {
 	paginate, 
+	removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
 	mergeIntoOrRemoveFromObjectRequest, 
 	mergeIntoOrResetObject, 
-	entitiesBufferedReset
+	fetchFailure
 } from './utilities'
 import {
 	ACCOUNTS_REQUEST,
@@ -14,7 +15,7 @@ import {
 const accounts = createReducer(
 	{}, 
 	{
-		ACCOUNTS_SUCCESS: mergeIntoOrResetObject
+		ACCOUNTS_SUCCESS: removeFromObjectIfDeleteOrMergeIntoOrResetObject
 	}
 )
 export const accountsBuffered = createReducer(
@@ -22,7 +23,7 @@ export const accountsBuffered = createReducer(
 	{
 		ACCOUNTS_REQUEST: mergeIntoOrRemoveFromObjectRequest, 
 		ACCOUNTS_SUCCESS: mergeIntoOrResetObject, 
-		ACCOUNTS_FAILURE: entitiesBufferedReset
+		ACCOUNTS_FAILURE: fetchFailure
 	}
 )
 export const paginationAccounts = paginate({

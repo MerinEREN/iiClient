@@ -115,8 +115,7 @@ class Pages extends Component {
 	handleDelete() {
 		const {
 			pageIDsSelected, 
-			deletePages, 
-			buttonSet
+			deletePages
 		}= this.props
 		deletePages({
 			URL: `/pages?IDs=${generateURLVariableFromIDs(pageIDsSelected)}`, 
@@ -124,7 +123,6 @@ class Pages extends Component {
 				data: pageIDsSelected
 			}
 		})
-		buttonSet("pagesDelete")
 	}
 	pageTiles(pages) {
 		return Object.entries(pages).map(([k, v]) => {
@@ -150,8 +148,7 @@ class Pages extends Component {
 		} = this.state
 		const {
 			pages, 
-			pageIDsSelected, 
-			deleteClicked
+			pageIDsSelected
 		} = this.props
 		const stepLabels = [
 			"Description", 
@@ -217,8 +214,7 @@ class Pages extends Component {
 							<h3>No Pages</h3>
 						}
 						{
-							(!deleteClicked && pageIDsSelected.length > 0)
-								&& 
+							pageIDsSelected.length > 0 && 
 								<RaisedButton
 									label="Delete"
 									style={raisedButton}
@@ -227,8 +223,7 @@ class Pages extends Component {
 								/>
 						}
 						{
-							!showDialog 
-								&& 
+							!showDialog && 
 								<FloatingActionButton 
 									secondary={true}
 									style={floatingActionButton}
@@ -252,18 +247,12 @@ class Pages extends Component {
 	}
 }
 
-Pages.defaultProps = {
-	deleteClicked: false
-}
-
 Pages.propTypes = {
 	getPages: PropTypes.func.isRequired, 
 	pages: PropTypes.object.isRequired, 
 	postPage: PropTypes.func.isRequired, 
 	pageIDsSelected: PropTypes.array.isRequired, 
-	deletePages: PropTypes.func.isRequired, 
-	deleteClicked: PropTypes.bool.isRequired, 
-	buttonSet: PropTypes.func.isRequired
+	deletePages: PropTypes.func.isRequired
 }
 
 Pages.muiName = "GridList"

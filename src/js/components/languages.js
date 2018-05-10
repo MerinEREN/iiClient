@@ -122,7 +122,7 @@ class Languages extends Component {
 		this.setState({showDialog: !this.state.showDialog})
 	}
 	handleDelete() {
-		const {languageIDsSelected, deleteLanguages, buttonSet} = this.props
+		const {languageIDsSelected, deleteLanguages} = this.props
 		deleteLanguages({
 			URL: `/languages?IDs=${generateURLVariableFromIDs(languageIDsSelected)}`, 
 			body: {
@@ -130,7 +130,6 @@ class Languages extends Component {
 				data: languageIDsSelected
 			}
 		})
-		buttonSet("languagesDelete")
 	}
 	languageTiles(languages) {
 		const {languageIDsSelected} = this.props
@@ -156,8 +155,7 @@ class Languages extends Component {
 		} = this.state
 		const {
 			languages, 
-			languageIDsSelected, 
-			deleteClicked
+			languageIDsSelected
 		} = this.props
 		const stepLabels = [
 			"Description", 
@@ -222,8 +220,7 @@ class Languages extends Component {
 							<h3>No Languages</h3>
 					}
 					{
-						(!deleteClicked && languageIDsSelected.length > 0)
-							&& 
+						languageIDsSelected.length > 0 && 
 							<RaisedButton
 								label="Delete"
 								style={raisedButton}
@@ -232,8 +229,7 @@ class Languages extends Component {
 							/>
 					}
 					{
-						!showDialog 
-							&& 
+						!showDialog && 
 							<FloatingActionButton 
 								secondary={true}
 								style={floatingActionButton}
@@ -257,18 +253,12 @@ class Languages extends Component {
 	}
 }
 
-Languages.defaultProps = {
-	deleteClicked: false
-}
-
 Languages.propTypes = {
 	getLanguages: PropTypes.func.isRequired, 
 	languages: PropTypes.object.isRequired, 
 	postLanguage: PropTypes.func.isRequired, 
 	languageIDsSelected: PropTypes.array.isRequired, 
-	deleteLanguages: PropTypes.func.isRequired,
-	deleteClicked: PropTypes.bool.isRequired, 
-	buttonSet: PropTypes.func.isRequired
+	deleteLanguages: PropTypes.func.isRequired
 }
 
 Languages.muiName = "GridList"

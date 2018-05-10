@@ -1,4 +1,5 @@
 import {
+	removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
 	mergeIntoOrResetObject
 } from "./utilities"
 import {
@@ -6,7 +7,7 @@ import {
 } from "../actions/types"
 
 const page = {
-	PAGE_SUCCESS: mergeIntoOrResetObject
+	PAGE_SUCCESS: removeFromObjectIfDeleteOrMergeIntoOrResetObject
 }
 export const pageBuffered = {
 	PAGE_SUCCESS: mergeIntoOrResetObject

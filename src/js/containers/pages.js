@@ -2,14 +2,12 @@ import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import PagesComponent from '../components/pages'
 import getPages, {postPage, deletePages}  from '../middlewares/pages'
-import {buttonSet} from "../actions/buttons"
 
 // Can use ownProps here.
 const mapStateToProps = state => {
 	return {
 		pages: state.entitiesBuffered.pages, 
-		pageIDsSelected: state.appState.pageIDs, 
-		deleteClicked: state.appState.buttons.clicked.pagesDelete
+		pageIDsSelected: state.appState.pageIDs
 	}
 }
 
@@ -17,8 +15,7 @@ const mapDispatchToProps = dispatch => bindActionCreators(
 	{
 		getPages, 
 		postPage, 
-		deletePages, 
-		buttonSet
+		deletePages
 	},
 	dispatch
 )

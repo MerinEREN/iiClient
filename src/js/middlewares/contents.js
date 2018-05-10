@@ -87,26 +87,30 @@ export const removeUpdateContentsWithThatPage = ID =>
 				contents[v.ID] = {...v, pageIDs: IDs2}
 			}
 		})
-		// Update entitiesBuffered and pagination
-		dispatch(contentsRequest({
-			method: "DELETE", 
-			response: {result: IDs}, 
-			key: "all"
-		}))
-		// Update entities and pagination
-		// Reset contentIDsSelected
-		dispatch(contentsSuccess({
-			method: "DELETE", 
-			response: {result: {...getState().entitiesBuffered.contents}}, 
-			key: "all"
-		}))
-		// Update entities and entitiesBuffered
-		dispatch(contentsSuccess({
-			method: "PUT", 
-			response: {result: contents}, 
-			key: "all", 
-			mergeIntoState: true
-		}))
+		if (IDs.length > 0) {
+			// Update entitiesBuffered
+			// Reset contentIDsSelected
+			dispatch(contentsRequest({
+				method: "DELETE", 
+				response: {result: IDs}, 
+				key: "all"
+			}))
+			// Update entities and pagination
+			dispatch(contentsSuccess({
+				method: "DELETE", 
+				response: {result: IDs}, 
+				key: "all"
+			}))
+		}
+		if (Object.keys(contents).length > 0) {
+			// Update entities and entitiesBuffered
+			dispatch(contentsSuccess({
+				method: "PUT", 
+				response: {result: contents}, 
+				key: "all", 
+				mergeIntoState: true
+			}))
+		}
 	}
 
 export default getContents

@@ -1,8 +1,9 @@
 import createReducer, {
 	paginate, 
 	mergeIntoOrRemoveFromObjectRequest, 
+	removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
 	mergeIntoOrResetObject, 
-	entitiesBufferedReset
+	fetchFailure
 } from './utilities'
 import {
 	USERS_REQUEST,
@@ -15,7 +16,7 @@ import user, {userBuffered} from "./user"
 const users = createReducer(
 	{}, 
 	{
-		USERS_SUCCESS: mergeIntoOrResetObject, 
+		USERS_SUCCESS: removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
 		...user
 	}
 )
@@ -24,7 +25,7 @@ export const usersBuffered = createReducer(
 	{
 		USERS_REQUEST: mergeIntoOrRemoveFromObjectRequest, 
 		USERS_SUCCESS: mergeIntoOrResetObject, 
-		USERS_FAILURE: entitiesBufferedReset, 
+		USERS_FAILURE: fetchFailure, 
 		...userBuffered
 	}
 )

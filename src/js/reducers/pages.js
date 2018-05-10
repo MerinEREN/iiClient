@@ -1,8 +1,9 @@
 import createReducer, {
 	paginate, 
 	mergeIntoOrRemoveFromObjectRequest, 
+	removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
 	mergeIntoOrResetObject, 
-	entitiesBufferedReset, 
+	fetchFailure, 
 	addToOrRemoveFromArray, 
 	resetArrayOrObject
 } from "./utilities"
@@ -18,7 +19,7 @@ import page, {pageBuffered} from "./page"
 const pages = createReducer(
 	{}, 
 	{
-		PAGES_SUCCESS: mergeIntoOrResetObject, 
+		PAGES_SUCCESS: removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
 		...page
 	}
 )
@@ -27,7 +28,7 @@ export const pagesBuffered = createReducer(
 	{
 		PAGES_REQUEST: mergeIntoOrRemoveFromObjectRequest, 
 		PAGES_SUCCESS: mergeIntoOrResetObject, 
-		PAGES_FAILURE: entitiesBufferedReset, 
+		PAGES_FAILURE: fetchFailure, 
 		...pageBuffered
 	}
 )

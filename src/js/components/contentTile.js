@@ -86,8 +86,7 @@ class ContentTile extends Component {
 		const {
 			content, 
 			isChecked, 
-			selectedContentIDsAddRemove, 
-			buttonReset
+			selectedContentIDsAddRemove
 		} = this.props
 		const {ID} = content
 		return (
@@ -105,10 +104,7 @@ class ContentTile extends Component {
 					<Checkbox
 						style={checkbox} 
 						checked={isChecked}
-						onCheck={() => {
-							buttonReset("contentsDelete")
-							selectedContentIDsAddRemove(ID)
-						}}
+						onCheck={() => selectedContentIDsAddRemove(ID)}
 					/>
 				}
 				actionPosition="left"
@@ -128,8 +124,7 @@ ContentTile.propTypes = {
 	isChecked: PropTypes.bool.isRequired, 
 	handleUpdate: PropTypes.func.isRequired, 
 	contentUpdate: PropTypes.func.isRequired, 
-	selectedContentIDsAddRemove: PropTypes.func.isRequired, 
-	buttonReset: PropTypes.func.isRequired
+	selectedContentIDsAddRemove: PropTypes.func.isRequired
 }
 
 // ContentTile.muiName = "GridTile"

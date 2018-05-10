@@ -1,8 +1,9 @@
 import createReducer, {
 	paginate, 
 	mergeIntoOrRemoveFromObjectRequest, 
+	removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
 	mergeIntoOrResetObject, 
-	entitiesBufferedReset
+	fetchFailure
 } from './utilities'
 import {
 	OFFERS_REQUEST, 
@@ -13,7 +14,7 @@ import {
 const offers = createReducer(
 	{}, 
 	{
-		OFFERS_SUCCESS: mergeIntoOrResetObject
+		OFFERS_SUCCESS: removeFromObjectIfDeleteOrMergeIntoOrResetObject
 	}
 )
 export const offersBuffered = createReducer(
@@ -21,7 +22,7 @@ export const offersBuffered = createReducer(
 	{
 		OFFERS_REQUEST: mergeIntoOrRemoveFromObjectRequest, 
 		OFFERS_SUCCESS: mergeIntoOrResetObject, 
-		OFFERS_FAILURE: entitiesBufferedReset
+		OFFERS_FAILURE: fetchFailure
 	}
 )
 export const paginationOffers = paginate({

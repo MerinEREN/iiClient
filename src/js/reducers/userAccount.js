@@ -1,7 +1,8 @@
 import createReducer, {
 	mergeIntoOrRemoveFromObjectRequest, 
+	removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
 	mergeIntoOrResetObject, 
-	entitiesBufferedReset
+	fetchFailure
 } from './utilities'
 import {
 	USER_ACCOUNT_REQUEST, 
@@ -16,7 +17,7 @@ const userAccount = createReducer(
 		user: {}
 	}, 
 	{
-		USER_ACCOUNT_SUCCESS: mergeIntoOrResetObject
+		USER_ACCOUNT_SUCCESS: removeFromObjectIfDeleteOrMergeIntoOrResetObject
 	}
 )
 export const userAccountBuffered = createReducer(
@@ -24,7 +25,7 @@ export const userAccountBuffered = createReducer(
 	{
 		USER_ACCOUNT_REQUEST: mergeIntoOrRemoveFromObjectRequest, 
 		USER_ACCOUNT_SUCCESS: mergeIntoOrResetObject, 
-		USER_ACCOUNT_FAILURE: entitiesBufferedReset
+		USER_ACCOUNT_FAILURE: fetchFailure
 	}
 )
 

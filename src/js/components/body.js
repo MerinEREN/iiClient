@@ -60,12 +60,11 @@ class Body extends Component {
 		const {
 			muiTheme, 
 			isFetching, 
-			snackbar, 
+			snackbars, 
 			account, 
 			user, 
 			toggleDrawer, 
-			children, 
-			resetSnackbar
+			children
 		} = this.props
 		this.styles = {
 			div: {
@@ -138,16 +137,17 @@ class Body extends Component {
 				{this.session && <Drawer {...this.props} />}
 				{this.session ? children : <Login />}
 				{
-					Object.keys(snackbar).length > 0
-					&&
-					<Snackbar
-						open={!snackbar.clicked} 
-						message={snackbar.message}
-						autoHideDuration={snackbar.duration || 5000}
-						action={snackbar.action}
-						onActionTouchTap={snackbar.onActionClick}
-						onRequestClose={() => resetSnackbar()}
-					/>
+					Object.entries(snackbars).map(([k, v]) => 
+						<Snackbar
+							key={k}
+							open={true} 
+							message={v.message}
+							autoHideDuration={v.duration || 5000}
+							action={v.action}
+							onActionTouchTap={v.onActionClick}
+							onRequestClose={v.onRequestClose}
+						/>
+					)
 				}
 			</div>
 		)
@@ -173,8 +173,7 @@ Body.propTypes = {
 	loadData: PropTypes.func.isRequired,
 	toggleDrawer: PropTypes.func.isRequired,
 	children: PropTypes.node.isRequired, 
-	snackbar: PropTypes.object, 
-	resetSnackbar: PropTypes.func.isRequired
+	snackbars: PropTypes.object
 }
 
 export default withCookies(muiThemeable()(Body))

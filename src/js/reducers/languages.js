@@ -1,8 +1,9 @@
 import createReducer, {
 	paginate, 
 	mergeIntoOrRemoveFromObjectRequest, 
+	removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
 	mergeIntoOrResetObject, 
-	entitiesBufferedReset, 
+	fetchFailure, 
 	addToOrRemoveFromArray, 
 	resetArrayOrObject
 } from './utilities'
@@ -17,7 +18,7 @@ import {
 const languages = createReducer(
 	{}, 
 	{
-		LANGUAGES_SUCCESS: mergeIntoOrResetObject
+		LANGUAGES_SUCCESS: removeFromObjectIfDeleteOrMergeIntoOrResetObject
 	}
 )
 export const languagesBuffered = createReducer(
@@ -25,7 +26,7 @@ export const languagesBuffered = createReducer(
 	{
 		LANGUAGES_REQUEST: mergeIntoOrRemoveFromObjectRequest, 
 		LANGUAGES_SUCCESS: mergeIntoOrResetObject, 
-		LANGUAGES_FAILURE: entitiesBufferedReset
+		LANGUAGES_FAILURE: fetchFailure
 	}
 )
 export const paginationLanguages = paginate({

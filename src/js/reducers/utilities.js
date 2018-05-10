@@ -46,6 +46,9 @@ export const paginate = ({types, mapActionToKey}) => {
 					isFetching: true
 				}
 			case successType:
+				if (method === "DELETE") {
+					var countAfterDelete = removeItemsFromArray(state.IDs, response.result)
+				}
 				return method === "GET" ? 
 					{
 						...state,
@@ -66,7 +69,11 @@ export const paginate = ({types, mapActionToKey}) => {
 						...state,
 						IDs: method === "PUT" ? 
 						state.IDs :
-						Object.keys(response.result), 
+						(
+							method === "DELETE" ?
+							countAfterDelete : 
+							Object.keys(response.result)
+						), 
 						nextPageURL: response.nextPageURL || 
 						state.nextPageURL, 
 						prevPageURL: response.prevPageURL || 
@@ -74,9 +81,17 @@ export const paginate = ({types, mapActionToKey}) => {
 						pageCount: method === "PUT" ? 
 						state.pageCount : 
 						(
-							Object.keys(response.result).length % 20 ? 
-							Math.floor(Object.keys(response.result).length / 20) + 1 : 
-							Math.floor(Object.keys(response.result).length / 20)
+							method === "DELETE" ? 
+							(
+								countAfterDelete.length % 20 ? 
+								Math.floor(countAfterDelete.length / 20) + 1 : 
+								countAfterDelete.length / 20
+							) : 
+							(
+								Object.keys(response.result).length % 20 ? 
+								Math.floor(Object.keys(response.result).length / 20) + 1 : 
+								Object.keys(response.result).length / 20
+							)
 						), 
 						isFetching: false
 						// didInvalidate: response.reset
@@ -107,44 +122,14 @@ export const paginate = ({types, mapActionToKey}) => {
 	}
 }
 
-export const addDynamicKeySetResetResetAll = ({types, mapActionToKey}) => {
-	if (!Array.isArray(types) || types.length !== 3) {
-		throw new Error("Expected types to be an array of three elements.")
-	}
-	if (!types.every(t => typeof t === "string")) {
-		throw new Error("Expected types to be strings.")
-	}
-	if (typeof mapActionToKey !== "function") {
-		throw new Error("Expected mapActionToKey to be a function.")
-	}
-
-	const [setType, resetType, resetAllType] = types
-
-	const updateState = (state, action) => {
-		switch (action.type) {
-			case setType:
-				return true
-			case resetType:
-				return false
-			default:
-				return state
-		}
-	}
-	return (state = {}, action) => {
-		switch (action.type) {
-			case setType:
-			case resetType:
-				const key = mapActionToKey(action)
-				return {
-					...state, 
-					[key]: updateState(state[key], action)
-				}
-			case resetAllType:
-				return {}
-			default:
-				return state
-		}
-	}
+const removeItemsFromArray = (array1, array2) => {
+	var array = []
+	console.log(array1, array2)
+	array1.forEach(v => {
+		if (array2.indexOf(v) === -1)
+			array.push(v)
+	})
+	return array
 }
 
 export const addDynamicKeyReturnResult = ({types, mapActionToKey}) => {
@@ -194,6 +179,15 @@ export const mergeIntoOrRemoveFromObjectRequest = (state, action) => {
 	return result ? {...state, ...result} : state
 }
 
+export const removeFromObjectIfDeleteOrMergeIntoOrResetObject = (state, action) => {
+	switch (action.method) {
+		case "DELETE":
+			return removeFromObject(state, action)
+		default:
+			return mergeIntoOrResetObject(state, action)
+	}
+}
+
 // "reset" is for search GET.
 export const mergeIntoOrResetObject = (state, action) => {
 	const {
@@ -201,11 +195,13 @@ export const mergeIntoOrResetObject = (state, action) => {
 		response: {
 			result, 
 			reset
-		}, 
+		},
 		mergeIntoState
 	} = action
 	if (mergeIntoState) // If PUT request returns data merge it.
 		return {...state, ...result}
+	if (method === "DELETE")
+		return state
 	if (method !== "GET" || reset)
 		return entitiesReset(action)
 	return result ? {...state, ...result} : state
@@ -227,11 +223,35 @@ const removeFromObject = (state, action) => {
 	return newState
 }
 
+export const removeByKeyFromObject = (state, action) => {
+	let newState = {}
+	Object.entries(state).forEach(([k, v]) => {
+			if (action.key !== k)
+				newState[k] = v
+	})
+	return newState
+}
+
+export const addByKeyToObject = (state, action) => {
+	return {...state, ...action.object}
+}
+
 const entitiesReset = (action) => action.response.result
 
-export const entitiesBufferedReset = (state, action) => action.method === "GET" ? 
-	state : 
-	action.response.result
+export const fetchFailure = (state, action) => {
+	switch (action.method) {
+		case "DELETE":
+			// Merge deleted objects back to the entitiesBuffered kind.
+			return {...state, ...action.response.result}
+		case "POST":
+		case "PUT":
+			// Replace entitiesBuffered kind with entities kind.
+			return action.response.result
+		default:
+			// GET request
+			return state
+	}
+}
 
 export const resetArrayOrObject = (state, action) => {
 	if (action.method === "DELETE" || action.method === "POST")

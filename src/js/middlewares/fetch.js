@@ -1,9 +1,7 @@
 // import fetch from "isomorphic-fetch"
 import {toggleFetching} from "../actions/fetchingProgres"
-import {setSnackbar} from "../actions/snackbar"
-import {buttonResetAll} from "../actions/buttons"
-
-var timer
+import {addSnackbar, removeSnackbar} from "../actions/snackbars"
+import {getObjectsFromEntities} from "./utilities"
 
 export default function fetchDomainDataIfNeeded(args) {
 	// Function also receives getState()
@@ -23,9 +21,8 @@ export default function fetchDomainDataIfNeeded(args) {
 				}
 			case "DELETE":
 				// Dispatch a thunk from thunk.
-				return dispatch(shouldFetchAfterDelay(args, 7000)).
-					then(() => dispatch(fetchDomainData(args))).
-					catch(() => console.log("DELETE CANCELED"))
+				return dispatch(shouldFetchAfterDelay(args, 5000)).
+					then(() => dispatch(fetchDomainData(args)))
 			default:
 				// Covers "POST" and "PUT" methods
 				// Dispatch a thunk from thunk.
@@ -66,9 +63,7 @@ function shouldFetchDomainData(state, args) {
 	} */
 }
 
-const shouldFetchAfterDelay = (args, duration) => (dispatch, getState) => {
-	// Cancel previous api DELETE request
-	clearTimeout(timer)
+const shouldFetchAfterDelay = (args, duration) => dispatch => {
 	const {
 		actionsRequest, 
 		request: {method}, 
@@ -81,9 +76,16 @@ const shouldFetchAfterDelay = (args, duration) => (dispatch, getState) => {
 		response: {result: dataBody}, 
 		key
 	})))
-	// Set snackbar
-	dispatch(setSnackbar({
-		props: {
+	let timer
+	const promise = new Promise(resolve => {
+		timer = setTimeout(function() {
+			resolve()
+		}, duration + 1000)
+	})
+	// Add snackbar
+	const snackbarKey = Date.now()
+	dispatch(addSnackbar({object: {
+		[snackbarKey]: {
 			message: Array.isArray(dataBody) 
 			? (dataBody.length === 1 ? 
 				`${dataBody.map(k => k)} deleted` : 
@@ -94,43 +96,24 @@ const shouldFetchAfterDelay = (args, duration) => (dispatch, getState) => {
 			duration, 
 			action: "Undo", 
 			onActionClick: () => {
-				dispatch(buttonResetAll())
+				clearTimeout(timer)
 				dispatch(cancelFetch(args))
+				dispatch(removeSnackbar({key: snackbarKey.toString()}))
 			}, 
-			clicked: false
+			onRequestClose: reason => reason === "timeout" && dispatch(removeSnackbar({key: snackbarKey.toString()}))
 		}
-	}))
-	return new Promise((resolve, reject) => {
-		timer = setTimeout(function() {
-			if (getState().appState.snackbar.clicked) {
-				reject()
-			} else {
-				resolve()
-			}
-		}, duration + 1000)
-	})
+	}}))
+	return promise
 }
 
 // Reset entitiesBuffered with entities.
-const cancelFetch = ({actionsFailure, request: {method}, kind, key}) => 
+const cancelFetch = ({actionsFailure, request: {method}, dataBody, kind, key}) => 
 	(dispatch, getState) => {
-		const {
-			appState: {snackbar}, 
-			entities
-		} = getState()
 		actionsFailure.forEach(ac => dispatch(ac({
 			method, 
-			response: {result: {...entities[kind]}}, 
+			response: {result: getObjectsFromEntities(dataBody, getState().entities[kind])}, 
 			key
 		})))
-		// Reset snackbar properties
-		dispatch(setSnackbar({
-			props: {
-				...snackbar, 
-				onActionClick: undefined, 
-				clicked: true
-			}
-		}))
 	}
 
 const fetchDomainData = args => (dispatch, getState) => {
@@ -180,7 +163,8 @@ const fetchDomainData = args => (dispatch, getState) => {
 					// like all DELETE requests and some PUT requests.
 					actionsSuccess.forEach(ac => dispatch(ac({
 						method: request.method, 
-						response: {result: 
+						response: {result: request.method === "DELETE" ? 
+							dataBody :
 							{...getState().entitiesBuffered[kind]}
 						}, 
 						key
@@ -235,20 +219,24 @@ const fetchDomainData = args => (dispatch, getState) => {
 					actionsFailure.forEach(ac => dispatch(ac({
 						method: request.method, 
 						error: "USE ERROR CODE AND MESSAGE HERE", 
-						response: {result: 
+						response: {result: request.method === "DELETE" ? 
+							getObjectsFromEntities(dataBody, getState().entities[kind]) :
 							{...getState().entities[kind]}
 						}, 
 						key
 					})))
 			}
 			// USE Response.status HERE TO HANDLE RESPONSE STATUSES !!!!!!!!!!!
-			if(showSnackbar)
-				dispatch(setSnackbar({
-					props: {
+			if(showSnackbar) {
+				const snackbarKey = Date.now()
+				dispatch(addSnackbar({object: {
+					[snackbarKey]: {
 						// message: response.headers.get("Date")
-						message: response.statusText
+						message: response.statusText, 
+						onRequestClose: () => dispatch(removeSnackbar({key:snackbarKey.toString()}))
 					}
-				}))
+				}}))
+			}
 			return response
 		})
 		.catch(err => {
@@ -266,12 +254,18 @@ const fetchDomainData = args => (dispatch, getState) => {
 				actionsFailure.forEach(ac => dispatch(ac({
 					method: request.method, 
 					error: err.message, 
-					response: {result: {...getState().entities[kind]}}, 
+					response: {result: request.method === "DELETE" ? 
+						getObjectsFromEntities(dataBody, getState().entities[kind]) :
+						{...getState().entities[kind]}
+					}, 
 					key
 				})))
-			dispatch(setSnackbar({
-				props: {
-					message: err.message}
-			}))
+			const snackbarKey = Date.now()
+			dispatch(addSnackbar({object: {
+				[snackbarKey]: {
+					message: err.message, 
+					onRequestClose: () => dispatch(removeSnackbar({key:snackbarKey.toString()}))
+				}
+			}}))
 		})
 }

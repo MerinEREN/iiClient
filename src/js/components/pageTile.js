@@ -4,7 +4,6 @@ import {Link} from "react-router"
 import {GridTile} from "material-ui/GridList"
 import Checkbox from "material-ui/Checkbox"
 import {selectedPageIDsAddRemove} from '../actions/pages'
-import {buttonReset} from "../actions/buttons"
 
 const styles = {
 	gridTile: {
@@ -53,10 +52,7 @@ const PageTile = ({page, isChecked}) => {
 					<Checkbox
 						style={{...checkbox, display: "none"}} 
 						checked={isChecked}
-						onCheck={() => {
-							buttonReset("contentsDelete")
-							selectedPageIDsAddRemove(ID)
-						}}
+						onCheck={() => selectedPageIDsAddRemove(ID)}
 					/>
 				}
 				actionPosition="left"

@@ -182,14 +182,13 @@ class Contents extends Component {
 		})
 	}
 	handleDelete() {
-		const {contentIDsSelected, deleteContents, buttonSet}= this.props
+		const {contentIDsSelected, deleteContents}= this.props
 		deleteContents({
 			URL: `/contents?IDs=${generateURLVariableFromIDs(contentIDsSelected)}`, 
 			body: {
 				data: contentIDsSelected
 			}
 		})
-		buttonSet("contentsDelete")
 	}
 	contentTiles(contents) {
 		const {inputErrTexts} = this.state
@@ -223,8 +222,7 @@ class Contents extends Component {
 			contents, 
 			contentIDsSelected, 
 			languageIDs, 
-			allPages, 
-			deleteClicked
+			allPages
 		} = this.props
 		const children = <GridList 
 					cols={4}
@@ -286,10 +284,7 @@ class Contents extends Component {
 							/>
 					}
 					{
-						(
-							!deleteClicked && 
-							contentIDsSelected.length > 0
-						) && 
+							contentIDsSelected.length > 0 && 
 							<RaisedButton
 								label="Delete"
 								style={raisedButton}
@@ -327,10 +322,6 @@ class Contents extends Component {
 	}
 }
 
-Contents.defaultProps = {
-	deleteClicked: false
-}
-
 Contents.propTypes = {
 	languageIDs: PropTypes.array.isRequired, 
 	getContents: PropTypes.func.isRequired, 
@@ -340,9 +331,7 @@ Contents.propTypes = {
 	postContents: PropTypes.func.isRequired, 
 	putContents: PropTypes.func.isRequired, 
 	contentIDsSelected: PropTypes.array.isRequired, 
-	deleteContents: PropTypes.func.isRequired, 
-	deleteClicked: PropTypes.bool.isRequired, 
-	buttonSet: PropTypes.func.isRequired
+	deleteContents: PropTypes.func.isRequired
 }
 
 Contents.muiName = "GridList"
