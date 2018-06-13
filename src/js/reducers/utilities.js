@@ -58,17 +58,15 @@ export const paginate = ({types, mapActionToKey}) => {
 						state.nextPageURL, 
 						prevPageURL: response.prevPageURL || 
 						state.prevPageURL,
-						pageCount: Object.keys(response.result).length ?
-						state.pageCount + 1 : 
-						state.pageCount, 
+						pageCount: Object.keys(response.result).length && 
+						state.pageCount + 1, 
 						isFetching: false, 
 						didInvalidate: typeof didInvalidate === 
 						"undefined"
 					} : 
 					{
 						...state,
-						IDs: method === "PUT" ? 
-						state.IDs :
+						IDs: method !== "PUT" && 
 						(
 							method === "DELETE" ?
 							countAfterDelete : 
@@ -78,8 +76,7 @@ export const paginate = ({types, mapActionToKey}) => {
 						state.nextPageURL, 
 						prevPageURL: response.prevPageURL || 
 						state.prevPageURL,
-						pageCount: method === "PUT" ? 
-						state.pageCount : 
+						pageCount: method !== "PUT" && 
 						(
 							method === "DELETE" ? 
 							(
@@ -133,8 +130,9 @@ const removeItemsFromArray = (array1, array2) => {
 }
 
 export const addDynamicKeyReturnResult = ({types, mapActionToKey}) => {
-	if (!Array.isArray(types) || types.length !== 1) {
-		throw new Error("Expected types to be an array of one elements.")
+	console.log(types, types.length)
+	if (!Array.isArray(types) || types.length > 2) {
+		throw new Error("Expected types to be an array of max two elements.")
 	}
 	if (!types.every(t => typeof t === "string")) {
 		throw new Error("Expected types to be strings.")
@@ -143,7 +141,7 @@ export const addDynamicKeyReturnResult = ({types, mapActionToKey}) => {
 		throw new Error("Expected mapActionToKey to be a function.")
 	}
 
-	const [setType] = types
+	const [setType, resetAllType] = types
 
 	const updateState = (state, action) => {
 		switch (action.type) {
@@ -161,6 +159,8 @@ export const addDynamicKeyReturnResult = ({types, mapActionToKey}) => {
 					...state, 
 					[key]: updateState(state[key], action)
 				}
+			case resetAllType:
+				return {}
 			default:
 				return state
 		}

@@ -46,9 +46,11 @@ function getItemsFromEntities(pagination, entities) {
 const mapStateToProps = state => {
 	const {
 		entitiesBuffered, 
-		pagination
+		pagination, 
+		ui:{contents: {timeline: contents}}
 	} = state
 	return {
+		contents, 
 		items: getItemsFromEntities(pagination, entitiesBuffered)
 	}
 }

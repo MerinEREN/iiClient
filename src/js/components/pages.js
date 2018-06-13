@@ -67,12 +67,15 @@ class Pages extends Component {
 		}
 	}
 	handleRequiredInput(i) {
+		const {
+			contents
+		} = this.props
 		switch (i) {
 			case 1:
 				if(!this.state.title) {
 					this.setState({
 						inputErrText:{
-							title: "Required filed"
+							title: contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"]
 						}
 					})
 					return true
@@ -147,24 +150,23 @@ class Pages extends Component {
 			inputErrText
 		} = this.state
 		const {
+			contents, 
 			pages, 
 			pageIDsSelected
 		} = this.props
 		const stepLabels = [
-			"Description", 
-			"Page Title", 
-			"Page Thumbnail"
+			contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbDCAw"], 
+			contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI7lCAw"], 
+			contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI7lCgw"]
 		]
 		const stepContents = [
 			<p>
-				Create a new page with a name.
-				Uploading a file as a page foto is 
-				not required.
+				{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI7VCgw"]}
 			</p>, 
 			<TextField 
 				name="title" 
 				value={title}
-				floatingLabelText="Page Title" 
+				floatingLabelText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI7lCAw"]}
 				errorText={inputErrText.title}
 				onChange={this.handleInputChange}
 			/>, 
@@ -178,15 +180,16 @@ class Pages extends Component {
 			stepContents={stepContents}
 			stepIndex={stepIndex}
 			updateStepIndex={this.handleStepIndex}
+			contents={contents}
 		/>
 		const actions = [
 			<FlatButton
-				label="Close"
+				label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCww"] || " "}
 				onTouchTap={this.toggleDialog}
 			/>
 		]
 		stepContents.length - 1 === stepIndex && actions.push(<FlatButton
-			label="Save"
+			label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || " "}
 			primary={true}
 			onTouchTap={this.handlePost}
 		/>)
@@ -211,32 +214,32 @@ class Pages extends Component {
 								{this.pageTiles(pages)}
 							</GridList>
 							:
-							<h3>No Pages</h3>
+							<h3>{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI6lCgw"]}</h3>
 						}
 						{
 							pageIDsSelected.length > 0 && 
 								<RaisedButton
-									label="Delete"
+									label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCAw"] || " "}
 									style={raisedButton}
 									secondary={true}
 									onTouchTap={this.handleDelete}
 								/>
 						}
-						{
-							!showDialog && 
-								<FloatingActionButton 
-									secondary={true}
-									style={floatingActionButton}
-									onTouchTap={this.toggleDialog}
-								>
-									<ContentAdd />
-								</FloatingActionButton>
-						}
 					</GridTile>
 					<GridTile cols={1} />  
 				</GridList>
+				{
+					!showDialog && 
+						<FloatingActionButton 
+							secondary={true}
+							style={floatingActionButton}
+							onTouchTap={this.toggleDialog}
+						>
+							<ContentAdd />
+						</FloatingActionButton>
+				}
 				<Dialog
-					title="Add New Page"
+					title={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI6VCAw"]}
 					children={children}
 					actions={actions}
 					modal={true}
@@ -247,7 +250,12 @@ class Pages extends Component {
 	}
 }
 
+Pages.defaultProps = {
+	contents: {}
+}
+
 Pages.propTypes = {
+	contents: PropTypes.object.isRequired, 
 	getPages: PropTypes.func.isRequired, 
 	pages: PropTypes.object.isRequired, 
 	postPage: PropTypes.func.isRequired, 

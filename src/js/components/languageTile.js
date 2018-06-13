@@ -14,7 +14,7 @@ const styles = {
 	}
 }
 
-const LanguageTile = ({language: {ID, link}, isChecked, dispatch}) => {
+const LanguageTile = ({language: {ID, link}, title, isChecked, dispatch}) => {
 	const {
 		gridTile: {
 			marginTop, 
@@ -30,7 +30,7 @@ const LanguageTile = ({language: {ID, link}, isChecked, dispatch}) => {
 				marginBottom, 
 				opacity: isChecked ? 0.5 : 1
 			}}
-			title={ID}
+			title={title}
 			titlePosition="top"
 			titleBackground={titleBackground} 
 			actionIcon={
@@ -49,6 +49,7 @@ const LanguageTile = ({language: {ID, link}, isChecked, dispatch}) => {
 
 LanguageTile.propTypes = {
 	language: PropTypes.object.isRequired, 
+	title: PropTypes.string.isRequired, 
 	isChecked: PropTypes.bool.isRequired
 }
 

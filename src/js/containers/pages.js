@@ -5,9 +5,15 @@ import getPages, {postPage, deletePages}  from '../middlewares/pages'
 
 // Can use ownProps here.
 const mapStateToProps = state => {
+	const {
+		entitiesBuffered: {pages}, 
+		appState: {pageIDs}, 
+		ui: {contents: {pages: contents}}
+	} = state
 	return {
-		pages: state.entitiesBuffered.pages, 
-		pageIDsSelected: state.appState.pageIDs
+		pages, 
+		pageIDsSelected: pageIDs, 
+		contents
 	}
 }
 

@@ -6,7 +6,7 @@ import React, {Component} from 'react'
 // import Menu from 'material-ui/Menu'
 // import MenuItem from 'material-ui/MenuItem'
 
-class Login extends Component {
+class LandingPage extends Component {
 	constructor(props) {
 		super(props)
 	}
@@ -21,7 +21,7 @@ class Login extends Component {
 	}
 }
 
-Login.propTypes = {
+LandingPage.propTypes = {
 }
 
-export default Login
+export default LandingPage

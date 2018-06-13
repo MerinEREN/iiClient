@@ -48,11 +48,11 @@ class ContentTile extends Component {
 		)
 	}
 	selectField() {
-		const {content: {pageIDs}, inputErrTexts} = this.props
+		const {contents, content: {pageIDs}, inputErrTexts} = this.props
 		return (
 			<SelectField
 				multiple={true} 
-				hintText="select a page"
+				hintText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCgw"]}
 				value={pageIDs}
 				errorText={inputErrTexts && inputErrTexts.pageIDs}
 				onChange={this.handleFieldChange}
@@ -62,13 +62,13 @@ class ContentTile extends Component {
 		)
 	}
 	textFields() {
-		const {languageIDs, content: {values}, inputErrTexts} = this.props
-		return languageIDs.map(ID => <TextField 
-				key={ID}
-				name={ID}
-				value={values[ID]}
-				floatingLabelText={ID}
-				errorText={inputErrTexts && inputErrTexts[ID]}
+		const {contents, languages, content: {values}, inputErrTexts} = this.props
+		return Object.entries(languages).map( a => <TextField 
+				key={a[0]}
+				name={a[0]}
+				value={values[a[0]] || ""}
+				floatingLabelText={contents[a[1].name]}
+				errorText={inputErrTexts && inputErrTexts[a[0]]}
 				onChange={this.handleFieldChange}
 			/>
 		)
@@ -117,7 +117,8 @@ class ContentTile extends Component {
 }
 
 ContentTile.propTypes = {
-	languageIDs: PropTypes.array.isRequired, 
+	contents: PropTypes.object.isRequired, 
+	languages: PropTypes.object.isRequired, 
 	allPages: PropTypes.object.isRequired, 
 	content: PropTypes.object.isRequired, 
 	inputErrTexts: PropTypes.object, 

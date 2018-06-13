@@ -27,13 +27,14 @@ const styles = {
  (The vertical stepper can also be used without `<StepContent>` to display 
  a basic stepper.)
  **/
-const VerticalStepper = ({stepLabels, stepContents, stepIndex, updateStepIndex, save, cancel}) => {
+const VerticalStepper = ({contents, stepLabels, stepContents, stepIndex, updateStepIndex, save, cancel}) => {
+	console.log(contents)
 	const stepActions = <div style={styles.stepActionsContainer}>
 		{
 			(save && stepIndex === stepContents.length - 1) 
 			&& 
 			<RaisedButton
-				label={"Save"}
+				label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || " "}
 				disableTouchRipple={true}
 				disableFocusRipple={true}
 				primary={true}
@@ -45,7 +46,7 @@ const VerticalStepper = ({stepLabels, stepContents, stepIndex, updateStepIndex, 
 			stepIndex !== stepContents.length - 1 
 				&& 
 				<RaisedButton
-					label={"Next"}
+					label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLajCgw"] || " "}
 					disableTouchRipple={true}
 					disableFocusRipple={true}
 					primary={true}
@@ -69,7 +70,7 @@ const VerticalStepper = ({stepLabels, stepContents, stepIndex, updateStepIndex, 
 			stepIndex > 0 
 				&& 
 				<FlatButton
-					label="Back"
+					label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLajCQw"] || " "}
 					disabled={stepIndex === 0}
 					disableTouchRipple={true}
 					disableFocusRipple={true}
@@ -93,7 +94,12 @@ const VerticalStepper = ({stepLabels, stepContents, stepIndex, updateStepIndex, 
 	/>
 }
 
+VerticalStepper.defaultProps = {
+	contents: {}
+}
+
 VerticalStepper.propTypes = {
+	contents: PropTypes.object.isRequired,
 	stepLabels: PropTypes.array.isRequired,
 	stepContents: PropTypes.array.isRequired,
 	stepIndex: PropTypes.number.isRequired,

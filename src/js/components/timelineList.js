@@ -10,7 +10,10 @@ class TimelineList extends Component {
 		this.props.getItems({key: "timeline"})
 	}
 	render() {
-		const {items} =  this.props 
+		const {
+			contents, 
+			items
+		} =  this.props 
 		return (
 			<List>
 				{
@@ -42,11 +45,15 @@ class TimelineList extends Component {
 							}
 						})
 						:
-						<h3>No Item</h3>
+						<h3>{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI6lCgw"]}</h3>
 				}
 			</List>
 		)
 	}
+}
+
+TimelineList.defaultProps = {
+	contents: {}
 }
 
 TimelineList.propTypes = {
@@ -62,6 +69,7 @@ TimelineList.propTypes = {
 			editable: PropTypes.bool.isRequired
 		}))
 	})), */
+	contents: PropTypes.object.isRequired, 
 	items: PropTypes.array, 
 	getItems: PropTypes.func.isRequired, 
 }

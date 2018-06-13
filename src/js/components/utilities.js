@@ -48,3 +48,40 @@ export const addIntoRemoveFromArray = (v, a) => {
 	})
 	return a2
 }
+
+export const getRouteContents = (session, prevProps, nextProps) => {
+	if (prevProps.routes !== nextProps.routes) {
+		// console.log(prevProps.routes)
+		// console.log(nextProps.routes)
+		const {
+			routes, 
+			location, 
+			getRouteContents: get
+		} = nextProps
+		routes.forEach(v => {
+			if (v.path) {
+				if (v.path === "/") {
+					if (location.pathname === "/") {
+						if (session) {
+							get({
+								URL: "/contents?pageID=timeline", 
+								key: "timeline"
+							})
+						} else {
+							get({
+								URL: "/contents?pageID=login", 
+								key: "login"
+							})
+						}
+					}
+				} else {
+					// REMOVE VARIABLES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+					get({
+						URL: `/contents?pageID=${v.path}`, 
+						key: v.path
+					})
+				}
+			}
+		})
+	}
+}

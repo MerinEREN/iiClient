@@ -39,9 +39,12 @@ function shouldFetchDomainData(state, args) {
 		isCached, 
 		didInvalidate
 	} = args
-	if (isCached) {
-		// For root object
+	if (typeof(isCached) === "function") {
+		if (key !== "all") 
+			return !isCached(state, key)
 		return !isCached(state)
+	} else if (typeof(isCached) === "boolean") {
+		return !isCached
 	// Not all kinds paginated, that is the reason of the first check belove.
 	} else if (state.pagination[kind] !== undefined && state.pagination[kind] !== {}) {
 		// For pagination object

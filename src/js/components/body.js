@@ -1,37 +1,52 @@
 import React, {Component}  from "react"
-import PropTypes, {instanceOf} from 'prop-types'
-import {Cookies, withCookies} from 'react-cookie'
-import muiThemeable from 'material-ui/styles/muiThemeable'
-import LinearProgress from 'material-ui/LinearProgress'
-import AppBar from 'material-ui/AppBar'
-import Snackbar from 'material-ui/Snackbar'
-import {ToolbarGroup} from 'material-ui/Toolbar'
-import IconButton from 'material-ui/IconButton'
-import Badge from 'material-ui/Badge'
-import NotificationsIcon from 'material-ui/svg-icons/social/notifications'
-import Login from '../containers/login'
-import LoginUrls  from '../containers/loginUrls'
-import Logged  from '../containers/logged'
-import Drawer from '../containers/drawer'
+import PropTypes, {instanceOf} from "prop-types"
+import {Cookies, withCookies} from "react-cookie"
+import muiThemeable from "material-ui/styles/muiThemeable"
+import LinearProgress from "material-ui/LinearProgress"
+import AppBar from "material-ui/AppBar"
+import Snackbar from "material-ui/Snackbar"
+import {ToolbarGroup} from "material-ui/Toolbar"
+import IconButton from "material-ui/IconButton"
+import Badge from "material-ui/Badge"
+import NotificationsIcon from "material-ui/svg-icons/social/notifications"
+import LandingPage from "../containers/landingPage"
+import LoginUrls  from "../containers/loginUrls"
+import Logged  from "../containers/logged"
+import Drawer from "../containers/drawer"
+import {getRouteContents} from "./utilities"
 
 class Body extends Component {
 	constructor(props) {
 		super(props)
 		// MODIFY THIS SESSION CONTROL !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		// 'ACSID' is for prod, and 'dev_appserver_login is for development.
+		// "ACSID" is for prod, and "dev_appserver_login is for development.
 		// true is optional "doNotParse" arg.
 		// If not specified get() deserialize any cookies starting with "{" or "[".
 		const {cookies} = this.props
-		this.session = cookies.get('ACSID', true) 
-				|| 
-				cookies.get('dev_appserver_login', true)
-		this.state = {completed: 0}
+		this.session = cookies.get("ACSID", true) || 
+			cookies.get("dev_appserver_login", true)
+		this.lang = cookies.get("lang", true)
+		if (!this.lang) {
+			this.lang = window.navigator.language
+			cookies.set("lang", this.lang)
+		}
+		this.state = {
+			completed: 0
+		}
 		// IT IS POSIBLE TO CALL THE FUNCTION EVEN BELOW BINDING !!!!!!!!!!!!!!!!!!
 		this.progress = this.progress.bind(this)
 	}
 	componentWillMount() {
-		if (this.session)
-			this.props.loadData()
+		const {
+			loadData, 
+			getRouteContents: get
+		} = this.props
+		loadData()
+		get({
+			URL: "/contents?pageID=body", 
+			key: "body"
+		})
+		getRouteContents(this.session, {}, this.props)
 	}
 	componentWillReceiveProps(nextProps) {
 		if (!nextProps.isFetching) {
@@ -39,6 +54,7 @@ class Body extends Component {
 		} else {
 			this.progress(5)
 		}
+		getRouteContents(this.session, this.props, nextProps)
 	}
 	componentWillUnmount() {
 		clearTimeout(this.timer)
@@ -61,15 +77,17 @@ class Body extends Component {
 			muiTheme, 
 			isFetching, 
 			snackbars, 
+			contents, 
 			account, 
 			user, 
+			cookies, 
 			toggleDrawer, 
 			children
 		} = this.props
 		this.styles = {
 			div: {
 				backgroundColor: muiTheme.palette.canvasColor, 
-				height: '100vh'
+				height: "100vh"
 				// opacity: this.session ? 1 : 0.5
 			}, 
 			appBar: {
@@ -123,19 +141,17 @@ class Body extends Component {
 								</IconButton>
 							</Badge>
 						{
-							this.session === undefined 
-								?
-								<LoginUrls />
-								:
+							this.session === undefined ?
+								<LoginUrls /> :
 								<Logged 
-									account= {account} 
-									user={user} 
+									{...this.props} 
+									lang ={this.lang}
 								/>
 						}
 					</ToolbarGroup>
 				</AppBar>
 				{this.session && <Drawer {...this.props} />}
-				{this.session ? children : <Login />}
+				{this.session ? children : <LandingPage />}
 				{
 					Object.entries(snackbars).map(([k, v]) => 
 						<Snackbar
@@ -155,6 +171,7 @@ class Body extends Component {
 }
 
 Body.defaultProps = {
+	contents: {}, 
 	account: {
 		photo: {}
 	}, 
@@ -168,9 +185,11 @@ Body.propTypes = {
 	cookies: instanceOf(Cookies).isRequired, 
 	muiTheme: PropTypes.object.isRequired,
 	isFetching: PropTypes.bool.isRequired,
+	contents: PropTypes.object.isRequired,
 	account: PropTypes.object,
 	user: PropTypes.object,
 	loadData: PropTypes.func.isRequired,
+	getRouteContents: PropTypes.func.isRequired,
 	toggleDrawer: PropTypes.func.isRequired,
 	children: PropTypes.node.isRequired, 
 	snackbars: PropTypes.object

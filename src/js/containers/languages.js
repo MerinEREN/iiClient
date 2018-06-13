@@ -5,9 +5,15 @@ import getLanguages, {postLanguage, deleteLanguages}  from "../middlewares/langu
 
 // Can use ownProps here.
 const mapStateToProps = state => {
+	const {
+		entitiesBuffered: {languages}, 
+		appState: {languageIDs: languageIDsSelected}, 
+		ui: {contents: {languages: contents}}
+	} = state
 	return {
-		languages: state.entitiesBuffered.languages, 
-		languageIDsSelected: state.appState.languageIDs
+		languages, 
+		languageIDsSelected, 
+		contents
 	}
 }
 

@@ -8,6 +8,7 @@ import Dialog from "material-ui/Dialog"
 import FlatButton from "material-ui/FlatButton"
 import VerticalStepper from "./verticalStepper"
 import SelectField from "material-ui/SelectField"
+import TextField from "material-ui/TextField"
 import MenuItem from "material-ui/MenuItem"
 import LanguageTile from "./languageTile"
 import {generateURLVariableFromIDs} from "./utilities"
@@ -30,14 +31,6 @@ const styles = {
 		right: 48
 	}
 }
-const items = [
-	<MenuItem key={1} value="tr" primaryText="Turkish" />,
-	<MenuItem key={2} value="en" primaryText="English" />,
-	<MenuItem key={3} value="de" primaryText="German" />,
-	<MenuItem key={4} value="zh-cn" primaryText="Chinese" />,
-	<MenuItem key={5} value="pt" primaryText="Portuguese" />,
-	<MenuItem key={6} value="ru" primaryText="Russian" />,
-]
 
 class Languages extends Component {
 	constructor(props) {
@@ -45,7 +38,10 @@ class Languages extends Component {
 		this.state = {
 			showDialog: false, 
 			stepIndex: 0, 
-			ID: "",    
+			langNew: {
+				ID: "",  
+				name: ""
+			}, 
 			inputErrText: {}
 		}
 		this.toggleDialog = this.toggleDialog.bind(this)
@@ -56,6 +52,31 @@ class Languages extends Component {
 	}
 	componentWillMount() {
 		this.props.getLanguages()
+	}
+	componentWillReceiveProps (nextProps) {
+		if (this.props.contents !== nextProps.contents)
+			this.items = [
+				<MenuItem 
+					key={1} 
+					value="tr-TR" 
+					primaryText={nextProps.contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgKaTCgw"]} 
+				/>,
+				<MenuItem 
+					key={2} 
+					value="en-US" 
+					primaryText={nextProps.contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgKaTCQw"]} 
+				/>,
+				<MenuItem 
+					key={3} 
+					value="de-DE" 
+					primaryText={nextProps.contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgKaTCww"]} 
+				/>,
+				<MenuItem 
+					key={4} 
+					value="ru-RU" 
+					primaryText={nextProps.contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgKbTCAw"]} 
+				/>
+			]
 	}
 	handleStepIndex(direction) {
 		const {stepIndex} = this.state
@@ -75,48 +96,71 @@ class Languages extends Component {
 		}
 	}
 	handleRequiredInput(i) {
+		const {
+			contents
+		} = this.props
+		let key
 		switch (i) {
 			case 1:
-				if(!this.state.ID) {
-					this.setState({
-						inputErrText:{
-							ID: "Required field"
-						}
-					})
-					return true
-				}
-				return false
+				key = "ID"
+				break
+			case 2:
+				key = "name"
+				break
 			default:
 				return false
 		}
+		if (!this.state.langNew[key]) {
+			this.setState({
+				inputErrText: {
+					...this.state.inputErrText, 
+					[key]: contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"]
+				}
+			})
+			return true
+		}
+		return false
 	}
-	handleInputChange(event, index, value) {
-		const {inputErrText} = this.state
+	// INDEX AND VALUES ARE FOR SELECT FIELD ONLY
+	handleInputChange(event, index, values) {
+		const target = event.target
+		const name = target.name || "ID"
+		const value = target.value || values
+		const {langNew, inputErrText} = this.state
 		this.setState({
-			ID: value, 
+			langNew: {
+				...langNew, 
+				[name]: value
+			}, 
 			inputErrText: {
 				...inputErrText, 
-				ID: ""
+				[name]: null
 			}
 		})
 	}
 	handlePost() {
 		this.toggleDialog()
-		const {ID} = this.state
+		const {langNew} = this.state
 		this.props.postLanguage({
 			body: {
 				type: "FormData", 
 				// Use "contentType" for "Blob" type.
 				// contentType: "application/json", 
 				data: {
-					[ID]: {
-						ID: ID, 
+					[langNew.ID]: {
+						...langNew, 
 						file: this.file.files[0] 
 					}
 				}
 			}
 		})
-		this.setState({ID: "", stepIndex: 0})
+		this.setState({
+			langNew: {
+				ID: "", 
+				name: ""
+			}, 
+			stepIndex: 0
+		})
 	}
 	toggleDialog() {
 		this.setState({showDialog: !this.state.showDialog})
@@ -132,11 +176,12 @@ class Languages extends Component {
 		})
 	}
 	languageTiles(languages) {
-		const {languageIDsSelected} = this.props
+		const {contents, languageIDsSelected} = this.props
 		return Object.values(languages).map(v => 
 			<LanguageTile 
 				key={v.ID} 
 				language={v} 
+				title={contents[v.name] || v.ID}
 				isChecked={languageIDsSelected.indexOf(v.ID) !== -1}
 			/>)
 	}
@@ -151,29 +196,38 @@ class Languages extends Component {
 			showDialog, 
 			stepIndex, 
 			inputErrText, 
-			ID
+			langNew
 		} = this.state
 		const {
+			contents, 
 			languages, 
 			languageIDsSelected
 		} = this.props
 		const stepLabels = [
-			"Description", 
-			"Language", 
-			"Thumbnail"
+			contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbDCAw"], 
+			contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJaDCgw"], 
+			contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbDCww"], 
+			contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLajCAw"]
 		]
 		const stepContents = [
 			<p>
-				Select a language from the select field.
+				{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaDCAw"]}
 			</p>, 
 			<SelectField 
-				value={ID}
-				floatingLabelText="Language" 
+				value={langNew.ID}
+				floatingLabelText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJaDCgw"]}
 				errorText={inputErrText.ID}
 				onChange={this.handleInputChange}
 			>
-				{items}
+				{this.items}
 			</SelectField>, 
+			<TextField 
+				name="name"
+				value={langNew.name || ""}
+				floatingLabelText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaTCQw"]}
+				errorText={inputErrText.name}
+				onChange={this.handleInputChange}
+			/>, 
 			<input 
 				type="file"
 				ref={input => this.file = input}
@@ -184,15 +238,16 @@ class Languages extends Component {
 			stepContents={stepContents}
 			stepIndex={stepIndex}
 			updateStepIndex={this.handleStepIndex}
+			contents={contents}
 		/>
 		const actions = [
 			<FlatButton
-				label="Close"
+				label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCww"] || " "}
 				onTouchTap={this.toggleDialog}
 			/>
 		]
 		stepContents.length - 1 === stepIndex && actions.push(<FlatButton
-			label="Save"
+			label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || " "}
 			primary={true}
 			onTouchTap={this.handlePost}
 		/>)
@@ -217,32 +272,32 @@ class Languages extends Component {
 								{this.languageTiles(languages)}
 							</GridList>
 							:
-							<h3>No Languages</h3>
+							<h3>{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI6lCgw"]}</h3>
 					}
 					{
 						languageIDsSelected.length > 0 && 
 							<RaisedButton
-								label="Delete"
+								label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCAw"] || " "}
 								style={raisedButton}
 								secondary={true}
 								onTouchTap={this.handleDelete}
 							/>
 					}
-					{
-						!showDialog && 
-							<FloatingActionButton 
-								secondary={true}
-								style={floatingActionButton}
-								onTouchTap={this.toggleDialog}
-							>
-								<ContentAdd />
-							</FloatingActionButton>
-					}
 					</GridTile>
 					<GridTile cols={1} />  
 				</GridList>
+				{
+					!showDialog && 
+						<FloatingActionButton 
+							secondary={true}
+							style={floatingActionButton}
+							onTouchTap={this.toggleDialog}
+						>
+							<ContentAdd />
+						</FloatingActionButton>
+				}
 				<Dialog
-					title="Add New Language"
+					title={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbTCQw"]}
 					children={children}
 					actions={actions}
 					modal={true}
@@ -253,7 +308,12 @@ class Languages extends Component {
 	}
 }
 
+Languages.defaultProps = {
+	contents: {}
+}
+
 Languages.propTypes = {
+	contents: PropTypes.object.isRequired, 
 	getLanguages: PropTypes.func.isRequired, 
 	languages: PropTypes.object.isRequired, 
 	postLanguage: PropTypes.func.isRequired, 

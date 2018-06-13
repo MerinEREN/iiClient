@@ -1,31 +1,32 @@
 import React, {Component}  from "react"
-import PropTypes, {instanceOf} from 'prop-types'
-import {Cookies, withCookies} from 'react-cookie'
-import {IndexLink, Link} from 'react-router'
-import AppBar from 'material-ui/AppBar'
-import Drawer from 'material-ui/Drawer'
-import {List, ListItem} from 'material-ui/List'
-import {Card, CardMedia, CardTitle, CardText} from 'material-ui/Card'
-import {GridList, GridTile} from 'material-ui/GridList'
-import Badge from 'material-ui/Badge'
-import Avatar from 'material-ui/Avatar'
-import Chip from 'material-ui/Chip'
-import Toggle from 'material-ui/Toggle'
-import Divider from 'material-ui/Divider'
-import Skills from 'material-ui/svg-icons/action/build'
-import Time from 'material-ui/svg-icons/action/alarm'
-import Communication from 'material-ui/svg-icons/action/record-voice-over'
-import Account from 'material-ui/svg-icons/action/account-circle'
-import Dashboard from 'material-ui/svg-icons/action/dashboard'
-import Home from 'material-ui/svg-icons/action/home'
-import EditContent from 'material-ui/svg-icons/content/create'
-import ListAction from 'material-ui/svg-icons/action/list'
-import Settings from 'material-ui/svg-icons/action/settings'
-import AccountSettings from 'material-ui/svg-icons/action/supervisor-account'
-import UserSettings from 'material-ui/svg-icons/social/person'
-import Help from 'material-ui/svg-icons/action/help'
-import Feedback from 'material-ui/svg-icons/action/feedback'
-import {isAdmin, isContentEditor} from './utilities'
+import PropTypes, {instanceOf} from "prop-types"
+import {Cookies, withCookies} from "react-cookie"
+import Link from "react-router/lib/Link"
+import IndexLink from "react-router/lib/IndexLink"
+import AppBar from "material-ui/AppBar"
+import Drawer from "material-ui/Drawer"
+import {List, ListItem} from "material-ui/List"
+import {Card, CardMedia, CardTitle, CardText} from "material-ui/Card"
+import {GridList, GridTile} from "material-ui/GridList"
+import Badge from "material-ui/Badge"
+import Avatar from "material-ui/Avatar"
+import Chip from "material-ui/Chip"
+import Toggle from "material-ui/Toggle"
+import Divider from "material-ui/Divider"
+import Skills from "material-ui/svg-icons/action/build"
+import Time from "material-ui/svg-icons/action/alarm"
+import Communication from "material-ui/svg-icons/action/record-voice-over"
+import Account from "material-ui/svg-icons/action/account-circle"
+import Dashboard from "material-ui/svg-icons/action/dashboard"
+import Home from "material-ui/svg-icons/action/home"
+import EditContent from "material-ui/svg-icons/content/create"
+import ListAction from "material-ui/svg-icons/action/list"
+import Settings from "material-ui/svg-icons/action/settings"
+import AccountSettings from "material-ui/svg-icons/action/supervisor-account"
+import UserSettings from "material-ui/svg-icons/social/person"
+import Help from "material-ui/svg-icons/action/help"
+import Feedback from "material-ui/svg-icons/action/feedback"
+import {isAdmin, isContentEditor} from "./utilities"
 
 const styles = {
 	drawer: {
@@ -48,12 +49,12 @@ const styles = {
 	}, 
 	link: {
 		activeStyle: {
-				color: '#0097a7'
+				color: "#0097a7"
 		}
 	}
 }
 
-const drawer = ({cookies, account, user, open, changeTheme, toggleDrawer}) => (
+const drawer = ({cookies, contents, account, user, open, changeTheme, toggleDrawer}) => (
 	<Drawer 
 		open={open}
 		containerStyle={styles.drawer.containerStyle}
@@ -68,9 +69,9 @@ const drawer = ({cookies, account, user, open, changeTheme, toggleDrawer}) => (
 		<Card
 			containerStyle={styles.card.containerStyle}
 		>
-			{/* BECAUSE OF 'CardMedia' 'actAsExpander' BUG I WRAPPED IT WITH
-			'CardTitle'. AND THE BEST WAY TO USE THE FEAUTURE IS USING IT WITH
-			'CardTitle' IN 'overlay' AT 'CardMedia'. */}
+			{/* BECAUSE OF "CardMedia" "actAsExpander" BUG I WRAPPED IT WITH
+			"CardTitle". AND THE BEST WAY TO USE THE FEAUTURE IS USING IT WITH
+			"CardTitle" IN "overlay" AT "CardMedia". */}
 			<CardTitle 
 				actAsExpander={true}
 				style={styles.cardTitle.style}
@@ -78,12 +79,12 @@ const drawer = ({cookies, account, user, open, changeTheme, toggleDrawer}) => (
 				<CardMedia
 					overlay={
 						<CardTitle 
-							title={'Score: 4'} 
+							title={`${contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIabCAw"]}: 4`} 
 						/>
 					}
 				>
 					<img 
-						src={account.photo.path || '/img/matrix.gif'} 
+						src={account.photo.path || "/img/matrix.gif"} 
 					/>
 				</CardMedia>
 			</CardTitle>
@@ -91,24 +92,24 @@ const drawer = ({cookies, account, user, open, changeTheme, toggleDrawer}) => (
 				<List>
 					<ListItem 
 						leftIcon={<Skills />} 
-						primaryText={'Skills: 4'} 
+						primaryText={`${contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJa9Cgw"]}: 4`} 
 						disabled={true}
 					/>
 					<ListItem 
 						leftIcon={<Time />} 
-						primaryText={'Timing: 3'} 
+						primaryText={`${contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJa9CQw"]}: 3`} 
 						disabled={true}
 					/>
 					<ListItem 
 						leftIcon={<Communication />} 
-						primaryText={'Communication: 5'} 
+						primaryText={`${contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJa9Cww"]}: 5`} 
 						disabled={true}
 					/>
 				</List>
 				<Divider />
 				<GridList 
 					cols={1} 
-					cellHeight='auto' 
+					cellHeight="auto" 
 					style={styles.gridList}
 				>
 					<GridTile>
@@ -171,7 +172,7 @@ const drawer = ({cookies, account, user, open, changeTheme, toggleDrawer}) => (
 						activeStyle={styles.link.activeStyle}
 					/>
 				}
-				primaryText='Home'
+				primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJq3Cgw"]}
 				leftIcon={<Home />}
 			/>
 			<ListItem 
@@ -181,7 +182,7 @@ const drawer = ({cookies, account, user, open, changeTheme, toggleDrawer}) => (
 						activeStyle={styles.link.activeStyle}
 					/>
 				}
-				primaryText='Dashboard'
+				primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLrHCAw"]}
 				leftIcon={<Dashboard />}
 			/>
 			{
@@ -195,7 +196,7 @@ const drawer = ({cookies, account, user, open, changeTheme, toggleDrawer}) => (
 							activeStyle={styles.link.activeStyle}
 						/>
 					}
-					primaryText='Languages'
+					primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLqHCgw"]}
 					leftIcon={<EditContent />}
 				/>
 			}
@@ -210,7 +211,7 @@ const drawer = ({cookies, account, user, open, changeTheme, toggleDrawer}) => (
 							activeStyle={styles.link.activeStyle}
 						/>
 					}
-					primaryText='Pages'
+					primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLqHCQw"]}
 					leftIcon={<EditContent />}
 				/>
 			}
@@ -225,7 +226,7 @@ const drawer = ({cookies, account, user, open, changeTheme, toggleDrawer}) => (
 							activeStyle={styles.link.activeStyle}
 						/>
 					}
-					primaryText='Contents'
+					primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLqHCww"]}
 					leftIcon={<EditContent />}
 				/>
 			}
@@ -236,20 +237,20 @@ const drawer = ({cookies, account, user, open, changeTheme, toggleDrawer}) => (
 						activeStyle={styles.link.activeStyle}
 					/>
 				} 
-				primaryText='Account'
+				primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLrHCgw"]}
 				leftIcon={<Account />} 
 			/>
 			<ListItem 
 				containerElement={
 					<Link
 						// add if at accounts page control to
-						// attribute 'to'
-						// to={condition ? '/demands' : `/${account.ID}/demands`}
+						// attribute "to"
+						// to={condition ? "/demands" : `/${account.ID}/demands`}
 						to="/demands"
 						activeStyle={styles.link.activeStyle}
 					/>
 				} 
-				primaryText='Demands'
+				primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLqnCww"]}
 				leftIcon={<ListAction />} 
 			/>
 			<ListItem 
@@ -259,27 +260,27 @@ const drawer = ({cookies, account, user, open, changeTheme, toggleDrawer}) => (
 						activeStyle={styles.link.activeStyle}
 					/>
 				} 
-				primaryText='Offers'
+				primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLrnCQw"]}
 				leftIcon={<ListAction />} 
 			/>
 			<ListItem 
 				containerElement={
 					<Link
-						to="/servicePacks"
+						to="/servicepacks"
 						activeStyle={styles.link.activeStyle}
 					/>
 				} 
-				primaryText='Service Packs'
+				primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIarCgw"]}
 				leftIcon={<ListAction />} 
 			/>
 		</List>
 		<Divider />
 		<List>
 			<ListItem
-				primaryText='Night Mode'
+				primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIbrCgw"]}
 				rightToggle={
 					<Toggle
-						toggled={cookies.get('theme') === 'dark'}
+						toggled={cookies.get("theme") === "dark"}
 						onToggle={() => changeTheme(cookies)}
 					/>
 				}
@@ -292,29 +293,29 @@ const drawer = ({cookies, account, user, open, changeTheme, toggleDrawer}) => (
 				isAdmin(user.roles)
 				?
 				<ListItem 
-					primaryText='Settings'
+					primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIarCQw"]}
 					leftIcon={<Settings />} 
 					nestedItems={[
 						<ListItem 
 							key={1} 
 							containerElement={
 								<Link
-									to="/accountSettings"
+									to="/accountsettings"
 									activeStyle={styles.link.activeStyle}
 								/>
 							} 
-							primaryText='Account Settings'
+							primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIarCww"]}
 							leftIcon={<AccountSettings />} 
 						/>, 
 						<ListItem 
 							key={2} 
 							containerElement={
 								<Link
-									to="/userSettings"
+									to="/usersettings"
 									activeStyle={styles.link.activeStyle}
 								/>
 							} 
-							primaryText='User Settings'
+							primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIbrCAw"]}
 							leftIcon={<UserSettings />} 
 						/>
 					]}
@@ -328,7 +329,7 @@ const drawer = ({cookies, account, user, open, changeTheme, toggleDrawer}) => (
 							activeStyle={styles.link.activeStyle}
 						/>
 					} 
-					primaryText='Settings'
+					primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIarCQw"]}
 					leftIcon={<Settings />} 
 				/>
 			}
@@ -339,7 +340,7 @@ const drawer = ({cookies, account, user, open, changeTheme, toggleDrawer}) => (
 						activeStyle={styles.link.activeStyle}
 					/>
 				} 
-				primaryText='Help'
+				primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIbrCQw"]}
 				leftIcon={<Help />} 
 			/>
 			<ListItem 
@@ -349,7 +350,7 @@ const drawer = ({cookies, account, user, open, changeTheme, toggleDrawer}) => (
 						activeStyle={styles.link.activeStyle}
 					/>
 				} 
-				primaryText='Send Feedback'
+				primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIbrCww"]}
 				leftIcon={<Feedback />} 
 			/>
 		</List>
@@ -357,6 +358,7 @@ const drawer = ({cookies, account, user, open, changeTheme, toggleDrawer}) => (
 )
 
 drawer.propTypes = {
+	contents: PropTypes.object.isRequired,
 	cookies: instanceOf(Cookies).isRequired, 
 	open: PropTypes.bool.isRequired,
 	account: PropTypes.object,
@@ -365,6 +367,6 @@ drawer.propTypes = {
 	toggleDrawer: PropTypes.func.isRequired,
 }
 
-drawer.muiName = 'Drawer'
+drawer.muiName = "Drawer"
 
 export default withCookies(drawer)

@@ -1,7 +1,8 @@
-import {connect} from 'react-redux'
-import {bindActionCreators} from 'redux'
-import LoggedComponent from '../components/logged'
-import getLanguages from '../middlewares/languages'
+import {connect} from "react-redux"
+import {bindActionCreators} from "redux"
+import LoggedComponent from "../components/logged"
+import getLanguages from "../middlewares/languages"
+import {routeContentsResetAll} from "../actions/routeContents"
 
 const mapStateToProps = state => {
 	return {
@@ -12,7 +13,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
-		getLanguages
+		getLanguages, 
+		routeContentsResetAll
 	},
 	dispatch
 )

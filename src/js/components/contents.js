@@ -57,7 +57,7 @@ class Contents extends Component {
 						values: {}, 
 						pageIDs: []
 					}
-			this.props.languageIDs.forEach(
+			Object.keys(this.props.languages).forEach(
 				v => tempObj[`newContent_${i}`].values[v] = ""
 			)
 		}
@@ -114,16 +114,21 @@ class Contents extends Component {
 		}
 	}
 	handleRequiredInput(contents) {
-		const {inputErrTexts} = this.state
+		const {
+			contentsRoot
+		} = this.props
+		const {
+			inputErrTexts
+		} = this.state
 		return Object.entries(contents).every(a => {
 			// Not necessary for newContents but necessary for contents
-			if(a[1].values.en === "") {
+			if(a[1].values["en-US"] === "") {
 				this.setState({
 					inputErrTexts: {
 						...inputErrTexts, 
 						[a[0]]: {
 							...inputErrTexts[a[0]], 
-							en: "Required field"
+							["en-US"]: contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"]
 						}
 					}
 				})
@@ -135,7 +140,7 @@ class Contents extends Component {
 						...inputErrTexts, 
 						[a[0]]: {
 							...inputErrTexts[a[0]], 
-							pageIDs: "Required field"
+							pageIDs: contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"]
 						}
 					}
 				})
@@ -147,7 +152,7 @@ class Contents extends Component {
 	handlePost() {
 		let newContents = {}
 		Object.entries(this.state.newContents).forEach( a => {
-			if(a[1].values.en !== "")
+			if(a[1].values["en-US"] !== "")
 				newContents[a[0]] = a[1]
 		})
 		if(Object.keys(newContents).length === 0) {
@@ -193,13 +198,15 @@ class Contents extends Component {
 	contentTiles(contents) {
 		const {inputErrTexts} = this.state
 		const {
-			languageIDs, 
+			contentsRoot, 
+			languages, 
 			allPages, 
 			contentIDsSelected
 		} = this.props
 		return Object.values(contents).map(v => <ContentTile 
 			key={v.ID}
-			languageIDs={languageIDs}
+			contents={contentsRoot}
+			languages={languages}
 			allPages={allPages}
 			content={v} 
 			inputErrTexts={inputErrTexts[v.ID]} 
@@ -219,9 +226,10 @@ class Contents extends Component {
 			newContents
 		} = this.state
 		const {
+			contentsRoot, 
 			contents, 
 			contentIDsSelected, 
-			languageIDs, 
+			languages, 
 			allPages
 		} = this.props
 		const children = <GridList 
@@ -234,15 +242,15 @@ class Contents extends Component {
 				</GridList>
 		const actions = [
 			<FlatButton
-				label="Create New Contents"
+				label={contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCQw"] || " "}
 				onTouchTap={this.handleCreateNewContents}
 			/>, 
 			<FlatButton
-				label="Close"
+				label={contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCww"] || " "}
 				onTouchTap={this.toggleDialog}
 			/>, 
 			<FlatButton
-				label="Save"
+				label={contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || " "}
 				primary={true}
 				onTouchTap={this.handlePost}
 			/>
@@ -257,27 +265,25 @@ class Contents extends Component {
 					<GridTile cols={1} />  
 					<GridTile cols={2}>  
 					{ 
-						Object.keys(contents).length > 0 
-							? 
-							<GridList 
-								cols={4}
-								style={gridList}
-								padding={10}
-								cellHeight={"auto"}
-							>
-								{this.contentTiles(contents)}
-							</GridList>
-							:
+						Object.keys(contents).length > 0 ? 
+						<GridList 
+							cols={4}
+							style={gridList}
+							padding={10}
+							cellHeight={"auto"}
+						>
+							{this.contentTiles(contents)}
+						</GridList> :
 						<div>
-							<h1>No contents yet... </h1>
-							<h2>Add page first to be able to add content.</h2>
+							<h1>{contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI6lCgw"]}</h1>
+							<h2>{contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI7VCww"]}</h2>
 						</div>
 					}
 					{
 						Object.keys(contents).length > 0
 							&& 
 							<RaisedButton
-								label="Save"
+								label={contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || " "}
 								style={raisedButton}
 								primary={true}
 								onTouchTap={this.handlePut}
@@ -286,31 +292,31 @@ class Contents extends Component {
 					{
 							contentIDsSelected.length > 0 && 
 							<RaisedButton
-								label="Delete"
+								label={contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCAw"] || " "}
 								style={raisedButton}
 								secondary={true}
 								onTouchTap={this.handleDelete}
 							/>
 					}
-					{ 
-						(
-							languageIDs.length > 0 && 
-							Object.keys(allPages).length > 0 && 
-							!showDialog
-						) &&
-							<FloatingActionButton 
-								secondary={true}
-								style={floatingActionButton}
-								onTouchTap={this.toggleDialog}
-							>
-								<ContentAdd />
-							</FloatingActionButton>
-					}
 					</GridTile>
 					<GridTile cols={1} />  
 				</GridList>
+				{ 
+					(
+						Object.keys(languages).length > 0 && 
+						Object.keys(allPages).length > 0 && 
+						!showDialog
+					) &&
+						<FloatingActionButton 
+							secondary={true}
+							style={floatingActionButton}
+							onTouchTap={this.toggleDialog}
+						>
+							<ContentAdd />
+						</FloatingActionButton>
+				}
 				<Dialog
-					title="Add New Contents"
+					title={contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCgw"]}
 					children={children}
 					actions={actions}
 					modal={true}
@@ -322,8 +328,14 @@ class Contents extends Component {
 	}
 }
 
+Contents.defaultProps = {
+	contentsRoot: {}, 
+	contents: {}
+}
+
 Contents.propTypes = {
-	languageIDs: PropTypes.array.isRequired, 
+	contentsRoot: PropTypes.object.isRequired, 
+	languages: PropTypes.object.isRequired, 
 	getContents: PropTypes.func.isRequired, 
 	contents: PropTypes.object.isRequired, 
 	getPages: PropTypes.func.isRequired, 
