@@ -5,6 +5,7 @@ import {usersBuffered as users} from "./users"
 import {languagesBuffered as languages} from "./languages"
 import {pagesBuffered as pages} from "./pages"
 import {contentsBuffered as contents} from "./contents"
+import {tagsBuffered as tags} from "./tags"
 import {demandsBuffered as demands} from "./demands"
 import {offersBuffered as offers} from "./offers"
 import {servicePacksBuffered as servicePacks} from "./servicePacks"
@@ -15,6 +16,7 @@ const entitiesBuffered = combineReducers({
 	languages, 
 	pages, 
 	contents, 
+	tags, 
 	accounts,
 	users,
 	offers,

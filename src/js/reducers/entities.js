@@ -7,6 +7,7 @@ import users from "./users"
 import languages from "./languages"
 import pages from "./pages"
 import contents from "./contents"
+import tags from "./tags"
 import demands from "./demands"
 import offers from "./offers"
 import servicePacks from "./servicePacks"
@@ -19,6 +20,7 @@ const entities = combineReducers({
 	languages, 
 	pages, 
 	contents, 
+	tags, 
 	accounts,
 	users,
 	offers,

@@ -10,7 +10,7 @@ const styles = {
 		justifyContent: 'center'
 	}, 
 	gridList: {
-		margin: 0
+		margin: 20
 	}
 }
 

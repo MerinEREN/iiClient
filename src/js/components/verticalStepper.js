@@ -28,7 +28,6 @@ const styles = {
  a basic stepper.)
  **/
 const VerticalStepper = ({contents, stepLabels, stepContents, stepIndex, updateStepIndex, save, cancel}) => {
-	console.log(contents)
 	const stepActions = <div style={styles.stepActionsContainer}>
 		{
 			(save && stepIndex === stepContents.length - 1) 

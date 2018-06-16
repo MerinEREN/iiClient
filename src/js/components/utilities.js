@@ -85,3 +85,10 @@ export const getRouteContents = (session, prevProps, nextProps) => {
 		})
 	}
 }
+
+export const getFirstLetters = text => {
+	let a = text.split(" ", 3)
+	let s = ""
+	a.forEach(v => s += v.charAt().toUpperCase())
+	return s
+}

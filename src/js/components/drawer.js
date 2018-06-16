@@ -230,6 +230,20 @@ const drawer = ({cookies, contents, account, user, open, changeTheme, toggleDraw
 					leftIcon={<EditContent />}
 				/>
 			}
+			{
+				(isAdmin(user.roles))
+				&&
+				<ListItem 
+					containerElement={
+						<Link
+							to="/tags"
+							activeStyle={styles.link.activeStyle}
+						/>
+					}
+					primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgK6ZCgw"]}
+					leftIcon={<EditContent />}
+				/>
+			}
 			<ListItem 
 				containerElement={
 					<Link

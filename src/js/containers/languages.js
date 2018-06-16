@@ -29,5 +29,3 @@ const mapDispatchToProps = dispatch => bindActionCreators(
 const Languages = connect(mapStateToProps, mapDispatchToProps)(LanguagesComponent)
 
 export default Languages
-
-

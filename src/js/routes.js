@@ -10,6 +10,7 @@ import Languages  from "./containers/languages"
 import Pages  from "./containers/pages"
 import Page  from "./containers/page"
 import Contents from "./containers/contents"
+import Tags from "./containers/tags"
 import Account  from "./components/account"
 import Demands  from "./components/demands"
 import Offers  from "./components/offers"
@@ -29,6 +30,7 @@ const routes  = <Route path="/" component={Body}>
 	<Route path="pages" component={Pages} />
 	<Route path="pages/:ID" component={Page} />
 	<Route path="contents" component={Contents} />
+	<Route path="tags" component={Tags} />
 	<Route path="settings" component={Settings} />
 	<Route path="accountsettings" component={Settings} />
 	<Route path="usersettings" component={Settings} />

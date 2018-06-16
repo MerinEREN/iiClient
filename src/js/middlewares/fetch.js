@@ -81,9 +81,10 @@ const shouldFetchAfterDelay = (args, duration) => dispatch => {
 	})))
 	let timer
 	const promise = new Promise(resolve => {
-		timer = setTimeout(function() {
+		/* timer = setTimeout(function() {
 			resolve()
-		}, duration + 1000)
+		}, duration + 1000) */
+		timer = setTimeout(resolve, duration + 1000)
 	})
 	// Add snackbar
 	const snackbarKey = Date.now()

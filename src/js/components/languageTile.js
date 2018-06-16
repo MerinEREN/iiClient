@@ -17,8 +17,6 @@ const styles = {
 const LanguageTile = ({language: {ID, link}, title, isChecked, dispatch}) => {
 	const {
 		gridTile: {
-			marginTop, 
-			marginBottom, 
 			titleBackground
 		}, 
 		checkbox
@@ -26,8 +24,6 @@ const LanguageTile = ({language: {ID, link}, title, isChecked, dispatch}) => {
 	return (
 		<GridTile  
 			style={{
-				marginTop, 
-				marginBottom, 
 				opacity: isChecked ? 0.5 : 1
 			}}
 			title={title}

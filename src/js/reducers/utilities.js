@@ -121,7 +121,7 @@ export const paginate = ({types, mapActionToKey}) => {
 
 const removeItemsFromArray = (array1, array2) => {
 	var array = []
-	console.log(array1, array2)
+	// console.log(array1, array2)
 	array1.forEach(v => {
 		if (array2.indexOf(v) === -1)
 			array.push(v)
@@ -130,7 +130,7 @@ const removeItemsFromArray = (array1, array2) => {
 }
 
 export const addDynamicKeyReturnResult = ({types, mapActionToKey}) => {
-	console.log(types, types.length)
+	// console.log(types, types.length)
 	if (!Array.isArray(types) || types.length > 2) {
 		throw new Error("Expected types to be an array of max two elements.")
 	}
@@ -210,13 +210,16 @@ export const mergeIntoOrResetObject = (state, action) => {
 // By array items or object keys.
 // TYPE OF ARRAY IS OLSO OBJECT !!!!!
 const removeFromObject = (state, action) => {
+	const {
+		response: {result}
+	} = action
 	let newState = {}
 	Object.entries(state).forEach(([k, v]) => {
-		if (Array.isArray(action.response.result)) {
-			if (action.response.result.indexOf(k) === -1)
+		if (Array.isArray(result)) {
+			if (result.indexOf(k) === -1)
 				newState[k] = v
 		} else {
-			if (!action.response.result.hasOwnProperty(k))
+			if (!result.hasOwnProperty(k))
 				newState[k] = v
 		}
 	})
