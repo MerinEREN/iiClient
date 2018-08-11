@@ -1,15 +1,15 @@
-import {makeLoader} from './utilities'
+import {makeLoader} from "./utilities"
 import {
 	loginUrlsSuccess
-} from '../actions/loginUrls'
+} from "../actions/signin"
 
-const getLoginUrls = makeLoader({
+const loginUrlsGet = makeLoader({
 	actionCreators: {
 		actionsSuccess: [loginUrlsSuccess]
 	}, 
 	options: {
 		isCached: state => Object.keys(state.entities.loginUrls).length
 	}
-	})
+})
 
-export default getLoginUrls
+export default loginUrlsGet

@@ -3,12 +3,15 @@ import {
 	userSuccess
 } from "../actions/user"
 
-const getUser = makeLoader({
+const userGet = makeLoader({
+	defaults: {
+		URL: "/users/"
+	},
 	actionCreators: {
 		actionsSuccess: [userSuccess]
 	}
 })
-export const putUser = makeLoader({
+export const userPut = makeLoader({
 	defaults: {
 		method: "PUT"
 	},
@@ -21,4 +24,4 @@ export const putUser = makeLoader({
 	}
 })
 
-export default getUser
+export default userGet

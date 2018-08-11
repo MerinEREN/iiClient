@@ -1,7 +1,6 @@
 import React, {Component}  from "react"
 import PropTypes, {instanceOf} from "prop-types"
 import {Cookies} from "react-cookie"
-import {Link} from "react-router"
 import IconMenu from "material-ui/IconMenu"
 import IconButton from "material-ui/IconButton"
 import Avatar from "material-ui/Avatar"
@@ -38,7 +37,7 @@ const styles = {
 	}
 }
 
-class Logged extends Component {
+class Signed extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -46,12 +45,19 @@ class Logged extends Component {
 		}
 	}
 	componentWillMount() {
-		this.props.getLanguages()
+		const {
+			userLoggedGet, 
+			languagesGet, 
+			signOutURLGet
+		} = this.props
+		userLoggedGet()
+		languagesGet()
+		signOutURLGet()
 	}
 	render() {
 		const {
+			session, 
 			contents, 
-			account, 
 			user, 
 			cookies, 
 			languages, 
@@ -59,19 +65,13 @@ class Logged extends Component {
 			getRouteContents: get, 
 			signOutURL
 		} = this.props
-		// MODIFY THIS SESSION CONTROL !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		// "ACSID" is for prod, and "dev_appserver_login is for development.
-		// true is optional "doNotParse" arg.
-		// If not specified get() deserialize any cookies starting with "{" or "[".
-		const session = cookies.get("ACSID", true) || 
-			cookies.get("dev_appserver_login", true)
 		return (
 			<IconMenu
 				iconButtonElement={
 					<IconButton 
 						style= {styles.iconButton}
 					>
-						<Avatar src={user.photo.path || "/img/adele.jpg"} />
+						<Avatar src={user.photo.link || "/img/adele.jpg"} />
 					</IconButton>
 				}
 				targetOrigin={{horizontal: "right", vertical: "top"}}
@@ -83,7 +83,7 @@ class Logged extends Component {
 						title={user.email}
 						subtitle={`${contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIabCAw"]}: 4`} 
 						textStyle={styles.cardHeader.textStyle}
-						avatar={user.photo.path || "/img/adele.jpg"}
+						avatar={user.photo.link || "/img/adele.jpg"}
 					/>
 				</Card>
 				<Divider style={styles.divider} />
@@ -105,10 +105,10 @@ class Logged extends Component {
 											onTouchTap={() => {
 												cookies.set("lang", l.ID)
 												routeContentsResetAll()
-			get({
-				URL: "/contents?pageID=body", 
-				key: "body"
-			})
+												get({
+													URL: "/contents?pageID=body", 
+													key: "body"
+												})
 												getRouteContents(session, {}, this.props)
 												this.setState({lang: l.ID})
 											}}
@@ -132,20 +132,22 @@ class Logged extends Component {
 	}
 }
 
-Logged.propTypes = {
-	contents: PropTypes.object.isRequired,
-	user: PropTypes.object.isRequired, 
-	account: PropTypes.object.isRequired, 
-	lang: PropTypes.string.isRequired, 
+Signed.propTypes = {
+	session: PropTypes.string.isRequired,
 	cookies: instanceOf(Cookies).isRequired, 
+	contents: PropTypes.object.isRequired,
+	lang: PropTypes.string.isRequired, 
+	languagesGet: PropTypes.func.isRequired, 
 	languages: PropTypes.object.isRequired, 
-	getLanguages: PropTypes.func.isRequired, 
-	getRouteContents: PropTypes.func.isRequired,
+	userLoggedGet: PropTypes.func.isRequired, 
+	user: PropTypes.object.isRequired, 
+	signOutURLGet: PropTypes.func.isRequired, 
+	signOutURL: PropTypes.string.isRequired, 
 	routeContentsResetAll: PropTypes.func.isRequired,
-	signOutURL: PropTypes.string.isRequired
+	getRouteContents: PropTypes.func.isRequired
 }
 
-// My custom "Logged" component acts like "IconMenu" mui component !!!!!!!!!!!!!!!!!!!!!!!
-Logged.muiName = "IconMenu"
+// My custom "Signed" component acts like "IconMenu" mui component !!!!!!!!!!!!!!!!!!!!!!!
+Signed.muiName = "IconMenu"
 
-export default Logged
+export default Signed

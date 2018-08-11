@@ -164,16 +164,19 @@ const fetchDomainData = args => (dispatch, getState) => {
 					contentType.indexOf("text/html") !== -1
 				) {
 					// When status code is 204 No Content
-					// like all DELETE requests and some PUT requests.
-					actionsSuccess.forEach(ac => dispatch(ac({
-						method: request.method, 
-						response: {result: request.method === "DELETE" ? 
-							dataBody :
-							{...getState().entitiesBuffered[kind]}
-						}, 
-						key
-						// receivedAt: Date.now()
-					})))
+					// like all DELETE requests 
+					// and some PUT and GET requests.
+					if (request.method !== "GET") {
+						actionsSuccess.forEach(ac => dispatch(ac({
+							method: request.method, 
+							response: {result: request.method === "DELETE" ? 
+								dataBody :
+								{...getState().entitiesBuffered[kind]}
+							}, 
+							key
+							// receivedAt: Date.now()
+						})))
+					}
 					/* response.text()
 						.then(body => 
 							actionsSuccess.forEach(ac => dispatch(ac({
@@ -218,7 +221,6 @@ const fetchDomainData = args => (dispatch, getState) => {
 				}
 			} else {
 				// response code is not between 199 and 300
-				console.log("Response code is not between 199 and 300")
 				if (actionsFailure)
 					actionsFailure.forEach(ac => dispatch(ac({
 						method: request.method, 
@@ -231,7 +233,7 @@ const fetchDomainData = args => (dispatch, getState) => {
 					})))
 			}
 			// USE Response.status HERE TO HANDLE RESPONSE STATUSES !!!!!!!!!!!
-			if(showSnackbar) {
+			if(showSnackbar || (response.status === 204 && request.method === "GET")) {
 				const snackbarKey = Date.now()
 				dispatch(addSnackbar({object: {
 					[snackbarKey]: {

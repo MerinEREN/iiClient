@@ -51,7 +51,7 @@ class Languages extends Component {
 		this.handleDelete = this.handleDelete.bind(this)
 	}
 	componentWillMount() {
-		this.props.getLanguages()
+		this.props.languagesGet()
 	}
 	componentWillReceiveProps (nextProps) {
 		if (this.props.contents !== nextProps.contents)
@@ -141,7 +141,7 @@ class Languages extends Component {
 	handlePost() {
 		this.toggleDialog()
 		const {langNew} = this.state
-		this.props.postLanguage({
+		this.props.languagePost({
 			body: {
 				type: "FormData", 
 				// Use "contentType" for "Blob" type.
@@ -166,8 +166,8 @@ class Languages extends Component {
 		this.setState({showDialog: !this.state.showDialog})
 	}
 	handleDelete() {
-		const {languageIDsSelected, deleteLanguages} = this.props
-		deleteLanguages({
+		const {languageIDsSelected, languagesDelete} = this.props
+		languagesDelete({
 			URL: `/languages?IDs=${generateURLVariableFromIDs(languageIDsSelected)}`, 
 			body: {
 				type: "FormData", 
@@ -314,11 +314,11 @@ Languages.defaultProps = {
 
 Languages.propTypes = {
 	contents: PropTypes.object.isRequired, 
-	getLanguages: PropTypes.func.isRequired, 
+	languagesGet: PropTypes.func.isRequired, 
 	languages: PropTypes.object.isRequired, 
-	postLanguage: PropTypes.func.isRequired, 
+	languagePost: PropTypes.func.isRequired, 
 	languageIDsSelected: PropTypes.array.isRequired, 
-	deleteLanguages: PropTypes.func.isRequired
+	languagesDelete: PropTypes.func.isRequired
 }
 
 Languages.muiName = "GridList"

@@ -51,7 +51,8 @@ const mapStateToProps = state => {
 	} = state
 	return {
 		contents, 
-		items: getItemsFromEntities(pagination, entitiesBuffered)
+		items: getItemsFromEntities(pagination, entitiesBuffered), 
+		uID: entitiesBuffered.account.user.ID
 	}
 }
 

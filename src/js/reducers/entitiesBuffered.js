@@ -1,27 +1,29 @@
 import {combineReducers} from "redux"
-import {accountsBuffered as accounts} from "./accounts"
-import {userAccountBuffered as userAccount} from "./userAccount"
-import {usersBuffered as users} from "./users"
-import {languagesBuffered as languages} from "./languages"
-import {pagesBuffered as pages} from "./pages"
 import {contentsBuffered as contents} from "./contents"
+import {languagesBuffered as languages} from "./languages"
+import {userLoggedBuffered as userLogged} from "./userLogged"
+import {accountLoggedBuffered as accountLogged} from "./accountLogged"
+import {pagesBuffered as pages} from "./pages"
 import {tagsBuffered as tags} from "./tags"
 import {demandsBuffered as demands} from "./demands"
 import {offersBuffered as offers} from "./offers"
 import {servicePacksBuffered as servicePacks} from "./servicePacks"
+import {accountsBuffered as accounts} from "./accounts"
+import {usersBuffered as users} from "./users"
 
 // Higher-Order Reducer
 const entitiesBuffered = combineReducers({
-	userAccount, 
-	languages, 
-	pages, 
 	contents, 
+	languages, 
+	userLogged, 
+	accountLogged, 
+	pages, 
 	tags, 
-	accounts,
-	users,
-	offers,
 	demands, 
-	servicePacks
+	offers,
+	servicePacks, 
+	accounts,
+	users
 })
 
 export default entitiesBuffered 

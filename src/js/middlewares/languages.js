@@ -5,7 +5,7 @@ import {
 	languagesFailure
 } from "../actions/languages"
 
-const getLanguages = makeLoader({
+const languagesGet = makeLoader({
 	defaults: {
 		URL: "/languages", 
 		kind: "languages"
@@ -20,7 +20,7 @@ const getLanguages = makeLoader({
 	}
 })
 
-export const postLanguage = makeLoader({
+export const languagePost = makeLoader({
 	defaults: {
 		method: "POST", 
 		URL: "/languages", 
@@ -37,7 +37,7 @@ export const postLanguage = makeLoader({
 	}
 })
 
-export const deleteLanguages = makeLoader({
+export const languagesDelete = makeLoader({
 	defaults: {
 		method: "DELETE", 
 		kind: "languages"
@@ -53,4 +53,4 @@ export const deleteLanguages = makeLoader({
 	}
 })
 
-export default getLanguages
+export default languagesGet

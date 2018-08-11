@@ -1,7 +1,6 @@
 import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
 import BodyComponent from "../components/body"
-import loadData from "../middlewares/body"
 import getRouteContents from "../middlewares/routeContents"
 import {toggleDrawer} from "../actions/drawer"
 // Needed for onTouchTap, REMOVE WHEN REACT HAS THIS FEATURE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -31,12 +30,11 @@ const mapStateToProps = state => {
 		    } */
 	const {
 		appState: {snackbars, isFetching}, 
-		entitiesBuffered: {userAccount: {account, user}}, 
+		entitiesBuffered: {userLogged}, 
 		ui: {contents: {body}}
 	} = state
 	return {
-		account, 
-		user, 
+		user: userLogged, 
 		isFetching,
 		snackbars, 
 		contents: body
@@ -45,7 +43,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
-		loadData,
 		getRouteContents, 
 		toggleDrawer
 	},

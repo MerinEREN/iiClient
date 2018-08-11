@@ -3,35 +3,38 @@ import createReducer, {
 	removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
 	mergeIntoOrResetObject, 
 	fetchFailure
-} from './utilities'
+} from "./utilities"
 import {
-	USER_ACCOUNT_REQUEST, 
-	USER_ACCOUNT_SUCCESS, 
-	USER_ACCOUNT_FAILURE
-} from '../actions/types'
+	ACCOUNT_REQUEST, 
+	ACCOUNT_SUCCESS, 
+	ACCOUNT_FAILURE
+} from "../actions/types"
 
 // Slice Reducers
-const userAccount = createReducer(
-	{
-		account: {}, 
-		user: {}
-	}, 
-	{
-		USER_ACCOUNT_SUCCESS: removeFromObjectIfDeleteOrMergeIntoOrResetObject
-	}
-)
-export const userAccountBuffered = createReducer(
+const account = createReducer(
 	{}, 
 	{
-		USER_ACCOUNT_REQUEST: mergeIntoOrRemoveFromObjectRequest, 
-		USER_ACCOUNT_SUCCESS: mergeIntoOrResetObject, 
-		USER_ACCOUNT_FAILURE: fetchFailure
+		ACCOUNT_SUCCESS: removeFromObjectIfDeleteOrMergeIntoOrResetObject
+	}
+)
+export const accountBuffered = createReducer(
+	{
+		photo: {}, 
+		user: {
+			photo: {}, 
+			roles: []
+		}
+	}, 
+	{
+		ACCOUNT_REQUEST: mergeIntoOrRemoveFromObjectRequest, 
+		ACCOUNT_SUCCESS: mergeIntoOrResetObject, 
+		ACCOUNT_FAILURE: fetchFailure
 	}
 )
 
-export default userAccount
+export default account
 
-// import {combineReducers} from 'redux'
+// import {combineReducers} from "redux"
 /* function pushIDs(state, action) {
 	const {result} = action.response
 	if(result.account) 

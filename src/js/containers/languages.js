@@ -1,7 +1,7 @@
 import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
 import LanguagesComponent from "../components/languages"
-import getLanguages, {postLanguage, deleteLanguages}  from "../middlewares/languages"
+import languagesGet, {languagePost, languagesDelete}  from "../middlewares/languages"
 
 // Can use ownProps here.
 const mapStateToProps = state => {
@@ -19,9 +19,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
-		getLanguages, 
-		postLanguage, 
-		deleteLanguages
+		languagesGet, 
+		languagePost, 
+		languagesDelete
 	},
 	dispatch
 )

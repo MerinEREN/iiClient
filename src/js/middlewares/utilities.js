@@ -1,23 +1,25 @@
 import fetchDomainDataIfNeeded from "./fetch"
 
-export const generateURL = (key, returnedURL, ...pageURLs) => {
+export const generateURL = (key, ...pageURLs) => {
 	var URL = (key ? "/" + key : "/") + "?"
-	URL += returnedURL === "nextPageURL" ? "d=next" : "d=prev"
-	var domainAndParams
-	var params
+	var domainAndParams, params, c
 	pageURLs.forEach((v, i) => {
-		domainAndParams = v.split("?")
-		params = domainAndParams[1].split("&c")
 		switch (i) {
 			case 0:
-				URL += "&cd" + params[1]
-				return
+				domainAndParams = v.split("?")
+				params = domainAndParams[1]
+				uIDandDirection = params.split("&c")[0]
+				c = params.split("&c")[1]
+				URL += uIDandDirection + "&cd=" + c
+				break
 			case 1:
-				URL += "&co" + params[1]
-				return
+				c = v.split("&c")[1]
+				URL += "&co=" + c
+				break
 			case 2:
-				URL += "&csp" + params[1]
-				return
+				c = v.split("&c")[1]
+				URL += "&csp=" + c
+				break
 		}
 	})
 	return URL

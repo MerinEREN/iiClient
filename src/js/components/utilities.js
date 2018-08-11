@@ -69,8 +69,8 @@ export const getRouteContents = (session, prevProps, nextProps) => {
 							})
 						} else {
 							get({
-								URL: "/contents?pageID=login", 
-								key: "login"
+								URL: "/contents?pageID=LandingPage", 
+								key: "LandingPage"
 							})
 						}
 					}

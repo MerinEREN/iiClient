@@ -20,7 +20,7 @@ export const getURL = (key, returnedURL) => (dispatch, getState) => {
 					timeline: {[returnedURL]: spURL}
 				}
 			} = getState().pagination
-			return generateURL(key, returnedURL, dURL, oURL, spURL)
+			return generateURL(key, dURL, oURL, spURL)
 	}
 }
 

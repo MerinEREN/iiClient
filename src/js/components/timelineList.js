@@ -6,8 +6,10 @@ import Offer from "../components/offer"
 import ServicePack from "../components/servicePack"
 
 class TimelineList extends Component {
-	componentWillMount() {
-		this.props.getItems({key: "timeline"})
+	componentWillReceiveProps(nextProps) {
+		if (nextProps.uID !== this.props.uID) {
+			this.props.getItems(nextProps.uID, "timeline")
+		}
 	}
 	render() {
 		const {
@@ -53,7 +55,8 @@ class TimelineList extends Component {
 }
 
 TimelineList.defaultProps = {
-	contents: {}
+	contents: {}, 
+	uID: ""
 }
 
 TimelineList.propTypes = {
@@ -72,6 +75,7 @@ TimelineList.propTypes = {
 	contents: PropTypes.object.isRequired, 
 	items: PropTypes.array, 
 	getItems: PropTypes.func.isRequired, 
+	uID: PropTypes.string.isRequired
 }
 
 TimelineList.muiName = 'List'

@@ -11,7 +11,7 @@ const styles = {
 	}
 }
 
-class LoginUrls extends Component {
+class Signin extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -21,7 +21,7 @@ class LoginUrls extends Component {
 		this.handleRequestClose = this.handleRequestClose.bind(this)
 	}
 	componentWillMount() {
-		this.props.getLoginUrls()
+		this.props.loginUrlsGet()
 	}
 	handleTouchTap(event) {
 		// This prevents ghost click.
@@ -37,11 +37,14 @@ class LoginUrls extends Component {
 		})
 	}
 	render() {
-		const {loginUrls} = this.props
+		const {
+			contents, 
+			loginUrls 
+		} = this.props
 		return (
 			<div>
 				<FlatButton
-					label="Login"
+					label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgImiCgw"] || " "}
 					onTouchTap={this.handleTouchTap}
 				/>
 				<Popover
@@ -73,9 +76,14 @@ class LoginUrls extends Component {
 	}
 }
 
-LoginUrls.propTypes = {
-loginUrls: PropTypes.object.isRequired, 
-getLoginUrls: PropTypes.func.isRequired
+Signin.defaultProps = {
+	contents: {}
 }
 
-export default LoginUrls
+Signin.propTypes = {
+contents: PropTypes.object.isRequired,
+loginUrls: PropTypes.object.isRequired, 
+loginUrlsGet: PropTypes.func.isRequired
+}
+
+export default Signin

@@ -10,8 +10,8 @@ import IconButton from "material-ui/IconButton"
 import Badge from "material-ui/Badge"
 import NotificationsIcon from "material-ui/svg-icons/social/notifications"
 import LandingPage from "../containers/landingPage"
-import LoginUrls  from "../containers/loginUrls"
-import Logged  from "../containers/logged"
+import Signin  from "../containers/signin"
+import Signed  from "../containers/signed"
 import Drawer from "../containers/drawer"
 import {getRouteContents} from "./utilities"
 
@@ -33,16 +33,9 @@ class Body extends Component {
 		this.state = {
 			completed: 0
 		}
-		// IT IS POSIBLE TO CALL THE FUNCTION EVEN BELOW BINDING !!!!!!!!!!!!!!!!!!
-		this.progress = this.progress.bind(this)
 	}
 	componentWillMount() {
-		const {
-			loadData, 
-			getRouteContents: get
-		} = this.props
-		loadData()
-		get({
+		this.props.getRouteContents({
 			URL: "/contents?pageID=body", 
 			key: "body"
 		})
@@ -74,15 +67,17 @@ class Body extends Component {
 	}
 	render() {
 		const {
+			location, 
 			muiTheme, 
 			isFetching, 
 			snackbars, 
 			contents, 
-			account, 
 			user, 
 			cookies, 
 			toggleDrawer, 
-			children
+			children, 
+			timeline, 
+			dashboard
 		} = this.props
 		this.styles = {
 			div: {
@@ -141,17 +136,32 @@ class Body extends Component {
 								</IconButton>
 							</Badge>
 						{
-							this.session === undefined ?
-								<LoginUrls /> :
-								<Logged 
+							this.session ?
+								<Signed 
 									{...this.props} 
-									lang ={this.lang}
+									session={this.session}
+									lang={this.lang}
+								/> :
+								<Signin 
+									contents={contents} 
 								/>
 						}
 					</ToolbarGroup>
 				</AppBar>
 				{this.session && <Drawer {...this.props} />}
-				{this.session ? children : <LandingPage />}
+				{
+					this.session ? 
+						(
+							location.pathname === "/" ? 
+							(
+								user.tags && user.tags.length ? 
+								timeline : 
+								dashboard
+							) : 
+							children
+						) :
+						<LandingPage />
+				}
 				{
 					Object.entries(snackbars).map(([k, v]) => 
 						<Snackbar
@@ -171,14 +181,7 @@ class Body extends Component {
 }
 
 Body.defaultProps = {
-	contents: {}, 
-	account: {
-		photo: {}
-	}, 
-	user: {
-		photo: {}, 
-		roles: []
-	}
+	contents: {}
 }
 
 Body.propTypes = {
@@ -186,12 +189,12 @@ Body.propTypes = {
 	muiTheme: PropTypes.object.isRequired,
 	isFetching: PropTypes.bool.isRequired,
 	contents: PropTypes.object.isRequired,
-	account: PropTypes.object,
 	user: PropTypes.object,
-	loadData: PropTypes.func.isRequired,
 	getRouteContents: PropTypes.func.isRequired,
 	toggleDrawer: PropTypes.func.isRequired,
-	children: PropTypes.node.isRequired, 
+	children: PropTypes.node, 
+	timeline: PropTypes.node, 
+	dashboard: PropTypes.node, 
 	snackbars: PropTypes.object
 }
 

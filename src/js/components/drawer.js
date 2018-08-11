@@ -49,22 +49,45 @@ const styles = {
 	}, 
 	link: {
 		activeStyle: {
-				color: "#0097a7"
+			color: "#0097a7"
 		}
 	}
 }
 
-const drawer = ({cookies, contents, account, user, open, changeTheme, toggleDrawer}) => (
-	<Drawer 
-		open={open}
-		containerStyle={styles.drawer.containerStyle}
-	>
-		<AppBar
-			title={user.email}
-			onLeftIconButtonTouchTap={() => 
-					toggleDrawer()}
-		/>
-		{/*ADD ALL NECESSARY ACCOUNT INFO IN CARD !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+class MyDrawer extends Component {
+	constructor(props) {
+		super(props)
+		this.state = {
+			open: false
+		}
+	}
+	componentWillMount() {
+		const {
+			accountLoggedGet, 
+			toggleDrawer
+		} = this.props
+		accountLoggedGet().then(toggleDrawer())
+	}
+	render() {
+		const {
+			contents, 
+			cookies, 
+			user, 
+			account, 
+			open, 
+			changeTheme
+		} = this.props
+		return (
+			<Drawer 
+				open={open}
+				containerStyle={styles.drawer.containerStyle}
+			>
+				<AppBar
+					title={user.email}
+					onLeftIconButtonTouchTap={() => 
+							toggleDrawer()}
+						/>
+						{/*ADD ALL NECESSARY ACCOUNT INFO IN CARD !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		ALSO ADD THE ACCOUNT RANK AS SUBTITLE OF CardTitle !!!!!!!!!!!!!!!!!!!!!*/}
 		<Card
 			containerStyle={styles.card.containerStyle}
@@ -84,7 +107,7 @@ const drawer = ({cookies, contents, account, user, open, changeTheme, toggleDraw
 					}
 				>
 					<img 
-						src={account.photo.path || "/img/matrix.gif"} 
+						src={account.photo.link || "/img/matrix.gif"} 
 					/>
 				</CardMedia>
 			</CardTitle>
@@ -188,61 +211,61 @@ const drawer = ({cookies, contents, account, user, open, changeTheme, toggleDraw
 			{
 				// Also chack account type here.
 				(isContentEditor(user.roles) || isAdmin(user.roles))
-				&&
-				<ListItem 
-					containerElement={
-						<Link
-							to="/languages"
-							activeStyle={styles.link.activeStyle}
-						/>
-					}
-					primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLqHCgw"]}
-					leftIcon={<EditContent />}
-				/>
+					&&
+					<ListItem 
+						containerElement={
+							<Link
+								to="/languages"
+								activeStyle={styles.link.activeStyle}
+							/>
+						}
+						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLqHCgw"]}
+						leftIcon={<EditContent />}
+					/>
 			}
 			{
 				// Also chack account type here.
 				(isContentEditor(user.roles) || isAdmin(user.roles))
-				&&
-				<ListItem 
-					containerElement={
-						<Link
-							to="/pages"
-							activeStyle={styles.link.activeStyle}
-						/>
-					}
-					primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLqHCQw"]}
-					leftIcon={<EditContent />}
-				/>
+					&&
+					<ListItem 
+						containerElement={
+							<Link
+								to="/pages"
+								activeStyle={styles.link.activeStyle}
+							/>
+						}
+						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLqHCQw"]}
+						leftIcon={<EditContent />}
+					/>
 			}
 			{
 				// Also chack account type here.
 				(isContentEditor(user.roles) || isAdmin(user.roles))
-				&&
-				<ListItem 
-					containerElement={
-						<Link
-							to="/contents"
-							activeStyle={styles.link.activeStyle}
-						/>
-					}
-					primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLqHCww"]}
-					leftIcon={<EditContent />}
-				/>
+					&&
+					<ListItem 
+						containerElement={
+							<Link
+								to="/contents"
+								activeStyle={styles.link.activeStyle}
+							/>
+						}
+						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLqHCww"]}
+						leftIcon={<EditContent />}
+					/>
 			}
 			{
 				(isAdmin(user.roles))
-				&&
-				<ListItem 
-					containerElement={
-						<Link
-							to="/tags"
-							activeStyle={styles.link.activeStyle}
-						/>
-					}
-					primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgK6ZCgw"]}
-					leftIcon={<EditContent />}
-				/>
+					&&
+					<ListItem 
+						containerElement={
+							<Link
+								to="/tags"
+								activeStyle={styles.link.activeStyle}
+							/>
+						}
+						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgK6ZCgw"]}
+						leftIcon={<EditContent />}
+					/>
 			}
 			<ListItem 
 				containerElement={
@@ -305,47 +328,47 @@ const drawer = ({cookies, contents, account, user, open, changeTheme, toggleDraw
 			{
 				// Also chack account type here.
 				isAdmin(user.roles)
-				?
-				<ListItem 
-					primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIarCQw"]}
-					leftIcon={<Settings />} 
-					nestedItems={[
-						<ListItem 
-							key={1} 
-							containerElement={
-								<Link
-									to="/accountsettings"
-									activeStyle={styles.link.activeStyle}
-								/>
-							} 
-							primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIarCww"]}
-							leftIcon={<AccountSettings />} 
-						/>, 
-						<ListItem 
-							key={2} 
-							containerElement={
-								<Link
-									to="/usersettings"
-									activeStyle={styles.link.activeStyle}
-								/>
-							} 
-							primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIbrCAw"]}
-							leftIcon={<UserSettings />} 
-						/>
-					]}
-					primaryTogglesNestedList={true}
-				/>
-				:
-				<ListItem 
-					containerElement={
-						<Link
-							to="/settings"
-							activeStyle={styles.link.activeStyle}
-						/>
-					} 
-					primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIarCQw"]}
-					leftIcon={<Settings />} 
-				/>
+					?
+					<ListItem 
+						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIarCQw"]}
+						leftIcon={<Settings />} 
+						nestedItems={[
+							<ListItem 
+								key={1} 
+								containerElement={
+									<Link
+										to="/accountsettings"
+										activeStyle={styles.link.activeStyle}
+									/>
+								} 
+								primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIarCww"]}
+								leftIcon={<AccountSettings />} 
+							/>, 
+							<ListItem 
+								key={2} 
+								containerElement={
+									<Link
+										to="/usersettings"
+										activeStyle={styles.link.activeStyle}
+									/>
+								} 
+								primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIbrCAw"]}
+								leftIcon={<UserSettings />} 
+							/>
+						]}
+						primaryTogglesNestedList={true}
+					/>
+					:
+					<ListItem 
+						containerElement={
+							<Link
+								to="/settings"
+								activeStyle={styles.link.activeStyle}
+							/>
+						} 
+						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIarCQw"]}
+						leftIcon={<Settings />} 
+					/>
 			}
 			<ListItem 
 				containerElement={
@@ -369,18 +392,21 @@ const drawer = ({cookies, contents, account, user, open, changeTheme, toggleDraw
 			/>
 		</List>
 	</Drawer>
-)
+		)
+	}
+}
 
-drawer.propTypes = {
+MyDrawer.propTypes = {
 	contents: PropTypes.object.isRequired,
 	cookies: instanceOf(Cookies).isRequired, 
 	open: PropTypes.bool.isRequired,
 	account: PropTypes.object,
 	user: PropTypes.object,
-	changeTheme: PropTypes.func.isRequired,
+	accountLoggedGet: PropTypes.func.isRequired, 
 	toggleDrawer: PropTypes.func.isRequired,
+	changeTheme: PropTypes.func.isRequired
 }
 
-drawer.muiName = "Drawer"
+MyDrawer.muiName = "Drawer"
 
-export default withCookies(drawer)
+export default withCookies(MyDrawer)

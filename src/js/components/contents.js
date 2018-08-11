@@ -49,7 +49,9 @@ class Contents extends Component {
 		this.props.getPages()
 	}
 	handleCreateNewContents() {
-		let {newContents} = this.state
+		const {
+			newContents
+		} = this.state
 		let tempObj = {}
 		for(let i = Object.keys(newContents).length; i < Object.keys(newContents).length + 8; i++) {
 			tempObj[`newContent_${i}`] = {

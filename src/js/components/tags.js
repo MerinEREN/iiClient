@@ -63,9 +63,7 @@ class Tags extends Component {
 		}
 	}
 	handleRequiredInput(i) {
-		const {
-			contents
-		} = this.props
+		const {contents} = this.props
 		let key
 		switch (i) {
 			case 1:
@@ -136,10 +134,7 @@ class Tags extends Component {
 		this.setState({showDialog: !this.state.showDialog})
 	}
 	handleDelete(ID) {
-		const {
-			deleteTags
-		} = this.props
-		deleteTags({
+		this.props.deleteTags({
 			URL: `/tags?ID=${ID}`, 
 			body: {
 				type: "FormData", 
@@ -155,7 +150,7 @@ class Tags extends Component {
 			<TagTile 
 				key={i} 
 				tag={v} 
-				name={contents[v.name] || "USE CONTENT KEY PLEASE !!!!!"}
+				name={contents[v.name]}
 				handleDelete={this.handleDelete}
 			/>)
 	}

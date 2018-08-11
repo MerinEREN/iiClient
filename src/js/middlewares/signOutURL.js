@@ -3,7 +3,10 @@ import {
 	signOutURLSuccess
 } from "../actions/signOutURL"
 
-const getSignOutURL = makeLoader({
+const signOutURLGet = makeLoader({
+	defaults: {
+		URL: "/signout"
+	}, 
 	actionCreators: {
 			actionsSuccess: [signOutURLSuccess]
 	},
@@ -12,4 +15,4 @@ const getSignOutURL = makeLoader({
 	}
 	})
 
-export default getSignOutURL
+export default signOutURLGet
