@@ -1,5 +1,5 @@
 import createReducer, {
-	mergeIntoOrRemoveFromObjectRequest, 
+	mergeIntoOrRemoveFromObject, 
 	removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
 	mergeIntoOrResetObject, 
 	fetchFailure
@@ -26,7 +26,7 @@ export const accountBuffered = createReducer(
 		}
 	}, 
 	{
-		ACCOUNT_REQUEST: mergeIntoOrRemoveFromObjectRequest, 
+		ACCOUNT_REQUEST: mergeIntoOrRemoveFromObject, 
 		ACCOUNT_SUCCESS: mergeIntoOrResetObject, 
 		ACCOUNT_FAILURE: fetchFailure
 	}

@@ -1,6 +1,6 @@
 import createReducer, {
 	paginate, 
-	mergeIntoOrRemoveFromObjectRequest, 
+	mergeIntoOrRemoveFromObject, 
 	removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
 	mergeIntoOrResetObject, 
 	fetchFailure
@@ -20,7 +20,7 @@ const servicePacks = createReducer(
 export const servicePacksBuffered = createReducer(
 	{}, 
 	{
-		SERVICE_PACKS_REQUEST: mergeIntoOrRemoveFromObjectRequest, 
+		SERVICE_PACKS_REQUEST: mergeIntoOrRemoveFromObject, 
 		SERVICE_PACKS_SUCCESS: mergeIntoOrResetObject, 
 		SERVICE_PACKS_FAILURE: fetchFailure
 	}

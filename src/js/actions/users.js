@@ -1,9 +1,10 @@
-import makeActionCreator from './creator'
+import makeActionCreator from "./creator"
 import {
 	USERS_REQUEST,
 	USERS_SUCCESS,
-	USERS_FAILURE
-} from './types'
+	USERS_FAILURE, 
+	USERIDS_SELECTED_ADD_REMOVE
+} from "./types"
 
 // Action Creators
 export const usersRequest = makeActionCreator(
@@ -14,4 +15,8 @@ export const usersSuccess = makeActionCreator(
 )
 export const usersFailure = makeActionCreator(
 	USERS_FAILURE
+)
+export const selectedUserIDsAddRemove = makeActionCreator(
+	USERIDS_SELECTED_ADD_REMOVE, 
+	"ID"
 )

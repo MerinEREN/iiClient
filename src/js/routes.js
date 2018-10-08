@@ -15,7 +15,7 @@ import Account from "./components/account"
 import Demands from "./components/demands"
 import Offers from "./components/offers"
 import ServicePacks from "./components/servicePacks"
-import SettingsAccount from "./containers/settingsAccount"
+import Settings from "./containers/settings"
 import SettingsUser from "./containers/settingsUser"
 import Feedback from "./components/feedback"
 import Help from "./components/help"
@@ -23,7 +23,7 @@ import Help from "./components/help"
 // AVOIDING GETTING ERROR WHEN RE-RENDERING BECAUSE OF muiTheme CHANGES !!!!!!!!!!!!!!!!!!!
 // PRECEDENCE (matching routes in the order they are defined) IS IMPORTANT !!!!!!!!!!!!!!!!
 // Add a control for path=":ID" 
-// like onEnter={(nextState, replace) => {if (notMatch) replace("/")}}.
+// like onEnter={(nextState, replace) => {if (noMatch) replace("/")}}.
 const routes  = <Route path="/" component={Body}>
 	<IndexRoute components={{dashboard: Dashboard, timeline: Timeline}} />
 	<Route path="dashboard" component={Dashboard} />
@@ -32,9 +32,8 @@ const routes  = <Route path="/" component={Body}>
 	<Route path="pages/:ID" component={Page} />
 	<Route path="contents" component={Contents} />
 	<Route path="tags" component={Tags} />
-	<Redirect from="settings" to="accountsettings" />
-	<Route path="accountsettings" component={SettingsAccount} />
-	<Route path="usersettings" component={SettingsUser} />
+	<Route path="settings" component={Settings} />
+	<Route path="users/:ID" component={SettingsUser} />
 	<Route path="feedback" component={Feedback} />
 	<Route path="help" component={Help} />
 	<Route path="accounts/:ID">

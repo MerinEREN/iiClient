@@ -31,6 +31,7 @@ const styles = {
 	}
 }
 
+// "deletePages" is ready but not in use.
 class Pages extends Component {
 	constructor(props) {
 		super(props)
@@ -38,11 +39,11 @@ class Pages extends Component {
 			showDialog: false, 
 			stepIndex: 0, 
 			title: "", 
-			inputErrText: {}
+			errFields: {}
 		}
 		this.toggleDialog = this.toggleDialog.bind(this)
 		this.handleStepIndex = this.handleStepIndex.bind(this)
-		this.handleInputChange = this.handleInputChange.bind(this)
+		this.handleFieldChange = this.handleFieldChange.bind(this)
 		this.handlePost = this.handlePost.bind(this)
 		this.handleDelete = this.handleDelete.bind(this)
 	}
@@ -53,7 +54,7 @@ class Pages extends Component {
 		const {stepIndex} = this.state
 		switch (direction) {
 			case "next":
-				if(this.handleRequiredInput(stepIndex))
+				if(this.handleRequiredField(stepIndex))
 					return
 				this.setState({
 					stepIndex: stepIndex + 1,
@@ -66,15 +67,20 @@ class Pages extends Component {
 				break
 		}
 	}
-	handleRequiredInput(i) {
+	handleRequiredField(i) {
+		const {
+			title, 
+			errFields
+		} = this.state
 		const {
 			contents
 		} = this.props
 		switch (i) {
 			case 1:
-				if(!this.state.title) {
+				if(!title) {
 					this.setState({
-						inputErrText:{
+						errFields: {
+							...errFields, 
 							title: contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"]
 						}
 					})
@@ -85,13 +91,20 @@ class Pages extends Component {
 				return false
 		}
 	}
-	handleInputChange(event) {
+	handleFieldChange(event) {
 		const target = event.target
 		const name = target.name
 		const value = target.value
+		const {
+			title, 
+			errFields
+		} = this.state
 		this.setState({
 			title: value, 
-			inputErrText: {[name]: ""}
+			errFields: {
+				...errFields, 
+				[name]: ""
+			}
 		})
 	}
 	handlePost() {
@@ -147,7 +160,7 @@ class Pages extends Component {
 			showDialog, 
 			stepIndex, 
 			title, 
-			inputErrText
+			errFields
 		} = this.state
 		const {
 			contents, 
@@ -167,8 +180,8 @@ class Pages extends Component {
 				name="title" 
 				value={title}
 				floatingLabelText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI7lCAw"]}
-				errorText={inputErrText.title}
-				onChange={this.handleInputChange}
+				errorText={errFields.title}
+				onChange={this.handleFieldChange}
 			/>, 
 			<input 
 				type="file"

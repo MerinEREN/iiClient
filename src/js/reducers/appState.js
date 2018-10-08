@@ -1,10 +1,12 @@
-import {combineReducers} from 'redux'
-import {isFetching} from './fetchingProgres'
-import snackbars from './snackbars'
-import counters from './counters'
-import {languageIDsSelected as languageIDs} from './languages'
-import {pageIDsSelected as pageIDs} from './pages'
-import {contentIDsSelected as contentIDs} from './contents'
+import {combineReducers} from "redux"
+import {isFetching} from "./fetchingProgres"
+import snackbars from "./snackbars"
+import counters from "./counters"
+import {languageIDsSelected as languageIDs} from "./languages"
+import {pageIDsSelected as pageIDs} from "./pages"
+import {contentIDsSelected as contentIDs} from "./contents"
+import {userIDsSelected as userIDs} from "./users"
+import {tagIDsSelected as tagIDs} from "./tags"
 
 // Higher-Order Reducer
 const appState = combineReducers({
@@ -13,7 +15,9 @@ const appState = combineReducers({
 	counters, 
 	languageIDs, 
 	pageIDs, 
-	contentIDs
+	contentIDs, 
+	userIDs, 
+	tagIDs
 })
 
 export default appState

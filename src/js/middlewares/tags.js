@@ -5,7 +5,7 @@ import {
 	tagsFailure
 } from "../actions/tags"
 
-const getTags = makeLoader({
+const tagsGet = makeLoader({
 	defaults: {
 		URL: "/tags", 
 		kind: "tags"
@@ -20,7 +20,7 @@ const getTags = makeLoader({
 	}
 })
 
-export const postTag = makeLoader({
+export const tagPost = makeLoader({
 	defaults: {
 		method: "POST", 
 		URL: "/tags", 
@@ -37,7 +37,7 @@ export const postTag = makeLoader({
 	}
 })
 
-export const deleteTags = makeLoader({
+export const tagsDelete = makeLoader({
 	defaults: {
 		method: "DELETE", 
 		kind: "tags"
@@ -53,4 +53,4 @@ export const deleteTags = makeLoader({
 	}
 })
 
-export default getTags
+export default tagsGet

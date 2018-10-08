@@ -2,6 +2,7 @@ import {combineReducers} from "redux"
 import {contentsBuffered as contents} from "./contents"
 import {languagesBuffered as languages} from "./languages"
 import {userLoggedBuffered as userLogged} from "./userLogged"
+import {tagsByUserBuffered as tagsByUser} from "./userTags"
 import {accountLoggedBuffered as accountLogged} from "./accountLogged"
 import {pagesBuffered as pages} from "./pages"
 import {tagsBuffered as tags} from "./tags"
@@ -16,6 +17,7 @@ const entitiesBuffered = combineReducers({
 	contents, 
 	languages, 
 	userLogged, 
+	tagsByUser, 
 	accountLogged, 
 	pages, 
 	tags, 

@@ -3,13 +3,14 @@
 // Returns slice reducer for given action type/function pairs in handlers
 export default function createReducer(initialState, handlers) {
 	return function reducer(state = initialState, action) {
-		if(handlers.hasOwnProperty(action.type))
+		if (handlers.hasOwnProperty(action.type))
 			return handlers[action.type](state, action)
 		return state
 	}
 }
 
-// Creates a reducer managing pagination, given the action types to handle,
+// Creates a reducer managing pagination and fetching control, given the action types 
+// to handle,
 // and a function telling how to extract the key from an action.
 export const paginate = ({types, mapActionToKey}) => {
 	if (!Array.isArray(types) || types.length !== 3) {
@@ -167,22 +168,33 @@ export const addDynamicKeyReturnResult = ({types, mapActionToKey}) => {
 	}
 }
 
-export const mergeIntoOrRemoveFromObjectRequest = (state, action) => {
+export const mergeIntoOrRemoveFromObject = (state, action) => {
 	const {
 		method, 
+		key, 
 		response: {
 			result
 		}
 	} = action
 	if (method === "DELETE")
-		return removeFromObject(state, action)
+		return removeFromAnObject(state, action)
+	if (key != "all")
+		return result ? 
+			{
+				...state, 
+				[key]: {
+					...state[key], 
+					...result
+				}
+			} : 
+			state
 	return result ? {...state, ...result} : state
 }
 
 export const removeFromObjectIfDeleteOrMergeIntoOrResetObject = (state, action) => {
 	switch (action.method) {
 		case "DELETE":
-			return removeFromObject(state, action)
+			return removeFromAnObject(state, action)
 		default:
 			return mergeIntoOrResetObject(state, action)
 	}
@@ -196,24 +208,65 @@ export const mergeIntoOrResetObject = (state, action) => {
 			result, 
 			reset
 		},
+		key, 
 		mergeIntoState
 	} = action
-	if (mergeIntoState) // If PUT request returns data merge it.
-		return {...state, ...result}
-	if (method === "DELETE")
-		return state
-	if (method !== "GET" || reset)
-		return entitiesReset(action)
-	return result ? {...state, ...result} : state
+	if (key != "all") {
+		if (mergeIntoState) // If PUT request returns data merge it.
+			return {
+				...state, 
+				[key]: {
+					...state[key], 
+					...result
+				}
+			}
+		if (method === "DELETE")
+			return state
+		if (method !== "GET" || reset)
+			return entitiesReset(action)
+		return result ? 
+			{
+				...state, 
+				[key]: {
+					...state[key], 
+					...result
+				}
+			} : 
+			state
+	} else {
+		if (mergeIntoState) // If PUT request returns data merge it.
+			return {...state, ...result}
+		if (method === "DELETE")
+			return state
+		if (method !== "GET" || reset)
+			return entitiesReset(action)
+		return result ? {...state, ...result} : state
+	}
 }
 
 // By array items or object keys.
 // TYPE OF ARRAY IS OLSO OBJECT !!!!!
-const removeFromObject = (state, action) => {
+const removeFromAnObject = (state, action) => {
 	const {
-		response: {result}
+		response: {result}, 
+		key
 	} = action
 	let newState = {}
+	if (key != "all") {
+		Object.entries(state[key]).forEach(([k, v]) => {
+			if (Array.isArray(result)) {
+				if (result.indexOf(k) === -1)
+					newState[k] = v
+			} else {
+				if (!result.hasOwnProperty(k))
+					newState[k] = v
+			}
+		})
+		return {
+			...state, 
+			[key]: newState
+		}
+	}
 	Object.entries(state).forEach(([k, v]) => {
 		if (Array.isArray(result)) {
 			if (result.indexOf(k) === -1)
@@ -226,35 +279,39 @@ const removeFromObject = (state, action) => {
 	return newState
 }
 
-export const removeByKeyFromObject = (state, action) => {
-	let newState = {}
-	Object.entries(state).forEach(([k, v]) => {
-			if (action.key !== k)
-				newState[k] = v
-	})
-	return newState
-}
-
-export const addByKeyToObject = (state, action) => {
-	return {...state, ...action.object}
-}
-
+// Replace entities with entitiesBuffered.
+// Also replaces entitiesBuffered with entitiesBuffered but it is not a problem.
 const entitiesReset = (action) => action.response.result
 
 export const fetchFailure = (state, action) => {
-	switch (action.method) {
+	const { response: {result}, 
+		method, 
+		key
+	} = action
+	switch (method) {
 		case "DELETE":
 			// Merge deleted objects back to the entitiesBuffered kind.
-			return {...state, ...action.response.result}
+			if (key != "all")
+				return {
+					...state, 
+					[key]: {
+						...state[key], 
+						...result
+					}
+				}
+			return {...state, ...result}
 		case "POST":
 		case "PUT":
 			// Replace entitiesBuffered kind with entities kind.
-			return action.response.result
+			return result
 		default:
 			// GET request
 			return state
 	}
 }
+
+export const resetReducer = (state, action) => action.value
+
 
 export const resetArrayOrObject = (state, action) => {
 	if (action.method === "DELETE" || action.method === "POST")
@@ -272,6 +329,43 @@ export const addToOrRemoveFromArray = (state, action) => {
 	return array
 }
 
+// Inserts an object into another object by it's key or removes if it is present.
+export const addToOrRemoveFromAnObject = (state, action) => {
+	if (state.hasOwnProperty(action.object.ID))
+		return removeByKeyFromAnObject(state, action.object.ID)
+	return addByKeyToAnObject(state, action)
+}
+
+// Two functions below are using for adding and removing snackbar.
+export const removeByKeyFromObject = (state, action) => {
+	let newState = {}
+	Object.entries(state).forEach(([k, v]) => {
+			if (action.key !== k)
+				newState[k] = v
+	})
+	return newState
+}
+
+export const addByKeyToObject = (state, action) => {
+	return {...state, ...action.object}
+}
+
+const removeByKeyFromAnObject = (state, key) => {
+	let newState = {}
+	Object.entries(state).forEach(([k, v]) => {
+			if (k !== key)
+				newState[k] = v
+	})
+	return newState
+}
+
+const addByKeyToAnObject = (state, action) => {
+	return {
+		...state, 
+		[action.object.ID]: action.object
+	}
+}
+
 export const updateObject = (oldObject, newValues) => {
 	// Encapsulate the idea of passing a new object as the first parameter
 	// to Object.assign to ensure we correctly copy data instead of mutating
@@ -280,7 +374,7 @@ export const updateObject = (oldObject, newValues) => {
 
 export const updateItemInArray = (array, itemId, updateItemCallback) => {
 	const updatedItems = array.map(item => {
-		if(item.id !== itemId) {
+		if (item.id !== itemId) {
 			// Since we only want to update one item, 
 			// preserve all others as they are now
 			return item;

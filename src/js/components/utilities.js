@@ -1,21 +1,13 @@
 export const isAdmin = (roles) => {
 	if (!roles)
 		return false
-	for(let r of roles) {
-		if(r === 'admin')
-			return true
-	}
-	return false
+	return roles.indexOf("admin") > -1
 }
 
 export const isContentEditor = (roles) => {
 	if (!roles)
 		return false
-	for(let r of roles) {
-		if(r === 'contentEditor')
-			return true
-	}
-	return false
+	return roles.indexOf("contentEditor") > -1
 }
 
 // generateURLVariableFromIDs returns a string that established with provided object keys 
@@ -75,10 +67,15 @@ export const getRouteContents = (session, prevProps, nextProps) => {
 						}
 					}
 				} else {
-					// REMOVE VARIABLES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+					let path = v.path
+					if (v.path.includes("s/:ID")) {
+						path = v.path.replace("s/:ID", "")
+					} else if (v.path.includes(":ID/")) {
+						path = v.path.replace(":ID/", "")
+					}
 					get({
-						URL: `/contents?pageID=${v.path}`, 
-						key: v.path
+						URL: `/contents?pageID=${path}`, 
+						key: path
 					})
 				}
 			}
@@ -87,6 +84,8 @@ export const getRouteContents = (session, prevProps, nextProps) => {
 }
 
 export const getFirstLetters = text => {
+	if (!text)
+		return
 	let a = text.split(" ", 3)
 	let s = ""
 	a.forEach(v => s += v.charAt().toUpperCase())

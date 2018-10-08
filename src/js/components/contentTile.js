@@ -26,7 +26,7 @@ class ContentTile extends Component {
 		this.selectField = this.selectField.bind(this)
 		this.menuItems = this.menuItems.bind(this)
 	}
-	// INDEX AND VALUES ARE FOR SELECT FIELD ONLY
+	// index and values are for select field only
 	handleFieldChange(event, index, values) {
 		const {content: {ID}, handleUpdate, contentUpdate} = this.props
 		const target = event.target

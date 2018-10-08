@@ -1,6 +1,6 @@
-// import 'babel-polyfill'
-import React from 'react'
-import {render}  from 'react-dom'
-import Root from './components/cookies'
+// import "babel-polyfill"
+import React from "react"
+import {render}  from "react-dom"
+import App from "./components/cookies"
 
-render(<Root />, document.getElementById('root'))
+render(<App />, document.getElementById("root"))

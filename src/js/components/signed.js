@@ -47,22 +47,40 @@ class Signed extends Component {
 	componentWillMount() {
 		const {
 			userLoggedGet, 
+			userTagsGet, 
 			languagesGet, 
 			signOutURLGet
 		} = this.props
-		userLoggedGet()
+		userLoggedGet().then(() => userTagsGet(
+			{
+				URL: `/userTags/${this.props.user.ID}`, 
+				key: this.props.user.ID
+			}
+		))
 		languagesGet()
 		signOutURLGet()
 	}
-	render() {
+	selectLanguage(langID) {
 		const {
-			session, 
-			contents, 
-			user, 
 			cookies, 
-			languages, 
 			routeContentsResetAll, 
 			getRouteContents: get, 
+			session
+		} = this.props
+		cookies.set("lang", langID)
+		routeContentsResetAll()
+		get({
+			URL: "/contents?pageID=body", 
+			key: "body"
+		})
+		getRouteContents(session, {}, this.props)
+		this.setState({lang: langID})
+	}
+	render() {
+		const {
+			contents, 
+			user, 
+			languages, 
 			signOutURL
 		} = this.props
 		return (
@@ -71,7 +89,7 @@ class Signed extends Component {
 					<IconButton 
 						style= {styles.iconButton}
 					>
-						<Avatar src={user.photo.link || "/img/adele.jpg"} />
+						<Avatar src={user.link || "/img/adele.jpg"} />
 					</IconButton>
 				}
 				targetOrigin={{horizontal: "right", vertical: "top"}}
@@ -83,7 +101,7 @@ class Signed extends Component {
 						title={user.email}
 						subtitle={`${contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIabCAw"]}: 4`} 
 						textStyle={styles.cardHeader.textStyle}
-						avatar={user.photo.link || "/img/adele.jpg"}
+						avatar={user.link || "/img/adele.jpg"}
 					/>
 				</Card>
 				<Divider style={styles.divider} />
@@ -102,16 +120,7 @@ class Signed extends Component {
 											primaryText={contents[l.name]} 
 											checked={l.ID === this.state.lang}
 											insetChildren={true}
-											onTouchTap={() => {
-												cookies.set("lang", l.ID)
-												routeContentsResetAll()
-												get({
-													URL: "/contents?pageID=body", 
-													key: "body"
-												})
-												getRouteContents(session, {}, this.props)
-												this.setState({lang: l.ID})
-											}}
+											onTouchTap={() => this.selectLanguage(l.ID)}
 										/>
 									)
 							}
@@ -141,6 +150,7 @@ Signed.propTypes = {
 	languages: PropTypes.object.isRequired, 
 	userLoggedGet: PropTypes.func.isRequired, 
 	user: PropTypes.object.isRequired, 
+	userTagsGet: PropTypes.func.isRequired, 
 	signOutURLGet: PropTypes.func.isRequired, 
 	signOutURL: PropTypes.string.isRequired, 
 	routeContentsResetAll: PropTypes.func.isRequired,

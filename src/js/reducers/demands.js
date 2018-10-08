@@ -1,6 +1,6 @@
 import createReducer, {
 	paginate, 
-	mergeIntoOrRemoveFromObjectRequest, 
+	mergeIntoOrRemoveFromObject, 
 	removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
 	mergeIntoOrResetObject, 
 	fetchFailure
@@ -20,7 +20,7 @@ const demands = createReducer(
 export const demandsBuffered = createReducer(
 	{}, 
 	{
-		DEMANDS_REQUEST: mergeIntoOrRemoveFromObjectRequest, 
+		DEMANDS_REQUEST: mergeIntoOrRemoveFromObject, 
 		DEMANDS_SUCCESS: mergeIntoOrResetObject, 
 		DEMANDS_FAILURE: fetchFailure
 	}

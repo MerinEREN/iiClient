@@ -1,15 +1,18 @@
 import createReducer, {
 	paginate, 
-	mergeIntoOrRemoveFromObjectRequest, 
+	mergeIntoOrRemoveFromObject, 
 	removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
 	mergeIntoOrResetObject, 
-	fetchFailure
-} from './utilities'
+	fetchFailure, 
+	addToOrRemoveFromArray, 
+	resetArrayOrObject
+} from "./utilities"
 import {
 	USERS_REQUEST,
 	USERS_SUCCESS,
-	USERS_FAILURE
-} from '../actions/types'
+	USERS_FAILURE, 
+	USERIDS_SELECTED_ADD_REMOVE
+} from "../actions/types"
 import user, {userBuffered} from "./user"
 
 // Slice Reducers
@@ -23,7 +26,7 @@ const users = createReducer(
 export const usersBuffered = createReducer(
 	{}, 
 	{
-		USERS_REQUEST: mergeIntoOrRemoveFromObjectRequest, 
+		USERS_REQUEST: mergeIntoOrRemoveFromObject, 
 		USERS_SUCCESS: mergeIntoOrResetObject, 
 		USERS_FAILURE: fetchFailure, 
 		...userBuffered
@@ -37,5 +40,11 @@ export const paginationUsers = paginate({
 		USERS_FAILURE
 	]
 })
+export const userIDsSelected = createReducer([], 
+	{
+		USERS_REQUEST: resetArrayOrObject, 
+		USERIDS_SELECTED_ADD_REMOVE: addToOrRemoveFromArray
+	}
+)
 
 export default users

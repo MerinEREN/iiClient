@@ -5,9 +5,8 @@ import {
 	usersFailure
 } from "../actions/users"
 
-const getUsers = makeLoader({
+const usersGet = makeLoader({
 	defaults: {
-		URL: "/users", 
 		kind: "users"
 	},
 	actionCreators: {
@@ -19,7 +18,7 @@ const getUsers = makeLoader({
 		didInvalidate: false
 	}
 })
-export const deleteUsers = makeLoader({
+export const usersDelete = makeLoader({
 	defaults: {
 		method: "DELETE", 
 		kind: "users"
@@ -34,7 +33,7 @@ export const deleteUsers = makeLoader({
 		showSnackbar: true
 	}
 })
-export const postUser = makeLoader({
+export const userPost = makeLoader({
 	defaults: {
 		method: "POST", 
 		URL: "/users", 
@@ -51,4 +50,4 @@ export const postUser = makeLoader({
 	}
 })
 
-export default getUsers
+export default usersGet

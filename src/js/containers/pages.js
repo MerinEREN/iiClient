@@ -1,7 +1,7 @@
-import {connect} from 'react-redux'
-import {bindActionCreators} from 'redux'
-import PagesComponent from '../components/pages'
-import getPages, {postPage, deletePages}  from '../middlewares/pages'
+import {connect} from "react-redux"
+import {bindActionCreators} from "redux"
+import PagesComponent from "../components/pages"
+import getPages, {postPage, deletePages}  from "../middlewares/pages"
 
 // Can use ownProps here.
 const mapStateToProps = state => {
@@ -29,4 +29,3 @@ const mapDispatchToProps = dispatch => bindActionCreators(
 const Pages = connect(mapStateToProps, mapDispatchToProps)(PagesComponent)
 
 export default Pages
-

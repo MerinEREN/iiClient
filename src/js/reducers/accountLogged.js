@@ -1,5 +1,5 @@
 import createReducer, {
-	mergeIntoOrRemoveFromObjectRequest, 
+	mergeIntoOrRemoveFromObject, 
 	removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
 	mergeIntoOrResetObject, 
 	fetchFailure
@@ -18,11 +18,9 @@ const accountLogged = createReducer(
 	}
 )
 export const accountLoggedBuffered = createReducer(
+	{}, 
 	{
-		photo: {}
-	}, 
-	{
-		ACCOUNT_LOGGED_REQUEST: mergeIntoOrRemoveFromObjectRequest, 
+		ACCOUNT_LOGGED_REQUEST: mergeIntoOrRemoveFromObject, 
 		ACCOUNT_LOGGED_SUCCESS: mergeIntoOrResetObject, 
 		ACCOUNT_LOGGED_FAILURE: fetchFailure
 	}

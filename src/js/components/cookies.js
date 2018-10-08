@@ -1,6 +1,6 @@
 import React from "react"
-import {CookiesProvider} from 'react-cookie'
-import StoreProvider from './storeProvider'
+import {CookiesProvider} from "react-cookie"
+import StoreProvider from "./storeProvider"
 
 const CookieMonsters = () => (
 	<CookiesProvider>

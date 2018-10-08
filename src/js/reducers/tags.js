@@ -1,15 +1,19 @@
 import createReducer, {
 	paginate, 
-	mergeIntoOrRemoveFromObjectRequest, 
+	mergeIntoOrRemoveFromObject, 
 	removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
 	mergeIntoOrResetObject, 
-	fetchFailure
-} from './utilities'
+	fetchFailure, 
+	resetArrayOrObject, 
+	resetReducer
+} from "./utilities"
 import {
 	TAGS_REQUEST, 
 	TAGS_SUCCESS, 
-	TAGS_FAILURE
-} from '../actions/types'
+	TAGS_FAILURE, 
+	USER_TAGS_REQUEST, 
+	TAGIDS_SELECTED_RESET
+} from "../actions/types"
 
 // Slice Reducers
 const tags = createReducer(
@@ -21,7 +25,7 @@ const tags = createReducer(
 export const tagsBuffered = createReducer(
 	{}, 
 	{
-		TAGS_REQUEST: mergeIntoOrRemoveFromObjectRequest, 
+		TAGS_REQUEST: mergeIntoOrRemoveFromObject, 
 		TAGS_SUCCESS: mergeIntoOrResetObject, 
 		TAGS_FAILURE: fetchFailure
 	}
@@ -35,5 +39,12 @@ export const paginationTags = paginate({
 	]
 })
 
-export default tags
+export const tagIDsSelected = createReducer(
+	[],  
+	{
+		USER_TAGS_REQUEST: resetArrayOrObject, 
+		TAGIDS_SELECTED_RESET: resetReducer
+	}
+)
 
+export default tags

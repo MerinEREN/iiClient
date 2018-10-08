@@ -13,9 +13,7 @@ const userLogged = createReducer(
 	}
 )
 export const userLoggedBuffered = createReducer(
-	{
-		photo:{}
-	}, 
+	{}, 
 	{
 		USER_LOGGED_SUCCESS: mergeIntoOrResetObject
 	}

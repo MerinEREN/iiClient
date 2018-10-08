@@ -30,6 +30,8 @@ export const generateURL = (key, ...pageURLs) => {
 // and returns a slice of store to allow or prevent API call for root store objects.
 // "didInvalidate" if it is not undefined prevents the API call.
 // "mergeIntoState" when PUT request returns data merges it into state.
+// If the request is "PUT" function compares to the entitiesBuffered and the entities to 
+// send only changed entities as the request body.
 export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) => { 
 	var {kind, method, URL} = defaults
 	var {hideFetching, isCached, didInvalidate, showSnackbar, mergeIntoState} = options
@@ -53,7 +55,7 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 			if (body && method !== "DELETE") {
 				switch (body.type) {
 					case "Blob":
-						init.body = new Blob(
+						/* init.body = new Blob(
 							Object.values(method !== "PUT" ? 
 								body.data : 
 								getChanged(
@@ -65,6 +67,21 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 								// return JSON.stringify(rest)
 								return JSON.stringify(v)
 							}),
+							{type : body.contentType}
+						) */
+						init.body = new Blob(
+							Array.isArray(body.data) ?
+							[JSON.stringify(body.data)] :
+							(
+								method !== "PUT" ? 
+								[JSON.stringify(body.data)] : 
+								[JSON.stringify(
+									getChanged(
+										getState().entities[kind], 
+										body.data
+									)
+								)]
+							), 
 							{type : body.contentType}
 						)
 						break

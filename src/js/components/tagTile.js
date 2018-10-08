@@ -24,7 +24,7 @@ const TagTile = ({tag: {ID}, name, handleDelete}) => (
 
 TagTile.propTypes = {
 	tag: PropTypes.object.isRequired, 
-	name: PropTypes.string.isRequired, 
+	name: PropTypes.string, 
 	handleDelete: PropTypes.func.isRequired
 }
 

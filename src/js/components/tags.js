@@ -43,7 +43,7 @@ class Tags extends Component {
 		this.handleDelete = this.handleDelete.bind(this)
 	}
 	componentWillMount() {
-		this.props.getTags()
+		this.props.tagsGet()
 	}
 	handleStepIndex(direction) {
 		const {stepIndex} = this.state
@@ -111,7 +111,7 @@ class Tags extends Component {
 		if(this.handleRequiredInput(stepIndex))
 			return
 		this.toggleDialog()
-		this.props.postTag({
+		this.props.tagPost({
 			body: {
 				type: "FormData", 
 				// Use "contentType" for "Blob" type.
@@ -134,7 +134,7 @@ class Tags extends Component {
 		this.setState({showDialog: !this.state.showDialog})
 	}
 	handleDelete(ID) {
-		this.props.deleteTags({
+		this.props.tagsDelete({
 			URL: `/tags?ID=${ID}`, 
 			body: {
 				type: "FormData", 
@@ -146,9 +146,9 @@ class Tags extends Component {
 		const {
 			contents
 		} = this.props
-		return Object.entries(tags).map(([i, v]) => 
+		return Object.entries(tags).map(([k, v]) => 
 			<TagTile 
-				key={i} 
+				key={k} 
 				tag={v} 
 				name={contents[v.name]}
 				handleDelete={this.handleDelete}
@@ -245,10 +245,10 @@ Tags.defaultProps = {
 
 Tags.propTypes = {
 	contents: PropTypes.object.isRequired, 
-	getTags: PropTypes.func.isRequired, 
+	tagsGet: PropTypes.func.isRequired, 
 	tags: PropTypes.object.isRequired, 
-	postTag: PropTypes.func.isRequired, 
-	deleteTags: PropTypes.func.isRequired
+	tagPost: PropTypes.func.isRequired, 
+	tagsDelete: PropTypes.func.isRequired
 }
 
 Tags.muiName = "GridList"

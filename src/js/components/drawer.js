@@ -22,11 +22,10 @@ import Home from "material-ui/svg-icons/action/home"
 import EditContent from "material-ui/svg-icons/content/create"
 import ListAction from "material-ui/svg-icons/action/list"
 import Settings from "material-ui/svg-icons/action/settings"
-import AccountSettings from "material-ui/svg-icons/action/supervisor-account"
-import UserSettings from "material-ui/svg-icons/social/person"
 import Help from "material-ui/svg-icons/action/help"
 import Feedback from "material-ui/svg-icons/action/feedback"
 import {isAdmin, isContentEditor} from "./utilities"
+import {getFirstLetters} from "./utilities"
 
 const styles = {
 	drawer: {
@@ -68,12 +67,30 @@ class MyDrawer extends Component {
 		} = this.props
 		accountLoggedGet().then(toggleDrawer())
 	}
+	tagTiles() {
+		const {
+			contents, 
+			userTags
+		} = this.props
+		return Object.values(userTags).map(v => 
+			<GridTile>
+				<Avatar 
+					size={32}
+					color={blue300}
+				>
+					{getFirstLetters(contents[v.name])}
+				</Avatar>
+				{contents[v.name]}
+			</GridTile>
+		)
+	}
 	render() {
 		const {
 			contents, 
 			cookies, 
 			user, 
 			account, 
+			userTags, 
 			open, 
 			changeTheme
 		} = this.props
@@ -84,281 +101,204 @@ class MyDrawer extends Component {
 			>
 				<AppBar
 					title={user.email}
-					onLeftIconButtonTouchTap={() => 
-							toggleDrawer()}
-						/>
-						{/*ADD ALL NECESSARY ACCOUNT INFO IN CARD !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		ALSO ADD THE ACCOUNT RANK AS SUBTITLE OF CardTitle !!!!!!!!!!!!!!!!!!!!!*/}
-		<Card
-			containerStyle={styles.card.containerStyle}
-		>
-			{/* BECAUSE OF "CardMedia" "actAsExpander" BUG I WRAPPED IT WITH
-			"CardTitle". AND THE BEST WAY TO USE THE FEAUTURE IS USING IT WITH
-			"CardTitle" IN "overlay" AT "CardMedia". */}
-			<CardTitle 
-				actAsExpander={true}
-				style={styles.cardTitle.style}
-			>
-				<CardMedia
-					overlay={
-						<CardTitle 
-							title={`${contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIabCAw"]}: 4`} 
-						/>
-					}
+					onLeftIconButtonTouchTap={() => toggleDrawer()}
+				/>
+				{/*ADD ALL NECESSARY ACCOUNT INFO IN CARD !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				ALSO ADD THE ACCOUNT RANK AS SUBTITLE OF CardTitle !!!!!!!!!!!!!!!!!!!!!*/}
+				<Card
+					containerStyle={styles.card.containerStyle}
 				>
-					<img 
-						src={account.photo.link || "/img/matrix.gif"} 
-					/>
-				</CardMedia>
-			</CardTitle>
-			<CardText expandable={true}>
+					{/* BECAUSE OF "CardMedia" "actAsExpander" BUG I WRAPPED IT WITH
+					"CardTitle". AND THE BEST WAY TO USE THE FEAUTURE IS USING IT WITH
+					"CardTitle" IN "overlay" AT "CardMedia". */}
+					<CardTitle 
+						actAsExpander={true}
+						style={styles.cardTitle.style}
+					>
+						<CardMedia
+							overlay={
+								<CardTitle 
+									title={`${contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIabCAw"]}: 4`} 
+								/>
+							}
+						>
+							<img 
+								src={account.link || "/img/matrix.gif"} 
+							/>
+						</CardMedia>
+					</CardTitle>
+					<CardText expandable={true}>
+						<List>
+							<ListItem 
+								leftIcon={<Skills />} 
+								primaryText={`${contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJa9Cgw"]}: 4`} 
+								disabled={true}
+							/>
+							<ListItem 
+								leftIcon={<Time />} 
+								primaryText={`${contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJa9CQw"]}: 3`} 
+								disabled={true}
+							/>
+							<ListItem 
+								leftIcon={<Communication />} 
+								primaryText={`${contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJa9Cww"]}: 5`} 
+									disabled={true}
+							/>
+						</List>
+						{ 
+							Object.keys(userTags).length > 0 && 
+								<Divider />
+						}
+						{ 
+							Object.keys(userTags).length > 0 && 
+								<GridList 
+									cols={1} 
+									cellHeight="auto" 
+									style={styles.gridList}
+								>
+									{this.tagTiles()}
+								</GridList>
+						}
+					</CardText>
+				</Card>
 				<List>
 					<ListItem 
-						leftIcon={<Skills />} 
-						primaryText={`${contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJa9Cgw"]}: 4`} 
-						disabled={true}
+						containerElement={
+							<IndexLink
+								to="/"
+								activeStyle={styles.link.activeStyle}
+							/>
+						}
+						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJq3Cgw"]}
+						leftIcon={<Home />}
 					/>
 					<ListItem 
-						leftIcon={<Time />} 
-						primaryText={`${contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJa9CQw"]}: 3`} 
-						disabled={true}
+						containerElement={
+							<Link
+								to="/dashboard"
+								activeStyle={styles.link.activeStyle}
+							/>
+						}
+						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLrHCAw"]}
+						leftIcon={<Dashboard />}
+					/>
+					{
+						// Also chack account type here.
+						(isContentEditor(user.roles) || isAdmin(user.roles))
+							&&
+							<ListItem 
+								containerElement={
+									<Link
+										to="/languages"
+										activeStyle={styles.link.activeStyle}
+									/>
+								}
+								primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLqHCgw"]}
+								leftIcon={<EditContent />}
+							/>
+					}
+					{
+						// Also chack account type here.
+						(isContentEditor(user.roles) || isAdmin(user.roles))
+							&&
+							<ListItem 
+								containerElement={
+									<Link
+										to="/pages"
+										activeStyle={styles.link.activeStyle}
+									/>
+								}
+								primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLqHCQw"]}
+								leftIcon={<EditContent />}
+							/>
+					}
+					{
+						// Also chack account type here.
+						(isContentEditor(user.roles) || isAdmin(user.roles))
+							&&
+							<ListItem 
+								containerElement={
+									<Link
+										to="/contents"
+										activeStyle={styles.link.activeStyle}
+									/>
+								}
+								primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLqHCww"]}
+								leftIcon={<EditContent />}
+							/>
+					}
+					{
+						(isAdmin(user.roles))
+							&&
+							<ListItem 
+								containerElement={
+									<Link
+										to="/tags"
+										activeStyle={styles.link.activeStyle}
+									/>
+								}
+								primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgK6ZCgw"]}
+								leftIcon={<EditContent />}
+							/>
+					}
+					<ListItem 
+						containerElement={
+							<Link
+								to={"/accounts/" + account.ID}
+								activeStyle={styles.link.activeStyle}
+							/>
+						} 
+						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLrHCgw"]}
+						leftIcon={<Account />} 
 					/>
 					<ListItem 
-						leftIcon={<Communication />} 
-						primaryText={`${contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJa9Cww"]}: 5`} 
-						disabled={true}
+						containerElement={
+							<Link
+								// add if at accounts page control to
+								// attribute "to"
+								// to={condition ? "/demands" : `/${account.ID}/demands`}
+								to="/demands"
+								activeStyle={styles.link.activeStyle}
+							/>
+						} 
+						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLqnCww"]}
+						leftIcon={<ListAction />} 
+					/>
+					<ListItem 
+						containerElement={
+							<Link
+								to="/offers"
+								activeStyle={styles.link.activeStyle}
+							/>
+						} 
+						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLrnCQw"]}
+						leftIcon={<ListAction />} 
+					/>
+					<ListItem 
+						containerElement={
+							<Link
+								to="/servicepacks"
+								activeStyle={styles.link.activeStyle}
+							/>
+						} 
+						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIarCgw"]}
+						leftIcon={<ListAction />} 
 					/>
 				</List>
 				<Divider />
-				<GridList 
-					cols={1} 
-					cellHeight="auto" 
-					style={styles.gridList}
-				>
-					<GridTile>
-						<Chip>
-							<Avatar size={32}>
-								WD
-							</Avatar>
-							Web Development
-						</Chip>
-					</GridTile>
-					<GridTile>
-						<Chip>
-							<Avatar size={32}>
-								G
-							</Avatar>
-							Golang
-						</Chip>
-					</GridTile>
-					<GridTile>
-						<Chip>
-							<Avatar size={32}>
-								R
-							</Avatar>
-							React
-						</Chip>
-					</GridTile>
-					<GridTile>
-						<Chip>
-							<Avatar size={32}>
-								R
-							</Avatar>
-							Redux
-						</Chip>
-					</GridTile>
-					<GridTile>
-						<Chip>
-							<Avatar size={32}>
-								GC
-							</Avatar>
-							Google Cloud
-						</Chip>
-					</GridTile>
-					<GridTile>
-						<Chip>
-							<Avatar size={32}>
-								GAE
-							</Avatar>
-							Google App Engine
-						</Chip>
-					</GridTile>
-				</GridList>
-			</CardText>
-		</Card>
-		<List>
-			{/* Only show if not at root URL.*/}
-			<ListItem 
-				containerElement={
-					<IndexLink
-						to="/"
-						activeStyle={styles.link.activeStyle}
-					/>
-				}
-				primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJq3Cgw"]}
-				leftIcon={<Home />}
-			/>
-			<ListItem 
-				containerElement={
-					<Link
-						to="/dashboard"
-						activeStyle={styles.link.activeStyle}
-					/>
-				}
-				primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLrHCAw"]}
-				leftIcon={<Dashboard />}
-			/>
-			{
-				// Also chack account type here.
-				(isContentEditor(user.roles) || isAdmin(user.roles))
-					&&
-					<ListItem 
-						containerElement={
-							<Link
-								to="/languages"
-								activeStyle={styles.link.activeStyle}
+				<List>
+					<ListItem
+						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIbrCgw"]}
+						rightToggle={
+							<Toggle
+								toggled={cookies.get("theme") === "dark"}
+								onToggle={() => changeTheme(cookies)}
 							/>
 						}
-						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLqHCgw"]}
-						leftIcon={<EditContent />}
 					/>
-			}
-			{
-				// Also chack account type here.
-				(isContentEditor(user.roles) || isAdmin(user.roles))
-					&&
-					<ListItem 
-						containerElement={
-							<Link
-								to="/pages"
-								activeStyle={styles.link.activeStyle}
-							/>
-						}
-						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLqHCQw"]}
-						leftIcon={<EditContent />}
-					/>
-			}
-			{
-				// Also chack account type here.
-				(isContentEditor(user.roles) || isAdmin(user.roles))
-					&&
-					<ListItem 
-						containerElement={
-							<Link
-								to="/contents"
-								activeStyle={styles.link.activeStyle}
-							/>
-						}
-						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLqHCww"]}
-						leftIcon={<EditContent />}
-					/>
-			}
-			{
-				(isAdmin(user.roles))
-					&&
-					<ListItem 
-						containerElement={
-							<Link
-								to="/tags"
-								activeStyle={styles.link.activeStyle}
-							/>
-						}
-						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgK6ZCgw"]}
-						leftIcon={<EditContent />}
-					/>
-			}
-			<ListItem 
-				containerElement={
-					<Link
-						to={"/accounts/" + account.ID}
-						activeStyle={styles.link.activeStyle}
-					/>
-				} 
-				primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLrHCgw"]}
-				leftIcon={<Account />} 
-			/>
-			<ListItem 
-				containerElement={
-					<Link
-						// add if at accounts page control to
-						// attribute "to"
-						// to={condition ? "/demands" : `/${account.ID}/demands`}
-						to="/demands"
-						activeStyle={styles.link.activeStyle}
-					/>
-				} 
-				primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLqnCww"]}
-				leftIcon={<ListAction />} 
-			/>
-			<ListItem 
-				containerElement={
-					<Link
-						to="/offers"
-						activeStyle={styles.link.activeStyle}
-					/>
-				} 
-				primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLrnCQw"]}
-				leftIcon={<ListAction />} 
-			/>
-			<ListItem 
-				containerElement={
-					<Link
-						to="/servicepacks"
-						activeStyle={styles.link.activeStyle}
-					/>
-				} 
-				primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIarCgw"]}
-				leftIcon={<ListAction />} 
-			/>
-		</List>
-		<Divider />
-		<List>
-			<ListItem
-				primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIbrCgw"]}
-				rightToggle={
-					<Toggle
-						toggled={cookies.get("theme") === "dark"}
-						onToggle={() => changeTheme(cookies)}
-					/>
-				}
-			/>
-		</List>
-		<Divider />
-		<List>
-			{
-				// Also chack account type here.
-				isAdmin(user.roles)
-					?
-					<ListItem 
-						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIarCQw"]}
-						leftIcon={<Settings />} 
-						nestedItems={[
-							<ListItem 
-								key={1} 
-								containerElement={
-									<Link
-										to="/accountsettings"
-										activeStyle={styles.link.activeStyle}
-									/>
-								} 
-								primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIarCww"]}
-								leftIcon={<AccountSettings />} 
-							/>, 
-							<ListItem 
-								key={2} 
-								containerElement={
-									<Link
-										to="/usersettings"
-										activeStyle={styles.link.activeStyle}
-									/>
-								} 
-								primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIbrCAw"]}
-								leftIcon={<UserSettings />} 
-							/>
-						]}
-						primaryTogglesNestedList={true}
-					/>
-					:
+				</List>
+				<Divider />
+				<List>
 					<ListItem 
 						containerElement={
 							<Link
@@ -369,29 +309,28 @@ class MyDrawer extends Component {
 						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIarCQw"]}
 						leftIcon={<Settings />} 
 					/>
-			}
-			<ListItem 
-				containerElement={
-					<Link
-						to="/help"
-						activeStyle={styles.link.activeStyle}
+					<ListItem 
+						containerElement={
+							<Link
+								to="/help"
+								activeStyle={styles.link.activeStyle}
+							/>
+						} 
+						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIbrCQw"]}
+						leftIcon={<Help />} 
 					/>
-				} 
-				primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIbrCQw"]}
-				leftIcon={<Help />} 
-			/>
-			<ListItem 
-				containerElement={
-					<Link
-						to="/feedback"
-						activeStyle={styles.link.activeStyle}
+					<ListItem 
+						containerElement={
+							<Link
+								to="/feedback"
+								activeStyle={styles.link.activeStyle}
+							/>
+						} 
+						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIbrCww"]}
+						leftIcon={<Feedback />} 
 					/>
-				} 
-				primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIbrCww"]}
-				leftIcon={<Feedback />} 
-			/>
-		</List>
-	</Drawer>
+				</List>
+			</Drawer>
 		)
 	}
 }
@@ -402,6 +341,7 @@ MyDrawer.propTypes = {
 	open: PropTypes.bool.isRequired,
 	account: PropTypes.object,
 	user: PropTypes.object,
+	userTags: PropTypes.object,
 	accountLoggedGet: PropTypes.func.isRequired, 
 	toggleDrawer: PropTypes.func.isRequired,
 	changeTheme: PropTypes.func.isRequired

@@ -1,7 +1,7 @@
-import makeActionCreator from './creator'
+import makeActionCreator from "./creator"
 import {
 	USER_LOGGED_SUCCESS
-} from './types'
+} from "./types"
 
 // Action Creators
 export const userLoggedSuccess = makeActionCreator(

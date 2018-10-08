@@ -1,9 +1,10 @@
 import {combineReducers} from "redux"
 import contents from "./contents"
-import loginUrls from './loginUrls'
+import loginUrls from "./loginUrls"
 import languages from "./languages"
 import userLogged from "./userLogged"
-import signOutURL from './signOutURL'
+import tagsByUser from "./userTags"
+import signOutURL from "./signOutURL"
 import accountLogged from "./accountLogged"
 import pages from "./pages"
 import tags from "./tags"
@@ -19,6 +20,7 @@ const entities = combineReducers({
 	loginUrls,
 	languages, 
 	userLogged, 
+	tagsByUser, 
 	signOutURL, 
 	accountLogged, 
 	pages, 

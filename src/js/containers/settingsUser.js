@@ -1,23 +1,36 @@
 import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
 import UserSettingsComponent from "../components/settingsUser"
-import getTags from "../middlewares/tags"
+import userGet from "../middlewares/user"
+import tagsGet from "../middlewares/tags"
+import userTagsGet, {userTagsDelete} from "../middlewares/userTags"
+import {tagIDsSelectedReset} from "../actions/tags"
 
 // Can use ownProps here.
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
 	const {
-		entitiesBuffered: {tags}, 
-		ui: {contents: {usersettings: contents}}
+		ui: {contents: {user: contents}}, 
+		entitiesBuffered: {userLogged, users, tags, tagsByUser}, 
+		appState: {tagIDs}
 	} = state
+	const {ID} = ownProps.params
 	return {
+		contents, 
+		userLogged, 
+		user: ID ? (users[ID] || userLogged) : userLogged, 
 		tags, 
-		contents
+		userTags: tagsByUser[ID] || {}, 
+		tagIDsSelected: tagIDs
 	}
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
-		getTags
+		userGet, 
+		tagsGet, 
+		userTagsGet, 
+		tagIDsSelectedReset, 
+		userTagsDelete
 	},
 	dispatch
 )

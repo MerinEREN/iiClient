@@ -1,4 +1,7 @@
+// FOR BROWSER COMPATIBILITY YOU SHOULD IMPORT ONE OF THE BELOW
+// BUT I THINK ALL BROWSERS SUPPORTS fetch NOW.
 // import fetch from "isomorphic-fetch"
+// OR import fetch from "cross-fetch"
 import {toggleFetching} from "../actions/fetchingProgres"
 import {addSnackbar, removeSnackbar} from "../actions/snackbars"
 import {getObjectsFromEntities} from "./utilities"
@@ -165,7 +168,7 @@ const fetchDomainData = args => (dispatch, getState) => {
 				) {
 					// When status code is 204 No Content
 					// like all DELETE requests 
-					// and some PUT and GET requests.
+					// and some PUT, POST and GET requests.
 					if (request.method !== "GET") {
 						actionsSuccess.forEach(ac => dispatch(ac({
 							method: request.method, 
