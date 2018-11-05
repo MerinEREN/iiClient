@@ -1,6 +1,6 @@
-import getDemands from './demands'
-import getOffers from './offers'
-import getServicePacks from './servicePacks'
+import getDemands from "./demands"
+import getOffers from "./offers"
+import getServicePacks from "./servicePacks"
 
 export default function getItems(uID, key) {
 	return dispatch => {

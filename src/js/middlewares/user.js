@@ -4,16 +4,16 @@ import {
 } from "../actions/user"
 
 const userGet = makeLoader({
-	defaults: {
-		URL: "/users/"
-	},
 	actionCreators: {
 		actionsSuccess: [userSuccess]
 	}
 })
 export const userPut = makeLoader({
 	defaults: {
-		method: "PUT"
+		method: "PUT", 
+		headers: {
+			"Accept": "application/json"
+		}
 	},
 	actionCreators: {
 		actionsSuccess: [userSuccess]

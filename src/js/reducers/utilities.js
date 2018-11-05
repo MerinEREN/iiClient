@@ -200,7 +200,7 @@ export const removeFromObjectIfDeleteOrMergeIntoOrResetObject = (state, action) 
 	}
 }
 
-// "reset" is for search GET.
+// "reset" is the response flag to reset the kind for search GET.
 export const mergeIntoOrResetObject = (state, action) => {
 	const {
 		method, 
@@ -212,7 +212,10 @@ export const mergeIntoOrResetObject = (state, action) => {
 		mergeIntoState
 	} = action
 	if (key != "all") {
-		if (mergeIntoState) // If PUT request returns data merge it.
+		if (method === "DELETE")
+			return state
+		// If PUT request returns data merge it.
+		if (mergeIntoState) {
 			return {
 				...state, 
 				[key]: {
@@ -220,10 +223,10 @@ export const mergeIntoOrResetObject = (state, action) => {
 					...result
 				}
 			}
-		if (method === "DELETE")
-			return state
-		if (method !== "GET" || reset)
+		} else if (method !== "GET" || reset) {
 			return entitiesReset(action)
+		}
+		// Merging "GET" results
 		return result ? 
 			{
 				...state, 
@@ -234,12 +237,15 @@ export const mergeIntoOrResetObject = (state, action) => {
 			} : 
 			state
 	} else {
-		if (mergeIntoState) // If PUT request returns data merge it.
-			return {...state, ...result}
 		if (method === "DELETE")
 			return state
-		if (method !== "GET" || reset)
+		// If PUT request returns data merge it.
+		if (mergeIntoState) {
+			return {...state, ...result}
+		} else if (method !== "GET" || reset) {
 			return entitiesReset(action)
+		}
+		// Merging "GET" results
 		return result ? {...state, ...result} : state
 	}
 }

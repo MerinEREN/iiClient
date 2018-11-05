@@ -1,13 +1,13 @@
-import React from 'react'
-import {GridList, GridTile} from 'material-ui/GridList'
-import CounterChip from '../containers/counterChip'
-import TimelineList from '../containers/timelineList'
+import React from "react"
+import {GridList, GridTile} from "material-ui/GridList"
+import CounterChip from "../containers/counterChip"
+import TimelineList from "../containers/timelineList"
 
 const styles = {
 	root: {
-		display: 'flex',
-		flexWrap: 'wrap', 
-		justifyContent: 'space-around'
+		display: "flex",
+		flexWrap: "wrap", 
+		justifyContent: "space-around"
 	}, 
 	gridList: {
 		margin: 0
@@ -17,7 +17,7 @@ const styles = {
 const Timeline = () =>  (
 	<div style={styles.root}>
 		<GridList 
-			cellHeight='auto'
+			cellHeight="auto"
 			style={styles.gridList}
 		>
 			<GridTile cols={2}>
@@ -30,6 +30,6 @@ const Timeline = () =>  (
 	</div>
 )
 
-Timeline.muiName = 'GridList'
+Timeline.muiName = "GridList"
 
 export default Timeline

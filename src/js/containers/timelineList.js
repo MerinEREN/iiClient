@@ -1,7 +1,7 @@
-import {connect} from 'react-redux'
-import {bindActionCreators} from 'redux'
-import TimelineListComponent from '../components/timelineList'
-import getItems from '../middlewares/timelineList'
+import {connect} from "react-redux"
+import {bindActionCreators} from "redux"
+import TimelineListComponent from "../components/timelineList"
+import getItems from "../middlewares/timelineList"
 
 const sortByLastModified = (is) => {
 	// Return sorted items array here.
@@ -21,21 +21,21 @@ function getItemsFromEntities(pagination, entities) {
 	let tds = []
 	if(pds) {
 		for (let ID of pds.IDs) {
-			demands[ID].type = 'demand'
+			demands[ID].type = "demand"
 			tds.push(demands[ID])
 		}
 	}
 	let tos = []
 	if(pos) {
 		for (let ID of pos.IDs) {
-			offers[ID].type = 'offer'
+			offers[ID].type = "offer"
 			tos.push(offers[ID])
 		}
 	}
 	let tsps = []
 	if(psps) {
 		for (let ID of psps.IDs) {
-			servicePacks[ID].type = 'servicePack'
+			servicePacks[ID].type = "servicePack"
 			tsps.push(servicePacks[ID])
 		}
 	}

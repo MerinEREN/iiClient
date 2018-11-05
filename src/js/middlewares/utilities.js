@@ -33,28 +33,36 @@ export const generateURL = (key, ...pageURLs) => {
 // If the request is "PUT" function compares to the entitiesBuffered and the entities to 
 // send only changed entities as the request body.
 export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) => { 
-	var {kind, method, URL} = defaults
+	var {URL, headers, method, kind} = defaults
 	var {hideFetching, isCached, didInvalidate, showSnackbar, mergeIntoState} = options
 	hideFetching = hideFetching || false
-	var headers = new Headers({"Accept": "text/plain"})
 	var init = {
 		method: method || "GET",
 		credentials: "same-origin",
-		headers: headers,
 		// referrer: "/MerinEREN",
 		// mode: "no-cors"
+	}
+	if (method === "GET")
+		init.headers = new Headers({"Accept": "application/json"})
+	// Some "POST" and "PUT" requests returns responses with data.
+	if(headers) {
+		init.headers = new Headers()
+		Object.entries(headers).forEach(([k, v]) => init.headers.set(k, v))
 	}
 	return (args = {}) => {
 		var {returnedURL, key, body} = args
 		returnedURL = returnedURL || "prevPageURL"
-		if(args.headers)
-			Object.entries(args.headers).forEach(a => init.headers.set(a))
 		key = key || "all"
 		return (dispatch, getState) => {
 			// Parse request body for "POST" and "PUT" methods
 			if (body && method !== "DELETE") {
 				switch (body.type) {
 					case "Blob":
+						// USING ONLY FOR CONTENTS NOW AND IT IS 
+						// NOT NECESSARY.
+						// MAY BE SHOULD BE REMOVED FROM CASES
+						// AFTER CONTENTS POST AND PUT REQUESTS 
+						// CHANGED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 						/* init.body = new Blob(
 							Object.values(method !== "PUT" ? 
 								body.data : 
@@ -71,17 +79,18 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 						) */
 						init.body = new Blob(
 							Array.isArray(body.data) ?
-							[JSON.stringify(body.data)] :
-							(
-								method !== "PUT" ? 
-								[JSON.stringify(body.data)] : 
-								[JSON.stringify(
-									getChanged(
-										getState().entities[kind], 
-										body.data
-									)
-								)]
-							), 
+							body.data.map(v => JSON.stringify(v)) :
+							Object.values(method !== "PUT" ? 
+								body.data : 
+								getChanged(
+									getState().entities[kind], 
+									body.data
+								)
+							).map(v => {
+								// const {ID, ...rest} = v
+								// return JSON.stringify(rest)
+								return JSON.stringify(v)
+							}),
 							{type : body.contentType}
 						)
 						break
@@ -102,6 +111,9 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 						}) 
 						init.body = fd
 						break
+					default: 
+						// For JSON encoded []byte.
+						init.body = JSON.stringify(body.data)
 				}
 			}
 			if (args.URL) {

@@ -60,8 +60,7 @@ class UserSettings extends Component {
 		userTagsPost({
 			URL: `/userTags/${ID}`, 
 			body: {
-				type: "Blob", 
-				contentType: "application/json", 
+				// type: "JSON" is default
 				data: tagIDsSelected
 			}
 		})

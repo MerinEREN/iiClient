@@ -159,42 +159,42 @@ const fetchDomainData = args => (dispatch, getState) => {
 			if(!hideFetching)
 				dispatch(toggleFetching())
 			if (response.ok) {
-				const contentType = response.headers
-					.get("content-type")
-				if (
-					contentType
-					&&
-					contentType.indexOf("text/html") !== -1
-				) {
-					// When status code is 204 No Content
-					// like all DELETE requests 
-					// and some PUT, POST and GET requests.
-					if (request.method !== "GET") {
-						actionsSuccess.forEach(ac => dispatch(ac({
-							method: request.method, 
-							response: {result: request.method === "DELETE" ? 
-								dataBody :
-								{...getState().entitiesBuffered[kind]}
-							}, 
-							key
-							// receivedAt: Date.now()
-						})))
-					}
-					/* response.text()
+				switch (response.status) {
+					case 204:
+						// like all DELETE requests 
+						// and some PUT, POST and GET requests.
+						if (request.method !== "GET") {
+							actionsSuccess.forEach(ac => dispatch(ac({
+								method: request.method, 
+								response: {result: request.method === "DELETE" ? 
+									dataBody :
+									{...getState().entitiesBuffered[kind]}
+								}, 
+								key
+								// receivedAt: Date.now()
+							})))
+						}
+						break
+					case 201:
+					default:
+						// If the response is 200.
+						const contentType = response.headers.get("Content-Type")
+						if (
+							contentType &&
+							contentType.indexOf("text/html") !== -1
+						) {
+							/* response.text()
 						.then(body => 
 							actionsSuccess.forEach(ac => dispatch(ac({
-								response: {result: body}, 
+								response: body, 
 								receivedAt: Date.now()
 							})))
 						) */
-				} else if (
-					contentType
-					&&
-					contentType.indexOf("application/json")
-					!==
-					-1
-				) {
-					/* response.json()
+						} else if (
+							contentType &&
+							contentType.indexOf("text/plain") !== -1
+						) {
+							/* response.text()
 						.then(body => 
 							dispatch(args[1](body.data.
 								children.
@@ -202,25 +202,22 @@ const fetchDomainData = args => (dispatch, getState) => {
 									data), 
 								Date.now()))
 						) */
-				} else if (
-					contentType
-					&&
-					contentType.indexOf("text/plain") !== -1
-				) {
-					// Backand sending JSON data as Marshald form.
-					// So the Content-Type is "text/plain".
-					response.text()
-						.then(body => {
-							const json = JSON.parse(body)
-							actionsSuccess.forEach(ac => dispatch(ac({
-								method: request.method, 
-								response: json, 
-								key, 
-								// receivedAt: Date.now(), 
-								didInvalidate, 
-								mergeIntoState
-							})))
-						})
+						} else if (
+							contentType &&
+							contentType.indexOf("application/json") !== -1
+						) {
+							response.json()
+								.then(body => {
+									actionsSuccess.forEach(ac => dispatch(ac({
+										method: request.method, 
+										response: body, 
+										key, 
+										// receivedAt: Date.now(), 
+										didInvalidate, 
+										mergeIntoState
+									})))
+								})
+						}
 				}
 			} else {
 				// response code is not between 199 and 300

@@ -22,8 +22,11 @@ const languagesGet = makeLoader({
 
 export const languagePost = makeLoader({
 	defaults: {
-		method: "POST", 
 		URL: "/languages", 
+		method: "POST", 
+		headers: {
+			"Accept": "application/json"
+		}, 
 		kind: "languages"
 	},
 	actionCreators: {

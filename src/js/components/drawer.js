@@ -11,6 +11,7 @@ import {GridList, GridTile} from "material-ui/GridList"
 import Badge from "material-ui/Badge"
 import Avatar from "material-ui/Avatar"
 import Chip from "material-ui/Chip"
+import {blue300} from "material-ui/styles/colors"
 import Toggle from "material-ui/Toggle"
 import Divider from "material-ui/Divider"
 import Skills from "material-ui/svg-icons/action/build"
@@ -72,8 +73,8 @@ class MyDrawer extends Component {
 			contents, 
 			userTags
 		} = this.props
-		return Object.values(userTags).map(v => 
-			<GridTile>
+		return Object.entries(userTags).map(([i, v]) => 
+			<GridTile key={i}>
 				<Avatar 
 					size={32}
 					color={blue300}

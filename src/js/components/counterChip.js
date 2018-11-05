@@ -22,27 +22,28 @@ class CounterChip extends Component {
 		}
 	}
 	getCount() {
-		const {id, getCount, getURL} = this.props
+		const {getCount, getURL} = this.props
 		getCount({
 			URL: getURL("timeline", "nextPageURL"), 
-			key: id
+			key: "timeline"
 		})
 	}
 	getData() {
 		this.setState({display: "none"})
+		// CHANGE getItems FUNCTION BELOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		this.props.getItems(
 			{
 				dArgs: {
 					returnedURL: "nextPageURL", 
-					groupID: "timeline"
+					key: "timeline"
 				}, 
 				oArgs: {
 					returnedURL: "nextPageURL", 
-					groupID: "timeline"
+					key: "timeline"
 				}, 
 				spArgs: {
 					returnedURL: "nextPageURL", 
-					groupID: "timeline"
+					key: "timeline"
 				}
 			}
 		)
@@ -61,7 +62,6 @@ class CounterChip extends Component {
 }
 
 CounterChip.propTypes = {
-	id: PropTypes.string.isRequired, 
 	count: PropTypes.number,  
 	getCount: PropTypes.func.isRequired, 
 	getItems: PropTypes.func.isRequired, 

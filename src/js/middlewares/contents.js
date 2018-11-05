@@ -22,8 +22,12 @@ const getContents = makeLoader({
 
 export const postContents = makeLoader({
 	defaults: {
+		URL: "/contents", 
 		method: "POST", 
-		URL: "/contents"
+		headers: {
+			"Accept": "application/json"
+		}, 
+		kind: "contents"
 	},
 	actionCreators: {
 		actionsRequest: [contentsRequest],
@@ -38,8 +42,8 @@ export const postContents = makeLoader({
 
 export const putContents = makeLoader({
 	defaults: {
-		method: "PUT", 
 		URL: "/contents", 
+		method: "PUT", 
 		kind: "contents"
 	},
 	actionCreators: {

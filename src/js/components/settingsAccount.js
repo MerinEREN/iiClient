@@ -49,16 +49,17 @@ class AccountSettings extends Component {
 		this.handlePost = this.handlePost.bind(this)
 		this.handleDelete = this.handleDelete.bind(this)
 	}
-	componentWillMount() {
+	componentWillReceiveProps(nextProps) {
 		const {
 			usersGet, 
 			tagsGet, 
 			account: {ID}
 		} = this.props
-		// WHEN A USER REFRESHES THE PAGE ACCOUNT ID COUSES PROBLEMS HERE !!!!!!!!!
-		usersGet({
-			URL:`/users?accID=${ID}`
-		})
+		if (nextProps.account.ID !== ID) {
+			usersGet({
+				URL:`/users?accID=${nextProps.account.ID}`
+			})
+		}
 		tagsGet()
 	}
 	handleStepIndex(direction) {
@@ -126,7 +127,12 @@ class AccountSettings extends Component {
 	handlePost() {
 		this.toggleDialog()
 		const {newObject} = this.state
-		this.props.userPost({
+		const {
+			account: {ID}, 
+			userPost
+		} = this.props
+		userPost({
+			URL: `/users?accID=${ID}`, 
 			body: {
 				type: "FormData", 
 				// Use "contentType" for "Blob" type.
@@ -164,7 +170,7 @@ class AccountSettings extends Component {
 		return <TextField 
 			name="email" 
 			value={email || ""}
-			floatingLabelText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI7lCAw"]}
+			floatingLabelText={"Email"}
 			errorText={errFields.email}
 			onChange={this.handleFieldChange}
 		/>
@@ -185,7 +191,7 @@ class AccountSettings extends Component {
 	tagsField({tagIDs}, errFields, contents) {
 		return <SelectField
 			multiple={true} 
-			hintText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCgw"]}
+			hintText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgK6ZCgw"]}
 			value={tagIDs}
 			errorText={errFields.tagIDs}
 			onChange={this.handleFieldChange}
@@ -213,12 +219,12 @@ class AccountSettings extends Component {
 		} = this.props
 		const stepLabels = [
 			contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbDCAw"], 
-			contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI7lCAw"], 
-			contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI7lCgw"]
+			"Email", 
+			contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgK6ZCgw"]
 		]
 		const stepContents = [
 			<p>
-				{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI7VCgw"]}
+				{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJWACAw"]}
 			</p>, 
 			this.emailField(newObject, errFields, contents), 
 			this.tagsField(newObject, errFields, contents)
@@ -282,7 +288,7 @@ class AccountSettings extends Component {
 						</FloatingActionButton>
 				}
 				<Dialog
-					title={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI6VCAw"]}
+					title={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJWACQw"]}
 					children={children}
 					actions={actions}
 					modal={true}

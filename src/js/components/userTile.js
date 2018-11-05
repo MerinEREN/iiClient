@@ -39,8 +39,10 @@ const UserTile = ({user: {ID, email, name, roles, link}, isChecked}) => {
 				title={name.first ? `${name.first} ${name.last}` : email}
 				titlePosition="top"
 				titleBackground={titleBackground} 
-				cols={roles.indexOf("admin") > -1 ? 2 : 1} 
-				rows={roles.indexOf("admin") > -1 ? 2 : 1}
+				// cols={roles.indexOf("admin") > -1 ? 2 : 1} 
+				// rows={roles.indexOf("admin") > -1 ? 2 : 1}
+				cols={2} 
+				rows={2}
 				style={{
 					paddingTop, 
 					marginTop, 

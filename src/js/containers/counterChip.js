@@ -4,9 +4,9 @@ import CounterChipComponent from "../components/counterChip"
 import getCount, {getURL} from "../middlewares/counters"
 import getItems from "../middlewares/timelineList"
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = state => {
 	return {
-		count: state.appState.counters[ownProps.id]
+		count: state.appState.counters.timeline || 0
 	}
 }
 

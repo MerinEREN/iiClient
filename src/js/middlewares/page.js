@@ -10,7 +10,10 @@ const getPage = makeLoader({
 })
 export const putPage = makeLoader({
 	defaults: {
-		method: "PUT"
+		method: "PUT", 
+		headers: {
+			"Accept": "application/json"
+		}
 	},
 	actionCreators: {
 		actionsSuccess: [pageSuccess]

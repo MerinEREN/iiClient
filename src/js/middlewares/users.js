@@ -35,8 +35,11 @@ export const usersDelete = makeLoader({
 })
 export const userPost = makeLoader({
 	defaults: {
-		method: "POST", 
 		URL: "/users", 
+		method: "POST", 
+		headers: {
+			"Accept": "application/json"
+		}, 
 		kind: "users"
 	},
 	actionCreators: {

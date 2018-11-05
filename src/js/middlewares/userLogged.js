@@ -13,7 +13,10 @@ const userLoggedGet = makeLoader({
 })
 export const userLoggedPut = makeLoader({
 	defaults: {
-		method: "PUT"
+		method: "PUT", 
+		headers: {
+			"Accept": "application/json"
+		}
 	},
 	actionCreators: {
 		actionsSuccess: [userLoggedSuccess]

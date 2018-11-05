@@ -22,8 +22,11 @@ const tagsGet = makeLoader({
 
 export const tagPost = makeLoader({
 	defaults: {
-		method: "POST", 
 		URL: "/tags", 
+		method: "POST", 
+		headers: {
+			"Accept": "application/json"
+		}, 
 		kind: "tags"
 	},
 	actionCreators: {

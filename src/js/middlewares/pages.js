@@ -36,8 +36,11 @@ export const deletePages = makeLoader({
 })
 export const postPage = makeLoader({
 	defaults: {
-		method: "POST", 
 		URL: "/pages", 
+		method: "POST", 
+		headers: {
+			"Accept": "application/json"
+		}, 
 		kind: "pages"
 	},
 	actionCreators: {
