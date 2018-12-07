@@ -41,7 +41,7 @@ class ContentTile extends Component {
 		return Object.values(allPages).map(p => <MenuItem
 			key={p.ID}
 			value={p.ID}
-			primaryText={p.title}
+			primaryText={p.text}
 			checked={pageIDs && pageIDs.indexOf(p.ID) > -1}
 			insetChildren={true}
 		/>
@@ -52,7 +52,7 @@ class ContentTile extends Component {
 		return (
 			<SelectField
 				multiple={true} 
-				hintText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCgw"]}
+				hintText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCgw"] || "Pages"}
 				value={pageIDs}
 				errorText={inputErrTexts && inputErrTexts.pageIDs}
 				onChange={this.handleFieldChange}
@@ -67,7 +67,7 @@ class ContentTile extends Component {
 				key={a[0]}
 				name={a[0]}
 				value={values[a[0]] || ""}
-				floatingLabelText={contents[a[1].name]}
+				floatingLabelText={contents[a[1].contentID]}
 				errorText={inputErrTexts && inputErrTexts[a[0]]}
 				onChange={this.handleFieldChange}
 			/>

@@ -4,10 +4,10 @@ import SettingsComponent from "../components/settings"
 // Can use ownProps here.
 const mapStateToProps = state => {
 	const {
-		entitiesBuffered: {userLogged}, 
+		entitiesBuffered: {userLogged, rolesByUser}, 
 	} = state
 	return {
-		user: userLogged
+		userRoles: rolesByUser[userLogged.ID] || {}
 	}
 }
 

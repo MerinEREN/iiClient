@@ -28,7 +28,7 @@ export const userTagsPost = makeLoader({
 	}
 })
 
-export const userTagsDelete = makeLoader({
+export const userTagDelete = makeLoader({
 	defaults: {
 		method: "DELETE", 
 		kind: "userTags"

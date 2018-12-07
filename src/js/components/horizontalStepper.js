@@ -26,54 +26,54 @@ const styles = {
  **
  Linear steppers require users to complete one step in order to move on to the next.
  **/
-const HorizontalStepper = ({stepLabels, stepContents, stepIndex, updateStepIndex, save, cancel}) => {
+const HorizontalStepper = ({contents, stepLabels, stepContents, stepIndex, updateStepIndex, save, cancel}) => {
 	const stepActions = <div style={styles.stepActionsContainer}>
 		{
 			(save && stepIndex === stepContents.length - 1) 
 			&& 
 			<RaisedButton
-				label={"Save"}
+				label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || "Save"}
 				disableTouchRipple={true}
 				disableFocusRipple={true}
 				primary={true}
-				onTouchTap={save}
 				style={styles.raisedButton}
+				onTouchTap={save}
 			/>
 		}
 		{
 			stepIndex !== stepContents.length - 1 
-				&& 
-				<RaisedButton
-					label={"Next"}
-					disableTouchRipple={true}
-					disableFocusRipple={true}
-					primary={true}
-					style={styles.raisedButton}
-					onTouchTap={() => updateStepIndex("next")}
-				/>
+			&& 
+			<RaisedButton
+			label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLajCgw"] || "Next"}
+				disableTouchRipple={true}
+				disableFocusRipple={true}
+				primary={true}
+				style={styles.raisedButton}
+				onTouchTap={() => updateStepIndex("next")}
+			/>
 		}
 		{
 			(cancel && stepIndex === stepContents.length - 1) 
-				&& 
-				<RaisedButton
-					label="Cancel"
-					disableTouchRipple={true}
-					disableFocusRipple={true}
-					secondary={true}
-					style={styles.raisedButton}
-					onTouchTap={cancel}
-				/>
+			&& 
+			<RaisedButton
+			label={contents["Cancel !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"] || "Cancel"}
+				disableTouchRipple={true}
+				disableFocusRipple={true}
+				secondary={true}
+				style={styles.raisedButton}
+				onTouchTap={cancel}
+			/>
 		}
 		{
 			stepIndex > 0 
-				&& 
-				<FlatButton
-					label="Back"
-					disabled={stepIndex === 0}
-					disableTouchRipple={true}
-					disableFocusRipple={true}
-					onTouchTap={() => updateStepIndex("prev")}
-				/>
+			&& 
+			<FlatButton
+				label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLajCQw"] || "Back"}
+				disabled={stepIndex === 0}
+				disableTouchRipple={true}
+				disableFocusRipple={true}
+				onTouchTap={() => updateStepIndex("prev")}
+			/>
 		}
 	</div>
 		const stepLabels = stepLabels.map((v, i) => 
@@ -94,7 +94,12 @@ const HorizontalStepper = ({stepLabels, stepContents, stepIndex, updateStepIndex
 	</div>
 }
 
+HorizontalStepper.defaultProps = {
+	contents: {}
+}
+
 HorizontalStepper.propTypes = {
+	contents: PropTypes.object.isRequired,
 	stepLabels: PropTypes.array.isRequired,
 	stepContents: PropTypes.array.isRequired,
 	stepIndex: PropTypes.number.isRequired,

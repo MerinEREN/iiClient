@@ -115,7 +115,7 @@ class Contents extends Component {
 			this.setState({initNewContents: false})
 		}
 	}
-	handleRequiredInput(contents) {
+	handleRequiredField(contents) {
 		const {
 			contentsRoot
 		} = this.props
@@ -130,7 +130,7 @@ class Contents extends Component {
 						...inputErrTexts, 
 						[a[0]]: {
 							...inputErrTexts[a[0]], 
-							["en-US"]: contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"]
+							["en-US"]: contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"] || "RequiredField"
 						}
 					}
 				})
@@ -142,7 +142,7 @@ class Contents extends Component {
 						...inputErrTexts, 
 						[a[0]]: {
 							...inputErrTexts[a[0]], 
-							pageIDs: contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"]
+							pageIDs: contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"] || "RequiredField"
 						}
 					}
 				})
@@ -161,7 +161,7 @@ class Contents extends Component {
 			this.toggleDialog()
 			return
 		}
-		if(!this.handleRequiredInput(newContents))
+		if(!this.handleRequiredField(newContents))
 			return
 		this.toggleDialog()
 		this.setState({
@@ -178,7 +178,7 @@ class Contents extends Component {
 	}
 	handlePut() {
 		const {contents, putContents} = this.props
-		if(!this.handleRequiredInput(contents))
+		if(!this.handleRequiredField(contents))
 			return
 		putContents({
 			body: {
@@ -244,15 +244,15 @@ class Contents extends Component {
 				</GridList>
 		const actions = [
 			<FlatButton
-				label={contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCQw"] || " "}
+				label={contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCQw"] || "Generate New Contents"}
 				onTouchTap={this.handleCreateNewContents}
 			/>, 
 			<FlatButton
-				label={contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCww"] || " "}
+				label={contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCww"] || "Close"}
 				onTouchTap={this.toggleDialog}
 			/>, 
 			<FlatButton
-				label={contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || " "}
+				label={contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || "Save"}
 				primary={true}
 				onTouchTap={this.handlePost}
 			/>
@@ -277,15 +277,14 @@ class Contents extends Component {
 							{this.contentTiles(contents)}
 						</GridList> :
 						<div>
-							<h1>{contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI6lCgw"]}</h1>
-							<h2>{contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI7VCww"]}</h2>
+							<h3>{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI6lCgw"] || "No Content"}</h3>
 						</div>
 					}
 					{
 						Object.keys(contents).length > 0
 							&& 
 							<RaisedButton
-								label={contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || " "}
+								label={contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || "Save"}
 								style={raisedButton}
 								primary={true}
 								onTouchTap={this.handlePut}
@@ -294,7 +293,7 @@ class Contents extends Component {
 					{
 							contentIDsSelected.length > 0 && 
 							<RaisedButton
-								label={contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCAw"] || " "}
+								label={contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCAw"] || "Delete"}
 								style={raisedButton}
 								secondary={true}
 								onTouchTap={this.handleDelete}
@@ -318,7 +317,7 @@ class Contents extends Component {
 						</FloatingActionButton>
 				}
 				<Dialog
-					title={contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCgw"]}
+					title={contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCgw"] || "Add new contents"}
 					children={children}
 					actions={actions}
 					modal={true}

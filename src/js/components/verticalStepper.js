@@ -33,7 +33,7 @@ const VerticalStepper = ({contents, stepLabels, stepContents, stepIndex, updateS
 			(save && stepIndex === stepContents.length - 1) 
 			&& 
 			<RaisedButton
-				label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || " "}
+				label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || "Save"}
 				disableTouchRipple={true}
 				disableFocusRipple={true}
 				primary={true}
@@ -43,38 +43,38 @@ const VerticalStepper = ({contents, stepLabels, stepContents, stepIndex, updateS
 		}
 		{
 			stepIndex !== stepContents.length - 1 
-				&& 
-				<RaisedButton
-					label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLajCgw"] || " "}
-					disableTouchRipple={true}
-					disableFocusRipple={true}
-					primary={true}
-					style={styles.raisedButton}
-					onTouchTap={() => updateStepIndex("next")}
-				/>
+			&& 
+			<RaisedButton
+				label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLajCgw"] || "Next"}
+				disableTouchRipple={true}
+				disableFocusRipple={true}
+				primary={true}
+				style={styles.raisedButton}
+				onTouchTap={() => updateStepIndex("next")}
+			/>
 		}
 		{
 			(cancel && stepIndex === stepContents.length - 1) 
-				&& 
-				<RaisedButton
-					label="Cancel"
-					disableTouchRipple={true}
-					disableFocusRipple={true}
-					secondary={true}
-					style={styles.raisedButton}
-					onTouchTap={cancel}
-				/>
+			&& 
+			<RaisedButton
+				label={contents["Cancel !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"] || "Cancel"}
+				disableTouchRipple={true}
+				disableFocusRipple={true}
+				secondary={true}
+				style={styles.raisedButton}
+				onTouchTap={cancel}
+			/>
 		}
 		{
 			stepIndex > 0 
-				&& 
-				<FlatButton
-					label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLajCQw"] || " "}
-					disabled={stepIndex === 0}
-					disableTouchRipple={true}
-					disableFocusRipple={true}
-					onTouchTap={() => updateStepIndex("prev")}
-				/>
+			&& 
+			<FlatButton
+				label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLajCQw"] || "Back"}
+				disabled={stepIndex === 0}
+				disableTouchRipple={true}
+				disableFocusRipple={true}
+				onTouchTap={() => updateStepIndex("prev")}
+			/>
 		}
 	</div>
 		const steps = stepContents.map((v, i) => (

@@ -41,7 +41,7 @@ class AccountSettings extends Component {
 			showDialog: false, 
 			stepIndex: 0, 
 			newObject: {},  
-			errFields: {}
+			inputErrTexts: {}
 		}
 		this.toggleDialog = this.toggleDialog.bind(this)
 		this.handleStepIndex = this.handleStepIndex.bind(this)
@@ -52,14 +52,15 @@ class AccountSettings extends Component {
 	componentWillReceiveProps(nextProps) {
 		const {
 			usersGet, 
+			rolesGet, 
 			tagsGet, 
 			account: {ID}
 		} = this.props
-		if (nextProps.account.ID !== ID) {
-			usersGet({
-				URL:`/users?accID=${nextProps.account.ID}`
-			})
-		}
+		// CHANGE THE CONTROL BELOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		ID && usersGet({
+			URL:`/users?accID=${ID}`
+		})
+		rolesGet()
 		tagsGet()
 	}
 	handleStepIndex(direction) {
@@ -82,51 +83,75 @@ class AccountSettings extends Component {
 	handleRequiredField(i) {
 		const {
 			newObject, 
-			errFields
+			inputErrTexts
 		} = this.state
 		const {
 			contents
 		} = this.props
+		let key
 		switch (i) {
 			case 1:
-				// VALIDATE EMAIL HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-				if(!newObject.email) {
+				key = "email"
+				/* if(!isValidEmail(newObject[key])) {
 					this.setState({
-						errFields: {
-							...errFields, 
-							email: contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"]
+						inputErrTexts: {
+							...inputErrTexts, 
+							[key]: contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"] || "Invalid email"
 						}
 					})
 					return true
-				}
-				return false
+				} */
+				break
+			case 2:
+				key = "roleIDs"
+				break
+			case 3:
+				/* Uncoment to make required
+				key = "tagIDs"
+				break */
 			default:
 				return false
 		}
+		if(!newObject[key] || newObject[key].length === 0) {
+			this.setState({
+				inputErrTexts: {
+					...inputErrTexts, 
+					[key]: contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"] || "Required field"
+				}
+			})
+			return true
+		}
+		return false
 	}
 	// index and values are for select field only
 	handleFieldChange(event, index, values) {
 		const target = event.target
-		const name = target.name || "tagIDs"
+		const name = target.name || 
+			(this.state.stepIndex === 2 ? "roleIDs" : "tagIDs")
 		const value = target.value || values
 		const {
 			newObject, 
-			errFields
+			inputErrTexts
 		} = this.state
 		this.setState({
 			newObject: {
 				...newObject, 
 				[name]: value
 			}, 
-			errFields: {
-				...errFields, 
-				[name]: ""
+			inputErrTexts: {
+				...inputErrTexts, 
+				[name]: null
 			}
 		})
 	}
 	handlePost() {
+		const {
+			stepIndex, 
+			newObject
+		} = this.state
+		if(this.handleRequiredField(stepIndex))
+			return
 		this.toggleDialog()
-		const {newObject} = this.state
 		const {
 			account: {ID}, 
 			userPost
@@ -166,14 +191,38 @@ class AccountSettings extends Component {
 			isChecked={this.props.userIDsSelected.indexOf(k) !== -1}
 		/>)
 	}
-	emailField({email}, errFields, contents) {
+	emailField({email}, inputErrTexts, contents) {
 		return <TextField 
 			name="email" 
 			value={email || ""}
 			floatingLabelText={"Email"}
-			errorText={errFields.email}
+			errorText={inputErrTexts.email}
 			onChange={this.handleFieldChange}
 		/>
+	}
+	roleItems(roleIDs, contents){
+		const {
+			roles
+		} = this.props
+		return Object.entries(roles).map(([k, v]) => <MenuItem
+			key={k}
+			value={k}
+			primaryText={contents[v.contentID]}
+			checked={roleIDs && roleIDs.indexOf(k) > -1}
+			insetChildren={true}
+		/>
+		)
+	}
+	rolesField({roleIDs}, inputErrTexts, contents) {
+		return <SelectField
+			multiple={true} 
+			hintText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgK6ZCgw"] || "Roles"}
+			value={roleIDs}
+			errorText={inputErrTexts.roleIDs}
+			onChange={this.handleFieldChange}
+		>
+			{this.roleItems(roleIDs, contents)}
+		</SelectField>
 	}
 	tagItems(tagIDs, contents){
 		const {
@@ -182,18 +231,18 @@ class AccountSettings extends Component {
 		return Object.entries(tags).map(([k, v]) => <MenuItem
 			key={k}
 			value={k}
-			primaryText={contents[v.name]}
+			primaryText={contents[v.contentID]}
 			checked={tagIDs && tagIDs.indexOf(k) > -1}
 			insetChildren={true}
 		/>
 		)
 	}
-	tagsField({tagIDs}, errFields, contents) {
+	tagsField({tagIDs}, inputErrTexts, contents) {
 		return <SelectField
 			multiple={true} 
-			hintText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgK6ZCgw"]}
+			hintText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgK6ZCgw"] || "Tags"}
 			value={tagIDs}
-			errorText={errFields.tagIDs}
+			errorText={inputErrTexts.tagIDs}
 			onChange={this.handleFieldChange}
 		>
 			{this.tagItems(tagIDs, contents)}
@@ -210,24 +259,33 @@ class AccountSettings extends Component {
 			showDialog, 
 			stepIndex, 
 			newObject,
-			errFields
+			inputErrTexts
 		} = this.state
 		const {
 			contents, 
 			users, 
 			userIDsSelected
 		} = this.props
-		const stepLabels = [
-			contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbDCAw"], 
+		const stepLabels = Object.keys(contents).length > 0 ?
+			[
+			contents["Description"], 
 			"Email", 
-			contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgK6ZCgw"]
-		]
+			contents["Roles"], 
+			contents["Tags"]
+			] : 
+			[
+				"Description", 
+				"Email", 
+				"Roles", 
+				"Tags"
+			]
 		const stepContents = [
 			<p>
-				{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJWACAw"]}
+				{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgPWfCQw"] || "Add a new user. Email and Roles fields are required."}
 			</p>, 
-			this.emailField(newObject, errFields, contents), 
-			this.tagsField(newObject, errFields, contents)
+			this.emailField(newObject, inputErrTexts, contents), 
+			this.rolesField(newObject, inputErrTexts, contents), 
+			this.tagsField(newObject, inputErrTexts, contents)
 		]
 		const children = <VerticalStepper 
 			stepLabels={stepLabels} 
@@ -238,12 +296,12 @@ class AccountSettings extends Component {
 		/>
 		const actions = [
 			<FlatButton
-				label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCww"] || " "}
+				label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCww"] || "Close"}
 				onTouchTap={this.toggleDialog}
 			/>
 		]
 		stepContents.length - 1 === stepIndex && actions.push(<FlatButton
-			label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || " "}
+			label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || "Save"}
 			primary={true}
 			onTouchTap={this.handlePost}
 		/>)
@@ -257,18 +315,21 @@ class AccountSettings extends Component {
 					<GridTile cols={1} />  
 					<GridTile cols={2}>  
 						<div>ACCOUNT INPUTS</div>
-						<GridList 
-							style={gridList}
-							cols={4}
-							padding={10}
-							cellHeight={333}
-						>
-							{this.userTiles(users)}
-						</GridList>
+						{
+							Object.keys(users).length > 0 && 
+								<GridList 
+									style={gridList}
+									cols={4}
+									padding={10}
+									cellHeight={333}
+								>
+									{this.userTiles(users)}
+								</GridList>
+						}
 						{
 							userIDsSelected.length > 0 && 
 								<RaisedButton
-									label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCAw"] || " "}
+									label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCAw"] || "Delete"}
 									style={raisedButton}
 									secondary={true}
 									onTouchTap={this.handleDelete}
@@ -288,7 +349,7 @@ class AccountSettings extends Component {
 						</FloatingActionButton>
 				}
 				<Dialog
-					title={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJWACQw"]}
+					title={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJWACQw"] || "Add a new user"}
 					children={children}
 					actions={actions}
 					modal={true}
@@ -309,11 +370,13 @@ AccountSettings.propTypes = {
 	account: PropTypes.object.isRequired, 
 	users: PropTypes.object.isRequired, 
 	tags: PropTypes.object.isRequired, 
+	roles: PropTypes.object.isRequired, 
 	userIDsSelected: PropTypes.array.isRequired, 
 	usersGet: PropTypes.func.isRequired, 
 	userPost: PropTypes.func.isRequired, 
 	usersDelete: PropTypes.func.isRequired, 
-	tagsGet: PropTypes.func.isRequired
+	tagsGet: PropTypes.func.isRequired, 
+	rolesGet: PropTypes.func.isRequired
 }
 
 AccountSettings.muiName = "GridList"

@@ -6,7 +6,8 @@ import {languageIDsSelected as languageIDs} from "./languages"
 import {pageIDsSelected as pageIDs} from "./pages"
 import {contentIDsSelected as contentIDs} from "./contents"
 import {userIDsSelected as userIDs} from "./users"
-import {tagIDsSelected as tagIDs} from "./tags"
+import {roleIDsSelectedByUser as roleIDsByUser} from "./roles"
+import {tagIDsSelectedByUser as tagIDsByUser} from "./tags"
 
 // Higher-Order Reducer
 const appState = combineReducers({
@@ -17,7 +18,8 @@ const appState = combineReducers({
 	pageIDs, 
 	contentIDs, 
 	userIDs, 
-	tagIDs
+	roleIDsByUser, 
+	tagIDsByUser
 })
 
 export default appState

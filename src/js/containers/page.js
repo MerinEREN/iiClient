@@ -6,8 +6,13 @@ import {deletePages} from "../middlewares/pages"
 import {removeUpdateContentsWithThatPage} from "../middlewares/contents"
 
 const mapStateToProps = (state, ownProps) => {
+	const {
+		entitiesBuffered: {pages: {[ownProps.params.ID]: page}}, 
+		ui: {contents: {page: contents}}
+	} = state
 	return {
-		page: state.entitiesBuffered.pages[ownProps.params.ID]
+		page, 
+		contents
 	}
 }
 

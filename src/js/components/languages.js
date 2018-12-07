@@ -40,7 +40,7 @@ class Languages extends Component {
 			stepIndex: 0, 
 			langNew: {
 				ID: "",  
-				name: ""
+				contentID: ""
 			}, 
 			inputErrText: {}
 		}
@@ -59,22 +59,22 @@ class Languages extends Component {
 				<MenuItem 
 					key={1} 
 					value="tr-TR" 
-					primaryText={nextProps.contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgKaTCgw"]} 
+					primaryText={nextProps.contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgKaTCgw"] || "Turkish"} 
 				/>,
 				<MenuItem 
 					key={2} 
 					value="en-US" 
-					primaryText={nextProps.contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgKaTCQw"]} 
+					primaryText={nextProps.contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgKaTCQw"] || "English"} 
 				/>,
 				<MenuItem 
 					key={3} 
 					value="de-DE" 
-					primaryText={nextProps.contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgKaTCww"]} 
+					primaryText={nextProps.contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgKaTCww"] || "German"} 
 				/>,
 				<MenuItem 
 					key={4} 
 					value="ru-RU" 
-					primaryText={nextProps.contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgKbTCAw"]} 
+					primaryText={nextProps.contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgKbTCAw"] || "Russian"} 
 				/>
 			]
 	}
@@ -82,7 +82,7 @@ class Languages extends Component {
 		const {stepIndex} = this.state
 		switch (direction) {
 			case "next":
-				if(this.handleRequiredInput(stepIndex))
+				if(this.handleRequiredField(stepIndex))
 					return
 				this.setState({
 					stepIndex: stepIndex + 1,
@@ -95,7 +95,7 @@ class Languages extends Component {
 				break
 		}
 	}
-	handleRequiredInput(i) {
+	handleRequiredField(i) {
 		const {
 			contents
 		} = this.props
@@ -105,7 +105,7 @@ class Languages extends Component {
 				key = "ID"
 				break
 			case 2:
-				key = "name"
+				key = "contentID"
 				break
 			default:
 				return false
@@ -114,7 +114,7 @@ class Languages extends Component {
 			this.setState({
 				inputErrText: {
 					...this.state.inputErrText, 
-					[key]: contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"]
+					[key]: contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"] || "Required field"
 				}
 			})
 			return true
@@ -157,7 +157,7 @@ class Languages extends Component {
 		this.setState({
 			langNew: {
 				ID: "", 
-				name: ""
+				contentID: ""
 			}, 
 			stepIndex: 0
 		})
@@ -170,7 +170,6 @@ class Languages extends Component {
 		languagesDelete({
 			URL: `/languages?IDs=${generateURLVariableFromIDs(languageIDsSelected)}`, 
 			body: {
-				type: "FormData", 
 				data: languageIDsSelected
 			}
 		})
@@ -181,7 +180,7 @@ class Languages extends Component {
 			<LanguageTile 
 				key={v.ID} 
 				language={v} 
-				title={contents[v.name] || v.ID}
+				title={contents[v.contentID] || v.ID}
 				isChecked={languageIDsSelected.indexOf(v.ID) !== -1}
 			/>)
 	}
@@ -203,29 +202,36 @@ class Languages extends Component {
 			languages, 
 			languageIDsSelected
 		} = this.props
-		const stepLabels = [
-			contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbDCAw"], 
-			contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJaDCgw"], 
-			contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbDCww"], 
-			contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLajCAw"]
-		]
+		const stepLabels = Object.keys(contents).length > 0 ?
+			[
+				contents["Description"], 
+				contents["Language"], 
+				contents["Tag"], 
+				contents["File"]
+			] :
+			[
+				"Description", 
+				"Language", 
+				"Tag", 
+				"File"
+			]
 		const stepContents = [
 			<p>
-				{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaDCAw"]}
+				{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaDCAw"] || "Add a new language. Language and Tag fields are required."}
 			</p>, 
 			<SelectField 
 				value={langNew.ID}
-				floatingLabelText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJaDCgw"]}
+				floatingLabelText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJaDCgw"] || "Language"}
 				errorText={inputErrText.ID}
 				onChange={this.handleInputChange}
 			>
 				{this.items}
 			</SelectField>, 
 			<TextField 
-				name="name"
-				value={langNew.name || ""}
-				floatingLabelText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaTCQw"]}
-				errorText={inputErrText.name}
+				name="contentID"
+				value={langNew.contentID || ""}
+				floatingLabelText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaTCQw"] || "Content ID"}
+				errorText={inputErrText.contentID}
 				onChange={this.handleInputChange}
 			/>, 
 			<input 
@@ -242,12 +248,12 @@ class Languages extends Component {
 		/>
 		const actions = [
 			<FlatButton
-				label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCww"] || " "}
+				label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCww"] || "Close"}
 				onTouchTap={this.toggleDialog}
 			/>
 		]
 		stepContents.length - 1 === stepIndex && actions.push(<FlatButton
-			label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || " "}
+			label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || "Save"}
 			primary={true}
 			onTouchTap={this.handlePost}
 		/>)
@@ -272,12 +278,12 @@ class Languages extends Component {
 								{this.languageTiles(languages)}
 							</GridList>
 							:
-							<h3>{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI6lCgw"]}</h3>
+							<h3>{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI6lCgw"] || "No Content"}</h3>
 					}
 					{
 						languageIDsSelected.length > 0 && 
 							<RaisedButton
-								label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCAw"] || " "}
+								label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCAw"] || "Delete"}
 								style={raisedButton}
 								secondary={true}
 								onTouchTap={this.handleDelete}
@@ -297,7 +303,7 @@ class Languages extends Component {
 						</FloatingActionButton>
 				}
 				<Dialog
-					title={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbTCQw"]}
+					title={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbTCQw"] || "Add a language"}
 					children={children}
 					actions={actions}
 					modal={true}

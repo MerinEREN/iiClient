@@ -20,7 +20,7 @@ const tagsGet = makeLoader({
 	}
 })
 
-export const tagPost = makeLoader({
+export const tagsPost = makeLoader({
 	defaults: {
 		URL: "/tags", 
 		method: "POST", 
@@ -40,7 +40,7 @@ export const tagPost = makeLoader({
 	}
 })
 
-export const tagsDelete = makeLoader({
+export const tagDelete = makeLoader({
 	defaults: {
 		method: "DELETE", 
 		kind: "tags"

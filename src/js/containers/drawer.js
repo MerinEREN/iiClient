@@ -9,12 +9,13 @@ import {changeTheme} from "../actions/theme"
 // For accessing params for example.
 const mapStateToProps = state => {
 	const {
-		entitiesBuffered: {accountLogged, userLogged, tagsByUser}, 
+		entitiesBuffered: {accountLogged, userLogged, rolesByUser, tagsByUser}, 
 		ui: {openDrawer}
 	} = state
 	return {
 		account: accountLogged, 
 		user: userLogged, 
+		userRoles: rolesByUser[userLogged.ID] || {}, 
 		userTags: tagsByUser[userLogged.ID] || {}, 
 		open: openDrawer
 	}

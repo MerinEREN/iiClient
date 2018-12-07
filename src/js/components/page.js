@@ -36,8 +36,8 @@ class Page extends Component {
 		this.state = {
 			showDialog: false, 
 			stepIndex: 0, 
-			title: "", 
-			inputErrText: {}
+			text: "", 
+			inputErrTexts: {}
 		}
 		this.toggleDialog = this.toggleDialog.bind(this)
 		this.handleStepIndex = this.handleStepIndex.bind(this)
@@ -56,7 +56,7 @@ class Page extends Component {
 		const {stepIndex} = this.state
 		switch (direction) {
 			case "next":
-				if(this.handleRequiredInput(stepIndex))
+				if(this.handleRequiredField(stepIndex))
 					return
 				this.setState({
 					stepIndex: stepIndex + 1,
@@ -69,13 +69,17 @@ class Page extends Component {
 				break
 		}
 	}
-	handleRequiredInput(i) {
+	handleRequiredField(i) {
+		const {
+			contents
+		} = this.props
 		switch (i) {
 			case 1:
-				if(!this.state.title) {
+				if(!this.state.text) {
 					this.setState({
-						inputErrText:{
-							title: "Required filed"
+						inputErrTexts:{
+							...this.state.inputErrTexts, 
+							text: contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"] || "Required field"
 						}
 					})
 					return true
@@ -90,13 +94,16 @@ class Page extends Component {
 		const name = target.name
 		const value = target.value
 		this.setState({
-			title: value, 
-			inputErrText: {[name]: ""}
+			text: value, 
+			inputErrTexts: {
+				...this.state.inputErrTexts, 
+				[name]: null
+			}
 		})
 	}
 	handlePut() {
 		this.toggleDialog()
-		const {title} = this.state
+		const {text} = this.state
 		const {putPage, params: {ID}, page} = this.props
 		putPage({
 			URL: `/pages/${ID}`, 
@@ -106,13 +113,13 @@ class Page extends Component {
 				// contentType: "application/json", 
 				data: {
 					[ID]: {
-						title: title.trim(), 
+						text: text.trim(), 
 						file: this.file.files[0] 
 					}
 				}
 			}
 		})
-		this.setState({title: "", stepIndex: 0})
+		this.setState({text: "", stepIndex: 0})
 	}
 	handleDelete() {
 		const {
@@ -138,24 +145,33 @@ class Page extends Component {
 		const {
 			showDialog, 
 			stepIndex, 
-			title, 
-			inputErrText
+			text, 
+			inputErrTexts
 		} = this.state
-		const {page} = this.props
-		const stepLabels = [
-			"Description", 
-			"Page Title", 
-			"Page Thumbnail"
-		]
+		const {
+			contents, 
+			page
+		} = this.props
+		const stepLabels = Object.keys(contents).length > 0 ?
+			[
+				contents["Description"], 
+				contents["Name"], 
+				contents["File"]
+			] :
+			[
+				"Description", 
+				"Name", 
+				"File"
+			]
 		const stepContents = [
 			<p>
-				Change page attributes.
+				{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaDCAw"] || "Update page, name field is tequired."}
 			</p>, 
 			<TextField 
-				name="title" 
-				value={title}
-				floatingLabelText="Page Title" 
-				errorText={inputErrText.title}
+				name="text" 
+				value={text}
+				floatingLabelText={contents["name"] || "Name"}
+				errorText={inputErrTexts.text}
 				onChange={this.handleInputChange}
 			/>, 
 			<input 
@@ -171,12 +187,12 @@ class Page extends Component {
 		/>
 		const actions = [
 			<FlatButton
-				label="Close"
+				label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCww"] || "Close"}
 				onTouchTap={this.toggleDialog}
 			/>
 		]
 		stepContents.length - 1 === stepIndex && actions.push(<FlatButton
-			label="Save"
+			label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || "Save"}
 			primary={true}
 			onTouchTap={this.handlePut}
 		/>)
@@ -186,16 +202,16 @@ class Page extends Component {
 					<CardMedia>
 						<img src={page.link || "/img/adele.jpg"} />
 					</CardMedia>
-					<CardTitle title={page.title} />
+					<CardTitle title={page.text} />
 					<CardText>
 						<List>
-							<ListItem primaryText="Last Modified" secondaryText={page.lastModified} disabled={true} />
-							<ListItem primaryText="Created" secondaryText={page.created} disabled={true} />
+							<ListItem primaryText={contents["last modified"] || "Last Modified"} secondaryText={page.lastModified} disabled={true} />
+							<ListItem primaryText={contents["created"] || "Created"} secondaryText={page.created} disabled={true} />
 						</List>
 					</CardText>
 					<CardActions>
 						<FlatButton 
-							label="Delete" 
+							label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCAw"] || "Delete"}
 							secondary={true}
 							onTouchTap={this.handleDelete} 
 						/>
@@ -213,7 +229,7 @@ class Page extends Component {
 						</FloatingActionButton>
 				}
 				<Dialog
-					title="Update The Page"
+					title={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbTCQw"] || "Update The Page"}
 					children={children}
 					actions={actions}
 					modal={true}
@@ -226,10 +242,12 @@ class Page extends Component {
 
 // For "undefined required page" error when refreshing the page.
 Page.defaultProps = {
+	contents: {}, 
 	page: {}
 }
 
 Page.propTypes = {
+	contents: PropTypes.object.isRequired, 
 	page: PropTypes.object.isRequired, 
 	getPage: PropTypes.func.isRequired, 
 	putPage: PropTypes.func.isRequired, 

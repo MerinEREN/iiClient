@@ -1,13 +1,17 @@
 export const isAdmin = (roles) => {
 	if (!roles)
 		return false
-	return roles.indexOf("admin") > -1
+	if(Object.values(roles).every(v => v.contentID === "aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFYWRtaW4M"))
+		return true
+	return false
 }
 
 export const isContentEditor = (roles) => {
 	if (!roles)
 		return false
-	return roles.indexOf("contentEditor") > -1
+	if(Object.values(roles).every(v => v.contentID === "aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOQ29udGVudCBFZGl0b3IM"))
+		return true
+	return false
 }
 
 // generateURLVariableFromIDs returns a string that established with provided object keys 

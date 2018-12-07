@@ -3,11 +3,14 @@ import contents from "./contents"
 import loginUrls from "./loginUrls"
 import languages from "./languages"
 import userLogged from "./userLogged"
+import rolesByUser from "./userRoles"
 import tagsByUser from "./userTags"
 import signOutURL from "./signOutURL"
 import accountLogged from "./accountLogged"
 import pages from "./pages"
 import tags from "./tags"
+import roles from "./roles"
+import roleTypes from "./roleTypes"
 import demands from "./demands"
 import offers from "./offers"
 import servicePacks from "./servicePacks"
@@ -20,11 +23,14 @@ const entities = combineReducers({
 	loginUrls,
 	languages, 
 	userLogged, 
+	rolesByUser, 
 	tagsByUser, 
 	signOutURL, 
 	accountLogged, 
 	pages, 
 	tags, 
+	roles, 
+	roleTypes, 
 	demands, 
 	offers,
 	servicePacks, 

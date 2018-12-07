@@ -4,6 +4,7 @@ import {Link} from "react-router"
 import {GridTile} from "material-ui/GridList"
 import Checkbox from "material-ui/Checkbox"
 import {selectedUserIDsAddRemove} from "../actions/users"
+import {isAdmin} from "./utilities"
 
 const styles = {
 	gridTile: {
@@ -23,7 +24,7 @@ const styles = {
 }
 
 // FIND A WAY TO PREVENT TO TRIGER LINK WHEN CHECKBOX CHECKED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-const UserTile = ({user: {ID, email, name, roles, link}, isChecked}) => {
+const UserTile = ({user: {ID, email, name, link}, isChecked}) => {
 		const {
 			gridTile: {
 				paddingTop, 
@@ -36,13 +37,17 @@ const UserTile = ({user: {ID, email, name, roles, link}, isChecked}) => {
 		} = styles
 		return (
 			<GridTile  
-				title={name.first ? `${name.first} ${name.last}` : email}
+				title={
+					name ? 
+						(
+							name.first ? 
+							`${name.first} ${name.last}` : 
+							email
+						) :
+						email
+				}
 				titlePosition="top"
 				titleBackground={titleBackground} 
-				// cols={roles.indexOf("admin") > -1 ? 2 : 1} 
-				// rows={roles.indexOf("admin") > -1 ? 2 : 1}
-				cols={2} 
-				rows={2}
 				style={{
 					paddingTop, 
 					marginTop, 

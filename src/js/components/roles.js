@@ -7,7 +7,9 @@ import Dialog from "material-ui/Dialog"
 import FlatButton from "material-ui/FlatButton"
 import VerticalStepper from "./verticalStepper"
 import TextField from "material-ui/TextField"
-import TagTile from "./tagTile"
+import SelectField from "material-ui/SelectField"
+import MenuItem from "material-ui/MenuItem"
+import RoleTile from "./roleTile"
 
 const styles = {
 	root: {
@@ -25,14 +27,15 @@ const styles = {
 	}
 }
 
-class Tags extends Component {
+class Roles extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
 			showDialog: false, 
 			stepIndex: 0, 
-			tagNew: {
-				contentID: ""
+			roleNew: {
+				contentID: "", 
+				types: []
 			}, 
 			inputErrTexts: {}
 		}
@@ -43,7 +46,7 @@ class Tags extends Component {
 		this.handleDelete = this.handleDelete.bind(this)
 	}
 	componentWillMount() {
-		this.props.tagsGet()
+		this.props.rolesGet()
 	}
 	handleStepIndex(direction) {
 		const {stepIndex} = this.state
@@ -69,10 +72,13 @@ class Tags extends Component {
 			case 1:
 				key = "contentID"
 				break
+			case 2:
+				key = "types"
+				break
 			default:
 				return false
 		}
-		if (!this.state.tagNew[key]) {
+		if (!this.state.roleNew[key] || this.state.roleNew[key].length === 0) {
 			this.setState({
 				inputErrTexts: {
 					...this.state.inputErrTexts, 
@@ -86,15 +92,15 @@ class Tags extends Component {
 	// INDEX AND VALUES ARE FOR SELECT FIELD ONLY
 	handleInputChange(event, index, values) {
 		const target = event.target
-		const name = target.name
-		const value = target.value
+		const name = target.name || "types"
+		const value = target.value || values
 		const {
-			tagNew, 
+			roleNew, 
 			inputErrTexts
 		} = this.state
 		this.setState({
-			tagNew: {
-				...tagNew, 
+			roleNew: {
+				...roleNew, 
 				[name]: value
 			}, 
 			inputErrTexts: {
@@ -106,52 +112,68 @@ class Tags extends Component {
 	handlePost() {
 		const {
 			stepIndex, 
-			tagNew
+			roleNew
 		} = this.state
 		if(this.handleRequiredField(stepIndex))
 			return
 		this.toggleDialog()
-		this.props.tagsPost({
+		this.props.rolesPost({
 			body: {
 				type: "FormData", 
 				// Use "contentType" for "Blob" type.
 				// contentType: "application/json", 
 				data: {
-					tag: {
-						...tagNew
+					role: {
+						...roleNew
 					}
 				}
 			}
 		})
 		this.setState({
-			tagNew: {
-				contentID: ""
+			roleNew: {
+				contentID: "", 
+				types: []
 			}, 
 			stepIndex: 0
 		})
 	}
 	toggleDialog() {
+		this.props.roleTypesGet()
 		this.setState({showDialog: !this.state.showDialog})
 	}
 	handleDelete(ID) {
-		this.props.tagDelete({
-			URL: `/tags/${ID}`, 
+		this.props.roleDelete({
+			URL: `/roles/${ID}`, 
 			body: {
 				data: [ID]
 			}
 		})
 	}
-	tagTiles(tags) {
+	roleTiles(roles) {
 		const {
 			contents
 		} = this.props
-		return Object.entries(tags).map(([k, v]) => 
-			<TagTile 
+		return Object.entries(roles).map(([k, v]) => 
+			<RoleTile 
 				key={k} 
-				tag={v} 
+				role={v} 
 				text={contents[v.contentID]}
 				handleDelete={this.handleDelete}
 			/>)
+	}
+	menuItems(){
+		const {
+			roleNew: {types}
+		} = this.state
+		const {roleTypes} = this.props
+		return Object.entries(roleTypes).map(([k, v]) => <MenuItem
+			key={k}
+			value={v.ID}
+			primaryText={v.ID}
+			checked={types.indexOf(v.ID) > -1}
+			insetChildren={true}
+		/>
+		)
 	}
 	render() {
 		const {
@@ -163,32 +185,43 @@ class Tags extends Component {
 			showDialog, 
 			stepIndex, 
 			inputErrTexts, 
-			tagNew
+			roleNew
 		} = this.state
 		const {
 			contents, 
-			tags
+			roles
 		} = this.props
 		const stepLabels = Object.keys(contents).length > 0 ?
 			[
 				contents["Description"], 
-				contents["Tag"]
+				contents["Role"], 
+				contents["Types"]
 			] :
 			[
 				"Description", 
-				"Tag"
+				"Role", 
+				"Types"
 			]
 		const stepContents = [
 			<p>
-				{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIH-CQw"] || "Add a new tag. The field is required."}
+				{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgPWfCQw"] || "Add a new role. All fields are required."}
 			</p>, 
 			<TextField 
 				name="contentID"
-				value={tagNew.contentID || ""}
-				floatingLabelText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIGBCAw"] || "Content ID"}
+				value={roleNew.contentID || ""}
+				floatingLabelText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgPXfCAw"] || "Content ID"}
 				errorText={inputErrTexts.contentID}
 				onChange={this.handleInputChange}
-			/>
+			/>, 
+			<SelectField
+				multiple={true} 
+				hintText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgM2bCgw"] || "Types"}
+				value={roleNew.types}
+				errorText={inputErrTexts.types}
+				onChange={this.handleInputChange}
+			>
+				{this.menuItems()}
+			</SelectField>
 		]
 		const children = <VerticalStepper 
 			stepLabels={stepLabels} 
@@ -211,12 +244,12 @@ class Tags extends Component {
 		return (
 			<div style={root}>
 				{ 
-					Object.entries(tags).length !== 0 
+					Object.entries(roles).length !== 0 
 						? 
 						<GridList 
 							style={gridList}
 						>
-							{this.tagTiles(tags)}
+							{this.roleTiles(roles)}
 						</GridList>
 						:
 						<h3>{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI6lCgw"] || "No Content"}</h3>
@@ -232,7 +265,7 @@ class Tags extends Component {
 						</FloatingActionButton>
 				}
 				<Dialog
-					title={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIHeCAw"] || "Add a tag"}
+					title={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgPWvCAw"] || "Add a role"}
 					children={children}
 					actions={actions}
 					modal={true}
@@ -243,18 +276,20 @@ class Tags extends Component {
 	}
 }
 
-Tags.defaultProps = {
+Roles.defaultProps = {
 	contents: {}
 }
 
-Tags.propTypes = {
+Roles.propTypes = {
 	contents: PropTypes.object.isRequired, 
-	tagsGet: PropTypes.func.isRequired, 
-	tags: PropTypes.object.isRequired, 
-	tagsPost: PropTypes.func.isRequired, 
-	tagDelete: PropTypes.func.isRequired
+	rolesGet: PropTypes.func.isRequired, 
+	roles: PropTypes.object.isRequired, 
+	roleTypesGet: PropTypes.func.isRequired, 
+	roleTypes: PropTypes.object.isRequired, 
+	rolesPost: PropTypes.func.isRequired, 
+	roleDelete: PropTypes.func.isRequired
 }
 
-Tags.muiName = "GridList"
+Roles.muiName = "GridList"
 
-export default Tags
+export default Roles

@@ -34,10 +34,10 @@ const PageTile = ({page, isChecked}) => {
 			link: {activeStyle}, 
 			checkbox
 		} = styles
-		const {ID, title, link} = page
+		const {ID, text, link} = page
 		return (
 			<GridTile  
-				title={title}
+				title={text}
 				titlePosition="top"
 				titleBackground={titleBackground} 
 				cols={ID === "Root" ? 2 : 1} 

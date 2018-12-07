@@ -90,7 +90,7 @@ class Body extends Component {
 			}, 
 			badge: {
 				badgeStyle: {
-					display: (this.session && 5) ? "flex" : "none", 
+					display: this.session ? "flex" : "none", 
 					width: 21, 
 					height: 21, 
 					zIndex: 1, 
@@ -98,7 +98,7 @@ class Body extends Component {
 					right: 13
 				}, 
 				style: {
-					display: (this.session) ? "flex" : "none", 
+					display: this.session ? "flex" : "none", 
 					paddingTop: 5 ? 8 : 0, 
 					paddingRight: 5 ? 14 : 0, 
 					paddingBottom: 0, 

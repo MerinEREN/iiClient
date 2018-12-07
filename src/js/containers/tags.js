@@ -1,7 +1,7 @@
 import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
 import TagsComponent from "../components/tags"
-import tagsGet, {tagPost, tagsDelete}  from "../middlewares/tags"
+import tagsGet, {tagsPost, tagDelete}  from "../middlewares/tags"
 
 // Can use ownProps here.
 const mapStateToProps = state => {
@@ -18,8 +18,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
 		tagsGet, 
-		tagPost, 
-		tagsDelete
+		tagsPost, 
+		tagDelete
 	},
 	dispatch
 )

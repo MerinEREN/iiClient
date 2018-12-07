@@ -7,7 +7,7 @@ import Dialog from "material-ui/Dialog"
 import FlatButton from "material-ui/FlatButton"
 import VerticalStepper from "./verticalStepper"
 import TextField from "material-ui/TextField"
-import TagTile from "./tagTile"
+import RoleTypeTile from "./roleTypeTile"
 
 const styles = {
 	root: {
@@ -25,16 +25,16 @@ const styles = {
 	}
 }
 
-class Tags extends Component {
+class RoleTypes extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
 			showDialog: false, 
 			stepIndex: 0, 
-			tagNew: {
-				contentID: ""
+			roleTypeNew: {
+				ID: ""
 			}, 
-			inputErrTexts: {}
+			inputErrText: {}
 		}
 		this.toggleDialog = this.toggleDialog.bind(this)
 		this.handleStepIndex = this.handleStepIndex.bind(this)
@@ -43,7 +43,7 @@ class Tags extends Component {
 		this.handleDelete = this.handleDelete.bind(this)
 	}
 	componentWillMount() {
-		this.props.tagsGet()
+		this.props.roleTypesGet()
 	}
 	handleStepIndex(direction) {
 		const {stepIndex} = this.state
@@ -67,15 +67,15 @@ class Tags extends Component {
 		let key
 		switch (i) {
 			case 1:
-				key = "contentID"
+				key = "ID"
 				break
 			default:
 				return false
 		}
-		if (!this.state.tagNew[key]) {
+		if (!this.state.roleTypeNew[key]) {
 			this.setState({
-				inputErrTexts: {
-					...this.state.inputErrTexts, 
+				inputErrText: {
+					...this.state.inputErrText, 
 					[key]: contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"] || "Required field"
 				}
 			})
@@ -89,16 +89,16 @@ class Tags extends Component {
 		const name = target.name
 		const value = target.value
 		const {
-			tagNew, 
-			inputErrTexts
+			roleTypeNew, 
+			inputErrText
 		} = this.state
 		this.setState({
-			tagNew: {
-				...tagNew, 
+			roleTypeNew: {
+				...roleTypeNew, 
 				[name]: value
 			}, 
-			inputErrTexts: {
-				...inputErrTexts, 
+			inputErrText: {
+				...inputErrText, 
 				[name]: null
 			}
 		})
@@ -106,26 +106,26 @@ class Tags extends Component {
 	handlePost() {
 		const {
 			stepIndex, 
-			tagNew
+			roleTypeNew
 		} = this.state
 		if(this.handleRequiredField(stepIndex))
 			return
 		this.toggleDialog()
-		this.props.tagsPost({
+		this.props.roleTypesPost({
 			body: {
 				type: "FormData", 
 				// Use "contentType" for "Blob" type.
 				// contentType: "application/json", 
 				data: {
-					tag: {
-						...tagNew
+					roleType: {
+						...roleTypeNew
 					}
 				}
 			}
 		})
 		this.setState({
-			tagNew: {
-				contentID: ""
+			roleTypeNew: {
+				ID: ""
 			}, 
 			stepIndex: 0
 		})
@@ -134,22 +134,18 @@ class Tags extends Component {
 		this.setState({showDialog: !this.state.showDialog})
 	}
 	handleDelete(ID) {
-		this.props.tagDelete({
-			URL: `/tags/${ID}`, 
+		this.props.roleTypeDelete({
+			URL: `/roleTypes/${ID}`, 
 			body: {
 				data: [ID]
 			}
 		})
 	}
-	tagTiles(tags) {
-		const {
-			contents
-		} = this.props
-		return Object.entries(tags).map(([k, v]) => 
-			<TagTile 
+	roleTypeTiles(roleTypes) {
+		return Object.entries(roleTypes).map(([k, v]) => 
+			<RoleTypeTile 
 				key={k} 
-				tag={v} 
-				text={contents[v.contentID]}
+				roleType={v} 
 				handleDelete={this.handleDelete}
 			/>)
 	}
@@ -162,31 +158,31 @@ class Tags extends Component {
 		const {
 			showDialog, 
 			stepIndex, 
-			inputErrTexts, 
-			tagNew
+			inputErrText, 
+			roleTypeNew
 		} = this.state
 		const {
 			contents, 
-			tags
+			roleTypes
 		} = this.props
 		const stepLabels = Object.keys(contents).length > 0 ?
 			[
 				contents["Description"], 
-				contents["Tag"]
+				contents["RoleType"]
 			] :
 			[
 				"Description", 
-				"Tag"
+				"RoleType"
 			]
 		const stepContents = [
 			<p>
-				{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIH-CQw"] || "Add a new tag. The field is required."}
+				{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIH-CQw"] || "Add a new roleType. The field is required."}
 			</p>, 
 			<TextField 
-				name="contentID"
-				value={tagNew.contentID || ""}
-				floatingLabelText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIGBCAw"] || "Content ID"}
-				errorText={inputErrTexts.contentID}
+				name="ID"
+				value={roleTypeNew.ID || ""}
+				floatingLabelText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIGBCAw"] || "ID"}
+				errorText={inputErrText.ID}
 				onChange={this.handleInputChange}
 			/>
 		]
@@ -211,12 +207,12 @@ class Tags extends Component {
 		return (
 			<div style={root}>
 				{ 
-					Object.entries(tags).length !== 0 
+					Object.entries(roleTypes).length !== 0 
 						? 
 						<GridList 
 							style={gridList}
 						>
-							{this.tagTiles(tags)}
+							{this.roleTypeTiles(roleTypes)}
 						</GridList>
 						:
 						<h3>{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI6lCgw"] || "No Content"}</h3>
@@ -232,7 +228,7 @@ class Tags extends Component {
 						</FloatingActionButton>
 				}
 				<Dialog
-					title={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIHeCAw"] || "Add a tag"}
+					title={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIHeCAw"] || "Add a roleType"}
 					children={children}
 					actions={actions}
 					modal={true}
@@ -243,18 +239,18 @@ class Tags extends Component {
 	}
 }
 
-Tags.defaultProps = {
+RoleTypes.defaultProps = {
 	contents: {}
 }
 
-Tags.propTypes = {
+RoleTypes.propTypes = {
 	contents: PropTypes.object.isRequired, 
-	tagsGet: PropTypes.func.isRequired, 
-	tags: PropTypes.object.isRequired, 
-	tagsPost: PropTypes.func.isRequired, 
-	tagDelete: PropTypes.func.isRequired
+	roleTypesGet: PropTypes.func.isRequired, 
+	roleTypes: PropTypes.object.isRequired, 
+	roleTypesPost: PropTypes.func.isRequired, 
+	roleTypeDelete: PropTypes.func.isRequired
 }
 
-Tags.muiName = "GridList"
+RoleTypes.muiName = "GridList"
 
-export default Tags
+export default RoleTypes

@@ -318,6 +318,12 @@ export const fetchFailure = (state, action) => {
 
 export const resetReducer = (state, action) => action.value
 
+export const resetReducerPartially = (state, {key, value}) => {
+	return {
+		...state, 
+		[key]: value
+	}
+}
 
 export const resetArrayOrObject = (state, action) => {
 	if (action.method === "DELETE" || action.method === "POST")

@@ -6,7 +6,7 @@ import Chip from 'material-ui/Chip'
 import {blue300} from "material-ui/styles/colors"
 import {getFirstLetters} from "./utilities"
 
-const TagTile = ({tag: {ID}, text, handleDelete}) => (
+const RoleTile = ({role: {ID}, text, handleDelete}) => (
 	<GridTile>
 		<Chip 
 			onRequestDelete={() => handleDelete(ID)}
@@ -22,10 +22,10 @@ const TagTile = ({tag: {ID}, text, handleDelete}) => (
 	</GridTile>
 )
 
-TagTile.propTypes = {
-	tag: PropTypes.object.isRequired, 
+RoleTile.propTypes = {
+	role: PropTypes.object.isRequired, 
 	text: PropTypes.string, 
 	handleDelete: PropTypes.func.isRequired
 }
 
-export default TagTile
+export default RoleTile

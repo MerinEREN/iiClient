@@ -38,8 +38,8 @@ class Pages extends Component {
 		this.state = {
 			showDialog: false, 
 			stepIndex: 0, 
-			title: "", 
-			errFields: {}
+			text: "", 
+			inputErrTexts: {}
 		}
 		this.toggleDialog = this.toggleDialog.bind(this)
 		this.handleStepIndex = this.handleStepIndex.bind(this)
@@ -69,19 +69,19 @@ class Pages extends Component {
 	}
 	handleRequiredField(i) {
 		const {
-			title, 
-			errFields
+			text, 
+			inputErrTexts
 		} = this.state
 		const {
 			contents
 		} = this.props
 		switch (i) {
 			case 1:
-				if(!title) {
+				if(!text) {
 					this.setState({
-						errFields: {
-							...errFields, 
-							title: contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"]
+						inputErrTexts: {
+							...inputErrTexts, 
+							text: contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"] || "Required field" 
 						}
 					})
 					return true
@@ -96,34 +96,34 @@ class Pages extends Component {
 		const name = target.name
 		const value = target.value
 		const {
-			title, 
-			errFields
+			text, 
+			inputErrTexts
 		} = this.state
 		this.setState({
-			title: value, 
-			errFields: {
-				...errFields, 
+			text: value, 
+			inputErrTexts: {
+				...inputErrTexts, 
 				[name]: ""
 			}
 		})
 	}
 	handlePost() {
 		this.toggleDialog()
-		const {title} = this.state
+		const {text} = this.state
 		this.props.postPage({
 			body: {
 				type: "FormData", 
 				// Use "contentType" for "Blob" type.
 				// contentType: "application/json", 
 				data: {
-					[trimSpace(title)]: {
-						title: title.trim(), 
+					[trimSpace(text)]: {
+						text: text.trim(), 
 						file: this.file.files[0] 
 					}
 				}
 			}
 		})
-		this.setState({title: "", stepIndex: 0})
+		this.setState({text: "", stepIndex: 0})
 	}
 	toggleDialog() {
 		this.setState({showDialog: !this.state.showDialog})
@@ -159,28 +159,34 @@ class Pages extends Component {
 		const {
 			showDialog, 
 			stepIndex, 
-			title, 
-			errFields
+			text, 
+			inputErrTexts
 		} = this.state
 		const {
 			contents, 
 			pages, 
 			pageIDsSelected
 		} = this.props
-		const stepLabels = [
-			contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbDCAw"], 
-			contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI7lCAw"], 
-			contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI7lCgw"]
-		]
+		const stepLabels = Object.keys(contents).length > 0 ?
+			[
+				contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbDCAw"], 
+				contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI7lCAw"], 
+				contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI7lCgw"]
+			] :
+			[
+				"Description", 
+				"Name", 
+				"File"
+			]
 		const stepContents = [
 			<p>
-				{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI7VCgw"]}
+				{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaDCAw"] || "Add a new page. Name field is required."}
 			</p>, 
 			<TextField 
-				name="title" 
-				value={title}
-				floatingLabelText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI7lCAw"]}
-				errorText={errFields.title}
+				name="text" 
+				value={text}
+				floatingLabelText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI7lCAw"] || "Name"}
+				errorText={inputErrTexts.text}
 				onChange={this.handleFieldChange}
 			/>, 
 			<input 
@@ -197,12 +203,12 @@ class Pages extends Component {
 		/>
 		const actions = [
 			<FlatButton
-				label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCww"] || " "}
+				label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCww"] || "Close"}
 				onTouchTap={this.toggleDialog}
 			/>
 		]
 		stepContents.length - 1 === stepIndex && actions.push(<FlatButton
-			label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || " "}
+			label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || "Save"}
 			primary={true}
 			onTouchTap={this.handlePost}
 		/>)
@@ -227,12 +233,12 @@ class Pages extends Component {
 								{this.pageTiles(pages)}
 							</GridList>
 							:
-							<h3>{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI6lCgw"]}</h3>
+							<h3>{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI6lCgw"] || "No Content"}</h3>
 						}
 						{
 							pageIDsSelected.length > 0 && 
 								<RaisedButton
-									label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCAw"] || " "}
+									label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCAw"] || "Delete"}
 									style={raisedButton}
 									secondary={true}
 									onTouchTap={this.handleDelete}
@@ -252,7 +258,7 @@ class Pages extends Component {
 						</FloatingActionButton>
 				}
 				<Dialog
-					title={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI6VCAw"]}
+					title={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI6VCAw"] || "Add a page"}
 					children={children}
 					actions={actions}
 					modal={true}

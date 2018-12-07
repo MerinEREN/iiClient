@@ -2,6 +2,7 @@ import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
 import SignedComponent from "../components/signed"
 import userLoggedGet from "../middlewares/userLogged"
+import userRolesGet from "../middlewares/userRoles"
 import userTagsGet from "../middlewares/userTags"
 import languagesGet from "../middlewares/languages"
 import signOutURLGet from "../middlewares/signOutURL"
@@ -22,6 +23,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
 		userLoggedGet, 
+		userRolesGet, 
 		userTagsGet, 
 		languagesGet, 
 		signOutURLGet, 

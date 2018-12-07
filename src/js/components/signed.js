@@ -47,16 +47,25 @@ class Signed extends Component {
 	componentWillMount() {
 		const {
 			userLoggedGet, 
+			userRolesGet, 
 			userTagsGet, 
 			languagesGet, 
 			signOutURLGet
 		} = this.props
-		userLoggedGet().then(() => userTagsGet(
-			{
-				URL: `/userTags/${this.props.user.ID}`, 
-				key: this.props.user.ID
-			}
-		))
+		userLoggedGet().then(() => { 
+			userRolesGet(
+				{
+					URL: `/userRoles/${this.props.user.ID}`, 
+					key: this.props.user.ID
+				}
+			)
+			userTagsGet(
+				{
+					URL: `/userTags/${this.props.user.ID}`, 
+					key: this.props.user.ID
+				}
+			)
+		})
 		languagesGet()
 		signOutURLGet()
 	}
@@ -99,7 +108,7 @@ class Signed extends Component {
 				<Card style={styles.card}>
 					<CardHeader
 						title={user.email}
-						subtitle={`${contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIabCAw"]}: 4`} 
+						subtitle={`Score ${contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIabCAw"]}: 4`} 
 						textStyle={styles.cardHeader.textStyle}
 						avatar={user.link || "/img/adele.jpg"}
 					/>
@@ -108,7 +117,7 @@ class Signed extends Component {
 				{
 					Object.values(languages).length !== 0 && 
 						<MenuItem 
-							primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJaDCgw"]}
+							primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJaDCgw"] || "Language"}
 							leftIcon={<ChevronLeft />}
 							rightIcon={<Language />}
 							menuItems={
@@ -117,7 +126,7 @@ class Signed extends Component {
 										l => 
 										<MenuItem 
 											key={l.ID}
-											primaryText={contents[l.name]} 
+											primaryText={contents[l.contentID]} 
 											checked={l.ID === this.state.lang}
 											insetChildren={true}
 											onTouchTap={() => this.selectLanguage(l.ID)}
@@ -131,7 +140,7 @@ class Signed extends Component {
 					style={styles.a}
 				>
 					<MenuItem 
-						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJb9CAw"]}
+						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJb9CAw"] || "Log out"}
 						insetChildren={true}
 						rightIcon={<SignOut />}
 					/>
@@ -150,6 +159,7 @@ Signed.propTypes = {
 	languages: PropTypes.object.isRequired, 
 	userLoggedGet: PropTypes.func.isRequired, 
 	user: PropTypes.object.isRequired, 
+	userRolesGet: PropTypes.func.isRequired, 
 	userTagsGet: PropTypes.func.isRequired, 
 	signOutURLGet: PropTypes.func.isRequired, 
 	signOutURL: PropTypes.string.isRequired, 

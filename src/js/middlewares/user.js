@@ -4,6 +4,9 @@ import {
 } from "../actions/user"
 
 const userGet = makeLoader({
+	defaults: {
+		kind: "users"
+	}, 
 	actionCreators: {
 		actionsSuccess: [userSuccess]
 	}

@@ -12,14 +12,13 @@
 export default function makeActionCreator(type, ...argNames) {
 	let action = {type}
 	// If argNames provided match with returned args
-	if(argNames.length) {
+	if(argNames.length)
 		return (...args) => {
 			argNames.forEach((v, i) => {
 				action[v] = args[i]
 			})
 			return action
 		}
-	}
 	return (args) => {
 		return {...action, ...args}
 	}
