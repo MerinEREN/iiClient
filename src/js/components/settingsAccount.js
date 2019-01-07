@@ -41,7 +41,8 @@ class AccountSettings extends Component {
 			showDialog: false, 
 			stepIndex: 0, 
 			newObject: {},  
-			inputErrTexts: {}
+			inputErrTexts: {}, 
+			fetchUsers: true
 		}
 		this.toggleDialog = this.toggleDialog.bind(this)
 		this.handleStepIndex = this.handleStepIndex.bind(this)
@@ -57,9 +58,12 @@ class AccountSettings extends Component {
 			account: {ID}
 		} = this.props
 		// CHANGE THE CONTROL BELOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		ID && usersGet({
-			URL:`/users?accID=${ID}`
-		})
+		if (this.state.fetchUsers && ID) {
+			usersGet({
+				URL:`/users?accID=${ID}`
+			})
+			this.setState({fetchUsers: false})
+		}
 		rolesGet()
 		tagsGet()
 	}
@@ -116,7 +120,7 @@ class AccountSettings extends Component {
 			this.setState({
 				inputErrTexts: {
 					...inputErrTexts, 
-					[key]: contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"] || "Required field"
+					[key]: contents["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"] || "Required Field"
 				}
 			})
 			return true
@@ -216,7 +220,7 @@ class AccountSettings extends Component {
 	rolesField({roleIDs}, inputErrTexts, contents) {
 		return <SelectField
 			multiple={true} 
-			hintText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgK6ZCgw"] || "Roles"}
+			hintText={contents["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFUm9sZXMM"] || "Roles"}
 			value={roleIDs}
 			errorText={inputErrTexts.roleIDs}
 			onChange={this.handleFieldChange}
@@ -240,7 +244,7 @@ class AccountSettings extends Component {
 	tagsField({tagIDs}, inputErrTexts, contents) {
 		return <SelectField
 			multiple={true} 
-			hintText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgK6ZCgw"] || "Tags"}
+			hintText={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEVGFncww"] || "Tags"}
 			value={tagIDs}
 			errorText={inputErrTexts.tagIDs}
 			onChange={this.handleFieldChange}
@@ -268,10 +272,10 @@ class AccountSettings extends Component {
 		} = this.props
 		const stepLabels = Object.keys(contents).length > 0 ?
 			[
-			contents["Description"], 
+			contents["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"], 
 			"Email", 
-			contents["Roles"], 
-			contents["Tags"]
+			contents["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFUm9sZXMM"], 
+			contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEVGFncww"]
 			] : 
 			[
 				"Description", 
@@ -281,7 +285,7 @@ class AccountSettings extends Component {
 			]
 		const stepContents = [
 			<p>
-				{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgPWfCQw"] || "Add a new user. Email and Roles fields are required."}
+				{contents["aghkZXZ-Tm9uZXJBCxIHQ29udGVudCI0QWRkIGEgbmV3IHVzZXIuIEVtYWlsIGFuZCBSb2xlcyBmaWVsZHMgYXJlIHJlcXVpcmVkLgw"] || "Add a new user. Email and Roles fields are required."}
 			</p>, 
 			this.emailField(newObject, inputErrTexts, contents), 
 			this.rolesField(newObject, inputErrTexts, contents), 
@@ -296,12 +300,12 @@ class AccountSettings extends Component {
 		/>
 		const actions = [
 			<FlatButton
-				label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCww"] || "Close"}
+				label={contents["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
 				onTouchTap={this.toggleDialog}
 			/>
 		]
 		stepContents.length - 1 === stepIndex && actions.push(<FlatButton
-			label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || "Save"}
+			label={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
 			primary={true}
 			onTouchTap={this.handlePost}
 		/>)
@@ -329,7 +333,7 @@ class AccountSettings extends Component {
 						{
 							userIDsSelected.length > 0 && 
 								<RaisedButton
-									label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCAw"] || "Delete"}
+									label={contents["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"] || "Delete"}
 									style={raisedButton}
 									secondary={true}
 									onTouchTap={this.handleDelete}
@@ -349,7 +353,7 @@ class AccountSettings extends Component {
 						</FloatingActionButton>
 				}
 				<Dialog
-					title={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJWACQw"] || "Add a new user"}
+					title={contents["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOQWRkIEEgTmV3IFVzZXIM"] || "Add A New User"}
 					children={children}
 					actions={actions}
 					modal={true}
@@ -374,7 +378,7 @@ AccountSettings.propTypes = {
 	userIDsSelected: PropTypes.array.isRequired, 
 	usersGet: PropTypes.func.isRequired, 
 	userPost: PropTypes.func.isRequired, 
-	usersDelete: PropTypes.func.isRequired, 
+	usersDelete: PropTypes.func, 
 	tagsGet: PropTypes.func.isRequired, 
 	rolesGet: PropTypes.func.isRequired
 }

@@ -1,5 +1,4 @@
 import createReducer, {
-	paginate, 
 	mergeIntoOrRemoveFromObject, 
 	removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
 	mergeIntoOrResetObject, 
@@ -32,14 +31,6 @@ export const usersBuffered = createReducer(
 		...userBuffered
 	}
 )
-export const paginationUsers = paginate({
-	mapActionToKey: action => action.key, 
-	types: [
-		USERS_REQUEST, 
-		USERS_SUCCESS, 
-		USERS_FAILURE
-	]
-})
 export const userIDsSelected = createReducer([], 
 	{
 		USERS_REQUEST: resetArrayOrObject, 

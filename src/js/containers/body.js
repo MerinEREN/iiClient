@@ -31,7 +31,7 @@ const mapStateToProps = state => {
 	const {
 		appState: {snackbars, isFetching}, 
 		entitiesBuffered: {userLogged}, 
-		ui: {contents: {body}}
+		ui: {contentsByPage: {body}}
 	} = state
 	return {
 		user: userLogged, 

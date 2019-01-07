@@ -9,6 +9,10 @@ const userGet = makeLoader({
 	}, 
 	actionCreators: {
 		actionsSuccess: [userSuccess]
+	}, 
+	options: {
+		// Bypassing pagination control.
+		isCached: false
 	}
 })
 export const userPut = makeLoader({

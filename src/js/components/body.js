@@ -10,6 +10,7 @@ import IconButton from "material-ui/IconButton"
 import Badge from "material-ui/Badge"
 import NotificationsIcon from "material-ui/svg-icons/social/notifications"
 import LandingPage from "../containers/landingPage"
+import Unauthorized from "../components/unauthorized"
 import Signin  from "../containers/signin"
 import Signed  from "../containers/signed"
 import Drawer from "../containers/drawer"
@@ -116,50 +117,57 @@ class Body extends Component {
 						value={this.state.completed} 
 					/>
 				}
-				<AppBar
-					title={user.email || "Ince Is"}
-					style={this.styles.appBar}
-					showMenuIconButton={this.session !== undefined}
-					onLeftIconButtonTouchTap={() => toggleDrawer()}
-				>
-					<ToolbarGroup>
-							<Badge 
-								badgeContent={5} 
-								secondary={true} 
-								badgeStyle={this.styles.badge.badgeStyle}
-								style={this.styles.badge.style}
-							>
-								<IconButton 
-									tooltip="Notifications"
+				{
+					(user.status !== "deleted" && user.status !== "suspended") && 
+						<AppBar
+							title={user.email || "Ince Is"}
+							style={this.styles.appBar}
+							showMenuIconButton={this.session !== undefined}
+							onLeftIconButtonTouchTap={() => toggleDrawer()}
+						>
+							<ToolbarGroup>
+								<Badge 
+									badgeContent={5} 
+									secondary={true} 
+									badgeStyle={this.styles.badge.badgeStyle}
+									style={this.styles.badge.style}
 								>
-									<NotificationsIcon/>
-								</IconButton>
-							</Badge>
-						{
-							this.session ?
-								<Signed 
-									{...this.props} 
-									session={this.session}
-									lang={this.lang}
-								/> :
-								<Signin 
-									contents={contents} 
-								/>
-						}
-					</ToolbarGroup>
-				</AppBar>
-				{this.session && <Drawer {...this.props} />}
+									<IconButton 
+										tooltip={contents["aghkZXZ-Tm9uZXIaCxIHQ29udGVudCINTm90aWZpY2F0aW9ucww"] || "notifications"}
+									>
+										<NotificationsIcon/>
+									</IconButton>
+								</Badge>
+								{
+									this.session ?
+										<Signed 
+											{...this.props} 
+											session={this.session}
+											lang={this.lang}
+										/> :
+										<Signin 
+											contents={contents} 
+										/>
+								}
+							</ToolbarGroup>
+						</AppBar>
+				}
+				{(this.session && user.status !== "deleted" && user.status !== "suspended") && <Drawer {...this.props} />}
 				{
 					this.session ? 
 						(
-							location.pathname === "/" ? 
+							(user.status !== "deleted" && user.status !== "suspended") ?
 							(
-								user.tags && user.tags.length ? 
-								timeline : 
-								dashboard
+								location.pathname === "/" ? 
+								(
+									user.tags && user.tags.length ? 
+									timeline : 
+									dashboard
+								) : 
+								children
 							) : 
-							children
-						) :
+							<Unauthorized />
+						) : 
 						<LandingPage />
 				}
 				{

@@ -2,17 +2,20 @@ import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
 import UserSettingsComponent from "../components/settingsUser"
 import userGet from "../middlewares/user"
+import {userDelete} from "../middlewares/users"
 import rolesGet from "../middlewares/roles"
 import tagsGet from "../middlewares/tags"
 import userRolesGet, {userRolesPost, userRoleDelete} from "../middlewares/userRoles"
 import userTagsGet, {userTagsPost, userTagDelete} from "../middlewares/userTags"
-import {roleIDsSelectedByUserReset} from "../actions/roles"
-import {tagIDsSelectedByUserReset} from "../actions/tags"
+import {roleIDsSelectedByUserSet, roleIDsSelectedByUserRemove} from "../actions/roles"
+import {tagIDsSelectedByUserSet, tagIDsSelectedByUserRemove} from "../actions/tags"
+import {userRolesRemove} from "../actions/userRoles"
+import {userTagsRemove} from "../actions/userTags"
 
 // Can use ownProps here.
 const mapStateToProps = (state, ownProps) => {
 	const {
-		ui: {contents: {user: contents}}, 
+		ui: {contentsByPage: {user: contents}}, 
 		entitiesBuffered: {
 			userLogged, 
 			users, 
@@ -44,12 +47,17 @@ const mapDispatchToProps = dispatch => bindActionCreators(
 		tagsGet, 
 		userRolesGet, 
 		userTagsGet, 
-		roleIDsSelectedByUserReset, 
-		tagIDsSelectedByUserReset, 
+		roleIDsSelectedByUserSet, 
+		tagIDsSelectedByUserSet, 
+		roleIDsSelectedByUserRemove, 
+		tagIDsSelectedByUserRemove, 
 		userRolesPost, 
 		userTagsPost, 
 		userRoleDelete, 
-		userTagDelete
+		userTagDelete, 
+		userDelete, 
+		userRolesRemove, 
+		userTagsRemove
 	},
 	dispatch
 )

@@ -76,7 +76,7 @@ class Tags extends Component {
 			this.setState({
 				inputErrTexts: {
 					...this.state.inputErrTexts, 
-					[key]: contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"] || "Required field"
+					[key]: contents["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"] || "Required Field"
 				}
 			})
 			return true
@@ -171,8 +171,8 @@ class Tags extends Component {
 		} = this.props
 		const stepLabels = Object.keys(contents).length > 0 ?
 			[
-				contents["Description"], 
-				contents["Tag"]
+				contents["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"], 
+				contents["aghkZXZ-Tm9uZXIQCxIHQ29udGVudCIDVGFnDA"]
 			] :
 			[
 				"Description", 
@@ -180,12 +180,12 @@ class Tags extends Component {
 			]
 		const stepContents = [
 			<p>
-				{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIH-CQw"] || "Add a new tag. The field is required."}
+				{contents["aghkZXZ-Tm9uZXIyCxIHQ29udGVudCIlQWRkIGEgbmV3IHRhZy4gVGhlIGZpZWxkIGlzIHJlcXVpcmVkLgw"] || "Add a new tag. The field is required."}
 			</p>, 
 			<TextField 
 				name="contentID"
 				value={tagNew.contentID || ""}
-				floatingLabelText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIGBCAw"] || "Content ID"}
+				floatingLabelText="ID"
 				errorText={inputErrTexts.contentID}
 				onChange={this.handleInputChange}
 			/>
@@ -199,12 +199,12 @@ class Tags extends Component {
 		/>
 		const actions = [
 			<FlatButton
-				label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCww"] || "Close"}
+				label={contents["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
 				onTouchTap={this.toggleDialog}
 			/>
 		]
 		stepContents.length - 1 === stepIndex && actions.push(<FlatButton
-			label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || "Save"}
+			label={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
 			primary={true}
 			onTouchTap={this.handlePost}
 		/>)
@@ -219,7 +219,7 @@ class Tags extends Component {
 							{this.tagTiles(tags)}
 						</GridList>
 						:
-						<h3>{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI6lCgw"] || "No Content"}</h3>
+						<h3>{contents["aghkZXZ-Tm9uZXIXCxIHQ29udGVudCIKTm8gQ29udGVudAw"] || "No Content"}</h3>
 				}
 				{
 					!showDialog && 
@@ -232,7 +232,7 @@ class Tags extends Component {
 						</FloatingActionButton>
 				}
 				<Dialog
-					title={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIHeCAw"] || "Add a tag"}
+					title={contents["aghkZXZ-Tm9uZXIaCxIHQ29udGVudCINQWRkIEEgTmV3IFRhZww"] || "Add A New Tag"}
 					children={children}
 					actions={actions}
 					modal={true}

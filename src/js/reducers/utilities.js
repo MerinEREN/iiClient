@@ -168,9 +168,12 @@ export const addDynamicKeyReturnResult = ({types, mapActionToKey}) => {
 	}
 }
 
+// If the result is an obeject merge it into state, 
+// if it is an array of keys generate the necessary object than merge it into state.
 export const mergeIntoOrRemoveFromObject = (state, action) => {
 	const {
 		method, 
+		stateSlice, 
 		key, 
 		response: {
 			result
@@ -179,16 +182,35 @@ export const mergeIntoOrRemoveFromObject = (state, action) => {
 	if (method === "DELETE")
 		return removeFromAnObject(state, action)
 	if (key != "all")
-		return result ? 
+		return result ? (
+			Array.isArray(result) ? 
+			{
+				...state, 
+				[key]: {
+					...state[key], 
+					...resultByKeys(stateSlice, result)
+				}
+			} : 
 			{
 				...state, 
 				[key]: {
 					...state[key], 
 					...result
 				}
-			} : 
+			}
+		) : 
 			state
-	return result ? {...state, ...result} : state
+	return result ? (
+		Array.isArray(result) ? 
+		{...state, ...resultByKeys(stateSlice, result)} : 
+		{...state, ...result}
+	) : state
+}
+
+const resultByKeys = (kind, keys) => {
+	let result = {}
+	keys.forEach(v => result[v] = kind[v])
+	return result
 }
 
 export const removeFromObjectIfDeleteOrMergeIntoOrResetObject = (state, action) => {
@@ -211,9 +233,9 @@ export const mergeIntoOrResetObject = (state, action) => {
 		key, 
 		mergeIntoState
 	} = action
+	if (method === "DELETE")
+		return state
 	if (key != "all") {
-		if (method === "DELETE")
-			return state
 		// If PUT request returns data merge it.
 		if (mergeIntoState) {
 			return {
@@ -237,8 +259,6 @@ export const mergeIntoOrResetObject = (state, action) => {
 			} : 
 			state
 	} else {
-		if (method === "DELETE")
-			return state
 		// If PUT request returns data merge it.
 		if (mergeIntoState) {
 			return {...state, ...result}
@@ -318,7 +338,7 @@ export const fetchFailure = (state, action) => {
 
 export const resetReducer = (state, action) => action.value
 
-export const resetReducerPartially = (state, {key, value}) => {
+export const setReducerPartially = (state, {key, value}) => {
 	return {
 		...state, 
 		[key]: value
@@ -344,7 +364,7 @@ export const addToOrRemoveFromArray = (state, action) => {
 // Inserts an object into another object by it's key or removes if it is present.
 export const addToOrRemoveFromAnObject = (state, action) => {
 	if (state.hasOwnProperty(action.object.ID))
-		return removeByKeyFromAnObject(state, action.object.ID)
+		return removeByKeyFromAnObject(state, action)
 	return addByKeyToAnObject(state, action)
 }
 
@@ -362,11 +382,18 @@ export const addByKeyToObject = (state, action) => {
 	return {...state, ...action.object}
 }
 
-const removeByKeyFromAnObject = (state, key) => {
+// Removes an object by an object ID or a key from a container object.
+export const removeByKeyFromAnObject = (state, action) => {
 	let newState = {}
-	Object.entries(state).forEach(([k, v]) => {
-			if (k !== key)
+	if (action.object)
+		Object.entries(state).forEach(([k, v]) => {
+			if (k !== action.object.ID)
 				newState[k] = v
+		})
+	// If action has a key.
+	Object.entries(state).forEach(([k, v]) => {
+		if (k !== action.key)
+			newState[k] = v
 	})
 	return newState
 }

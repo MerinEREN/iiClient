@@ -32,7 +32,7 @@ const HorizontalStepper = ({contents, stepLabels, stepContents, stepIndex, updat
 			(save && stepIndex === stepContents.length - 1) 
 			&& 
 			<RaisedButton
-				label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || "Save"}
+				label={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
 				disableTouchRipple={true}
 				disableFocusRipple={true}
 				primary={true}
@@ -44,7 +44,7 @@ const HorizontalStepper = ({contents, stepLabels, stepContents, stepIndex, updat
 			stepIndex !== stepContents.length - 1 
 			&& 
 			<RaisedButton
-			label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLajCgw"] || "Next"}
+				label={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIETmV4dAw"] || "Next"}
 				disableTouchRipple={true}
 				disableFocusRipple={true}
 				primary={true}
@@ -56,7 +56,7 @@ const HorizontalStepper = ({contents, stepLabels, stepContents, stepIndex, updat
 			(cancel && stepIndex === stepContents.length - 1) 
 			&& 
 			<RaisedButton
-			label={contents["Cancel !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"] || "Cancel"}
+			label={contents["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGQ2FuY2VsDA"] || "Cancel"}
 				disableTouchRipple={true}
 				disableFocusRipple={true}
 				secondary={true}
@@ -68,7 +68,7 @@ const HorizontalStepper = ({contents, stepLabels, stepContents, stepIndex, updat
 			stepIndex > 0 
 			&& 
 			<FlatButton
-				label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLajCQw"] || "Back"}
+				label={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEQmFjaww"] || "Back"}
 				disabled={stepIndex === 0}
 				disableTouchRipple={true}
 				disableFocusRipple={true}

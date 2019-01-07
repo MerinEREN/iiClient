@@ -24,7 +24,7 @@ const styles = {
 }
 
 // FIND A WAY TO PREVENT TO TRIGER LINK WHEN CHECKBOX CHECKED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-const UserTile = ({user: {ID, email, name, link}, isChecked}) => {
+const UserTile = ({user: {ID, email, name, link, status}, isChecked}) => {
 		const {
 			gridTile: {
 				paddingTop, 
@@ -52,7 +52,7 @@ const UserTile = ({user: {ID, email, name, link}, isChecked}) => {
 					paddingTop, 
 					marginTop, 
 					marginBottom, 
-					opacity: isChecked ? 0.5 : 1
+					opacity: (isChecked || status === "suspended") ? 0.5 : 1
 				}} 
 				actionIcon={
 					<Checkbox

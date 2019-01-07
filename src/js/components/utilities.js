@@ -1,17 +1,23 @@
 export const isAdmin = (roles) => {
 	if (!roles)
 		return false
-	if(Object.values(roles).every(v => v.contentID === "aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFYWRtaW4M"))
-		return true
-	return false
+	let check = false
+	Object.values(roles).forEach(v => {
+		if(v.contentID === "aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFYWRtaW4M")
+			check = true
+	})
+	return check
 }
 
 export const isContentEditor = (roles) => {
 	if (!roles)
 		return false
-	if(Object.values(roles).every(v => v.contentID === "aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOQ29udGVudCBFZGl0b3IM"))
-		return true
-	return false
+	let check = false
+	Object.values(roles).forEach(v => {
+		if(v.contentID === "aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOQ29udGVudCBFZGl0b3IM")
+			check = true
+	})
+	return check
 }
 
 // generateURLVariableFromIDs returns a string that established with provided object keys 
@@ -65,8 +71,8 @@ export const getRouteContents = (session, prevProps, nextProps) => {
 							})
 						} else {
 							get({
-								URL: "/contents?pageID=LandingPage", 
-								key: "LandingPage"
+								URL: "/contents?pageID=landingpage", 
+								key: "landingpage"
 							})
 						}
 					}
@@ -77,6 +83,7 @@ export const getRouteContents = (session, prevProps, nextProps) => {
 					} else if (v.path.includes(":ID/")) {
 						path = v.path.replace(":ID/", "")
 					}
+					path = path.toLowerCase()
 					get({
 						URL: `/contents?pageID=${path}`, 
 						key: path

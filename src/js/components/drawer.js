@@ -120,7 +120,7 @@ class MyDrawer extends Component {
 						<CardMedia
 							overlay={
 								<CardTitle 
-									title={`Score ${contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIabCAw"]}: 4`} 
+									title={`${contents["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFU2NvcmUM"]}: 4`} 
 								/>
 							}
 						>
@@ -133,17 +133,17 @@ class MyDrawer extends Component {
 						<List>
 							<ListItem 
 								leftIcon={<Skills />} 
-								primaryText={`Skills ${contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJa9Cgw"]}: 4`} 
+								primaryText={`${contents["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGU2tpbGxzDA"]}: 4`} 
 								disabled={true}
 							/>
 							<ListItem 
 								leftIcon={<Time />} 
-								primaryText={`Timing ${contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJa9CQw"]}: 3`} 
+								primaryText={`${contents["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGVGltaW5nDA"]}: 3`} 
 								disabled={true}
 							/>
 							<ListItem 
 								leftIcon={<Communication />} 
-								primaryText={`Communication ${contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJa9Cww"]}: 5`} 
+								primaryText={`${contents["aghkZXZ-Tm9uZXIaCxIHQ29udGVudCINQ29tbXVuaWNhdGlvbgw"]}: 5`} 
 									disabled={true}
 							/>
 						</List>
@@ -171,7 +171,7 @@ class MyDrawer extends Component {
 								activeStyle={styles.link.activeStyle}
 							/>
 						}
-						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJq3Cgw"] || "Home"}
+						primaryText={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIESG9tZQw"] || "Home"}
 						leftIcon={<Home />}
 					/>
 					<ListItem 
@@ -181,7 +181,7 @@ class MyDrawer extends Component {
 								activeStyle={styles.link.activeStyle}
 							/>
 						}
-						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLrHCAw"] || "Dashboard"}
+						primaryText={contents["aghkZXZ-Tm9uZXIWCxIHQ29udGVudCIJRGFzaGJvYXJkDA"] || "Dashboard"}
 						leftIcon={<Dashboard />}
 					/>
 					{
@@ -194,7 +194,7 @@ class MyDrawer extends Component {
 										activeStyle={styles.link.activeStyle}
 									/>
 								}
-								primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLqHCgw"] || "Languages"}
+								primaryText={contents["aghkZXZ-Tm9uZXIWCxIHQ29udGVudCIJTGFuZ3VhZ2VzDA"] || "Languages"}
 								leftIcon={<EditContent />}
 							/>
 					}
@@ -208,7 +208,7 @@ class MyDrawer extends Component {
 										activeStyle={styles.link.activeStyle}
 									/>
 								}
-								primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLqHCQw"] || "Pages"}
+								primaryText={contents["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFUGFnZXMM"] || "Pages"}
 								leftIcon={<EditContent />}
 							/>
 					}
@@ -222,7 +222,7 @@ class MyDrawer extends Component {
 										activeStyle={styles.link.activeStyle}
 									/>
 								}
-								primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLqHCww"] || "Contents"}
+								primaryText={contents["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIIQ29udGVudHMM"] || "Contents"}
 								leftIcon={<EditContent />}
 							/>
 					}
@@ -236,7 +236,7 @@ class MyDrawer extends Component {
 										activeStyle={styles.link.activeStyle}
 									/>
 								}
-								primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgK6ZCgw"] || "Tags"}
+								primaryText={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEVGFncww"] || "Tags"}
 								leftIcon={<EditContent />}
 							/>
 					}
@@ -250,7 +250,7 @@ class MyDrawer extends Component {
 										activeStyle={styles.link.activeStyle}
 									/>
 								}
-								primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgNWPCgw"] || "Roles"}
+								primaryText={contents["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFUm9sZXMM"] || "Roles"}
 								leftIcon={<EditContent />}
 							/>
 					}
@@ -264,7 +264,7 @@ class MyDrawer extends Component {
 										activeStyle={styles.link.activeStyle}
 									/>
 								}
-								primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgNWPCgw"] || "RoleTypes"}
+								primaryText={contents["aghkZXZ-Tm9uZXIXCxIHQ29udGVudCIKUm9sZSBUeXBlcww"] || "Role Types"}
 								leftIcon={<EditContent />}
 							/>
 					}
@@ -275,7 +275,7 @@ class MyDrawer extends Component {
 								activeStyle={styles.link.activeStyle}
 							/>
 						} 
-						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLrHCgw"] || "Account"}
+						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHUHJvZmlsZQw"] || "Profile"}
 						leftIcon={<Account />} 
 					/>
 					<ListItem 
@@ -288,7 +288,7 @@ class MyDrawer extends Component {
 								activeStyle={styles.link.activeStyle}
 							/>
 						} 
-						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLqnCww"] || "Demands"}
+						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHRGVtYW5kcww"] || "Demands"}
 						leftIcon={<ListAction />} 
 					/>
 					<ListItem 
@@ -298,7 +298,7 @@ class MyDrawer extends Component {
 								activeStyle={styles.link.activeStyle}
 							/>
 						} 
-						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLrnCQw"] || "Offers"}
+						primaryText={contents["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGT2ZmZXJzDA"] || "Offers"}
 						leftIcon={<ListAction />} 
 					/>
 					<ListItem 
@@ -308,14 +308,14 @@ class MyDrawer extends Component {
 								activeStyle={styles.link.activeStyle}
 							/>
 						} 
-						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIarCgw"] || "Service Packs"}
+						primaryText={contents["aghkZXZ-Tm9uZXIaCxIHQ29udGVudCINU2VydmljZSBQYWNrcww"] || "Service Packs"}
 						leftIcon={<ListAction />} 
 					/>
 				</List>
 				<Divider />
 				<List>
 					<ListItem
-						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIbrCgw"] || "Dark Mode"}
+						primaryText={contents["aghkZXZ-Tm9uZXIXCxIHQ29udGVudCIKTmlnaHQgTW9kZQw"] || "Night Mode"}
 						rightToggle={
 							<Toggle
 								toggled={cookies.get("theme") === "dark"}
@@ -333,7 +333,7 @@ class MyDrawer extends Component {
 								activeStyle={styles.link.activeStyle}
 							/>
 						} 
-						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIarCQw"] || "Settings"}
+						primaryText={contents["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIIU2V0dGluZ3MM"] || "Settings"}
 						leftIcon={<Settings />} 
 					/>
 					<ListItem 
@@ -343,7 +343,7 @@ class MyDrawer extends Component {
 								activeStyle={styles.link.activeStyle}
 							/>
 						} 
-						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIbrCQw"] || "Help"}
+						primaryText={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIESGVscAw"] || "Help"}
 						leftIcon={<Help />} 
 					/>
 					<ListItem 
@@ -353,7 +353,7 @@ class MyDrawer extends Component {
 								activeStyle={styles.link.activeStyle}
 							/>
 						} 
-						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIbrCww"] || "Feedback"}
+						primaryText={contents["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIIRmVlZGJhY2sM"] || "Feedback"}
 						leftIcon={<Feedback />} 
 					/>
 				</List>

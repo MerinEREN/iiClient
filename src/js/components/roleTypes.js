@@ -76,7 +76,7 @@ class RoleTypes extends Component {
 			this.setState({
 				inputErrText: {
 					...this.state.inputErrText, 
-					[key]: contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"] || "Required field"
+					[key]: contents["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"] || "Required Field"
 				}
 			})
 			return true
@@ -167,21 +167,21 @@ class RoleTypes extends Component {
 		} = this.props
 		const stepLabels = Object.keys(contents).length > 0 ?
 			[
-				contents["Description"], 
-				contents["RoleType"]
+				contents["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"], 
+				contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEVHlwZQw"]
 			] :
 			[
 				"Description", 
-				"RoleType"
+				"Type"
 			]
 		const stepContents = [
 			<p>
-				{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIH-CQw"] || "Add a new roleType. The field is required."}
+				{contents["aghkZXZ-Tm9uZXI4CxIHQ29udGVudCIrQWRkIGEgbmV3IHJvbGUgdHlwZS4gVGhlIGZpZWxkIGlzIHJlcXVpcmVkLgw"] || "Add a new role type. The field is required."}
 			</p>, 
 			<TextField 
 				name="ID"
 				value={roleTypeNew.ID || ""}
-				floatingLabelText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIGBCAw"] || "ID"}
+				floatingLabelText="ID"
 				errorText={inputErrText.ID}
 				onChange={this.handleInputChange}
 			/>
@@ -195,12 +195,12 @@ class RoleTypes extends Component {
 		/>
 		const actions = [
 			<FlatButton
-				label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCww"] || "Close"}
+				label={contents["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
 				onTouchTap={this.toggleDialog}
 			/>
 		]
 		stepContents.length - 1 === stepIndex && actions.push(<FlatButton
-			label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || "Save"}
+			label={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
 			primary={true}
 			onTouchTap={this.handlePost}
 		/>)
@@ -215,7 +215,7 @@ class RoleTypes extends Component {
 							{this.roleTypeTiles(roleTypes)}
 						</GridList>
 						:
-						<h3>{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI6lCgw"] || "No Content"}</h3>
+						<h3>{contents["aghkZXZ-Tm9uZXIXCxIHQ29udGVudCIKTm8gQ29udGVudAw"] || "No Content"}</h3>
 				}
 				{
 					!showDialog && 
@@ -228,7 +228,7 @@ class RoleTypes extends Component {
 						</FloatingActionButton>
 				}
 				<Dialog
-					title={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIHeCAw"] || "Add a roleType"}
+					title={contents["aghkZXZ-Tm9uZXIgCxIHQ29udGVudCITQWRkIEEgTmV3IFJvbGUgVHlwZQw"] || "Add A New Role Type"}
 					children={children}
 					actions={actions}
 					modal={true}

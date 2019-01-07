@@ -12,7 +12,7 @@ const getRouteContents = makeLoader({
 	}, 
 	options: {
 		hideFetching: true, 
-		isCached: (state, key) => state.ui.contents[key]
+		isCached: (state, key) => state.ui.contentsByPage[key]
 	}
 })
 

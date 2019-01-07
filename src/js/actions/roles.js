@@ -3,7 +3,8 @@ import {
 	ROLES_REQUEST, 
 	ROLES_SUCCESS, 
 	ROLES_FAILURE, 
-	ROLEIDS_SELECTED_BY_USER_RESET
+	ROLEIDS_SELECTED_BY_USER_SET, 
+	ROLEIDS_SELECTED_BY_USER_REMOVE
 } from "./types"
 
 // Action Creators
@@ -16,8 +17,12 @@ export const rolesSuccess = makeActionCreator(
 export const rolesFailure = makeActionCreator(
 	ROLES_FAILURE
 )
-export const roleIDsSelectedByUserReset = makeActionCreator(
-	ROLEIDS_SELECTED_BY_USER_RESET, 
+export const roleIDsSelectedByUserSet = makeActionCreator(
+	ROLEIDS_SELECTED_BY_USER_SET, 
 	"key", 
 	"value"
+)
+export const roleIDsSelectedByUserRemove = makeActionCreator(
+	ROLEIDS_SELECTED_BY_USER_REMOVE, 
+	"key"
 )

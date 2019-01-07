@@ -5,14 +5,16 @@ import createReducer, {
 	mergeIntoOrResetObject, 
 	fetchFailure, 
 	resetArrayOrObject, 
-	resetReducerPartially
+	setReducerPartially, 
+	removeByKeyFromAnObject
 } from "./utilities"
 import {
 	ROLES_REQUEST, 
 	ROLES_SUCCESS, 
 	ROLES_FAILURE, 
 	USER_ROLES_REQUEST, 
-	ROLEIDS_SELECTED_BY_USER_RESET
+	ROLEIDS_SELECTED_BY_USER_SET, 
+	ROLEIDS_SELECTED_BY_USER_REMOVE
 } from "../actions/types"
 
 // Slice Reducers
@@ -43,7 +45,8 @@ export const roleIDsSelectedByUser = createReducer(
 	{},   
 	{
 		USER_ROLES_REQUEST: resetArrayOrObject, 
-		ROLEIDS_SELECTED_BY_USER_RESET: resetReducerPartially
+		ROLEIDS_SELECTED_BY_USER_SET: setReducerPartially, 
+		ROLEIDS_SELECTED_BY_USER_REMOVE: removeByKeyFromAnObject
 	}
 )
 

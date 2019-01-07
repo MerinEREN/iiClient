@@ -11,7 +11,7 @@ import getPages from "../middlewares/pages"
 // Can use ownProps here.
 const mapStateToProps = state => {
 	const {
-		ui: {contents: {contents: contentsRoot}}, 
+		ui: {contentsByPage: {contents: contentsRoot}}, 
 		entitiesBuffered: {contents, languages, pages}, 
 		appState: {contentIDs}
 	} = state

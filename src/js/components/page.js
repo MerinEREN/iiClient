@@ -79,7 +79,7 @@ class Page extends Component {
 					this.setState({
 						inputErrTexts:{
 							...this.state.inputErrTexts, 
-							text: contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"] || "Required field"
+							text: contents["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"] || "Required Field"
 						}
 					})
 					return true
@@ -154,9 +154,9 @@ class Page extends Component {
 		} = this.props
 		const stepLabels = Object.keys(contents).length > 0 ?
 			[
-				contents["Description"], 
-				contents["Name"], 
-				contents["File"]
+				contents["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"], 
+				contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIETmFtZQw"], 
+				contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIERmlsZQw"]
 			] :
 			[
 				"Description", 
@@ -165,12 +165,12 @@ class Page extends Component {
 			]
 		const stepContents = [
 			<p>
-				{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaDCAw"] || "Update page, name field is tequired."}
+				{contents["aghkZXZ-Tm9uZXIxCxIHQ29udGVudCIkVXBkYXRlIHBhZ2UsIG5hbWUgZmllbGQgaXMgcmVxdWlyZWQuDA"] || "Update page, name field is required."}
 			</p>, 
 			<TextField 
 				name="text" 
 				value={text}
-				floatingLabelText={contents["name"] || "Name"}
+				floatingLabelText={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIETmFtZQw"] || "Name"}
 				errorText={inputErrTexts.text}
 				onChange={this.handleInputChange}
 			/>, 
@@ -184,15 +184,16 @@ class Page extends Component {
 			stepContents={stepContents}
 			stepIndex={stepIndex}
 			updateStepIndex={this.handleStepIndex}
+			contents={contents}
 		/>
 		const actions = [
 			<FlatButton
-				label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCww"] || "Close"}
+				label={contents["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
 				onTouchTap={this.toggleDialog}
 			/>
 		]
 		stepContents.length - 1 === stepIndex && actions.push(<FlatButton
-			label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || "Save"}
+			label={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
 			primary={true}
 			onTouchTap={this.handlePut}
 		/>)
@@ -205,13 +206,13 @@ class Page extends Component {
 					<CardTitle title={page.text} />
 					<CardText>
 						<List>
-							<ListItem primaryText={contents["last modified"] || "Last Modified"} secondaryText={page.lastModified} disabled={true} />
-							<ListItem primaryText={contents["created"] || "Created"} secondaryText={page.created} disabled={true} />
+							<ListItem primaryText={contents["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIITW9kaWZpZWQM"] || "Modified"} secondaryText={page.lastModified} disabled={true} />
+							<ListItem primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHQ3JlYXRlZAw"] || "Created"} secondaryText={page.created} disabled={true} />
 						</List>
 					</CardText>
 					<CardActions>
 						<FlatButton 
-							label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCAw"] || "Delete"}
+							label={contents["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"] || "Delete"}
 							secondary={true}
 							onTouchTap={this.handleDelete} 
 						/>
@@ -229,7 +230,7 @@ class Page extends Component {
 						</FloatingActionButton>
 				}
 				<Dialog
-					title={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbTCQw"] || "Update The Page"}
+					title={contents["aghkZXZ-Tm9uZXIcCxIHQ29udGVudCIPVXBkYXRlIFRoZSBQYWdlDA"] || "Update The Page"}
 					children={children}
 					actions={actions}
 					modal={true}

@@ -8,7 +8,7 @@ const mapStateToProps = state => {
 	const {
 		entitiesBuffered: {languages}, 
 		appState: {languageIDs: languageIDsSelected}, 
-		ui: {contents: {languages: contents}}
+		ui: {contentsByPage: {languages: contents}}
 	} = state
 	return {
 		languages, 

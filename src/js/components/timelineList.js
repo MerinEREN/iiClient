@@ -47,7 +47,7 @@ class TimelineList extends Component {
 							}
 						})
 						:
-						<h3>{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI6lCgw"]}</h3>
+						<h3>{contents["aghkZXZ-Tm9uZXIXCxIHQ29udGVudCIKTm8gQ29udGVudAw"] || "No Content"}</h3>
 				}
 			</List>
 		)

@@ -47,7 +47,7 @@ const mapStateToProps = state => {
 	const {
 		entitiesBuffered, 
 		pagination, 
-		ui:{contents: {timeline: contents}}
+		ui:{contentsByPage: {timeline: contents}}
 	} = state
 	return {
 		contents, 

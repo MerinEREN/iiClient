@@ -2,7 +2,8 @@ import makeActionCreator from "./creator"
 import {
 	USER_ROLES_REQUEST, 
 	USER_ROLES_SUCCESS, 
-	USER_ROLES_FAILURE
+	USER_ROLES_FAILURE, 
+	USER_ROLES_REMOVE
 } from "./types"
 
 // Action Creators
@@ -14,4 +15,8 @@ export const userRolesSuccess = makeActionCreator(
 )
 export const userRolesFailure = makeActionCreator(
 	USER_ROLES_FAILURE
+)
+export const userRolesRemove = makeActionCreator(
+	USER_ROLES_REMOVE, 
+	"key"
 )

@@ -7,7 +7,7 @@ import tagsGet, {tagsPost, tagDelete}  from "../middlewares/tags"
 const mapStateToProps = state => {
 	const {
 		entitiesBuffered: {tags}, 
-		ui: {contents: {tags: contents}}
+		ui: {contentsByPage: {tags: contents}}
 	} = state
 	return {
 		tags, 

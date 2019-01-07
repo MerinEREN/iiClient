@@ -15,12 +15,16 @@ const usersGet = makeLoader({
 		actionsFailure: [usersFailure]
 	}, 
 	options: {
-		didInvalidate: false
+		didInvalidate: false, 
+		isCached: (state) => Object.keys(state.entitiesBuffered.users).length
 	}
 })
-export const usersDelete = makeLoader({
+export const userPost = makeLoader({
 	defaults: {
-		method: "DELETE", 
+		method: "POST", 
+		headers: {
+			"Accept": "application/json"
+		}, 
 		kind: "users"
 	},
 	actionCreators: {
@@ -33,13 +37,9 @@ export const usersDelete = makeLoader({
 		showSnackbar: true
 	}
 })
-export const userPost = makeLoader({
+export const userDelete = makeLoader({
 	defaults: {
-		URL: "/users", 
-		method: "POST", 
-		headers: {
-			"Accept": "application/json"
-		}, 
+		method: "DELETE", 
 		kind: "users"
 	},
 	actionCreators: {

@@ -59,22 +59,22 @@ class Languages extends Component {
 				<MenuItem 
 					key={1} 
 					value="tr-TR" 
-					primaryText={nextProps.contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgKaTCgw"] || "Turkish"} 
+					primaryText={nextProps.contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHVHVya2lzaAw"] || "Turkish"} 
 				/>,
 				<MenuItem 
 					key={2} 
 					value="en-US" 
-					primaryText={nextProps.contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgKaTCQw"] || "English"} 
+					primaryText={nextProps.contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHRW5nbGlzaAw"] || "English"} 
 				/>,
 				<MenuItem 
 					key={3} 
 					value="de-DE" 
-					primaryText={nextProps.contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgKaTCww"] || "German"} 
+					primaryText={nextProps.contents["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGR2VybWFuDA"] || "German"} 
 				/>,
 				<MenuItem 
 					key={4} 
 					value="ru-RU" 
-					primaryText={nextProps.contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgKbTCAw"] || "Russian"} 
+					primaryText={nextProps.contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHUnVzc2lhbgw"] || "Russian"} 
 				/>
 			]
 	}
@@ -114,7 +114,7 @@ class Languages extends Component {
 			this.setState({
 				inputErrText: {
 					...this.state.inputErrText, 
-					[key]: contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"] || "Required field"
+					[key]: contents["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"] || "Required Field"
 				}
 			})
 			return true
@@ -204,24 +204,24 @@ class Languages extends Component {
 		} = this.props
 		const stepLabels = Object.keys(contents).length > 0 ?
 			[
-				contents["Description"], 
-				contents["Language"], 
-				contents["Tag"], 
-				contents["File"]
+				contents["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"], 
+				contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIETmFtZQw"], 
+				contents["aghkZXZ-Tm9uZXIQCxIHQ29udGVudCIDVGFnDA"], 
+				contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIERmlsZQw"]
 			] :
 			[
 				"Description", 
-				"Language", 
+				"Name", 
 				"Tag", 
 				"File"
 			]
 		const stepContents = [
 			<p>
-				{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaDCAw"] || "Add a new language. Language and Tag fields are required."}
+				{contents["aghkZXZ-Tm9uZXJGCxIHQ29udGVudCI5QWRkIGEgbmV3IGxhbmd1YWdlLiBMYW5ndWFnZSBhbmQgVGFnIGZpZWxkcyBhcmUgcmVxdWlyZWQuDA"] || "Add a new language. Language and Tag fields are required."}
 			</p>, 
 			<SelectField 
 				value={langNew.ID}
-				floatingLabelText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJaDCgw"] || "Language"}
+				floatingLabelText={contents["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIITGFuZ3VhZ2UM"] || "Language"}
 				errorText={inputErrText.ID}
 				onChange={this.handleInputChange}
 			>
@@ -230,7 +230,7 @@ class Languages extends Component {
 			<TextField 
 				name="contentID"
 				value={langNew.contentID || ""}
-				floatingLabelText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaTCQw"] || "Content ID"}
+				floatingLabelText="ID"
 				errorText={inputErrText.contentID}
 				onChange={this.handleInputChange}
 			/>, 
@@ -248,12 +248,12 @@ class Languages extends Component {
 		/>
 		const actions = [
 			<FlatButton
-				label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCww"] || "Close"}
+				label={contents["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
 				onTouchTap={this.toggleDialog}
 			/>
 		]
 		stepContents.length - 1 === stepIndex && actions.push(<FlatButton
-			label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || "Save"}
+			label={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
 			primary={true}
 			onTouchTap={this.handlePost}
 		/>)
@@ -278,12 +278,12 @@ class Languages extends Component {
 								{this.languageTiles(languages)}
 							</GridList>
 							:
-							<h3>{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI6lCgw"] || "No Content"}</h3>
+							<h3>{contents["aghkZXZ-Tm9uZXIXCxIHQ29udGVudCIKTm8gQ29udGVudAw"] || "No Content"}</h3>
 					}
 					{
 						languageIDsSelected.length > 0 && 
 							<RaisedButton
-								label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCAw"] || "Delete"}
+								label={contents["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"] || "Delete"}
 								style={raisedButton}
 								secondary={true}
 								onTouchTap={this.handleDelete}
@@ -303,7 +303,7 @@ class Languages extends Component {
 						</FloatingActionButton>
 				}
 				<Dialog
-					title={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbTCQw"] || "Add a language"}
+					title={contents["aghkZXZ-Tm9uZXIfCxIHQ29udGVudCISQWRkIEEgTmV3IExhbmd1YWdlDA"] || "Add A New Language"}
 					children={children}
 					actions={actions}
 					modal={true}

@@ -16,9 +16,10 @@ const userTagsGet = makeLoader({
 export const userTagsPost = makeLoader({
 	defaults: {
 		method: "POST", 
-		kind: "userTags"
+		kind: "tagsByUser"
 	},
 	actionCreators: {
+		actionsRequest: [userTagsRequest],
 		actionsSuccess: [userTagsSuccess],
 		actionsFailure: [userTagsFailure]
 	}, 
@@ -31,7 +32,7 @@ export const userTagsPost = makeLoader({
 export const userTagDelete = makeLoader({
 	defaults: {
 		method: "DELETE", 
-		kind: "userTags"
+		kind: "tagsByUser"
 	},
 	actionCreators: {
 		actionsRequest: [userTagsRequest],

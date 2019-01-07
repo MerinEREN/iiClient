@@ -8,7 +8,7 @@ import {removeUpdateContentsWithThatPage} from "../middlewares/contents"
 const mapStateToProps = (state, ownProps) => {
 	const {
 		entitiesBuffered: {pages: {[ownProps.params.ID]: page}}, 
-		ui: {contents: {page: contents}}
+		ui: {contentsByPage: {page: contents}}
 	} = state
 	return {
 		page, 

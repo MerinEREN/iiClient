@@ -7,7 +7,7 @@ import roleTypesGet, {roleTypesPost, roleTypeDelete}  from "../middlewares/roleT
 const mapStateToProps = state => {
 	const {
 		entitiesBuffered: {roleTypes}, 
-		ui: {contents: {roleTypes: contents}}
+		ui: {contentsByPage: {roletypes: contents}}
 	} = state
 	return {
 		roleTypes, 

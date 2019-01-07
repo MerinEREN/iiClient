@@ -6,7 +6,7 @@ import {
 } from "../actions/types"
 
 // Slice Reducer
-const contents = addDynamicKeyReturnResult({
+const contentsByPage = addDynamicKeyReturnResult({
 	mapActionToKey: action => action.key, 
 	types: [
 		ROUTE_CONTENTS_SUCCESS, 
@@ -15,4 +15,4 @@ const contents = addDynamicKeyReturnResult({
 
 })
 
-export default contents
+export default contentsByPage

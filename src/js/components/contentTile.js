@@ -52,7 +52,7 @@ class ContentTile extends Component {
 		return (
 			<SelectField
 				multiple={true} 
-				hintText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCgw"] || "Pages"}
+				hintText={contents["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFUGFnZXMM"] || "Pages"}
 				value={pageIDs}
 				errorText={inputErrTexts && inputErrTexts.pageIDs}
 				onChange={this.handleFieldChange}

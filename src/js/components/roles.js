@@ -82,7 +82,7 @@ class Roles extends Component {
 			this.setState({
 				inputErrTexts: {
 					...this.state.inputErrTexts, 
-					[key]: contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"] || "Required field"
+					[key]: contents["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"] || "Required Field"
 				}
 			})
 			return true
@@ -193,29 +193,29 @@ class Roles extends Component {
 		} = this.props
 		const stepLabels = Object.keys(contents).length > 0 ?
 			[
-				contents["Description"], 
-				contents["Role"], 
-				contents["Types"]
+				contents["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"], 
+				contents["aghkZXZ-Tm9uZXIQCxIHQ29udGVudCIDVGFnDA"], 
+				contents["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFVHlwZXMM"]
 			] :
 			[
 				"Description", 
-				"Role", 
+				"Tag", 
 				"Types"
 			]
 		const stepContents = [
 			<p>
-				{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgPWfCQw"] || "Add a new role. All fields are required."}
+				{contents["aghkZXZ-Tm9uZXI1CxIHQ29udGVudCIoQWRkIGEgbmV3IHJvbGUuIEFsbCBmaWVsZHMgYXJlIHJlcXVpcmVkLgw"] || "Add a new role. All fields are required."}
 			</p>, 
 			<TextField 
 				name="contentID"
 				value={roleNew.contentID || ""}
-				floatingLabelText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgPXfCAw"] || "Content ID"}
+				floatingLabelText="ID"
 				errorText={inputErrTexts.contentID}
 				onChange={this.handleInputChange}
 			/>, 
 			<SelectField
 				multiple={true} 
-				hintText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgM2bCgw"] || "Types"}
+				hintText={contents["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFVHlwZXMM"] || "Types"}
 				value={roleNew.types}
 				errorText={inputErrTexts.types}
 				onChange={this.handleInputChange}
@@ -232,12 +232,12 @@ class Roles extends Component {
 		/>
 		const actions = [
 			<FlatButton
-				label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCww"] || "Close"}
+				label={contents["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
 				onTouchTap={this.toggleDialog}
 			/>
 		]
 		stepContents.length - 1 === stepIndex && actions.push(<FlatButton
-			label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || "Save"}
+			label={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
 			primary={true}
 			onTouchTap={this.handlePost}
 		/>)
@@ -252,7 +252,7 @@ class Roles extends Component {
 							{this.roleTiles(roles)}
 						</GridList>
 						:
-						<h3>{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI6lCgw"] || "No Content"}</h3>
+						<h3>{contents["aghkZXZ-Tm9uZXIXCxIHQ29udGVudCIKTm8gQ29udGVudAw"] || "No Content"}</h3>
 				}
 				{
 					!showDialog && 
@@ -265,7 +265,7 @@ class Roles extends Component {
 						</FloatingActionButton>
 				}
 				<Dialog
-					title={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgPWvCAw"] || "Add a role"}
+					title={contents["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOQWRkIEEgTmV3IFJvbGUM"] || "Add A New Role"}
 					children={children}
 					actions={actions}
 					modal={true}

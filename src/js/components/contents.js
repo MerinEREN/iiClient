@@ -130,7 +130,7 @@ class Contents extends Component {
 						...inputErrTexts, 
 						[a[0]]: {
 							...inputErrTexts[a[0]], 
-							["en-US"]: contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"] || "RequiredField"
+							["en-US"]: contentsRoot["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"] || "Required Field"
 						}
 					}
 				})
@@ -142,7 +142,7 @@ class Contents extends Component {
 						...inputErrTexts, 
 						[a[0]]: {
 							...inputErrTexts[a[0]], 
-							pageIDs: contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"] || "RequiredField"
+							pageIDs: contentsRoot["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"] || "Required Field"
 						}
 					}
 				})
@@ -244,15 +244,15 @@ class Contents extends Component {
 				</GridList>
 		const actions = [
 			<FlatButton
-				label={contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCQw"] || "Generate New Contents"}
+				label={contentsRoot["aghkZXZ-Tm9uZXIiCxIHQ29udGVudCIVR2VuZXJhdGUgTmV3IENvbnRlbnRzDA"] || "Generate New Contents"}
 				onTouchTap={this.handleCreateNewContents}
 			/>, 
 			<FlatButton
-				label={contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCww"] || "Close"}
+				label={contentsRoot["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
 				onTouchTap={this.toggleDialog}
 			/>, 
 			<FlatButton
-				label={contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || "Save"}
+				label={contentsRoot["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
 				primary={true}
 				onTouchTap={this.handlePost}
 			/>
@@ -277,14 +277,14 @@ class Contents extends Component {
 							{this.contentTiles(contents)}
 						</GridList> :
 						<div>
-							<h3>{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI6lCgw"] || "No Content"}</h3>
+							<h3>{contents["aghkZXZ-Tm9uZXIXCxIHQ29udGVudCIKTm8gQ29udGVudAw"] || "No Content"}</h3>
 						</div>
 					}
 					{
 						Object.keys(contents).length > 0
 							&& 
 							<RaisedButton
-								label={contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || "Save"}
+								label={contentsRoot["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
 								style={raisedButton}
 								primary={true}
 								onTouchTap={this.handlePut}
@@ -293,7 +293,7 @@ class Contents extends Component {
 					{
 							contentIDsSelected.length > 0 && 
 							<RaisedButton
-								label={contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCAw"] || "Delete"}
+								label={contentsRoot["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"] || "Delete"}
 								style={raisedButton}
 								secondary={true}
 								onTouchTap={this.handleDelete}
@@ -317,7 +317,7 @@ class Contents extends Component {
 						</FloatingActionButton>
 				}
 				<Dialog
-					title={contentsRoot["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCgw"] || "Add new contents"}
+					title={contentsRoot["aghkZXZ-Tm9uZXIdCxIHQ29udGVudCIQQWRkIE5ldyBDb250ZW50cww"] || "Add New Contents"}
 					children={children}
 					actions={actions}
 					modal={true}

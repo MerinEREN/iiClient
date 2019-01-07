@@ -8,7 +8,7 @@ import tagsGet from "../middlewares/tags"
 // Can use ownProps here.
 const mapStateToProps = state => {
 	const {
-		ui: {contents: {settings: contents}}, 
+		ui: {contentsByPage: {settings: contents}}, 
 		entitiesBuffered: {
 			accountLogged, 
 			userLogged, 

@@ -16,9 +16,10 @@ const userRolesGet = makeLoader({
 export const userRolesPost = makeLoader({
 	defaults: {
 		method: "POST", 
-		kind: "userRoles"
+		kind: "rolesByUser"
 	},
 	actionCreators: {
+		actionsRequest: [userRolesRequest],
 		actionsSuccess: [userRolesSuccess],
 		actionsFailure: [userRolesFailure]
 	}, 
@@ -31,7 +32,7 @@ export const userRolesPost = makeLoader({
 export const userRoleDelete = makeLoader({
 	defaults: {
 		method: "DELETE", 
-		kind: "userRoles"
+		kind: "rolesByUser"
 	},
 	actionCreators: {
 		actionsRequest: [userRolesRequest],

@@ -52,19 +52,24 @@ class Signed extends Component {
 			languagesGet, 
 			signOutURLGet
 		} = this.props
-		userLoggedGet().then(() => { 
-			userRolesGet(
-				{
-					URL: `/userRoles/${this.props.user.ID}`, 
-					key: this.props.user.ID
-				}
-			)
-			userTagsGet(
-				{
-					URL: `/userTags/${this.props.user.ID}`, 
-					key: this.props.user.ID
-				}
-			)
+		userLoggedGet().then(response => { 
+			if (response.ok) {
+				userRolesGet(
+					{
+						URL: `/userRoles/${this.props.user.ID}`, 
+						key: this.props.user.ID
+					}
+				)
+				userTagsGet(
+					{
+						URL: `/userTags/${this.props.user.ID}`, 
+						key: this.props.user.ID
+					}
+				)
+			} else {
+				// Redirect unauthorized login attempts.
+				browserHistory.push("/unauthorized")
+			}
 		})
 		languagesGet()
 		signOutURLGet()
@@ -108,7 +113,7 @@ class Signed extends Component {
 				<Card style={styles.card}>
 					<CardHeader
 						title={user.email}
-						subtitle={`Score ${contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgIabCAw"]}: 4`} 
+						subtitle={`${contents["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFU2NvcmUM"]}: 4`} 
 						textStyle={styles.cardHeader.textStyle}
 						avatar={user.link || "/img/adele.jpg"}
 					/>
@@ -117,7 +122,7 @@ class Signed extends Component {
 				{
 					Object.values(languages).length !== 0 && 
 						<MenuItem 
-							primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJaDCgw"] || "Language"}
+							primaryText={contents["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIITGFuZ3VhZ2UM"] || "Language"}
 							leftIcon={<ChevronLeft />}
 							rightIcon={<Language />}
 							menuItems={
@@ -140,7 +145,7 @@ class Signed extends Component {
 					style={styles.a}
 				>
 					<MenuItem 
-						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgJb9CAw"] || "Log out"}
+						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHTG9nIG91dAw"] || "Log out"}
 						insetChildren={true}
 						rightIcon={<SignOut />}
 					/>

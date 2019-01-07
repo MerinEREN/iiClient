@@ -8,7 +8,7 @@ const mapStateToProps = state => {
 	const {
 		entitiesBuffered: {pages}, 
 		appState: {pageIDs}, 
-		ui: {contents: {pages: contents}}
+		ui: {contentsByPage: {pages: contents}}
 	} = state
 	return {
 		pages, 

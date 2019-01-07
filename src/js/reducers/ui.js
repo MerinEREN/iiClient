@@ -1,12 +1,12 @@
 import {combineReducers} from "redux"
 import selectedTheme from "./theme"
-import contents from "./routeContents"
+import contentsByPage from "./routeContents"
 import {openDrawer} from "./drawer"
 
 // Higher-Order Reducer
 const ui = combineReducers({
 	selectedTheme,
-	contents, 
+	contentsByPage, 
 	openDrawer
 })
 

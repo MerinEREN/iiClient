@@ -44,7 +44,7 @@ class Signin extends Component {
 		return (
 			<div>
 				<FlatButton
-					label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgImiCgw"] || "Log in"}
+					label={contents["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGTG9nIGluDA"] || "Log in"}
 					onTouchTap={this.handleTouchTap}
 				/>
 				<Popover

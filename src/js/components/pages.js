@@ -81,7 +81,7 @@ class Pages extends Component {
 					this.setState({
 						inputErrTexts: {
 							...inputErrTexts, 
-							text: contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"] || "Required field" 
+							text: contents["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"] || "Required Field" 
 						}
 					})
 					return true
@@ -169,9 +169,9 @@ class Pages extends Component {
 		} = this.props
 		const stepLabels = Object.keys(contents).length > 0 ?
 			[
-				contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbDCAw"], 
-				contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI7lCAw"], 
-				contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI7lCgw"]
+				contents["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"], 
+				contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIETmFtZQw"], 
+				contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIERmlsZQw"]
 			] :
 			[
 				"Description", 
@@ -180,12 +180,12 @@ class Pages extends Component {
 			]
 		const stepContents = [
 			<p>
-				{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaDCAw"] || "Add a new page. Name field is required."}
+				{contents["aghkZXZ-Tm9uZXI0CxIHQ29udGVudCInQWRkIGEgbmV3IHBhZ2UuIE5hbWUgZmllbGQgaXMgcmVxdWlyZWQuDA"] || "Add a new page. Name field is required."}
 			</p>, 
 			<TextField 
 				name="text" 
 				value={text}
-				floatingLabelText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI7lCAw"] || "Name"}
+				floatingLabelText={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIETmFtZQw"] || "Name"}
 				errorText={inputErrTexts.text}
 				onChange={this.handleFieldChange}
 			/>, 
@@ -203,12 +203,12 @@ class Pages extends Component {
 		/>
 		const actions = [
 			<FlatButton
-				label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCww"] || "Close"}
+				label={contents["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
 				onTouchTap={this.toggleDialog}
 			/>
 		]
 		stepContents.length - 1 === stepIndex && actions.push(<FlatButton
-			label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLbNCww"] || "Save"}
+			label={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
 			primary={true}
 			onTouchTap={this.handlePost}
 		/>)
@@ -233,12 +233,12 @@ class Pages extends Component {
 								{this.pageTiles(pages)}
 							</GridList>
 							:
-							<h3>{contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI6lCgw"] || "No Content"}</h3>
+							<h3>{contents["aghkZXZ-Tm9uZXIXCxIHQ29udGVudCIKTm8gQ29udGVudAw"] || "No Content"}</h3>
 						}
 						{
 							pageIDsSelected.length > 0 && 
 								<RaisedButton
-									label={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLatCAw"] || "Delete"}
+									label={contents["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"] || "Delete"}
 									style={raisedButton}
 									secondary={true}
 									onTouchTap={this.handleDelete}
@@ -258,7 +258,7 @@ class Pages extends Component {
 						</FloatingActionButton>
 				}
 				<Dialog
-					title={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgI6VCAw"] || "Add a page"}
+					title={contents["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOQWRkIEEgTmV3IFBhZ2UM"] || "Add A New Page"}
 					children={children}
 					actions={actions}
 					modal={true}

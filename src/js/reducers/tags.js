@@ -5,14 +5,16 @@ import createReducer, {
 	mergeIntoOrResetObject, 
 	fetchFailure, 
 	resetArrayOrObject, 
-	resetReducerPartially
+	setReducerPartially, 
+	removeByKeyFromAnObject
 } from "./utilities"
 import {
 	TAGS_REQUEST, 
 	TAGS_SUCCESS, 
 	TAGS_FAILURE, 
 	USER_TAGS_REQUEST, 
-	TAGIDS_SELECTED_BY_USER_RESET
+	TAGIDS_SELECTED_BY_USER_SET, 
+	TAGIDS_SELECTED_BY_USER_REMOVE
 } from "../actions/types"
 
 // Slice Reducers
@@ -43,7 +45,8 @@ export const tagIDsSelectedByUser = createReducer(
 	{},   
 	{
 		USER_TAGS_REQUEST: resetArrayOrObject, 
-		TAGIDS_SELECTED_BY_USER_RESET: resetReducerPartially
+		TAGIDS_SELECTED_BY_USER_SET: setReducerPartially, 
+		TAGIDS_SELECTED_BY_USER_REMOVE: removeByKeyFromAnObject
 	}
 )
 

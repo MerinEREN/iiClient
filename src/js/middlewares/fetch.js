@@ -82,24 +82,35 @@ const shouldFetchAfterDelay = (args, duration) => dispatch => {
 		response: {result: dataBody}, 
 		key
 	})))
-	let timer
-	const promise = new Promise(resolve => {
-		/* timer = setTimeout(function() {
-			resolve()
-		}, duration + 1000) */
-		timer = setTimeout(resolve, duration + 1000)
-	})
 	// Add snackbar
 	const snackbarKey = Date.now()
 	dispatch(addSnackbar({object: {
 		[snackbarKey]: {
-			message: Array.isArray(dataBody) 
-			? (dataBody.length === 1 ? 
-				`${dataBody.map(k => k)} deleted` : 
-				`${dataBody.length} items deleted`) 
-			: (Object.keys(dataBody).length === 1 ? 
-				`${Object.keys(dataBody).map(k => k)} deleted` : 
-				`${Object.keys(dataBody).length} items deleted`),
+			message: Array.isArray(dataBody) ? 
+			(
+				dataBody.length === 1 ? 
+				dataBody.map(k => {
+					if (k.length > 20) {
+						const substr = k.substring(0, 20)
+						return `${substr}... deleted`
+					} else {
+						return `${k} deleted`
+					}
+				}) : 
+				`${dataBody.length} items deleted`
+			) : 
+			(
+				Object.keys(dataBody).length === 1 ? 
+				Object.keys(dataBody).map(k => {
+					if (k.length > 20) {
+						const substr = k.substring(0, 20)
+						return `${substr}... deleted`
+					} else {
+						return `${k} deleted`
+					}
+				}) : 
+				`${Object.keys(dataBody).length} items deleted`
+			),
 			duration, 
 			action: "Undo", 
 			onActionClick: () => {
@@ -110,7 +121,11 @@ const shouldFetchAfterDelay = (args, duration) => dispatch => {
 			onRequestClose: reason => reason === "timeout" && dispatch(removeSnackbar({key: snackbarKey.toString()}))
 		}
 	}}))
-	return promise
+	// Return a promise
+	let timer
+	return new Promise(resolve => {
+		timer = setTimeout(resolve, duration + 1000)
+	})
 }
 
 // Reset entitiesBuffered with entities.
@@ -131,17 +146,19 @@ const fetchDomainData = args => (dispatch, getState) => {
 		request, 
 		dataBody, 
 		kind, 
+		stateSlice, 
 		key, 
 		didInvalidate, 
 		hideFetching, 
 		showSnackbar, 
 		mergeIntoState
 	} = args
-	// Modifies contentsBuffer if the method is POST.
+	// Modifies "contentsBuffered" if the method is POST.
 	if (actionsRequest && request.method !== "DELETE")
 		actionsRequest.forEach(ac => dispatch(ac({
 			method: request.method, 
 			response: {result: request.method !== "PUT" && dataBody}, 
+			stateSlice, 
 			key
 		})))
 	if (!hideFetching)

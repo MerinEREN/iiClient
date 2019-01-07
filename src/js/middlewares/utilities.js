@@ -32,6 +32,7 @@ export const generateURL = (key, ...pageURLs) => {
 // "mergeIntoState" when PUT request returns data merges it into state.
 // If the request is "PUT" function compares to the entitiesBuffered and the entities to 
 // send only changed entities as the request body.
+// "stateSlice" is the source kind object to filter by a provided array of keys.
 export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) => { 
 	var {URL, headers, method, kind} = defaults
 	var {hideFetching, isCached, didInvalidate, showSnackbar, mergeIntoState} = options
@@ -50,7 +51,7 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 		Object.entries(headers).forEach(([k, v]) => init.headers.set(k, v))
 	}
 	return (args = {}) => {
-		var {returnedURL, key, body} = args
+		var {returnedURL, stateSlice, key, body} = args
 		returnedURL = returnedURL || "prevPageURL"
 		key = key || "all"
 		return (dispatch, getState) => {
@@ -141,6 +142,7 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 				request: new Request(URL, init),
 				dataBody: body && body.data, 
 				kind, 
+				stateSlice, 
 				key, 
 				...actionCreators, 
 				isCached, 

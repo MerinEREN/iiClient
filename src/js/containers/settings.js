@@ -7,7 +7,7 @@ const mapStateToProps = state => {
 		entitiesBuffered: {userLogged, rolesByUser}, 
 	} = state
 	return {
-		userRoles: rolesByUser[userLogged.ID] || {}
+		userRoles: rolesByUser[userLogged.ID]
 	}
 }
 
