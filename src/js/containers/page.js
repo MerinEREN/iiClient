@@ -1,26 +1,26 @@
 import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
 import PageComponent from "../components/page"
-import getPage, {putPage} from "../middlewares/page"
-import {deletePages} from "../middlewares/pages"
+import pageGet, {pagePut} from "../middlewares/page"
+import {pagesDelete} from "../middlewares/pages"
 import {removeUpdateContentsWithThatPage} from "../middlewares/contents"
 
 const mapStateToProps = (state, ownProps) => {
 	const {
-		entitiesBuffered: {pages: {[ownProps.params.ID]: page}}, 
-		ui: {contentsByPage: {page: contents}}
+		ui: {contentsByPage: {page: contents}}, 
+		entitiesBuffered: {pages: {[ownProps.params.ID]: page}}
 	} = state
 	return {
-		page, 
-		contents
+		contents, 
+		page
 	}
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
-		getPage, 
-		putPage, 
-		deletePages, 
+		pageGet, 
+		pagePut, 
+		pagesDelete, 
 		removeUpdateContentsWithThatPage
 	},
 	dispatch

@@ -5,9 +5,8 @@ import {
 	servicePacksFailure
 } from "../actions/servicePacks"
 
-const getServicePacks = makeLoader({
+const servicePacksGet = makeLoader({
 	defaults: {
-		URL: "/servicePacks", 
 		kind: "servicePacks" 
 	},
 	actionCreators: {
@@ -16,36 +15,5 @@ const getServicePacks = makeLoader({
 		actionsFailure: [servicePacksFailure]
 	}
 })
-export const deleteServicePacks = makeLoader({
-	defaults: {
-		method: "DELETE", 
-		kind: "servicePacks"
-	},
-	actionCreators: {
-		actionsRequest: [servicePacksRequest],
-		actionsSuccess: [servicePacksSuccess],
-		actionsFailure: [servicePacksFailure]
-	}, 
-	options: {
-		hideFetching: true, 
-		showSnackbar: true
-	}
-})
-export const postServicePack = makeLoader({
-	defaults: {
-		method: "POST", 
-		URL: "/servicePacks", 
-		kind: "servicePacks"
-	},
-	actionCreators: {
-		actionsRequest: [servicePacksRequest],
-		actionsSuccess: [servicePacksSuccess],
-		actionsFailure: [servicePacksFailure]
-	}, 
-	options: {
-		hideFetching: true, 
-		showSnackbar: true
-	}
-})
 
-export default getServicePacks
+export default servicePacksGet

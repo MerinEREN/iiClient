@@ -1,28 +1,26 @@
 import fetchDomainDataIfNeeded from "./fetch"
 
 export const generateURL = (key, ...pageURLs) => {
-	var URL = (key ? "/" + key : "/") + "?"
-	var domainAndParams, params, c
+	let url = new URL(key, document.location)
 	pageURLs.forEach((v, i) => {
 		switch (i) {
 			case 0:
-				domainAndParams = v.split("?")
-				params = domainAndParams[1]
-				uIDandDirection = params.split("&c")[0]
-				c = params.split("&c")[1]
-				URL += uIDandDirection + "&cd=" + c
+				const paramsD = (new URL(v, document.location)).searchParams
+				url.searchParams.set("uID", paramsD.get("uID"))
+				url.searchParams.set("d", paramsD.get("d"))
+				paramsD.getAll("cs").forEach(v => url.searchParams.append("cds", v))
 				break
 			case 1:
-				c = v.split("&c")[1]
-				URL += "&co=" + c
+				/* const paramsO = (new URL(v, document.location)).searchParams
+				paramsO.getAll("cs").forEach(v => url.searchParams.append("cos", v)) */
 				break
 			case 2:
-				c = v.split("&c")[1]
-				URL += "&csp=" + c
+				const paramsSP = (new URL(v, document.location)).searchParams
+				paramsSP.getAll("cs").forEach(v => url.searchParams.append("csps", v))
 				break
 		}
 	})
-	return URL
+	return url
 }
 
 // "hideFetching" is to hide fetching progress component.
@@ -99,7 +97,7 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 						let fd = new FormData()
 						Object.values(body.data).forEach(v => {
 							Object.entries(v).forEach(a => {
-								if (a[0] !== "file")
+								/* if (a[0] !== "file")
 									fd.set(a[0], a[1])
 								if (a[0] === "file") {
 									if(a[1] !== undefined) {
@@ -107,7 +105,10 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 									} else {
 										fd.set(a[0], a[1])
 									}
-								}
+								} */
+								Array.isArray(a[1]) ? 
+									a[1].forEach(v => fd.append(a[0], v)) :
+									fd.set(a[0], a[1])
 							}) 
 						}) 
 						init.body = fd

@@ -3,12 +3,12 @@ import {
 	pageSuccess
 } from "../actions/page"
 
-const getPage = makeLoader({
+const pageGet = makeLoader({
 	actionCreators: {
 		actionsSuccess: [pageSuccess]
 	}
 })
-export const putPage = makeLoader({
+export const pagePut = makeLoader({
 	defaults: {
 		method: "PUT", 
 		headers: {
@@ -24,4 +24,4 @@ export const putPage = makeLoader({
 	}
 })
 
-export default getPage
+export default pageGet

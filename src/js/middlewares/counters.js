@@ -1,23 +1,28 @@
-import {makeLoader} from "./utilities"
-import {generateURL} from "./utilities"
+import {
+	makeLoader, 
+	generateURL
+} from "./utilities"
 import {
 	counterSuccess
 } from "../actions/counters"
 
-export const getURL = (key, returnedURL) => (dispatch, getState) => {
+export const getURL = (key, paginationURL) => (dispatch, getState) => {
 	switch (key) {
 		case "something": 
 			break
 		default:
 			const {
 				demands: {
-					timeline: {[returnedURL]: dURL}
+					timeline: {[paginationURL]: dURL}
 				}, 
+				/* offers: {
+					timeline: {[paginationURL]: oURL}
+				}, */
 				offers: {
-					timeline: {[returnedURL]: oURL}
-				}, 
+					timeline: oURL
+				},
 				servicePacks: {
-					timeline: {[returnedURL]: spURL}
+					timeline: {[paginationURL]: spURL}
 				}
 			} = getState().pagination
 			return generateURL(key, dURL, oURL, spURL)

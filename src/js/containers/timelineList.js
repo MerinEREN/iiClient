@@ -10,33 +10,51 @@ const sortByLastModified = (is) => {
 }
 
 function getItemsFromEntities(pagination, entities) {
-	const pds = pagination.demands.all
-	const pos = pagination.offers.all
-	const psps = pagination.servicePacks.all
+	const pds = pagination.demands.timeline
+	const pos = pagination.offers.timeline
+	const psps = pagination.servicePacks.timeline
 	const {
 		demands, 
 		offers, 
 		servicePacks
 	} = entities
 	let tds = []
+	// Second condition is for "DELETE" requests, 
+	// entity is been removed by "request action" but pagination ID of the entity is 
+	// been removed by "success action". \
+	// And this couses "undefined objects type assertion" problem.
 	if(pds) {
 		for (let ID of pds.IDs) {
-			demands[ID].type = "demand"
-			tds.push(demands[ID])
+			if (demands.timeline[ID]) {
+				demands.timeline[ID].type = "demand"
+				tds.push(demands.timeline[ID])
+			}
 		}
 	}
 	let tos = []
+	// Second condition is for "DELETE" requests, 
+	// entity is been removed by "request action" but pagination ID of the entity is 
+	// been removed by "success action". \
+	// And this couses "undefined objects type assertion" problem.
 	if(pos) {
 		for (let ID of pos.IDs) {
-			offers[ID].type = "offer"
-			tos.push(offers[ID])
+			if (offers.timeline[ID]) {
+				offers.timeline[ID].type = "offer"
+				tos.push(offers.timeline[ID])
+			}
 		}
 	}
 	let tsps = []
+	// Second condition is for "DELETE" requests, 
+	// entity is been removed by "request action" but pagination ID of the entity is 
+	// been removed by "success action". \
+	// And this couses "undefined objects type assertion" problem.
 	if(psps) {
 		for (let ID of psps.IDs) {
-			servicePacks[ID].type = "servicePack"
-			tsps.push(servicePacks[ID])
+			if (ServicePacks.timeline[ID]) {
+				servicePacks.timeline[ID].type = "servicePack"
+				tsps.push(servicePacks.timeline[ID])
+			}
 		}
 	}
 	return sortByLastModified([...tds, ...tos, ...tsps])
@@ -52,7 +70,7 @@ const mapStateToProps = state => {
 	return {
 		contents, 
 		items: getItemsFromEntities(pagination, entitiesBuffered), 
-		uID: entitiesBuffered.account.user.ID
+		uID: entitiesBuffered.userLogged.ID
 	}
 }
 

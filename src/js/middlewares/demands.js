@@ -5,9 +5,8 @@ import {
 	demandsFailure
 } from "../actions/demands"
 
-const getDemands = makeLoader({
+const demandsGet = makeLoader({
 	defaults: {
-		URL: "/demands", 
 		kind: "demands"
 	},
 	actionCreators: {
@@ -15,11 +14,10 @@ const getDemands = makeLoader({
 		actionsSuccess: [demandsSuccess],
 		actionsFailure: [demandsFailure]
 	}
-	})
-export const postDemand = makeLoader({
+})
+export const demandsDelete = makeLoader({
 	defaults: {
-		method: "POST", 
-		URL: "/demands", 
+		method: "DELETE", 
 		kind: "demands"
 	},
 	actionCreators: {
@@ -32,4 +30,14 @@ export const postDemand = makeLoader({
 		showSnackbar: true
 	}
 })
-export default getDemands
+export const demandPost = makeLoader({
+	defaults: {
+		method: "POST"
+	},
+	options: {
+		hideFetching: true, 
+		showSnackbar: true
+	}
+})
+
+export default demandsGet

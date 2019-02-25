@@ -7,8 +7,8 @@ import rolesGet from "../middlewares/roles"
 import tagsGet from "../middlewares/tags"
 import userRolesGet, {userRolesPost, userRoleDelete} from "../middlewares/userRoles"
 import userTagsGet, {userTagsPost, userTagDelete} from "../middlewares/userTags"
-import {roleIDsSelectedByUserSet, roleIDsSelectedByUserRemove} from "../actions/roles"
-import {tagIDsSelectedByUserSet, tagIDsSelectedByUserRemove} from "../actions/tags"
+import {roleIDsSelectedByKeySet, roleIDsSelectedByKeyRemove} from "../actions/roles"
+import {tagIDsSelectedByKeySet, tagIDsSelectedByKeyRemove} from "../actions/tags"
 import {userRolesRemove} from "../actions/userRoles"
 import {userTagsRemove} from "../actions/userTags"
 
@@ -24,7 +24,7 @@ const mapStateToProps = (state, ownProps) => {
 			rolesByUser, 
 			tagsByUser
 		}, 
-		appState: {roleIDsByUser, tagIDsByUser}
+		appState: {roleIDsByKey, tagIDsByKey}
 	} = state
 	const {ID} = ownProps.params
 	return {
@@ -35,8 +35,8 @@ const mapStateToProps = (state, ownProps) => {
 		roles, 
 		userRoles: rolesByUser[ID] || {}, 
 		userTags: tagsByUser[ID] || {}, 
-		roleIDsSelected: roleIDsByUser[ID] || [], 
-		tagIDsSelected: tagIDsByUser[ID] || []
+		roleIDsSelected: roleIDsByKey[ID] || [], 
+		tagIDsSelected: tagIDsByKey[ID] || []
 	}
 }
 
@@ -47,10 +47,10 @@ const mapDispatchToProps = dispatch => bindActionCreators(
 		tagsGet, 
 		userRolesGet, 
 		userTagsGet, 
-		roleIDsSelectedByUserSet, 
-		tagIDsSelectedByUserSet, 
-		roleIDsSelectedByUserRemove, 
-		tagIDsSelectedByUserRemove, 
+		roleIDsSelectedByKeySet, 
+		tagIDsSelectedByKeySet, 
+		roleIDsSelectedByKeyRemove, 
+		tagIDsSelectedByKeyRemove, 
 		userRolesPost, 
 		userTagsPost, 
 		userRoleDelete, 

@@ -1,8 +1,5 @@
-import React from 'react'
-import {ListItem} from 'material-ui/List'
+import React from "react"
 
-const ServicePack = () => <ListItem>ServicePack Item =)</ListItem>
-
-ServicePack.muiName = 'ListItem'
+const ServicePack = () => <h1>ServicePack =)</h1>
 
 export default ServicePack

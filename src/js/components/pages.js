@@ -31,7 +31,7 @@ const styles = {
 	}
 }
 
-// "deletePages" is ready but not in use.
+// "pagesDelete" is ready but not in use.
 class Pages extends Component {
 	constructor(props) {
 		super(props)
@@ -48,7 +48,7 @@ class Pages extends Component {
 		this.handleDelete = this.handleDelete.bind(this)
 	}
 	componentWillMount() {
-		this.props.getPages()
+		this.props.pagesGet()
 	}
 	handleStepIndex(direction) {
 		const {stepIndex} = this.state
@@ -110,7 +110,7 @@ class Pages extends Component {
 	handlePost() {
 		this.toggleDialog()
 		const {text} = this.state
-		this.props.postPage({
+		this.props.pagePost({
 			body: {
 				type: "FormData", 
 				// Use "contentType" for "Blob" type.
@@ -131,9 +131,9 @@ class Pages extends Component {
 	handleDelete() {
 		const {
 			pageIDsSelected, 
-			deletePages
+			pagesDelete
 		}= this.props
-		deletePages({
+		pagesDelete({
 			URL: `/pages?IDs=${generateURLVariableFromIDs(pageIDsSelected)}`, 
 			body: {
 				data: pageIDsSelected
@@ -275,11 +275,11 @@ Pages.defaultProps = {
 
 Pages.propTypes = {
 	contents: PropTypes.object.isRequired, 
-	getPages: PropTypes.func.isRequired, 
+	pagesGet: PropTypes.func.isRequired, 
 	pages: PropTypes.object.isRequired, 
-	postPage: PropTypes.func.isRequired, 
+	pagePost: PropTypes.func.isRequired, 
 	pageIDsSelected: PropTypes.array.isRequired, 
-	deletePages: PropTypes.func.isRequired
+	pagesDelete: PropTypes.func.isRequired
 }
 
 Pages.muiName = "GridList"

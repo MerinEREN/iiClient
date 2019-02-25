@@ -1,8 +1,5 @@
-import React from 'react'
-import {ListItem} from 'material-ui/List'
+import React from "react"
 
-const Offer = () => <ListItem>Offer Item =)</ListItem>
-
-Offer.muiName = 'ListItem'
+const Offer = () => <h1>Offer =)</h1>
 
 export default Offer

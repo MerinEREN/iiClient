@@ -8,21 +8,24 @@ class CounterChip extends Component {
 		this.state = {display: "none"}
 		this.getData = this.getData.bind(this)
 	}
-	componentWillMount() {
+	componentDidMount() {
 		this.loadDataInterval = setInterval(
-			() => this.getCount(), 180000
+			() => this.getCount(), 
+			180000
 		)
 	}
+	componentWillUnmount() {
+		clearInterval(this.loadDataInterval)
+	}
 	componentWillReceiveProps(nextProps) {
-		if(nextProps.count) {
-			// Not sure about "display: "block"", check from documantation.
-			this.setState({display: "block"})
-		} else {
-			this.setState({display: "none"})
-		}
+		if (nextProps.count)
+			this.setState({display: "flex"})
 	}
 	getCount() {
-		const {getCount, getURL} = this.props
+		const {
+			getCount, 
+			getURL
+		} = this.props
 		getCount({
 			URL: getURL("timeline", "nextPageURL"), 
 			key: "timeline"
@@ -30,26 +33,7 @@ class CounterChip extends Component {
 	}
 	getData() {
 		this.setState({display: "none"})
-		// CHANGE getItems FUNCTION BELOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		this.props.getItems(
-			{
-				dArgs: {
-					returnedURL: "nextPageURL", 
-					key: "timeline"
-				}, 
-				oArgs: {
-					returnedURL: "nextPageURL", 
-					key: "timeline"
-				}, 
-				spArgs: {
-					returnedURL: "nextPageURL", 
-					key: "timeline"
-				}
-			}
-		)
-	}
-	componentWillUnmount() {
-		clearInterval(this.loadDataInterval)
+		this.props.getItems(null, "timeline", "nextPageURL")
 	}
 	render() {
 		return <Chip 

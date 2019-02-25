@@ -5,6 +5,7 @@ import Redirect from "react-router/lib/Redirect"
 import IndexRedirect from "react-router/lib/IndexRedirect"
 import Body from "./containers/body"
 import Timeline from "./components/timeline"
+import LandingPage from "./containers/landingPage"
 import Dashboard from "./components/dashboard"
 import Languages from "./containers/languages"
 import Pages from "./containers/pages"
@@ -19,6 +20,9 @@ import Offers from "./components/offers"
 import ServicePacks from "./components/servicePacks"
 import Settings from "./containers/settings"
 import SettingsUser from "./containers/settingsUser"
+import Demand from "./containers/demand"
+import Offer from "./components/offer"
+import ServicePack from "./components/servicePack"
 import Feedback from "./components/feedback"
 import Help from "./components/help"
 
@@ -27,7 +31,7 @@ import Help from "./components/help"
 // Add a control for path=":ID" 
 // like onEnter={(nextState, replace) => {if (noMatch) replace("/")}}.
 const routes  = <Route path="/" component={Body}>
-	<IndexRoute components={{dashboard: Dashboard, timeline: Timeline}} />
+	<IndexRoute components={{landingPage: LandingPage, timeline: Timeline}} />
 	<Route path="dashboard" component={Dashboard} />
 	<Route path="languages" component={Languages} />
 	<Route path="pages" component={Pages} />
@@ -38,6 +42,9 @@ const routes  = <Route path="/" component={Body}>
 	<Route path="roleTypes" component={RoleTypes} />
 	<Route path="settings" component={Settings} />
 	<Route path="users/:ID" component={SettingsUser} />
+	<Route path="demands/:ID" component={Demand} />
+	<Route path="offers/:ID" component={Offer} />
+	<Route path="servicePacks/:ID" component={ServicePack} />
 	<Route path="feedback" component={Feedback} />
 	<Route path="help" component={Help} />
 	<Route path="accounts/:ID">

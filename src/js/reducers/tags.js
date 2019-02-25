@@ -4,17 +4,19 @@ import createReducer, {
 	removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
 	mergeIntoOrResetObject, 
 	fetchFailure, 
-	resetArrayOrObject, 
+	resetReducerPartially, 
 	setReducerPartially, 
-	removeByKeyFromAnObject
+	removeByKeyFromAnObject, 
+	addDynamicKeyReturnResult
 } from "./utilities"
 import {
 	TAGS_REQUEST, 
 	TAGS_SUCCESS, 
 	TAGS_FAILURE, 
 	USER_TAGS_REQUEST, 
-	TAGIDS_SELECTED_BY_USER_SET, 
-	TAGIDS_SELECTED_BY_USER_REMOVE
+	TAGIDS_SELECTED_BY_KEY_SET, 
+	TAGIDS_SELECTED_BY_KEY_REMOVE, 
+	TAGS_BY_FILTER_SUCCESS
 } from "../actions/types"
 
 // Slice Reducers
@@ -40,14 +42,19 @@ export const paginationTags = paginate({
 		TAGS_FAILURE
 	]
 })
-
-export const tagIDsSelectedByUser = createReducer(
+export const tagIDsSelectedByKey = createReducer(
 	{},   
 	{
-		USER_TAGS_REQUEST: resetArrayOrObject, 
-		TAGIDS_SELECTED_BY_USER_SET: setReducerPartially, 
-		TAGIDS_SELECTED_BY_USER_REMOVE: removeByKeyFromAnObject
+		USER_TAGS_REQUEST: resetReducerPartially, 
+		TAGIDS_SELECTED_BY_KEY_SET: setReducerPartially, 
+		TAGIDS_SELECTED_BY_KEY_REMOVE: removeByKeyFromAnObject
 	}
 )
+export const tagsByFilter = addDynamicKeyReturnResult({
+	mapActionToKey: action => action.key, 
+	types: [
+		TAGS_BY_FILTER_SUCCESS
+	]
+})
 
 export default tags

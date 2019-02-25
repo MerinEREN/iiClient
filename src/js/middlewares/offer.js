@@ -3,22 +3,10 @@ import {
 	offerSuccess
 } from "../actions/offer"
 
-const getOffer = makeLoader({
+const offerGet = makeLoader({
 	actionCreators: {
 		actionsSuccess: [offerSuccess]
-	}
-})
-export const putOffer = makeLoader({
-	defaults: {
-		method: "PUT"
-	},
-	actionCreators: {
-		actionsSuccess: [offerSuccess]
-	}, 
-	options: {
-		showSnackbar: true, 
-		mergeIntoState: true
 	}
 })
 
-export default getOffer
+export default offerGet

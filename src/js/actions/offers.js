@@ -1,9 +1,9 @@
-import makeActionCreator from './creator'
+import makeActionCreator from "./creator"
 import {
 	OFFERS_REQUEST, 
 	OFFERS_SUCCESS, 
 	OFFERS_FAILURE
-} from './types'
+} from "./types"
 
 // Action Creators
 export const offersRequest = makeActionCreator(

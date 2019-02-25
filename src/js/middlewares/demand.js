@@ -3,14 +3,17 @@ import {
 	demandSuccess
 } from "../actions/demand"
 
-const getDemand = makeLoader({
+const demandGet = makeLoader({
 	actionCreators: {
 		actionsSuccess: [demandSuccess]
 	}
 })
-export const putDemand = makeLoader({
+export const demandPut = makeLoader({
 	defaults: {
-		method: "PUT"
+		method: "PUT", 
+		headers: {
+			"Accept": "application/json"
+		}
 	},
 	actionCreators: {
 		actionsSuccess: [demandSuccess]
@@ -21,4 +24,4 @@ export const putDemand = makeLoader({
 	}
 })
 
-export default getDemand
+export default demandGet

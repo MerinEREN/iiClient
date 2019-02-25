@@ -38,7 +38,7 @@ class Languages extends Component {
 		this.state = {
 			showDialog: false, 
 			stepIndex: 0, 
-			langNew: {
+			newObject: {
 				ID: "",  
 				contentID: ""
 			}, 
@@ -110,7 +110,7 @@ class Languages extends Component {
 			default:
 				return false
 		}
-		if (!this.state.langNew[key]) {
+		if (!this.state.newObject[key]) {
 			this.setState({
 				inputErrText: {
 					...this.state.inputErrText, 
@@ -126,10 +126,10 @@ class Languages extends Component {
 		const target = event.target
 		const name = target.name || "ID"
 		const value = target.value || values
-		const {langNew, inputErrText} = this.state
+		const {newObject, inputErrText} = this.state
 		this.setState({
-			langNew: {
-				...langNew, 
+			newObject: {
+				...newObject, 
 				[name]: value
 			}, 
 			inputErrText: {
@@ -140,22 +140,22 @@ class Languages extends Component {
 	}
 	handlePost() {
 		this.toggleDialog()
-		const {langNew} = this.state
+		const {newObject} = this.state
 		this.props.languagePost({
 			body: {
 				type: "FormData", 
 				// Use "contentType" for "Blob" type.
 				// contentType: "application/json", 
 				data: {
-					[langNew.ID]: {
-						...langNew, 
+					[newObject.ID]: {
+						...newObject, 
 						file: this.file.files[0] 
 					}
 				}
 			}
 		})
 		this.setState({
-			langNew: {
+			newObject: {
 				ID: "", 
 				contentID: ""
 			}, 
@@ -195,7 +195,7 @@ class Languages extends Component {
 			showDialog, 
 			stepIndex, 
 			inputErrText, 
-			langNew
+			newObject
 		} = this.state
 		const {
 			contents, 
@@ -220,7 +220,7 @@ class Languages extends Component {
 				{contents["aghkZXZ-Tm9uZXJGCxIHQ29udGVudCI5QWRkIGEgbmV3IGxhbmd1YWdlLiBMYW5ndWFnZSBhbmQgVGFnIGZpZWxkcyBhcmUgcmVxdWlyZWQuDA"] || "Add a new language. Language and Tag fields are required."}
 			</p>, 
 			<SelectField 
-				value={langNew.ID}
+				value={newObject.ID}
 				floatingLabelText={contents["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIITGFuZ3VhZ2UM"] || "Language"}
 				errorText={inputErrText.ID}
 				onChange={this.handleInputChange}
@@ -229,7 +229,7 @@ class Languages extends Component {
 			</SelectField>, 
 			<TextField 
 				name="contentID"
-				value={langNew.contentID || ""}
+				value={newObject.contentID || ""}
 				floatingLabelText="ID"
 				errorText={inputErrText.contentID}
 				onChange={this.handleInputChange}
@@ -246,7 +246,7 @@ class Languages extends Component {
 			updateStepIndex={this.handleStepIndex}
 			contents={contents}
 		/>
-		const actions = [
+		let actions = [
 			<FlatButton
 				label={contents["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
 				onTouchTap={this.toggleDialog}

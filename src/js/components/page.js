@@ -16,11 +16,6 @@ const styles = {
 		flexWrap: "wrap", 
 		justifyContent: "space-around"
 	}, 
-	link: {
-		activeStyle: {
-			color: "#0097a7"
-		}
-	}, 
 	floatingActionButton: {
 		position: "fixed",
 		bottom: 32, 
@@ -41,13 +36,13 @@ class Page extends Component {
 		}
 		this.toggleDialog = this.toggleDialog.bind(this)
 		this.handleStepIndex = this.handleStepIndex.bind(this)
-		this.handleInputChange = this.handleInputChange.bind(this)
+		this.handleFieldChange = this.handleFieldChange.bind(this)
 		this.handlePut = this.handlePut.bind(this)
 		this.handleDelete = this.handleDelete.bind(this)
 	}
 	componentWillMount() {
-		const {getPage, params: {ID}} = this.props
-		getPage({
+		const {pageGet, params: {ID}} = this.props
+		pageGet({
 			URL: `/pages/${ID}`
 		})
 
@@ -89,7 +84,7 @@ class Page extends Component {
 				return false
 		}
 	}
-	handleInputChange(event) {
+	handleFieldChange(event) {
 		const target = event.target
 		const name = target.name
 		const value = target.value
@@ -104,8 +99,8 @@ class Page extends Component {
 	handlePut() {
 		this.toggleDialog()
 		const {text} = this.state
-		const {putPage, params: {ID}, page} = this.props
-		putPage({
+		const {pagePut, params: {ID}, page} = this.props
+		pagePut({
 			URL: `/pages/${ID}`, 
 			body: {
 				type: "FormData", 
@@ -124,10 +119,10 @@ class Page extends Component {
 	handleDelete() {
 		const {
 			params: {ID}, 
-			deletePages, 
+			pagesDelete, 
 			removeUpdateContentsWithThatPage
 		} = this.props
-		deletePages({
+		pagesDelete({
 			URL: `/pages/${ID}`, 
 			body: {
 				data: [ID]
@@ -172,7 +167,7 @@ class Page extends Component {
 				value={text}
 				floatingLabelText={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIETmFtZQw"] || "Name"}
 				errorText={inputErrTexts.text}
-				onChange={this.handleInputChange}
+				onChange={this.handleFieldChange}
 			/>, 
 			<input 
 				type="file"
@@ -250,9 +245,9 @@ Page.defaultProps = {
 Page.propTypes = {
 	contents: PropTypes.object.isRequired, 
 	page: PropTypes.object.isRequired, 
-	getPage: PropTypes.func.isRequired, 
-	putPage: PropTypes.func.isRequired, 
-	deletePages: PropTypes.func.isRequired, 
+	pageGet: PropTypes.func.isRequired, 
+	pagePut: PropTypes.func.isRequired, 
+	pagesDelete: PropTypes.func.isRequired, 
 	removeUpdateContentsWithThatPage: PropTypes.func.isRequired
 }
 

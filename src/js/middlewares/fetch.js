@@ -181,7 +181,7 @@ const fetchDomainData = args => (dispatch, getState) => {
 						// like all DELETE requests 
 						// and some PUT, POST and GET requests.
 						if (request.method !== "GET") {
-							actionsSuccess.forEach(ac => dispatch(ac({
+							actionsSuccess && actionsSuccess.forEach(ac => dispatch(ac({
 								method: request.method, 
 								response: {result: request.method === "DELETE" ? 
 									dataBody :

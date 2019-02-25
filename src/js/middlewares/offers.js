@@ -5,9 +5,8 @@ import {
 	offersFailure
 } from "../actions/offers"
 
-const getOffers = makeLoader({
+const offersGet = makeLoader({
 	defaults: {
-		URL: "/offers", 
 		kind: "offers"
 	},
 	actionCreators: {
@@ -16,7 +15,7 @@ const getOffers = makeLoader({
 		actionsFailure: [offersFailure]
 	}
 })
-export const deleteOffers = makeLoader({
+export const offersDelete = makeLoader({
 	defaults: {
 		method: "DELETE", 
 		kind: "offers"
@@ -31,21 +30,14 @@ export const deleteOffers = makeLoader({
 		showSnackbar: true
 	}
 })
-export const postOffer = makeLoader({
+export const offerPost = makeLoader({
 	defaults: {
-		method: "POST", 
-		URL: "/offers", 
-		kind: "offers"
+		method: "POST"
 	},
-	actionCreators: {
-		actionsRequest: [offersRequest],
-		actionsSuccess: [offersSuccess],
-		actionsFailure: [offersFailure]
-	}, 
 	options: {
 		hideFetching: true, 
 		showSnackbar: true
 	}
 })
 
-export default getOffers
+export default offersGet

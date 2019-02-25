@@ -8,7 +8,8 @@ import {
 
 // Action Creators
 export const userRolesRequest = makeActionCreator(
-	USER_ROLES_REQUEST
+	USER_ROLES_REQUEST, 
+	"key"
 )
 export const userRolesSuccess = makeActionCreator(
 	USER_ROLES_SUCCESS

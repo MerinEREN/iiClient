@@ -3,6 +3,7 @@ import {bindActionCreators} from "redux"
 import BodyComponent from "../components/body"
 import getRouteContents from "../middlewares/routeContents"
 import {toggleDrawer} from "../actions/drawer"
+import {tagsByFilterGet} from "../middlewares/tags"
 // Needed for onTouchTap, REMOVE WHEN REACT HAS THIS FEATURE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // It"s a mobile friendly onClick() alternative for all components in Material-UI 
 // http://stackoverflow.com/a/34015469/988941
@@ -29,22 +30,32 @@ const mapStateToProps = state => {
 		      lastUpdated
 		    } */
 	const {
-		appState: {snackbars, isFetching}, 
-		entitiesBuffered: {userLogged}, 
-		ui: {contentsByPage: {body}}
+		ui: {
+			contentsByPage: {body}
+		}, 
+		entitiesBuffered: {
+			userLogged, 
+			tagsByUser
+		}, 
+		appState: {
+			snackbars, 
+			isFetching
+		}
 	} = state
 	return {
+		contents: body, 
 		user: userLogged, 
-		isFetching,
+		userTags: tagsByUser[userLogged.ID] || {}, 
 		snackbars, 
-		contents: body
+		isFetching
 	}
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
 		getRouteContents, 
-		toggleDrawer
+		toggleDrawer, 
+		tagsByFilterGet
 	},
 	dispatch
 )

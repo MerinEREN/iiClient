@@ -8,7 +8,8 @@ import {
 
 // Action Creators
 export const userTagsRequest = makeActionCreator(
-	USER_TAGS_REQUEST
+	USER_TAGS_REQUEST, 
+	"key"
 )
 export const userTagsSuccess = makeActionCreator(
 	USER_TAGS_SUCCESS

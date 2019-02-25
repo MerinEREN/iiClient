@@ -13,11 +13,6 @@ const styles = {
 		marginBottom: 30, 
 		titleBackground: "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.3) 70%,rgba(0,0,0,0) 100%)"
 	}, 
-	link: {
-		activeStyle: {
-			color: "#0097a7"
-		}
-	}, 
 	checkbox: {
 		marginLeft: 12
 	}
@@ -32,7 +27,6 @@ const UserTile = ({user: {ID, email, name, link, status}, isChecked}) => {
 				marginBottom, 
 				titleBackground
 			}, 
-			link: {activeStyle}, 
 			checkbox
 		} = styles
 		return (
@@ -65,7 +59,6 @@ const UserTile = ({user: {ID, email, name, link, status}, isChecked}) => {
 				containerElement={
 					<Link 
 						to={`/users/${ID}`} 
-						activeStyle={activeStyle} 
 					/> 
 				}
 			>

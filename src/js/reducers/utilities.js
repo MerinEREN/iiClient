@@ -54,12 +54,16 @@ export const paginate = ({types, mapActionToKey}) => {
 					{
 						...state,
 						// IDs: union(state.IDs, response.result),
-						IDs: [...state.IDs, ...Object.keys(response.result)], 
+						IDs: response.reset ? 
+						[...Object.keys(response.result)] : 
+						[...state.IDs, ...Object.keys(response.result)], 
 						nextPageURL: response.nextPageURL || 
 						state.nextPageURL, 
 						prevPageURL: response.prevPageURL || 
 						state.prevPageURL,
-						pageCount: Object.keys(response.result).length && 
+						pageCount: response.reset ? 
+						1 : 
+						Object.keys(response.result).length && 
 						state.pageCount + 1, 
 						isFetching: false, 
 						didInvalidate: typeof didInvalidate === 
@@ -144,21 +148,13 @@ export const addDynamicKeyReturnResult = ({types, mapActionToKey}) => {
 
 	const [setType, resetAllType] = types
 
-	const updateState = (state, action) => {
-		switch (action.type) {
-			case setType:
-				return action.response.result
-			default:
-				return state
-		}
-	}
 	return (state = {}, action) => {
 		switch (action.type) {
 			case setType:
 				const key = mapActionToKey(action)
 				return {
 					...state, 
-					[key]: updateState(state[key], action)
+					[key]: action.response.result
 				}
 			case resetAllType:
 				return {}
@@ -246,7 +242,7 @@ export const mergeIntoOrResetObject = (state, action) => {
 				}
 			}
 		} else if (method !== "GET" || reset) {
-			return entitiesReset(action)
+			return entitiesReset(state, action)
 		}
 		// Merging "GET" results
 		return result ? 
@@ -263,7 +259,7 @@ export const mergeIntoOrResetObject = (state, action) => {
 		if (mergeIntoState) {
 			return {...state, ...result}
 		} else if (method !== "GET" || reset) {
-			return entitiesReset(action)
+			return entitiesReset(state, action)
 		}
 		// Merging "GET" results
 		return result ? {...state, ...result} : state
@@ -307,7 +303,22 @@ const removeFromAnObject = (state, action) => {
 
 // Replace entities with entitiesBuffered.
 // Also replaces entitiesBuffered with entitiesBuffered but it is not a problem.
-const entitiesReset = (action) => action.response.result
+const entitiesReset = (state, action) => {
+	const {
+		response: {result}, 
+		key
+	} = action
+	if (key !== "all") {
+		return result ? 
+			{
+				...state, 
+				[key]: result
+			} : 
+			state
+	} else {
+		return result ? {...state, ...result} : state
+	}
+}
 
 export const fetchFailure = (state, action) => {
 	const { response: {result}, 
@@ -338,6 +349,13 @@ export const fetchFailure = (state, action) => {
 
 export const resetReducer = (state, action) => action.value
 
+export const resetReducerPartially = (state, {key}) => {
+	return {
+		...state, 
+		[key]: Array.isArray(state[key]) ? [] : {}
+	}
+}
+
 export const setReducerPartially = (state, {key, value}) => {
 	return {
 		...state, 
@@ -350,6 +368,7 @@ export const resetArrayOrObject = (state, action) => {
 		return Array.isArray(state) ? [] : {}
 	return state
 }
+
 export const addToOrRemoveFromArray = (state, action) => {
 	if (state.indexOf(action.ID) === -1)
 		return [...state, action.ID]

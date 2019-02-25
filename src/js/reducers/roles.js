@@ -4,7 +4,7 @@ import createReducer, {
 	removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
 	mergeIntoOrResetObject, 
 	fetchFailure, 
-	resetArrayOrObject, 
+	resetReducerPartially, 
 	setReducerPartially, 
 	removeByKeyFromAnObject
 } from "./utilities"
@@ -13,8 +13,8 @@ import {
 	ROLES_SUCCESS, 
 	ROLES_FAILURE, 
 	USER_ROLES_REQUEST, 
-	ROLEIDS_SELECTED_BY_USER_SET, 
-	ROLEIDS_SELECTED_BY_USER_REMOVE
+	ROLEIDS_SELECTED_BY_KEY_SET, 
+	ROLEIDS_SELECTED_BY_KEY_REMOVE
 } from "../actions/types"
 
 // Slice Reducers
@@ -41,12 +41,12 @@ export const paginationRoles = paginate({
 	]
 })
 
-export const roleIDsSelectedByUser = createReducer(
+export const roleIDsSelectedByKey = createReducer(
 	{},   
 	{
-		USER_ROLES_REQUEST: resetArrayOrObject, 
-		ROLEIDS_SELECTED_BY_USER_SET: setReducerPartially, 
-		ROLEIDS_SELECTED_BY_USER_REMOVE: removeByKeyFromAnObject
+		USER_ROLES_REQUEST: resetReducerPartially, 
+		ROLEIDS_SELECTED_BY_KEY_SET: setReducerPartially, 
+		ROLEIDS_SELECTED_BY_KEY_REMOVE: removeByKeyFromAnObject
 	}
 )
 

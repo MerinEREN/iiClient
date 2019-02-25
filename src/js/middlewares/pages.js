@@ -5,7 +5,7 @@ import {
 	pagesFailure
 } from "../actions/pages"
 
-const getPages = makeLoader({
+const pagesGet = makeLoader({
 	defaults: {
 		URL: "/pages", 
 		kind: "pages"
@@ -19,7 +19,7 @@ const getPages = makeLoader({
 		didInvalidate: false
 	}
 })
-export const deletePages = makeLoader({
+export const pagesDelete = makeLoader({
 	defaults: {
 		method: "DELETE", 
 		kind: "pages"
@@ -34,7 +34,7 @@ export const deletePages = makeLoader({
 		showSnackbar: true
 	}
 })
-export const postPage = makeLoader({
+export const pagePost = makeLoader({
 	defaults: {
 		URL: "/pages", 
 		method: "POST", 
@@ -54,4 +54,4 @@ export const postPage = makeLoader({
 	}
 })
 
-export default getPages
+export default pagesGet

@@ -6,7 +6,7 @@ import getItems from "../middlewares/timelineList"
 
 const mapStateToProps = state => {
 	return {
-		count: state.appState.counters.timeline || 0
+		count: state.appState.counters.timeline
 	}
 }
 

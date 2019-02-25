@@ -53,8 +53,6 @@ class AccountSettings extends Component {
 	componentWillReceiveProps(nextProps) {
 		const {
 			usersGet, 
-			rolesGet, 
-			tagsGet, 
 			account: {ID}
 		} = this.props
 		// CHANGE THE CONTROL BELOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -64,8 +62,6 @@ class AccountSettings extends Component {
 			})
 			this.setState({fetchUsers: false})
 		}
-		rolesGet()
-		tagsGet()
 	}
 	handleStepIndex(direction) {
 		const {stepIndex} = this.state
@@ -174,6 +170,12 @@ class AccountSettings extends Component {
 		this.setState({newObject: {}, stepIndex: 0})
 	}
 	toggleDialog() {
+		const {
+			rolesGet, 
+			tagsGet
+		} = this.props
+		rolesGet()
+		tagsGet()
 		this.setState({showDialog: !this.state.showDialog})
 	}
 	handleDelete() {

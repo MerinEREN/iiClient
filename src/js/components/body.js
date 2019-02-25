@@ -9,11 +9,13 @@ import {ToolbarGroup} from "material-ui/Toolbar"
 import IconButton from "material-ui/IconButton"
 import Badge from "material-ui/Badge"
 import NotificationsIcon from "material-ui/svg-icons/social/notifications"
-import LandingPage from "../containers/landingPage"
-import Unauthorized from "../components/unauthorized"
+import FloatingActionButton from "material-ui/FloatingActionButton"
+import ContentAdd from "material-ui/svg-icons/content/add"
+import Unauthorized from "./unauthorized"
 import Signin  from "../containers/signin"
 import Signed  from "../containers/signed"
 import Drawer from "../containers/drawer"
+import DialogDemand from "../containers/dialogDemand"
 import {getRouteContents} from "./utilities"
 
 class Body extends Component {
@@ -32,8 +34,10 @@ class Body extends Component {
 			cookies.set("lang", this.lang)
 		}
 		this.state = {
-			completed: 0
+			completed: 0, 
+			showDialog: false
 		}
+		this.toggleDialog = this.toggleDialog.bind(this)
 	}
 	componentWillMount() {
 		this.props.getRouteContents({
@@ -61,12 +65,26 @@ class Body extends Component {
 			this.setState({completed})
 			const diff = Math.random() * 10
 			this.timer = setTimeout(
-				//() => this.progress(completed + diff), 
-				this.progress(completed + diff), 
+				() => this.progress(completed + diff), 
 				50)
 		}
 	}
+	toggleDialog() {
+		const {
+			showDialog
+		} = this.state
+		// Getting most used six tags to show as initial autocomplete values 
+		// if they does not exist yet.
+		this.props.tagsByFilterGet({
+			URL: "/tags?st=top", 
+			key: "top"
+		})
+		this.setState({showDialog: !showDialog})
+	}
 	render() {
+		const {
+			showDialog
+		} = this.state
 		const {
 			location, 
 			muiTheme, 
@@ -74,11 +92,12 @@ class Body extends Component {
 			snackbars, 
 			contents, 
 			user, 
+			userTags, 
 			cookies, 
 			toggleDrawer, 
 			children, 
 			timeline, 
-			dashboard
+			landingPage
 		} = this.props
 		this.styles = {
 			div: {
@@ -94,7 +113,7 @@ class Body extends Component {
 					display: this.session ? "flex" : "none", 
 					width: 21, 
 					height: 21, 
-					zIndex: 1, 
+					Index: 1, 
 					top: 12, 
 					right: 13
 				}, 
@@ -105,6 +124,11 @@ class Body extends Component {
 					paddingBottom: 0, 
 					paddingLeft: 0 
 				}
+			}, 
+			floatingActionButton: {
+				position: "fixed",
+				bottom: 32, 
+				right: 48
 			}
 		}
 		return (
@@ -160,16 +184,38 @@ class Body extends Component {
 							(
 								location.pathname === "/" ? 
 								(
-									user.tags && user.tags.length ? 
+									userTags && Object.keys(userTags).length ? 
 									timeline : 
-									dashboard
+									landingPage
 								) : 
 								children
 							) : 
 							<Unauthorized />
 						) : 
-						<LandingPage />
+						landingPage
 				}
+				{
+					(
+						!showDialog && 
+						this.session && 
+						(user.status !== "deleted" && user.status !== "suspended") && 
+						location.pathname === "/"
+					) && 
+						<FloatingActionButton 
+							secondary={true}
+							style={this.styles.floatingActionButton}
+							onTouchTap={this.toggleDialog}
+						>
+							<ContentAdd />
+						</FloatingActionButton>
+				}
+				<DialogDemand
+					contents={contents} 
+					title={contents[""] || "Create A New Demand"}
+					showDialog={showDialog} 
+					uID={user.ID}
+					toggleDialog={this.toggleDialog}
+				/>
 				{
 					Object.entries(snackbars).map(([k, v]) => 
 						<Snackbar
@@ -196,13 +242,15 @@ Body.propTypes = {
 	cookies: instanceOf(Cookies).isRequired, 
 	muiTheme: PropTypes.object.isRequired,
 	isFetching: PropTypes.bool.isRequired,
-	contents: PropTypes.object.isRequired,
 	user: PropTypes.object,
+	userTags: PropTypes.object,
+	contents: PropTypes.object.isRequired,
 	getRouteContents: PropTypes.func.isRequired,
+	tagsByFilterGet: PropTypes.func.isRequired, 
 	toggleDrawer: PropTypes.func.isRequired,
 	children: PropTypes.node, 
 	timeline: PropTypes.node, 
-	dashboard: PropTypes.node, 
+	landingPage: PropTypes.node, 
 	snackbars: PropTypes.object
 }
 

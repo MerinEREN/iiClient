@@ -1,15 +1,17 @@
 import React, {Component}  from "react"
-import PropTypes from 'prop-types'
-import {List, ListItem} from 'material-ui/List'
-import Demand from "../components/demand"
-import Offer from "../components/offer"
-import ServicePack from "../components/servicePack"
+import PropTypes from "prop-types"
+import {List, ListItem} from "material-ui/List"
+import Demand from "../components/listItemDemand"
+import Offer from "../components/listItemOffer"
+import ServicePack from "../components/listItemServicePack"
 
 class TimelineList extends Component {
-	componentWillReceiveProps(nextProps) {
-		if (nextProps.uID !== this.props.uID) {
-			this.props.getItems(nextProps.uID, "timeline")
-		}
+	componentWillMount() {
+		const {
+			uID, 
+			getItems
+		} = this.props
+		getItems(uID, "timeline", null)
 	}
 	render() {
 		const {
@@ -23,26 +25,20 @@ class TimelineList extends Component {
 						?
 						items.map((v, i) => {
 							switch (v.type) {
-								case 'demand':
+								case "demand":
 									return <Demand
-										key={v.ID}
-										index={i}
+										key={i}
 										{...v}
-										remove={() => remove(v.ID)}
 									/>
-								case 'offer':
+								case "offer":
 									return <Offer
-										key={v.ID}
-										index={i}
+										key={i}
 										{...v}
-										remove={() => remove(v.ID)}
 									/>
-								case 'servicePack':
+								case "servicePack":
 									return <ServicePack
-										key={v.ID}
-										index={i}
+										key={i}
 										{...v}
-										remove={() => remove(v.ID)}
 									/>
 							}
 						})
@@ -78,6 +74,6 @@ TimelineList.propTypes = {
 	uID: PropTypes.string.isRequired
 }
 
-TimelineList.muiName = 'List'
+TimelineList.muiName = "List"
 
 export default TimelineList

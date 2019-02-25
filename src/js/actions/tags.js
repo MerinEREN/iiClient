@@ -3,8 +3,9 @@ import {
 	TAGS_REQUEST, 
 	TAGS_SUCCESS, 
 	TAGS_FAILURE, 
-	TAGIDS_SELECTED_BY_USER_SET, 
-	TAGIDS_SELECTED_BY_USER_REMOVE
+	TAGIDS_SELECTED_BY_KEY_SET, 
+	TAGIDS_SELECTED_BY_KEY_REMOVE, 
+	TAGS_BY_FILTER_SUCCESS
 } from "./types"
 
 // Action Creators
@@ -17,12 +18,15 @@ export const tagsSuccess = makeActionCreator(
 export const tagsFailure = makeActionCreator(
 	TAGS_FAILURE
 )
-export const tagIDsSelectedByUserSet = makeActionCreator(
-	TAGIDS_SELECTED_BY_USER_SET, 
+export const tagIDsSelectedByKeySet = makeActionCreator(
+	TAGIDS_SELECTED_BY_KEY_SET, 
 	"key", 
 	"value"
 )
-export const tagIDsSelectedByUserRemove = makeActionCreator(
-	TAGIDS_SELECTED_BY_USER_REMOVE, 
+export const tagIDsSelectedByKeyRemove = makeActionCreator(
+	TAGIDS_SELECTED_BY_KEY_REMOVE, 
 	"key"
+)
+export const tagsByFilterSuccess = makeActionCreator(
+	TAGS_BY_FILTER_SUCCESS
 )

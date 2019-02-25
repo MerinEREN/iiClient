@@ -2,7 +2,8 @@ import {makeLoader} from "./utilities"
 import {
 	tagsRequest, 
 	tagsSuccess, 
-	tagsFailure
+	tagsFailure, 
+	tagsByFilterSuccess
 } from "../actions/tags"
 
 const tagsGet = makeLoader({
@@ -53,6 +54,16 @@ export const tagDelete = makeLoader({
 	options: {
 		hideFetching: true, 
 		showSnackbar: true
+	}
+})
+
+export const tagsByFilterGet = makeLoader({
+	actionCreators: {
+		actionsSuccess: [tagsByFilterSuccess]
+	}, 
+	options: {
+		hideFetching: true, 
+		isCached: (state, key) => state.appState.tagsByFilter[key]
 	}
 })
 

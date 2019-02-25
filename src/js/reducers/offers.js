@@ -4,17 +4,19 @@ import createReducer, {
 	removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
 	mergeIntoOrResetObject, 
 	fetchFailure
-} from './utilities'
+} from "./utilities"
 import {
 	OFFERS_REQUEST, 
 	OFFERS_SUCCESS, 
 	OFFERS_FAILURE
-} from '../actions/types'
+} from "../actions/types"
+import offer, {offerBuffered} from "./offer"
 
 const offers = createReducer(
 	{}, 
 	{
-		OFFERS_SUCCESS: removeFromObjectIfDeleteOrMergeIntoOrResetObject
+		OFFERS_SUCCESS: removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
+		...offer
 	}
 )
 export const offersBuffered = createReducer(
@@ -22,7 +24,8 @@ export const offersBuffered = createReducer(
 	{
 		OFFERS_REQUEST: mergeIntoOrRemoveFromObject, 
 		OFFERS_SUCCESS: mergeIntoOrResetObject, 
-		OFFERS_FAILURE: fetchFailure
+		OFFERS_FAILURE: fetchFailure, 
+		...offerBuffered
 	}
 )
 export const paginationOffers = paginate({

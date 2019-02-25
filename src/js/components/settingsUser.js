@@ -5,8 +5,8 @@ import SelectField from "material-ui/SelectField"
 import MenuItem from "material-ui/MenuItem"
 import FlatButton from "material-ui/FlatButton"
 import {isAdmin} from "./utilities"
-import Avatar from 'material-ui/Avatar'
-import Chip from 'material-ui/Chip'
+import Chip from "material-ui/Chip"
+import Avatar from "material-ui/Avatar"
 import {blue300} from "material-ui/styles/colors"
 import {getFirstLetters} from "./utilities"
 
@@ -64,11 +64,11 @@ class UserSettings extends Component {
 	}
 	// INDEX AND VALUES ARE FOR SELECT FIELD ONLY
 	handleRolesInputChange(event, index, values) {
-		this.props.roleIDsSelectedByUserSet(this.props.user.ID, values)
+		this.props.roleIDsSelectedByKeySet(this.props.user.ID, values)
 	}
 	// INDEX AND VALUES ARE FOR SELECT FIELD ONLY
 	handleTagsInputChange(event, index, values) {
-		this.props.tagIDsSelectedByUserSet(this.props.user.ID, values)
+		this.props.tagIDsSelectedByKeySet(this.props.user.ID, values)
 	}
 	handlePostRoles() {
 		const {
@@ -136,8 +136,8 @@ class UserSettings extends Component {
 			userDelete, 
 			userRolesRemove, 
 			userTagsRemove, 
-			roleIDsSelectedByUserRemove, 
-			tagIDsSelectedByUserRemove
+			roleIDsSelectedByKeyRemove, 
+			tagIDsSelectedByKeyRemove
 		} = this.props
 		userDelete({
 			URL: `/users/${ID}`, 
@@ -148,8 +148,8 @@ class UserSettings extends Component {
 			if (response.ok) {
 				userRolesRemove(ID)
 				userTagsRemove(ID)
-				roleIDsSelectedByUserRemove(ID) 
-				tagIDsSelectedByUserRemove(ID)
+				roleIDsSelectedByKeyRemove(ID) 
+				tagIDsSelectedByKeyRemove(ID)
 			}
 		})
 		browserHistory.goBack()
@@ -355,8 +355,8 @@ UserSettings.propTypes = {
 	tagsGet: PropTypes.func.isRequired, 
 	userRolesGet: PropTypes.func.isRequired, 
 	userTagsGet: PropTypes.func.isRequired, 
-	roleIDsSelectedByUserSet: PropTypes.func.isRequired, 
-	tagIDsSelectedByUserSet: PropTypes.func.isRequired, 
+	roleIDsSelectedByKeySet: PropTypes.func.isRequired, 
+	tagIDsSelectedByKeySet: PropTypes.func.isRequired, 
 	userRolesPost: PropTypes.func.isRequired, 
 	userTagsPost: PropTypes.func.isRequired, 
 	userRoleDelete: PropTypes.func.isRequired, 
@@ -364,8 +364,8 @@ UserSettings.propTypes = {
 	userDelete: PropTypes.func.isRequired, 
 	userRolesRemove: PropTypes.func.isRequired, 
 	userTagsRemove: PropTypes.func.isRequired, 
-	roleIDsSelectedByUserRemove: PropTypes.func.isRequired, 
-	tagIDsSelectedByUserRemove: PropTypes.func.isRequired
+	roleIDsSelectedByKeyRemove: PropTypes.func.isRequired, 
+	tagIDsSelectedByKeyRemove: PropTypes.func.isRequired
 }
 
 export default UserSettings
