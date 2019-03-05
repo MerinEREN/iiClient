@@ -8,8 +8,7 @@ import {
 
 // Action Creators
 export const userTagsRequest = makeActionCreator(
-	USER_TAGS_REQUEST, 
-	"key"
+	USER_TAGS_REQUEST
 )
 export const userTagsSuccess = makeActionCreator(
 	USER_TAGS_SUCCESS
@@ -18,6 +17,5 @@ export const userTagsFailure = makeActionCreator(
 	USER_TAGS_FAILURE
 )
 export const userTagsRemove = makeActionCreator(
-	USER_TAGS_REMOVE, 
-	"key"
+	USER_TAGS_REMOVE
 )

@@ -132,13 +132,13 @@ class DialogOffer extends Component {
 		} = this.props
 		return Object.keys(contents).length > 0 ?
 			[
+				contents["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRXhwbGFuYXRpb24M"], 
 				contents["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"], 
-				contents["Explanation"], 
-				contents["Amount"]
+				contents["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGQW1vdW50DA"]
 			] : 
 			[
-				"Description", 
 				"Explanation", 
+				"Description", 
 				"Amount"
 			]
 	}
@@ -153,7 +153,7 @@ class DialogOffer extends Component {
 		return <TextField 
 			name="explanation" 
 			value={explanation || ""}
-			floatingLabelText={contents["aghkZXZ-Tm9uZXIQCxIHQ29udGVudCIDVGFnDA"] || "Explanation"}
+			floatingLabelText={contents["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"] || "Description"}
 			errorText={inputErrTexts.explanation}
 			fullWidth={true}
 			multiLine={true}
@@ -174,7 +174,7 @@ class DialogOffer extends Component {
 			name="amount" 
 			value={amount || 0}
 			type="number"
-			floatingLabelText={contents["aghkZXZ-Tm9uZXIQCxIHQ29udGVudCIDVGFnDA"] || "Amount"}
+			floatingLabelText={contents["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGQW1vdW50DA"] || "Amount"}
 			errorText={inputErrTexts.amount}
 			onChange={this.handleFieldChange}
 		/>
@@ -184,7 +184,7 @@ class DialogOffer extends Component {
 			contents
 		} = this.props
 		return [
-			<p>{contents["aghkZXZ-Tm9uZXJBCxIHQ29udGVudCI0QWRkIGEgbmV3IHVzZXIuIEVtYWlsIGFuZCBSb2xlcyBmaWVsZHMgYXJlIHJlcXVpcmVkLgw"]}</p>, 
+			<p>{contents["aghkZXZ-Tm9uZXI0CxIHQ29udGVudCInTWFrZSBhbiBvZmZlci4gQWxsIGZpZWxkcyBhcmUgcmVxdWlyZWQuDA"]}</p>, 
 			this.explanationField(), 
 			this.amountField()
 		]

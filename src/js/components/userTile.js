@@ -1,6 +1,6 @@
 import React from "react"
 import PropTypes from "prop-types"
-import {Link} from "react-router"
+import Link from "react-router/lib/Link"
 import {GridTile} from "material-ui/GridList"
 import Checkbox from "material-ui/Checkbox"
 import {selectedUserIDsAddRemove} from "../actions/users"

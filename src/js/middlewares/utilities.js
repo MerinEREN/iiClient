@@ -175,13 +175,13 @@ const getChanged = (entities, entitiesBuffered) => {
 	return changedEntities
 }
 
-export const getObjectsFromEntities = (IDs, kind) => {
+export const getObjectsFromEntities = (IDs, object) => {
 	let obj = {}
 	for (let v of IDs) {
 		// Belowe control is delete page -> delete content which has only that page 
-		// -> cancel delete content after delete page timeout expiris check.
-		if (kind[v])
-			obj[v] = kind[v]
+		// 		// -> cancel delete content after delete page timeout expiris check.
+		if (object[v])
+			obj[v] = object[v]
 	}
 	return obj
 }

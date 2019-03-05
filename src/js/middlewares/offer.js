@@ -8,5 +8,17 @@ const offerGet = makeLoader({
 		actionsSuccess: [offerSuccess]
 	}
 })
+export const offerPut = makeLoader({
+	defaults: {
+		method: "PUT"
+	},
+	actionCreators: {
+		actionsSuccess: [offerSuccess]
+	}, 
+	options: {
+		showSnackbar: true, 
+		mergeIntoState: true
+	}
+})
 
 export default offerGet

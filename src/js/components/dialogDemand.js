@@ -217,15 +217,15 @@ class DialogDemand extends Component {
 		} = this.props
 		return Object.keys(contents).length > 0 ?
 			[
-				contents["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"], 
+				contents["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRXhwbGFuYXRpb24M"], 
 				contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEVGFncww"], 
-				contents["Explanation"], 
-				contents["Photos"]
+				contents["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"], 
+				contents["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGUGhvdG9zDA"]
 			] : 
 			[
-				"Description", 
-				"Tags", 
 				"Explanation", 
+				"Tags", 
+				"Description", 
 				"Photos"
 			]
 	}
@@ -312,7 +312,7 @@ class DialogDemand extends Component {
 				searchText={searchText}
 				filter={AutoComplete.noFilter}
 				dataSource={this.tagsDataSource()}
-				hintText={contents[""] || "bla bla bla..."}
+				hintText={contents["aghkZXZ-Tm9uZXIZCxIHQ29udGVudCIMU2VhcmNoIGEgdGFnDA"] || "Search a tag"}
 				floatingLabelText={contents["aghkZXZ-Tm9uZXIQCxIHQ29udGVudCIDVGFnDA"] || "Tag"}
 				errorText={inputErrTexts.tagIDs}
 				onUpdateInput={this.handleAutoComplete} 
@@ -333,7 +333,7 @@ class DialogDemand extends Component {
 		return <TextField 
 			name="explanation" 
 			value={explanation || ""}
-			floatingLabelText={contents["aghkZXZ-Tm9uZXIQCxIHQ29udGVudCIDVGFnDA"] || "Explanation"}
+			floatingLabelText={contents["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"] || "Description"}
 			errorText={inputErrTexts.explanation}
 			fullWidth={true}
 			multiLine={true}
@@ -354,8 +354,8 @@ class DialogDemand extends Component {
 			<p>
 				{
 					uID ? 
-						contents["aghkZXZ-Tm9uZXJBCxIHQ29udGVudCI0QWRkIGEgbmV3IHVzZXIuIEVtYWlsIGFuZCBSb2xlcyBmaWVsZHMgYXJlIHJlcXVpcmVkLgw"] : 
-						contents["aghkZXZ-Tm9uZXJBCxIHQ29udGVudCI0QWRkIGEgbmV3IHVzZXIuIEVtYWlsIGFuZCBSb2xlcyBmaWVsZHMgYXJlIHJlcXVpcmVkLgw"]  
+						contents["aghkZXZ-Tm9uZXJLCxIHQ29udGVudCI-Q3JlYXRlIGEgbmV3IGRlbWFuZC4gVGFncyBhbmQgRGVzY3JpcHRpb24gZmllbGRzIGFyZSByZXF1aXJlZC4M"] : 
+						contents["aghkZXZ-Tm9uZXJJCxIHQ29udGVudCI8VXBkYXRlIHRoZSBkZW1hbmQuIFRhZ3MgYW5kIERlc2NyaXB0aW9uIGZpZWxkcyBhcmUgcmVxdWlyZWQuDA"]  
 				}
 			</p>, 
 			this.tagsField(), 

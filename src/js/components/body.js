@@ -211,7 +211,7 @@ class Body extends Component {
 				}
 				<DialogDemand
 					contents={contents} 
-					title={contents[""] || "Create A New Demand"}
+					title={contents["aghkZXZ-Tm9uZXIgCxIHQ29udGVudCITQ3JlYXRlIEEgTmV3IERlbWFuZAw"] || "Create A New Demand"}
 					showDialog={showDialog} 
 					uID={user.ID}
 					toggleDialog={this.toggleDialog}

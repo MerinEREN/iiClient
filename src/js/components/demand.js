@@ -1,8 +1,10 @@
 import React, {Component} from "react"
 import PropTypes from "prop-types"
 import browserHistory from "react-router/lib/browserHistory"
-import {Card, CardActions, CardMedia, CardTitle, CardText} from "material-ui/Card"
+import Link from "react-router/lib/Link"
+import {Card, CardActions, CardTitle, CardText} from "material-ui/Card"
 import {List, ListItem} from "material-ui/List"
+import Divider from "material-ui/Divider"
 import FlatButton from "material-ui/FlatButton"
 import FloatingActionButton from "material-ui/FloatingActionButton"
 import ContentCreate from "material-ui/svg-icons/content/create"
@@ -10,6 +12,10 @@ import ContentAdd from "material-ui/svg-icons/content/add"
 import DialogDemand from "../containers/dialogDemand"
 import DialogOffer from "../containers/dialogOffer"
 import {isAdmin} from "./utilities"
+import Chip from "material-ui/Chip"
+import Avatar from "material-ui/Avatar"
+import {blue300} from "material-ui/styles/colors"
+import {getFirstLetters} from "./utilities"
 
 const styles = {
 	root: {
@@ -36,10 +42,11 @@ class Demand extends Component {
 		this.toggleDialogOffer = this.toggleDialogOffer.bind(this)
 		this.handleDelete = this.handleDelete.bind(this)
 	}
-	componentWillMount() {
+	componentDidMount() {
 		const {
 			demandGet, 
 			offersGet, 
+			tagsGet, 
 			params: {ID}
 		} = this.props
 		demandGet({
@@ -50,7 +57,7 @@ class Demand extends Component {
 			URL: `/offers?dID=${ID}`, 
 			key: ID
 		})
-
+		tagsGet()
 	}
 	handleDelete() {
 		const {
@@ -84,14 +91,84 @@ class Demand extends Component {
 		} = this.state
 		this.setState({showDialogOffer: !showDialogOffer})
 	}
+	demandTags(contents, tags, tagIDs) {
+		if ((!tagIDs || tagIDs.length === 0) || Object.keys(tags).length === 0)
+			return
+		let tagsSelected = {}
+		for (let v of tagIDs) {
+			tagsSelected = {
+				...tagsSelected, 
+				[v]: tags[v]
+			}
+		}
+		return <List>
+			{
+				Object.entries(tagsSelected).map(([k, v]) => 
+					<ListItem
+						key={k}
+						children={
+							<Chip
+								key={k}
+							>
+								<Avatar 
+									size={32}
+									color={blue300}
+								>
+									{getFirstLetters(contents[v.contentID])}
+								</Avatar>
+								{contents[v.contentID]}
+							</Chip>
+						}
+						disabled={true} 
+					/>
+				)
+			}
+		</List>
+	}
+	demandPhotos(links) {
+		if (!links || links.length === 0)
+			return
+		return <List>
+			{
+				links.map(v => {
+					if (v)
+						return <ListItem 
+							key={v}
+							children={<img 
+								key={v} 
+								src={v} 
+							/>}
+							disabled={true}
+						/>
+				})
+			}
+		</List>
+	}
+	offers(ID, os) {
+		return <List>
+			{
+				Object.values(os).map(v => <ListItem 
+					key={v.ID}
+					primaryText={v.explanation}
+					secondaryText={v.amount} 
+					containerElement={
+						<Link 
+							to={`/${ID}/offers/${v.ID}`} 
+						/> 
+					}
+				/>)
+			}
+		</List>
+	}
 	render() {
 		const {
 			showDialogDemand, 
 			showDialogOffer
 		} = this.state
 		const {
-			params, 
+			params: {ID}, 
 			contents, 
+			tags, 
 			demand, 
 			offers, 
 			userID, 
@@ -101,27 +178,51 @@ class Demand extends Component {
 		return (
 			<div style={styles.root}>
 				<Card>
-					<CardMedia>
-						<img src={demand.link || "/img/adele.jpg"} />
-					</CardMedia>
-					<CardTitle title={demand.text} />
+					<CardTitle title={demand.status} />
 					<CardText>
 						<List>
+							<ListItem primaryText={contents["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"] || "Description"} secondaryText={demand.explanation} disabled={true} />
 							<ListItem primaryText={contents["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIITW9kaWZpZWQM"] || "Modified"} secondaryText={demand.lastModified} disabled={true} />
 							<ListItem primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHQ3JlYXRlZAw"] || "Created"} secondaryText={demand.created} disabled={true} />
 						</List>
 					</CardText>
 					<CardActions>
-						<FlatButton 
-							label={contents["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"] || "Delete"}
-							secondary={true}
-							onTouchTap={this.handleDelete} 
-						/>
+						{
+							demand.status !== "accepted" && 
+								(
+									(userID && userID === demand.userID) || 
+									(
+										isAdmin(userRoles) && 
+										(accountID && accountID === demand.accountID)
+									) ?
+									<FlatButton 
+										label={contents["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"] || "Delete"}
+										secondary={true}
+										onTouchTap={this.handleDelete} 
+									/> : 
+									null
+								)
+						}
 					</CardActions>
 				</Card>
+				<Divider />
+				{
+					this.demandTags(contents, tags, demand.tagIDs)
+				}
+				<Divider />
+				{
+					this.demandPhotos(demand.linksPhoto)
+				}
+				<Divider />
+				{
+					demand.status !== "accepted" && 
+					this.offers(ID, offers)
+				}
 				{
 					(
 						!showDialogDemand && 
+						demand.status !== "accepted" && 
+						Object.values(offers).length === 0 && 
 						(
 							(userID && userID === demand.userID) || 
 							(
@@ -139,7 +240,11 @@ class Demand extends Component {
 						</FloatingActionButton>
 				}
 				{
-					(!showDialogOffer && (accountID && accountID !== demand.accountID)) && 
+					(
+						demand.status !== "accepted" && 
+						!showDialogOffer && 
+						(accountID && accountID !== demand.accountID)
+					) && 
 						<FloatingActionButton 
 							secondary={true}
 							style={styles.floatingActionButton}
@@ -150,16 +255,16 @@ class Demand extends Component {
 				}
 				<DialogDemand
 					contents={contents} 
-					title={contents[""] || "Update The Demand"}
+					title={contents["aghkZXZ-Tm9uZXIeCxIHQ29udGVudCIRVXBkYXRlIFRoZSBEZW1hbmQM"] || "Update The Demand"}
 					showDialog={showDialogDemand} 
 					demand={demand} 
 					toggleDialog={this.toggleDialogDemand}
 				/>
 				<DialogOffer
 					contents={contents} 
-					title={contents[""] || "Make An Offer"}
+					title={contents["aghkZXZ-Tm9uZXIaCxIHQ29udGVudCINTWFrZSBBbiBPZmZlcgw"] || "Make An Offer"}
 					uID={userID}
-					dID={params.ID}
+					dID={ID}
 					showDialog={showDialogOffer} 
 					toggleDialog={this.toggleDialogOffer}
 				/>
@@ -176,11 +281,13 @@ Demand.defaultProps = {
 
 Demand.propTypes = {
 	contents: PropTypes.object.isRequired, 
+	tags: PropTypes.object.isRequired, 
 	demand: PropTypes.object.isRequired, 
 	offers: PropTypes.object.isRequired, 
 	userID: PropTypes.string, 
 	accountID: PropTypes.string, 
 	userRoles: PropTypes.object, 
+	tagsGet: PropTypes.func.isRequired, 
 	demandGet: PropTypes.func.isRequired, 
 	demandsDelete: PropTypes.func.isRequired, 
 	tagsByFilterGet: PropTypes.func.isRequired, 

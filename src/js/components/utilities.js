@@ -80,6 +80,8 @@ export const getRouteContents = (session, prevProps, nextProps) => {
 					let path = v.path
 					if (v.path.includes("s/:ID")) {
 						path = v.path.replace("s/:ID", "")
+						if (path.includes(":pID/"))
+							path = path.replace(":pID/", "")
 					} else if (v.path.includes(":ID/")) {
 						path = v.path.replace(":ID/", "")
 					}

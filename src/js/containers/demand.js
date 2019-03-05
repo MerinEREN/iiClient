@@ -1,17 +1,17 @@
 import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
 import DemandComponent from "../components/demand"
+import tagsGet from "../middlewares/tags"
 import demandGet from "../middlewares/demand"
 import {tagsByFilterGet} from "../middlewares/tags"
 import {demandsDelete} from "../middlewares/demands"
 import offersGet from "../middlewares/offers"
-import {getObjectsFromEntities} from "../middlewares/utilities"
 
 const mapStateToProps = (state, ownProps) => {
 	const {
 		ui: {contentsByPage: {demand: contents}}, 
-		pagination, 
 		entitiesBuffered: {
+			tags, 
 			demands: {timeline}, 
 			offers, 
 			userLogged: {ID: userID}, 
@@ -21,10 +21,9 @@ const mapStateToProps = (state, ownProps) => {
 	} = state
 	return {
 		contents, 
+		tags, 
 		demand: timeline && timeline[ownProps.params.ID], 
-		offers: pagination.offers[ownProps.params.ID] ?
-		getObjectsFromEntities(pagination.offers[ownProps.params.ID].IDs, offers) : 
-		{}, 
+		offers: offers[ownProps.params.ID] || {}, 
 		userID, 
 		accountID, 
 		userRoles: rolesByUser[userID]
@@ -33,6 +32,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
+		tagsGet, 
 		demandGet, 
 		demandsDelete, 
 		tagsByFilterGet, 

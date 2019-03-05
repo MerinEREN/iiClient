@@ -21,7 +21,7 @@ import ServicePacks from "./components/servicePacks"
 import Settings from "./containers/settings"
 import SettingsUser from "./containers/settingsUser"
 import Demand from "./containers/demand"
-import Offer from "./components/offer"
+import Offer from "./containers/offer"
 import ServicePack from "./components/servicePack"
 import Feedback from "./components/feedback"
 import Help from "./components/help"
@@ -30,6 +30,7 @@ import Help from "./components/help"
 // PRECEDENCE (matching routes in the order they are defined) IS IMPORTANT !!!!!!!!!!!!!!!!
 // Add a control for path=":ID" 
 // like onEnter={(nextState, replace) => {if (noMatch) replace("/")}}.
+// "pID" is parent ID like account ID, demand ID etc.
 const routes  = <Route path="/" component={Body}>
 	<IndexRoute components={{landingPage: LandingPage, timeline: Timeline}} />
 	<Route path="dashboard" component={Dashboard} />
@@ -43,7 +44,7 @@ const routes  = <Route path="/" component={Body}>
 	<Route path="settings" component={Settings} />
 	<Route path="users/:ID" component={SettingsUser} />
 	<Route path="demands/:ID" component={Demand} />
-	<Route path="offers/:ID" component={Offer} />
+	<Route path=":pID/offers/:ID" component={Offer} />
 	<Route path="servicePacks/:ID" component={ServicePack} />
 	<Route path="feedback" component={Feedback} />
 	<Route path="help" component={Help} />

@@ -131,9 +131,12 @@ const shouldFetchAfterDelay = (args, duration) => dispatch => {
 // Reset entitiesBuffered with entities.
 const cancelFetch = ({actionsFailure, request: {method}, dataBody, kind, key}) => 
 	(dispatch, getState) => {
+		const object = key ? 
+			getState().entities[kind][key] : 
+			getState().entities[kind]
 		actionsFailure.forEach(ac => dispatch(ac({
 			method, 
-			response: {result: getObjectsFromEntities(dataBody, getState().entities[kind])}, 
+			response: {result: getObjectsFromEntities(dataBody, object)}, 
 			key
 		})))
 	}
