@@ -1,12 +1,12 @@
-import {
-	makeLoader, 
+import makeLoader, {
 	generateURL
 } from "./utilities"
 import {
 	counterSuccess
 } from "../actions/counters"
 
-export const getURL = (key, paginationURL) => (dispatch, getState) => {
+// CHANGE THIS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+export const URLGet = (key, paginationURL) => (dispatch, getState) => {
 	switch (key) {
 		case "something": 
 			break
@@ -29,13 +29,13 @@ export const getURL = (key, paginationURL) => (dispatch, getState) => {
 	}
 }
 
-const getCount = makeLoader({
+const countGet = makeLoader({
 	actionCreators: {
 		actionsSuccess: [counterSuccess]
 	},
 	options: {
-		hideFetching: true
+		hideFetching
 	}
 })
 
-export default getCount
+export default countGet

@@ -1,6 +1,8 @@
-import makeActionCreator from './creator'
-import {TOGGLE_DRAWER} from './types'
+import makeActionCreator from "./creator"
+import {DRAWER_TOGGLE} from "./types"
 
-export const toggleDrawer = makeActionCreator(
-	TOGGLE_DRAWER
+const drawerToggle = makeActionCreator(
+	DRAWER_TOGGLE
 )
+
+export default drawerToggle

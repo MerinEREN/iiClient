@@ -1,11 +1,11 @@
 import createReducer, {
 	paginate, 
-	mergeIntoOrRemoveFromObject, 
-	removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
-	mergeIntoOrResetObject, 
+	fetchRequest, 
+	fetchSuccessEntities, 
+	fetchSuccess, 
 	fetchFailure, 
-	addToOrRemoveFromArray, 
-	resetArrayOrObject
+	resetAnArrayOrAnObject, 
+	addToOrRemoveFromAnArray
 } from "./utilities"
 import {
 	PAGES_REQUEST, 
@@ -13,26 +13,23 @@ import {
 	PAGES_FAILURE,
 	PAGEIDS_SELECTED_ADD_REMOVE
 } from "../actions/types"
-import page, {pageBuffered} from "./page"
 
 // Slice Reducers
 const pages = createReducer(
 	{}, 
 	{
-		PAGES_SUCCESS: removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
-		...page
+		PAGES_SUCCESS: fetchSuccessEntities
 	}
 )
 export const pagesBuffered = createReducer(
 	{}, 
 	{
-		PAGES_REQUEST: mergeIntoOrRemoveFromObject, 
-		PAGES_SUCCESS: mergeIntoOrResetObject, 
-		PAGES_FAILURE: fetchFailure, 
-		...pageBuffered
+		PAGES_REQUEST: fetchRequest, 
+		PAGES_SUCCESS: fetchSuccess, 
+		PAGES_FAILURE: fetchFailure
 	}
 )
-export const paginationPages = paginate({
+export const pagesPagination = paginate({
 	mapActionToKey: action => action.key, 
 	types: [
 		PAGES_REQUEST, 
@@ -42,8 +39,8 @@ export const paginationPages = paginate({
 })
 export const pageIDsSelected = createReducer([], 
 	{
-		PAGES_REQUEST: resetArrayOrObject, 
-		PAGEIDS_SELECTED_ADD_REMOVE: addToOrRemoveFromArray
+		PAGES_REQUEST: resetAnArrayOrAnObject, 
+		PAGEIDS_SELECTED_ADD_REMOVE: addToOrRemoveFromAnArray
 	}
 )
 

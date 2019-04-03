@@ -1,4 +1,4 @@
-import {makeLoader} from "./utilities"
+import makeLoader from "./utilities"
 import {
 	rolesRequest, 
 	rolesSuccess, 
@@ -16,43 +16,21 @@ const rolesGet = makeLoader({
 		actionsFailure: [rolesFailure]
 	}, 
 	options: {
-		didInvalidate: false
+		didValidate
 	}
 })
-
-export const rolesPost = makeLoader({
+export const rolePost = makeLoader({
 	defaults: {
 		URL: "/roles", 
 		method: "POST", 
 		headers: {
 			"Accept": "application/json"
-		}, 
-		kind: "roles"
+		}
 	},
 	actionCreators: {
 		actionsRequest: [rolesRequest],
 		actionsSuccess: [rolesSuccess],
 		actionsFailure: [rolesFailure]
-	}, 
-	options: {
-		hideFetching: true, 
-		showSnackbar: true
-	}
-})
-
-export const roleDelete = makeLoader({
-	defaults: {
-		method: "DELETE", 
-		kind: "roles"
-	},
-	actionCreators: {
-		actionsRequest: [rolesRequest],
-		actionsSuccess: [rolesSuccess],
-		actionsFailure: [rolesFailure]
-	}, 
-	options: {
-		hideFetching: true, 
-		showSnackbar: true
 	}
 })
 

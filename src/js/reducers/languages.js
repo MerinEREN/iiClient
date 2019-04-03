@@ -1,35 +1,35 @@
 import createReducer, {
 	paginate, 
-	mergeIntoOrRemoveFromObject, 
-	removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
-	mergeIntoOrResetObject, 
+	fetchRequest, 
+	fetchSuccessEntities, 
+	fetchSuccess, 
 	fetchFailure, 
-	addToOrRemoveFromArray, 
-	resetArrayOrObject
-} from './utilities'
+	resetAnArrayOrAnObject, 
+	addToOrRemoveFromAnArray
+} from "./utilities"
 import {
 	LANGUAGES_REQUEST, 
 	LANGUAGES_SUCCESS, 
 	LANGUAGES_FAILURE, 
 	LANGUAGEIDS_SELECTED_ADD_REMOVE
-} from '../actions/types'
+} from "../actions/types"
 
 // Slice Reducers
 const languages = createReducer(
 	{}, 
 	{
-		LANGUAGES_SUCCESS: removeFromObjectIfDeleteOrMergeIntoOrResetObject
+		LANGUAGES_SUCCESS: fetchSuccessEntities
 	}
 )
 export const languagesBuffered = createReducer(
 	{}, 
 	{
-		LANGUAGES_REQUEST: mergeIntoOrRemoveFromObject, 
-		LANGUAGES_SUCCESS: mergeIntoOrResetObject, 
+		LANGUAGES_REQUEST: fetchRequest, 
+		LANGUAGES_SUCCESS: fetchSuccess, 
 		LANGUAGES_FAILURE: fetchFailure
 	}
 )
-export const paginationLanguages = paginate({
+export const languagesPagination = paginate({
 	mapActionToKey: action => action.key, 
 	types: [
 		LANGUAGES_REQUEST, 
@@ -40,8 +40,8 @@ export const paginationLanguages = paginate({
 export const languageIDsSelected = createReducer(
 	[], 
 	{
-		LANGUAGES_REQUEST: resetArrayOrObject, 
-		LANGUAGEIDS_SELECTED_ADD_REMOVE: addToOrRemoveFromArray
+		LANGUAGES_REQUEST: resetAnArrayOrAnObject, 
+		LANGUAGEIDS_SELECTED_ADD_REMOVE: addToOrRemoveFromAnArray
 	}
 )
 

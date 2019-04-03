@@ -1,4 +1,4 @@
-import {makeLoader} from "./utilities"
+import makeLoader from "./utilities"
 import {
 	pagesRequest, 
 	pagesSuccess, 
@@ -16,22 +16,7 @@ const pagesGet = makeLoader({
 		actionsFailure: [pagesFailure]
 	}, 
 	options: {
-		didInvalidate: false
-	}
-})
-export const pagesDelete = makeLoader({
-	defaults: {
-		method: "DELETE", 
-		kind: "pages"
-	},
-	actionCreators: {
-		actionsRequest: [pagesRequest],
-		actionsSuccess: [pagesSuccess],
-		actionsFailure: [pagesFailure]
-	}, 
-	options: {
-		hideFetching: true, 
-		showSnackbar: true
+		didValidate
 	}
 })
 export const pagePost = makeLoader({
@@ -40,17 +25,12 @@ export const pagePost = makeLoader({
 		method: "POST", 
 		headers: {
 			"Accept": "application/json"
-		}, 
-		kind: "pages"
+		}
 	},
 	actionCreators: {
 		actionsRequest: [pagesRequest],
 		actionsSuccess: [pagesSuccess],
 		actionsFailure: [pagesFailure]
-	}, 
-	options: {
-		hideFetching: true, 
-		showSnackbar: true
 	}
 })
 

@@ -1,18 +1,19 @@
-import {makeLoader} from "./utilities"
+import makeLoader from "./utilities"
 import {
 	signOutURLSuccess
 } from "../actions/signOutURL"
 
 const signOutURLGet = makeLoader({
 	defaults: {
-		URL: "/signout"
+		URL: "/signout", 
+		kind: "signOutURL"
 	}, 
 	actionCreators: {
-			actionsSuccess: [signOutURLSuccess]
+		actionsSuccess: [signOutURLSuccess]
 	},
 	options: {
-		hideFetching: true
+		isCached: (state, kind, key) => state.entities[kind]
 	}
-	})
+})
 
 export default signOutURLGet

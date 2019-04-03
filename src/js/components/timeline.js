@@ -1,6 +1,6 @@
 import React from "react"
 import {GridList, GridTile} from "material-ui/GridList"
-import CounterChip from "../containers/counterChip"
+import ChipCounter from "../containers/chipCounter"
 import TimelineList from "../containers/timelineList"
 
 const styles = {
@@ -21,7 +21,7 @@ const Timeline = () =>  (
 			style={styles.gridList}
 		>
 			<GridTile cols={2}>
-				<CounterChip id={"timeline"} />
+				<ChipCounter id={"timeline"} />
 			</GridTile>
 			<GridTile cols={2}>
 				<TimelineList/>

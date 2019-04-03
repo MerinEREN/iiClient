@@ -1,32 +1,32 @@
 import createReducer, {
 	paginate, 
-	removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
-	mergeIntoOrRemoveFromObject, 
-	mergeIntoOrResetObject, 
+	fetchRequest, 
+	fetchSuccessEntities, 
+	fetchSuccess, 
 	fetchFailure
-} from './utilities'
+} from "./utilities"
 import {
 	ACCOUNTS_REQUEST,
 	ACCOUNTS_SUCCESS,
 	ACCOUNTS_FAILURE
-} from '../actions/types'
+} from "../actions/types"
 
 // Slice Reducers
 const accounts = createReducer(
 	{}, 
 	{
-		ACCOUNTS_SUCCESS: removeFromObjectIfDeleteOrMergeIntoOrResetObject
+		ACCOUNTS_SUCCESS: fetchSuccessEntities
 	}
 )
 export const accountsBuffered = createReducer(
 	{}, 
 	{
-		ACCOUNTS_REQUEST: mergeIntoOrRemoveFromObject, 
-		ACCOUNTS_SUCCESS: mergeIntoOrResetObject, 
+		ACCOUNTS_REQUEST: fetchRequest, 
+		ACCOUNTS_SUCCESS: fetchSuccess, 
 		ACCOUNTS_FAILURE: fetchFailure
 	}
 )
-export const paginationAccounts = paginate({
+export const accountsPagination = paginate({
 	mapActionToKey: action => action.key, 
 	types: [
 		ACCOUNTS_REQUEST, 

@@ -1,23 +1,35 @@
-import {makeLoader} from "./utilities"
+import makeLoader from "./utilities"
 import {
-	accountSuccess
-} from "../actions/account"
+	accountsRequest, 
+	accountsSuccess, 
+	accountsFailure
+} from "../actions/accounts"
 
 const accountGet = makeLoader({
+	defaults: {
+		kind: "accounts"
+	},
 	actionCreators: {
-		actionsSuccess: [accountSuccess]
+		actionsRequest: [accountsRequest], 
+		actionsSuccess: [accountsSuccess], 
+		actionsFailure: [accountsFailure]
+	}, 
+	options: {
+		didValidate
 	}
 })
 export const accountPut = makeLoader({
 	defaults: {
-		method: "PUT"
+		method: "PUT", 
+		headers: {
+			"Accept": "application/json"
+		}, 
+		kind: "accounts"
 	},
 	actionCreators: {
-		actionsSuccess: [accountSuccess]
-	}, 
-	options: {
-		showSnackbar: true, 
-		mergeIntoState: true
+		actionsRequest: [accountsRequest], 
+		actionsSuccess: [accountsSuccess], 
+		actionsFailure: [accountsFailure]
 	}
 })
 

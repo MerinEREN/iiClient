@@ -1,5 +1,6 @@
 import fetchDomainDataIfNeeded from "./fetch"
 
+// CHANGE THIS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 export const generateURL = (key, ...pageURLs) => {
 	let url = new URL(key, document.location)
 	pageURLs.forEach((v, i) => {
@@ -23,17 +24,29 @@ export const generateURL = (key, ...pageURLs) => {
 	return url
 }
 
+// "isCached" is a function to fetch control for non paginated datas, page contexts 
+// and specific entities like demand, offer, page... 
+// "didValidate" if it is not undefined prevents the API call.
 // "hideFetching" is to hide fetching progress component.
-// "isCached" is a bool or a function which takes the store 
-// and returns a slice of store to allow or prevent API call for root store objects.
-// "didInvalidate" if it is not undefined prevents the API call.
-// "mergeIntoState" when PUT request returns data merges it into state.
+// "ineffective" is to prevent changes at "entities" and "entitiesBuffered" while changing 
+// "pagination" "IDs". Used mainly n to n relational transition tables.
+// "showSnackbar" if it is not undefined shows snackbar after an action
 // If the request is "PUT" function compares to the entitiesBuffered and the entities to 
 // send only changed entities as the request body.
-// "stateSlice" is the source kind object to filter by a provided array of keys.
-export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) => { 
-	var {URL, headers, method, kind} = defaults
-	var {hideFetching, isCached, didInvalidate, showSnackbar, mergeIntoState} = options
+const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) => { 
+	var {
+		URL, 
+		headers, 
+		method, 
+		kind
+	} = defaults
+	var {
+		ineffective, 
+		hideFetching, 
+		isCached, 
+		didValidate, 
+		showSnackbar
+	} = options
 	hideFetching = hideFetching || false
 	var init = {
 		method: method || "GET",
@@ -43,79 +56,69 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 	}
 	if (method === "GET")
 		init.headers = new Headers({"Accept": "application/json"})
-	// Some "POST" and "PUT" requests returns responses with data.
+	// Some "POST", "PATCH" and "PUT" requests returns responses with data.
 	if(headers) {
 		init.headers = new Headers()
 		Object.entries(headers).forEach(([k, v]) => init.headers.set(k, v))
 	}
 	return (args = {}) => {
-		var {returnedURL, stateSlice, key, body} = args
+		var {
+			returnedURL, 
+			key, 
+			data
+		} = args
 		returnedURL = returnedURL || "prevPageURL"
 		key = key || "all"
 		return (dispatch, getState) => {
 			// Parse request body for "POST" and "PUT" methods
-			if (body && method !== "DELETE") {
-				switch (body.type) {
+			if (data && method !== "DELETE") {
+				switch (data.type) {
 					case "Blob":
 						// USING ONLY FOR CONTENTS NOW AND IT IS 
 						// NOT NECESSARY.
 						// MAY BE SHOULD BE REMOVED FROM CASES
 						// AFTER CONTENTS POST AND PUT REQUESTS 
 						// CHANGED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-						/* init.body = new Blob(
-							Object.values(method !== "PUT" ? 
-								body.data : 
-								getChanged(
-									getState().entities[kind], 
-									body.data
-								)
-							).map(v => {
-								// const {ID, ...rest} = v
-								// return JSON.stringify(rest)
-								return JSON.stringify(v)
-							}),
-							{type : body.contentType}
-						) */
 						init.body = new Blob(
-							Array.isArray(body.data) ?
-							body.data.map(v => JSON.stringify(v)) :
+							Array.isArray(data.value) ?
+							data.value.map(v => JSON.stringify(v)) :
 							Object.values(method !== "PUT" ? 
-								body.data : 
+								data.value : 
 								getChanged(
 									getState().entities[kind], 
-									body.data
+									data.value
 								)
 							).map(v => {
 								// const {ID, ...rest} = v
 								// return JSON.stringify(rest)
 								return JSON.stringify(v)
 							}),
-							{type : body.contentType}
+							{type : data.contentType}
 						)
 						break
 					case "FormData":
-						let fd = new FormData()
-						Object.values(body.data).forEach(v => {
+						/* let fd = new FormData()
+						Object.values(data.value).forEach(v => {
 							Object.entries(v).forEach(a => {
-								/* if (a[0] !== "file")
-									fd.set(a[0], a[1])
-								if (a[0] === "file") {
-									if(a[1] !== undefined) {
-										fd.set(a[0], a[1], a[1].name)
-									} else {
-										fd.set(a[0], a[1])
-									}
-								} */
+								// if (a[0] !== "file")
+								// fd.set(a[0], a[1])
+								// if (a[0] === "file") {
+								// if(a[1] !== undefined) {
+								// fd.set(a[0], a[1], a[1].name)
+								// } else {
+								// fd.set(a[0], a[1])
+								// }
+								// }
 								Array.isArray(a[1]) ? 
 									a[1].forEach(v => fd.append(a[0], v)) :
 									fd.set(a[0], a[1])
 							}) 
 						}) 
-						init.body = fd
+						init.body = fd */
 						break
 					default: 
 						// For JSON encoded []byte.
-						init.body = JSON.stringify(body.data)
+						init.body = JSON.stringify(data.value)
 				}
 			}
 			if (args.URL) {
@@ -141,16 +144,15 @@ export const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) =
 			}
 			return dispatch(fetchDomainDataIfNeeded({
 				request: new Request(URL, init),
-				dataBody: body && body.data, 
+				data: data && data.value, 
 				kind, 
-				stateSlice, 
 				key, 
 				...actionCreators, 
+				ineffective, 
 				isCached, 
-				didInvalidate, 
+				didValidate, 
 				hideFetching, 
-				showSnackbar, 
-				mergeIntoState
+				showSnackbar
 			}))
 		}
 	}
@@ -175,13 +177,31 @@ const getChanged = (entities, entitiesBuffered) => {
 	return changedEntities
 }
 
-export const getObjectsFromEntities = (IDs, object) => {
+export const filterAnObjectByKeys = (object, keys) => {
 	let obj = {}
-	for (let v of IDs) {
+	for (let v of keys) {
 		// Belowe control is delete page -> delete content which has only that page 
 		// 		// -> cancel delete content after delete page timeout expiris check.
-		if (object[v])
+		if (object.hasOwnProperty(v))
 			obj[v] = object[v]
 	}
 	return obj
 }
+export const headerLocationParse = str => {
+	const links = str.split(", ")
+	let linkValue = ""
+	let linkParam = ""
+	let hrefs = {}
+	links.forEach(link => {
+		linkValue = link.split('>; rel="')[0].replace('<', '')
+		linkParam = link.split('>; rel="')[1].replace('"', '')
+		hrefs[linkParam] = linkValue
+	})
+	return hrefs
+}
+
+export const isCached = (state, kind, key) => key === "all" ? 
+	false : 
+	state.pagination[kind].hasOwnProperty(key)
+
+export default makeLoader

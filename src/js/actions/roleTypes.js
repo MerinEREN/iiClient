@@ -2,8 +2,8 @@ import makeActionCreator from "./creator"
 import {
 	ROLETYPES_REQUEST, 
 	ROLETYPES_SUCCESS, 
-	ROLETYPES_FAILURE, 
-	ROLETYPEIDS_SELECTED_RESET
+	ROLETYPES_FAILURE
+	// ROLETYPEIDS_SELECTED_RESET
 } from "./types"
 
 // Action Creators
@@ -16,7 +16,9 @@ export const roleTypesSuccess = makeActionCreator(
 export const roleTypesFailure = makeActionCreator(
 	ROLETYPES_FAILURE
 )
+/*
 export const roleTypeIDsSelectedReset = makeActionCreator(
 	ROLETYPEIDS_SELECTED_RESET, 
-	"value"
+	"data"
 )
+*/

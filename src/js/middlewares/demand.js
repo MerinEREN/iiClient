@@ -1,11 +1,21 @@
-import {makeLoader} from "./utilities"
+import makeLoader from "./utilities"
 import {
-	demandSuccess
-} from "../actions/demand"
+	demandsRequest, 
+	demandsSuccess, 
+	demandsFailure
+} from "../actions/demands"
 
 const demandGet = makeLoader({
+	defaults: {
+		kind: "demands"
+	},
 	actionCreators: {
-		actionsSuccess: [demandSuccess]
+		actionsRequest: [demandsRequest], 
+		actionsSuccess: [demandsSuccess], 
+		actionsFailure: [demandsFailure]
+	}, 
+	options: {
+		didValidate
 	}
 })
 export const demandPut = makeLoader({
@@ -13,14 +23,27 @@ export const demandPut = makeLoader({
 		method: "PUT", 
 		headers: {
 			"Accept": "application/json"
-		}
+		}, 
+		kind: "demands"
 	},
 	actionCreators: {
-		actionsSuccess: [demandSuccess]
+		actionsRequest: [demandsRequest], 
+		actionsSuccess: [demandsSuccess], 
+		actionsFailure: [demandsFailure]
+	}
+})
+export const demandDelete = makeLoader({
+	defaults: {
+		method: "DELETE", 
+		kind: "demands"
+	},
+	actionCreators: {
+		actionsRequest: [demandsRequest],
+		actionsSuccess: [demandsSuccess],
+		actionsFailure: [demandsFailure]
 	}, 
 	options: {
-		showSnackbar: true, 
-		mergeIntoState: true
+		hideFetching
 	}
 })
 

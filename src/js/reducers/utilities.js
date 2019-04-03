@@ -9,11 +9,11 @@ export default function createReducer(initialState, handlers) {
 	}
 }
 
-// Creates a reducer managing pagination and fetching control, given the action types 
+// Creates a reducer for managing pagination and fetching control, given the action types 
 // to handle,
 // and a function telling how to extract the key from an action.
 export const paginate = ({types, mapActionToKey}) => {
-	if (!Array.isArray(types) || types.length !== 3) {
+	if (!Array.isArray(types) || (types.length !== 3 || types.length !== 4)) {
 		throw new Error("Expected types to be an array of three elements.")
 	}
 	if (!types.every(t => typeof t === "string")) {
@@ -23,84 +23,99 @@ export const paginate = ({types, mapActionToKey}) => {
 		throw new Error("Expected mapActionToKey to be a function.")
 	} */
 
-	const [requestType, successType, failureType] = types
+	const [requestType, successType, failureType, resetAllType] = types
 
+	// "hrefs" is created via header link and refs are used as keys and urls as values.
+	// if "hrefs.next" does not exist it means there is no data to fetch.
+	// if "hrefs.prev" does not exist it means there is no data before the returned ones.
+	// "reset" resets the "IDs" with given response.
 	const updatePagination = (state = {
 		IDs: [],
-		nextPageURL: null,
-		prevPageURL: null,
-		pageCount: 0,
-		// error: false, 
+		hrefs: {}, 
+		error: null, 
 		isFetching: false,
-		didInvalidate: true
+		didValidate: false
 	}, action) => {
 		const {
 			type, 
 			method, 
+			data, 
 			response, 
-			didInvalidate
+			hrefs, 
+			reset, 
+			error, 
+			didValidate
 		} = action
+		let obj = {}
+		const data = data || (response.data || response)
+		// If the data is not enveloped.
+		if (data.hasOwnProperty(ID))
+			data = {[data.ID]: data}
 		switch (type) {
 			case requestType:
+				switch (method) {
+					case "DELETE":
+						obj.IDs = removeItemsFromArray(
+							state.IDs, 
+							data
+						)
+						break
+					case "POST":
+					case "PUT":
+					case "PATCH":
+					default:
+				}
 				return {
 					...state,
+					...obj, 
 					isFetching: true
 				}
 			case successType:
-				if (method === "DELETE") {
-					var countAfterDelete = removeItemsFromArray(state.IDs, response.result)
+				switch (method) {
+					case "PUT":
+					case "PATCH":
+					case "DELETE":
+						break
+					case "POST":
+						obj = {
+							IDs: reset ? 
+							[...Object.keys(data)] : 
+							[...state.IDs, ...Object.keys(data)]
+						}
+						break
+					default:
+						obj = {
+							IDs: reset ? 
+							[...Object.keys(data)] : 
+							[...state.IDs, ...Object.keys(data)], 
+							didValidate: typeof didValidate !== 
+							"undefined"
+						}
 				}
-				return method === "GET" ? 
-					{
-						...state,
-						// IDs: union(state.IDs, response.result),
-						IDs: response.reset ? 
-						[...Object.keys(response.result)] : 
-						[...state.IDs, ...Object.keys(response.result)], 
-						nextPageURL: response.nextPageURL || 
-						state.nextPageURL, 
-						prevPageURL: response.prevPageURL || 
-						state.prevPageURL,
-						pageCount: response.reset ? 
-						1 : 
-						Object.keys(response.result).length && 
-						state.pageCount + 1, 
-						isFetching: false, 
-						didInvalidate: typeof didInvalidate === 
-						"undefined"
-					} : 
-					{
-						...state,
-						IDs: method !== "PUT" && 
-						(
-							method === "DELETE" ?
-							countAfterDelete : 
-							Object.keys(response.result)
-						), 
-						nextPageURL: response.nextPageURL || 
-						state.nextPageURL, 
-						prevPageURL: response.prevPageURL || 
-						state.prevPageURL,
-						pageCount: method !== "PUT" && 
-						(
-							method === "DELETE" ? 
-							(
-								countAfterDelete.length % 20 ? 
-								Math.floor(countAfterDelete.length / 20) + 1 : 
-								countAfterDelete.length / 20
-							) : 
-							(
-								Object.keys(response.result).length % 20 ? 
-								Math.floor(Object.keys(response.result).length / 20) + 1 : 
-								Object.keys(response.result).length / 20
-							)
-						), 
-						isFetching: false
-						// didInvalidate: response.reset
-					}
-			case failureType:
 				return {
 					...state,
+					...obj, 
+					hrefs: hrefs || state.hrefs, 
+					error: null, 
+					isFetching: false
+				}
+			case failureType:
+				switch (method) {
+					case "DELETE":
+						obj.IDs = [
+							...state.IDs, 
+							...Object.keys(data)
+						]
+						break
+					case "POST":
+					case "PUT":
+					case "PATCH":
+					default:
+				}
+				return {
+					...state,
+					...obj, 
+					error, 
 					isFetching: false
 				}
 			default:
@@ -109,6 +124,7 @@ export const paginate = ({types, mapActionToKey}) => {
 	}
 	// USE action.receivedAt !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	return (state = {}, action) => {
+		// SHOW "resetAllType" VALUE AT THE CONSOL !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		switch (action.type) {
 			case requestType:
 			case successType:
@@ -118,6 +134,8 @@ export const paginate = ({types, mapActionToKey}) => {
 					...state,
 					[key]: updatePagination(state[key], action)
 				}
+			case resetAllType: 
+				return {}
 			default:
 				return state
 		}
@@ -126,7 +144,6 @@ export const paginate = ({types, mapActionToKey}) => {
 
 const removeItemsFromArray = (array1, array2) => {
 	var array = []
-	// console.log(array1, array2)
 	array1.forEach(v => {
 		if (array2.indexOf(v) === -1)
 			array.push(v)
@@ -134,8 +151,8 @@ const removeItemsFromArray = (array1, array2) => {
 	return array
 }
 
-export const addDynamicKeyReturnResult = ({types, mapActionToKey}) => {
-	// console.log(types, types.length)
+// Used for counters.
+export const setPartiallyOrResetAnObject = ({types, mapActionToKey}) => {
 	if (!Array.isArray(types) || types.length > 2) {
 		throw new Error("Expected types to be an array of max two elements.")
 	}
@@ -149,12 +166,21 @@ export const addDynamicKeyReturnResult = ({types, mapActionToKey}) => {
 	const [setType, resetAllType] = types
 
 	return (state = {}, action) => {
-		switch (action.type) {
+		const {
+			type, 
+			responseStatus, 
+			response, 
+			data
+		} = action
+		if (responseStatus === 204)
+			return state
+		const data = data || (response.data || response)
+		switch (type) {
 			case setType:
 				const key = mapActionToKey(action)
 				return {
 					...state, 
-					[key]: action.response.result
+					[key]: data
 				}
 			case resetAllType:
 				return {}
@@ -164,212 +190,221 @@ export const addDynamicKeyReturnResult = ({types, mapActionToKey}) => {
 	}
 }
 
-// If the result is an obeject merge it into state, 
-// if it is an array of keys generate the necessary object than merge it into state.
-export const mergeIntoOrRemoveFromObject = (state, action) => {
+// For the "entitiesBuffered" request actions.
+// If "ineffective" returns state.
+// If the method is "DELETE" removes corresponding objects 
+// from the "entitiesBuffered" by keys.
+// If the methods are "PUT" or "PATCH" merges the data by the data id 
+// to the "entitiesBuffered".
+// If the methods are "GET" or "POST" returns the previous "state".
+export const fetchRequest = (state, action) => {
 	const {
 		method, 
-		stateSlice, 
-		key, 
-		response: {
-			result
-		}
+		data, 
+		ineffective
 	} = action
-	if (method === "DELETE")
-		return removeFromAnObject(state, action)
-	if (key != "all")
-		return result ? (
-			Array.isArray(result) ? 
-			{
-				...state, 
-				[key]: {
-					...state[key], 
-					...resultByKeys(stateSlice, result)
-				}
-			} : 
-			{
-				...state, 
-				[key]: {
-					...state[key], 
-					...result
-				}
-			}
-		) : 
-			state
-	return result ? (
-		Array.isArray(result) ? 
-		{...state, ...resultByKeys(stateSlice, result)} : 
-		{...state, ...result}
-	) : state
-}
-
-const resultByKeys = (kind, keys) => {
-	let result = {}
-	keys.forEach(v => result[v] = kind[v])
-	return result
-}
-
-export const removeFromObjectIfDeleteOrMergeIntoOrResetObject = (state, action) => {
-	switch (action.method) {
+	if (ineffective)
+		return state
+	switch (method) {
 		case "DELETE":
-			return removeFromAnObject(state, action)
+			return removeFromAnObject(state, data)
+		case "PUT":
+		case "PATCH":
+			// If the data is the object.
+			if (data.ID) 
+				return {
+					...state, 
+					[data.ID]: {
+						...state[data.ID], 
+						...data
+					}
+				}
+			// If the data is the envelop of the datas.
+			let obj = {...state}
+			Object.values(data).forEach(v => {
+				obj = {
+					...obj, 
+					[v.ID]: {
+						...obj[v.ID], 
+						...v
+					}
+				}
+			})
+			return obj
+		case "POST":
 		default:
-			return mergeIntoOrResetObject(state, action)
+			return state
 	}
 }
 
-// "reset" is the response flag to reset the kind for search GET.
-export const mergeIntoOrResetObject = (state, action) => {
+// For the "entities" success actions.
+// If "ineffective" returns state.
+// If the method is "DELETE" removes corresponding objects from the "entities" by the keys.
+// If the methods are "PUT" or "PATCH" and the response status code is "204" 
+// replaces the "entities" with the "entitiesBuffered".
+// If the methods are "GET" or "POST" and the response status code is "204" 
+// returns the previous "state".
+export const fetchSuccessEntities = (state, action) => {
 	const {
 		method, 
-		response: {
-			result, 
-			reset
-		},
-		key, 
-		mergeIntoState
+		data, 
+		ineffective
 	} = action
-	if (method === "DELETE")
+	if (ineffective)
 		return state
-	if (key != "all") {
-		// If PUT request returns data merge it.
-		if (mergeIntoState) {
-			return {
-				...state, 
-				[key]: {
-					...state[key], 
-					...result
-				}
-			}
-		} else if (method !== "GET" || reset) {
-			return entitiesReset(state, action)
-		}
-		// Merging "GET" results
-		return result ? 
-			{
-				...state, 
-				[key]: {
-					...state[key], 
-					...result
-				}
-			} : 
-			state
-	} else {
-		// If PUT request returns data merge it.
-		if (mergeIntoState) {
-			return {...state, ...result}
-		} else if (method !== "GET" || reset) {
-			return entitiesReset(state, action)
-		}
-		// Merging "GET" results
-		return result ? {...state, ...result} : state
+	switch (method) {
+		case "DELETE":
+			return removeFromAnObject(state, data)
+		default:
+			return fetchSuccess(state, action)
 	}
 }
 
 // By array items or object keys.
 // TYPE OF ARRAY IS OLSO OBJECT !!!!!
-const removeFromAnObject = (state, action) => {
-	const {
-		response: {result}, 
-		key
-	} = action
+export const removeFromAnObject = (state, data) => {
 	let newState = {}
-	if (key != "all") {
-		Object.entries(state[key]).forEach(([k, v]) => {
-			if (Array.isArray(result)) {
-				if (result.indexOf(k) === -1)
-					newState[k] = v
-			} else {
-				if (!result.hasOwnProperty(k))
-					newState[k] = v
-			}
-		})
-		return {
-			...state, 
-			[key]: newState
-		}
-	}
 	Object.entries(state).forEach(([k, v]) => {
-		if (Array.isArray(result)) {
-			if (result.indexOf(k) === -1)
+		if (Array.isArray(data)) {
+			if (data.indexOf(k) === -1)
 				newState[k] = v
 		} else {
-			if (!result.hasOwnProperty(k))
-				newState[k] = v
+			if (data.ID) {
+				if (data.ID !== k)
+					newState[k] = v
+			} else {
+				// If the data is the envelop of the datas.
+				if (!data.hasOwnProperty(k))
+					newState[k] = v
+			}
 		}
 	})
 	return newState
 }
 
-// Replace entities with entitiesBuffered.
-// Also replaces entitiesBuffered with entitiesBuffered but it is not a problem.
-const entitiesReset = (state, action) => {
+// For the "entities" and the "entitiesBuffered" success actions.
+// If "ineffective" returns state.
+// If the method is "DELETE" returns the previous state for the "entitiesBuffered".
+// If the methods are "PUT" or "PATCH" and the response status code is "204" 
+// replaces the "entities" with the "entitiesBuffered" 
+// and overwrites the "entitiesBuffered".
+// If the methods are "GET" or "POST" and the response status code is "204" 
+// returns the previous "state".
+// Otherwise, merges the response to the state and returns the created object.
+export const fetchSuccess = (state, action) => {
 	const {
-		response: {result}, 
-		key
+		method, 
+		responseStatus, 
+		response, 
+		data, 
+		ineffective
 	} = action
-	if (key !== "all") {
-		return result ? 
-			{
-				...state, 
-				[key]: result
-			} : 
-			state
-	} else {
-		return result ? {...state, ...result} : state
+	if (ineffective || method === "DELETE")
+		return state
+	switch (responseStatus) {
+		case 204:
+			switch (method) {
+				case "PUT":
+				case "PATCH":
+					return {...data}
+				case "POST":
+				default:
+					return state
+			}
+		default:
+			const data = response.data || response
+			switch (method) {
+				case "PUT":
+				case "PATCH":
+					if (data.ID) 
+						return {
+							...state, 
+							[data.ID]: {
+								...state[data.ID], 
+								...data
+							}
+						}
+					// If the data is the envelop of the datas.
+					let obj = {...state}
+					Object.values(data).forEach(v => {
+						obj = {
+							...obj, 
+							[v.ID]: {
+								...obj[v.ID], 
+								...v
+							}
+						}
+					})
+					return obj
+				case "POST":
+				default:
+					let obj = {...state}
+					if (data.ID) {
+						if (obj.hasOwnProperty(data.ID)) {
+							// For "contexts" "value" update 
+							// after language change.
+							obj[data.ID] = {
+								...obj[data.ID], 
+								...data
+							}
+						} else {
+							obj[data.ID] = data
+						}
+					} else {
+						// If the data is the envelop of the datas.
+						Object.values(data).forEach(v => {
+							if (obj.hasOwnProperty(v.ID)) {
+								// For "contexts" "value" update 
+								// after language change.
+								obj[v.ID] = {
+									...obj[v.ID], 
+									...v
+								}
+							} else {
+								obj[v.ID] = v
+							}
+						})
+					}
+					return obj
+			}
 	}
 }
 
+// For the "entitiesBuffered" failure actions.
+// If "ineffective" returns state.
+// If the method is "DELETE" merges the data that created by the deleted object's keys 
+// from the "entities" to the state.
+// If the methods are "PUT" or "PATCH" replaces the "entitiesBuffered" with 
+// the "entities".
+// If the methods are "GET" or "POST" returns the previous "state".
 export const fetchFailure = (state, action) => {
-	const { response: {result}, 
+	const { 
 		method, 
-		key
+		data, 
+		ineffective
 	} = action
+	if (ineffective) 
+		return state
 	switch (method) {
 		case "DELETE":
-			// Merge deleted objects back to the entitiesBuffered kind.
-			if (key != "all")
-				return {
-					...state, 
-					[key]: {
-						...state[key], 
-						...result
-					}
-				}
-			return {...state, ...result}
-		case "POST":
+			return {...state, ...data}
 		case "PUT":
-			// Replace entitiesBuffered kind with entities kind.
-			return result
+		case "PATCH":
+			return {...data}
+		case "POST":
 		default:
-			// GET request
 			return state
 	}
 }
 
-export const resetReducer = (state, action) => action.value
-
-export const resetReducerPartially = (state, {key}) => {
-	return {
-		...state, 
-		[key]: Array.isArray(state[key]) ? [] : {}
-	}
-}
-
-export const setReducerPartially = (state, {key, value}) => {
-	return {
-		...state, 
-		[key]: value
-	}
-}
-
-export const resetArrayOrObject = (state, action) => {
+// Two functions below are used with "contents", "languagages" and "pages".
+export const resetAnArrayOrAnObject = (state, action) => {
 	if (action.method === "DELETE" || action.method === "POST")
 		return Array.isArray(state) ? [] : {}
 	return state
 }
 
-export const addToOrRemoveFromArray = (state, action) => {
+export const addToOrRemoveFromAnArray = (state, action) => {
 	if (state.indexOf(action.ID) === -1)
 		return [...state, action.ID]
 	let array = []
@@ -380,33 +415,12 @@ export const addToOrRemoveFromArray = (state, action) => {
 	return array
 }
 
-// Inserts an object into another object by it's key or removes if it is present.
-export const addToOrRemoveFromAnObject = (state, action) => {
-	if (state.hasOwnProperty(action.object.ID))
-		return removeByKeyFromAnObject(state, action)
-	return addByKeyToAnObject(state, action)
-}
-
-// Two functions below are using for adding and removing snackbar.
-export const removeByKeyFromObject = (state, action) => {
-	let newState = {}
-	Object.entries(state).forEach(([k, v]) => {
-			if (action.key !== k)
-				newState[k] = v
-	})
-	return newState
-}
-
-export const addByKeyToObject = (state, action) => {
-	return {...state, ...action.object}
-}
-
 // Removes an object by an object ID or a key from a container object.
-export const removeByKeyFromAnObject = (state, action) => {
+export const removeFromAnObjectByKey = (state, action) => {
 	let newState = {}
-	if (action.object)
+	if (action.data)
 		Object.entries(state).forEach(([k, v]) => {
-			if (k !== action.object.ID)
+			if (k !== action.data.ID)
 				newState[k] = v
 		})
 	// If action has a key.
@@ -417,20 +431,20 @@ export const removeByKeyFromAnObject = (state, action) => {
 	return newState
 }
 
-const addByKeyToAnObject = (state, action) => {
+export const addToAnObjectWithKey = (state, action) => {
 	return {
 		...state, 
-		[action.object.ID]: action.object
+		[aciton.data.ID]: action.data
 	}
 }
 
-export const updateObject = (oldObject, newValues) => {
+export const updateAnObject = (oldObject, newValues) => {
 	// Encapsulate the idea of passing a new object as the first parameter
 	// to Object.assign to ensure we correctly copy data instead of mutating
 	return Object.assign({}, oldObject, newValues);
 }
 
-export const updateItemInArray = (array, itemId, updateItemCallback) => {
+export const updateAnItemInAnArray = (array, itemId, updateItemCallback) => {
 	const updatedItems = array.map(item => {
 		if (item.id !== itemId) {
 			// Since we only want to update one item, 

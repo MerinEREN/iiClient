@@ -2,9 +2,16 @@
 // BUT I THINK ALL BROWSERS SUPPORTS fetch NOW.
 // import fetch from "isomorphic-fetch"
 // OR import fetch from "cross-fetch"
+import browserHistory from "react-router/lib/browserHistory"
 import {toggleFetching} from "../actions/fetchingProgres"
-import {addSnackbar, removeSnackbar} from "../actions/snackbars"
-import {getObjectsFromEntities} from "./utilities"
+import {
+	addSnackbar, 
+	removeSnackbar
+} from "../actions/snackbars"
+import {
+	getObjectsFromAnObjectByKeys, 
+	headerLocationParse
+} from "./utilities"
 
 export default function fetchDomainDataIfNeeded(args) {
 	// Function also receives getState()
@@ -19,7 +26,8 @@ export default function fetchDomainDataIfNeeded(args) {
 					// Dispatch a thunk from thunk.
 					return dispatch(fetchDomainData(args))
 				} else {
-					// Let the calling code know there"s nothing to wait for.
+					// Let the calling code know there is nothing 
+					// to wait for.
 					return Promise.resolve()
 				}
 			case "DELETE":
@@ -27,45 +35,35 @@ export default function fetchDomainDataIfNeeded(args) {
 				return dispatch(shouldFetchAfterDelay(args, 5000)).
 					then(() => dispatch(fetchDomainData(args)))
 			default:
-				// Covers "POST" and "PUT" methods
+				// Covers "POST", "PUT" and "PATCH" methods
 				// Dispatch a thunk from thunk.
 				return dispatch(fetchDomainData(args))
 		}
 	}
 }
 
-// CHANGE THIS
 function shouldFetchDomainData(state, args) {
 	const {
-		kind, 
-		key, 
 		isCached, 
-		didInvalidate
+		kind, 
+		key
 	} = args
-	if (typeof(isCached) === "function") {
-		if (key !== "all") 
-			return !isCached(state, key)
-		return !isCached(state)
-	} else if (typeof(isCached) === "boolean") {
-		return !isCached
-	// Not all kinds paginated, that is the reason of the first check belove.
-	} else if (state.pagination[kind] !== undefined && state.pagination[kind] !== {}) {
-		// For pagination object
-		if (state.pagination[kind][key])
-			return !state.pagination[kind][key].isFetching 
-				&& 
-				state.pagination[kind][key].didInvalidate
-			return true
-	} else {
-		return true
-	}
+	// For non paginated objects, page contexts 
+	// and specific entities like account, demand, offer, page...
+	if (isCached)
+		return !isCached(state, kind, key)
+	// For paginated objects
+	if (state.pagination[kind][key])
+		return !(state.pagination[kind][key].isFetching || 
+			state.pagination[kind][key].didValidate)
+	return true
 	/* const item = args.isCached(state)
 	if(!item) {
 		return true
 	} else if(item.isFetching) {
 		return false
 	} else {
-		return item.didInvalidate
+		return item.didInValidate
 	} */
 }
 
@@ -73,54 +71,56 @@ const shouldFetchAfterDelay = (args, duration) => dispatch => {
 	const {
 		actionsRequest, 
 		request: {method}, 
-		dataBody, 
-		key
+		data, 
+		key, 
+		ineffective
 	} = args
-	// Delete the object(s) from entitiesBufferd.
+	// Delete the object(s) from entitiesBufferd 
+	// and update corresponding IDs in pagination.
 	actionsRequest.forEach(ac => dispatch(ac({
 		method, 
-		response: {result: dataBody}, 
+		ineffective, 
+		data, 
 		key
 	})))
 	// Add snackbar
 	const snackbarKey = Date.now()
-	dispatch(addSnackbar({object: {
-		[snackbarKey]: {
-			message: Array.isArray(dataBody) ? 
-			(
-				dataBody.length === 1 ? 
-				dataBody.map(k => {
-					if (k.length > 20) {
-						const substr = k.substring(0, 20)
-						return `${substr}... deleted`
-					} else {
-						return `${k} deleted`
-					}
-				}) : 
-				`${dataBody.length} items deleted`
-			) : 
-			(
-				Object.keys(dataBody).length === 1 ? 
-				Object.keys(dataBody).map(k => {
-					if (k.length > 20) {
-						const substr = k.substring(0, 20)
-						return `${substr}... deleted`
-					} else {
-						return `${k} deleted`
-					}
-				}) : 
-				`${Object.keys(dataBody).length} items deleted`
-			),
-			duration, 
-			action: "Undo", 
-			onActionClick: () => {
-				clearTimeout(timer)
-				dispatch(cancelFetch(args))
-				dispatch(removeSnackbar({key: snackbarKey.toString()}))
-			}, 
-			onRequestClose: reason => reason === "timeout" && dispatch(removeSnackbar({key: snackbarKey.toString()}))
-		}
-	}}))
+	dispatch(addSnackbar({
+		ID: snackbarKey, 
+		message: Array.isArray(data) ? 
+		(
+			data.length === 1 ? 
+			data.map(k => {
+				if (k.length > 20) {
+					const substr = k.substring(0, 20)
+					return `${substr}... deleted`
+				} else {
+					return `${k} deleted`
+				}
+			}) : 
+			`${data.length} items deleted`
+		) : 
+		(
+			Object.keys(data).length === 1 ? 
+			Object.keys(data).map(k => {
+				if (k.length > 20) {
+					const substr = k.substring(0, 20)
+					return `${substr}... deleted`
+				} else {
+					return `${k} deleted`
+				}
+			}) : 
+			`${Object.keys(data).length} items deleted`
+		),
+		duration, 
+		action: "Undo", 
+		onActionClick: () => {
+			clearTimeout(timer)
+			dispatch(cancelFetch(args))
+			dispatch(removeSnackbar(snackbarKey.toString()))
+		}, 
+		onRequestClose: reason => reason === "timeout" && dispatch(removeSnackbar(snackbarKey.toString()))
+	}))
 	// Return a promise
 	let timer
 	return new Promise(resolve => {
@@ -128,15 +128,18 @@ const shouldFetchAfterDelay = (args, duration) => dispatch => {
 	})
 }
 
-// Reset entitiesBuffered with entities.
-const cancelFetch = ({actionsFailure, request: {method}, dataBody, kind, key}) => 
+// Restore the entities to the "entitiesBuffered" if not "ineffective"
+// and update the corresponding "IDs" in the "pagination".
+const cancelFetch = ({actionsFailure, request: {method}, data, kind, key, ineffective}) => 
 	(dispatch, getState) => {
-		const object = key ? 
-			getState().entities[kind][key] : 
-			getState().entities[kind]
 		actionsFailure.forEach(ac => dispatch(ac({
+			error: "Delete request canceled by the user!", 
 			method, 
-			response: {result: getObjectsFromEntities(dataBody, object)}, 
+			ineffective, 
+			data: getObjectsFromAnObjectByKeys(
+				data, 
+				getState().entities[kind]
+			), 
 			key
 		})))
 	}
@@ -147,21 +150,21 @@ const fetchDomainData = args => (dispatch, getState) => {
 		actionsSuccess, 
 		actionsFailure, 
 		request, 
-		dataBody, 
+		data, 
 		kind, 
-		stateSlice, 
 		key, 
-		didInvalidate, 
+		ineffective, 
+		didValidate, 
 		hideFetching, 
-		showSnackbar, 
-		mergeIntoState
+		showSnackbar
 	} = args
-	// Modifies "contentsBuffered" if the method is POST.
+	// "DELETE" requests are been handled in "shouldFetchAfterDelay" function.
 	if (actionsRequest && request.method !== "DELETE")
 		actionsRequest.forEach(ac => dispatch(ac({
 			method: request.method, 
-			response: {result: request.method !== "PUT" && dataBody}, 
-			stateSlice, 
+			ineffective, 
+			data: (request.method === "PUT" || request.method === "PATCH") && 
+			data,  
 			key
 		})))
 	if (!hideFetching)
@@ -179,26 +182,48 @@ const fetchDomainData = args => (dispatch, getState) => {
 			if(!hideFetching)
 				dispatch(toggleFetching())
 			if (response.ok) {
+				// The custom header entity to reset a kind.
+				if(response.headers.has("X-Reset"))
+					var reset = response.headers.get("X-Reset")
 				switch (response.status) {
 					case 204:
-						// like all DELETE requests 
-						// and some PUT, POST and GET requests.
-						if (request.method !== "GET") {
-							actionsSuccess && actionsSuccess.forEach(ac => dispatch(ac({
-								method: request.method, 
-								response: {result: request.method === "DELETE" ? 
-									dataBody :
-									{...getState().entitiesBuffered[kind]}
-								}, 
-								key
-								// receivedAt: Date.now()
-							})))
-						}
+						actionsSuccess && actionsSuccess.forEach(ac => dispatch(ac({
+							responseStatus: response.status, 
+							reset, 
+							method: request.method, 
+							ineffective, 
+							data: request.method === "DELETE" ? 
+							data : 
+							(
+								(
+									request.method === "PUT" || 
+									requset.method === "PATCH"
+								) ? 
+								getState().entitiesBuffered[kind] : 
+								(
+									(
+										request.method === "POST" && 
+										ineffective
+									) ? 
+
+									getObjectsFromAnObjectByKeys(data, getState().entitiesBuffered[kind]) :
+									{}
+								)
+							), 
+							key
+							// receivedAt: Date.now()
+						})))
 						break
 					case 201:
+						// If needed use the "location" to redirect 
+						// here.
+						if(response.headers.has("Location"))
+							var location = response.headers.get("Location")
 					default:
 						// If the response is 200.
 						const contentType = response.headers.get("Content-Type")
+						if(response.headers.has("Link"))
+							var hrefs = headerLocationParse(response.headers.get("Link"))
 						if (
 							contentType &&
 							contentType.indexOf("text/html") !== -1
@@ -229,12 +254,15 @@ const fetchDomainData = args => (dispatch, getState) => {
 							response.json()
 								.then(body => {
 									actionsSuccess.forEach(ac => dispatch(ac({
-										method: request.method, 
+										responseStatus: response.status, 
 										response: body, 
-										key, 
+										hrefs, 
+										reset, 
+										method: request.method, 
+										ineffective, 
+										didValidate, 
+										key
 										// receivedAt: Date.now(), 
-										didInvalidate, 
-										mergeIntoState
 									})))
 								})
 						}
@@ -243,55 +271,62 @@ const fetchDomainData = args => (dispatch, getState) => {
 				// response code is not between 199 and 300
 				if (actionsFailure)
 					actionsFailure.forEach(ac => dispatch(ac({
+						error: `${response.status}: ${response.statusText}`, 
+						data: request.method === "DELETE" ? 
+						getObjectsFromAnObjectByKeys(data, getState().entities[kind]) :
+						(
+							(
+								request.method === "PUT" || 
+								requset.method === "PATCH"
+							) &&  
+							getState().entities[kind]
+						), 
 						method: request.method, 
-						error: "USE ERROR CODE AND MESSAGE HERE", 
-						response: {result: request.method === "DELETE" ? 
-							getObjectsFromEntities(dataBody, getState().entities[kind]) :
-							{...getState().entities[kind]}
-						}, 
+						ineffective, 
 						key
 					})))
 			}
-			// USE Response.status HERE TO HANDLE RESPONSE STATUSES !!!!!!!!!!!
 			if(showSnackbar || (response.status === 204 && request.method === "GET")) {
 				const snackbarKey = Date.now()
-				dispatch(addSnackbar({object: {
-					[snackbarKey]: {
-						// message: response.headers.get("Date")
-						message: response.statusText, 
-						onRequestClose: () => dispatch(removeSnackbar({key:snackbarKey.toString()}))
-					}
-				}}))
+				dispatch(addSnackbar({
+					ID: snackbarKey, 
+					// message: response.headers.get("Date")
+					message: response.statusText, 
+					onRequestClose: () => dispatch(removeSnackbar(snackbarKey.toString()))
+				}))
 			}
-			return response
+			if (location) {
+				browserHistory.push(location)
+				// Let the calling code know there is nothing to wait for.
+				return Promise.resolve()
+			} else {
+				return response
+			}
 		})
 		.catch(err => {
 			if(!hideFetching)
 				dispatch(toggleFetching())
-			console.log(
-				`There has been a problem with my fetch
-					operation: ${err.message}`
-			)
-			// DID NOT USE error RIGHTNOW !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			// Remove the temporarily added new data (POST), 
-			// add the temporarily removed old data (DELETE) or 
-			// replace old data with modified data (PUT) from the store.
 			if (actionsFailure)
 				actionsFailure.forEach(ac => dispatch(ac({
-					method: request.method, 
 					error: err.message, 
-					response: {result: request.method === "DELETE" ? 
-						getObjectsFromEntities(dataBody, getState().entities[kind]) :
-						{...getState().entities[kind]}
-					}, 
+					data: request.method === "DELETE" ? 
+					getObjectsFromAnObjectByKeys(data, getState().entities[kind]) :
+					(
+						(
+							request.method === "PUT" || 
+							requset.method === "PATCH"
+						) &&  
+						getState().entities[kind]
+					), 
+					method: request.method, 
+					ineffective, 
 					key
 				})))
 			const snackbarKey = Date.now()
-			dispatch(addSnackbar({object: {
-				[snackbarKey]: {
-					message: err.message, 
-					onRequestClose: () => dispatch(removeSnackbar({key:snackbarKey.toString()}))
-				}
-			}}))
+			dispatch(addSnackbar({
+				ID: snackbarKey, 
+				message: err.message, 
+				onRequestClose: () => dispatch(removeSnackbar(snackbarKey.toString()))
+			}))
 		})
 }

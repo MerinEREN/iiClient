@@ -1,42 +1,62 @@
 import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
 import DemandComponent from "../components/demand"
+import photosGet from "../middlewares/photos"
+import tagsDemandGet from "../middlewares/tagsDemand"
 import tagsGet from "../middlewares/tags"
-import demandGet from "../middlewares/demand"
-import {tagsByFilterGet} from "../middlewares/tags"
-import {demandsDelete} from "../middlewares/demands"
 import offersGet from "../middlewares/offers"
+import demandGet, {demandDelete} from "../middlewares/demand"
+import {filterAnObjectByKeys} from "../middlewares/utilities"
 
 const mapStateToProps = (state, ownProps) => {
 	const {
-		ui: {contentsByPage: {demand: contents}}, 
+		pagination: {
+			contexts: {demand}, 
+			photos: photosPagination, 
+			tags: tagsPagination, 
+			offers: offersPagination, 
+			roles: rolesPagination, 
+			users: usersPagination, 
+			account: accountPagination
+		}, 
 		entitiesBuffered: {
+			contexts, 
+			photos, 
 			tags, 
-			demands: {timeline}, 
 			offers, 
-			userLogged: {ID: userID}, 
-			accountLogged: {ID: accountID}, 
-			rolesByUser
+			demands, 
+			roles
 		}
 	} = state
 	return {
-		contents, 
+		contexts: demand && filterAnObjectByKeys(contexts, demand.IDs), 
+		photosDemand: photosPagination[ownProps.params.ID] && 
+		filterAnObjectByKeys(photos, photosPagination[ownProps.params.ID].IDs), 
+		tagsDemand: tagsPagination[ownProps.params.ID] && 
+		filterAnObjectByKeys(tags, tagsPagination[ownProps.params.ID].IDs), 
+		tagsPagination, 
 		tags, 
-		demand: timeline && timeline[ownProps.params.ID], 
-		offers: offers[ownProps.params.ID] || {}, 
-		userID, 
-		accountID, 
-		userRoles: rolesByUser[userID]
+		offersDemand: offersPagination[ownProps.params.ID] && 
+		filterAnObjectByKeys(offers, offersPagination[ownProps.params.ID].IDs), 
+		demand: demands[ownProps.params.ID], 
+		userID: usersPagination.logged && usersPagination.logged.IDs[0], 
+		accountID: accountPagination.logged && accountPagination.logged.IDs[0],  
+		rolesUser: (
+			usersPagination.logged && 
+			rolesPagination[usersPagination.logged.IDs[0]]
+		) && 
+		filterAnObjectByKeys(roles, rolesPagination[usersPagination.logged.IDs[0].IDs])
 	}
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
+		photosGet, 
+		tagsDemandGet, 
 		tagsGet, 
+		offersGet, 
 		demandGet, 
-		demandsDelete, 
-		tagsByFilterGet, 
-		offersGet
+		demandDelete
 	},
 	dispatch
 )

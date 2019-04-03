@@ -1,9 +1,10 @@
 import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
 import BodyComponent from "../components/body"
-import getRouteContents from "../middlewares/routeContents"
-import {toggleDrawer} from "../actions/drawer"
-import {tagsByFilterGet} from "../middlewares/tags"
+import contextsGet from "../middlewares/contexts"
+import drawerToggle from "../actions/drawer"
+import tagsGet from "../middlewares/tags"
+import {filterAnObjectByKeys} from "../middlewares/utilities"
 // Needed for onTouchTap, REMOVE WHEN REACT HAS THIS FEATURE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // It"s a mobile friendly onClick() alternative for all components in Material-UI 
 // http://stackoverflow.com/a/34015469/988941
@@ -30,12 +31,15 @@ const mapStateToProps = state => {
 		      lastUpdated
 		    } */
 	const {
-		ui: {
-			contentsByPage: {body}
+		pagination: {
+			contexts: {body}, 
+			users: {logged}, 
+			tags: tagsPagination
 		}, 
 		entitiesBuffered: {
-			userLogged, 
-			tagsByUser
+			contexts, 
+			users, 
+			tags
 		}, 
 		appState: {
 			snackbars, 
@@ -43,9 +47,10 @@ const mapStateToProps = state => {
 		}
 	} = state
 	return {
-		contents: body, 
-		user: userLogged, 
-		userTags: tagsByUser[userLogged.ID] || {}, 
+		contexts: body && filterAnObjectByKeys(contexts, body.IDs), 
+		user: logged && filterAnObjectByKeys(users, logged.IDs), 
+		userTags: (logged && tagsPagination[logged.IDs[0]]) && 
+		filterAnObjectByKeys(tags, tagsPagination[logged.IDs[0]].IDs), 
 		snackbars, 
 		isFetching
 	}
@@ -53,9 +58,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
-		getRouteContents, 
-		toggleDrawer, 
-		tagsByFilterGet
+		contextsGet, 
+		drawerToggle, 
+		tagsGet
 	},
 	dispatch
 )

@@ -9,13 +9,13 @@ import FlatButton from "material-ui/FlatButton"
 import FloatingActionButton from "material-ui/FloatingActionButton"
 import ContentCreate from "material-ui/svg-icons/content/create"
 import ContentAdd from "material-ui/svg-icons/content/add"
-import DialogDemand from "../containers/dialogDemand"
-import DialogOffer from "../containers/dialogOffer"
+import DialogDemandUpdate from "../containers/dialogDemandUpdate"
+import DialogOfferCreate from "../containers/DialogOfferCreate"
 import {isAdmin} from "./utilities"
 import Chip from "material-ui/Chip"
 import Avatar from "material-ui/Avatar"
 import {blue300} from "material-ui/styles/colors"
-import {getFirstLetters} from "./utilities"
+import {firstLettersGenerate} from "./utilities"
 
 const styles = {
 	root: {
@@ -35,75 +35,87 @@ class Demand extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			showDialogDemand: false, 
-			showDialogOffer: false
+			tagsInputShow: false, 
+			dialogDemandShow: false, 
+			dialogOfferShow: false
 		}
-		this.toggleDialogDemand = this.toggleDialogDemand.bind(this)
-		this.toggleDialogOffer = this.toggleDialogOffer.bind(this)
+		this.tagsInputToggle = this.tagsInputToggle.bind(this)
+		this.dialogDemandToggle = this.dialogDemandToggle.bind(this)
+		this.dialogOfferToggle = this.dialogOfferToggle.bind(this)
 		this.handleDelete = this.handleDelete.bind(this)
 	}
-	componentDidMount() {
+	componentWillMount() {
 		const {
+			params: {ID}, 
+			tagsDemandGet, 
 			demandGet, 
-			offersGet, 
-			tagsGet, 
-			params: {ID}
+			offersGet
 		} = this.props
-		demandGet({
-			URL: `/demands/${ID}`, 
-			key: "timeline"
-		})
-		offersGet({
-			URL: `/offers?dID=${ID}`, 
+		photosGet({
+			URL: `/photos?q=${ID}`, 
 			key: ID
 		})
-		tagsGet()
+		tagsDemandGet({
+			URL: `/tagsDemand?q=${ID}`, 
+			key: ID
+		})
+		offersGet({
+			URL: `/offers?q=${ID}`, 
+			key: ID
+		})
+		demandGet({
+			URL: `/demands/${ID}`, 
+			key: ID
+		})
 	}
 	handleDelete() {
 		const {
-			params: {ID}, 
-			demandsDelete
+			params: {accID, ID}, 
+			demandDelete
 		} = this.props
-		demandsDelete({
+		// WHEN LISTING DEMANDS, BE CAREFULL ABOUT "undefined" VALUE OF 
+		// "entitiesBuffered[ID]" !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		// OR FIND A WAY TO DELETE THE "ID" FROM ALL "pagination[key].IDs" !!!!!!!!
+		demandDelete({
 			URL: `/demands/${ID}`, 
-			body: {
-				data: [ID]
+			data: {
+				value: [ID]
 			}, 
-			key: "timeline"
+			key: accID || "timeline"
 		})
 		browserHistory.goBack()
 	}
-	toggleDialogDemand() {
+	tagsInputToggle() {
 		const {
-			showDialogDemand
+			tagsInputShow
 		} = this.state
-		// Getting most used six tags to show as initial autocomplete values 
-		// if they does not exist yet.
-		this.props.tagsByFilterGet({
-			URL: "/tags?st=top", 
-			key: "top"
-		})
-		this.setState({showDialogDemand: !showDialogDemand})
+		this.setState({tagsInputShow: !tagsInputShow})
+		// For minor performance improvements only
+		if (tagsInputShow)
+			// Getting most used six tags 
+			// to show as initial autocomplete values 
+			// if they does not exist yet.
+			this.props.tagsGet({
+				URL: "/tags?q=top", 
+				key: "top"
+			})
 	}
-	toggleDialogOffer() {
+	dialogDemandToggle() {
 		const {
-			showDialogOffer
+			dialogDemandShow
 		} = this.state
-		this.setState({showDialogOffer: !showDialogOffer})
+		this.setState({dialogDemandShow: !dialogDemandShow})
 	}
-	demandTags(contents, tags, tagIDs) {
-		if ((!tagIDs || tagIDs.length === 0) || Object.keys(tags).length === 0)
-			return
-		let tagsSelected = {}
-		for (let v of tagIDs) {
-			tagsSelected = {
-				...tagsSelected, 
-				[v]: tags[v]
-			}
-		}
+	dialogOfferToggle() {
+		const {
+			dialogOfferShow
+		} = this.state
+		this.setState({dialogOfferShow: !dialogOfferShow})
+	}
+	tagsDemand(tags, contexts) {
 		return <List>
 			{
-				Object.entries(tagsSelected).map(([k, v]) => 
+				Object.entries(tags).map(([k, v]) => 
 					<ListItem
 						key={k}
 						children={
@@ -114,9 +126,9 @@ class Demand extends Component {
 									size={32}
 									color={blue300}
 								>
-									{getFirstLetters(contents[v.contentID])}
+									{firstLettersGenerate(contexts[v.contextID])}
 								</Avatar>
-								{contents[v.contentID]}
+								{contexts[v.contextID]}
 							</Chip>
 						}
 						disabled={true} 
@@ -125,29 +137,26 @@ class Demand extends Component {
 			}
 		</List>
 	}
-	demandPhotos(links) {
-		if (!links || links.length === 0)
-			return
+	photosDemand(photos) {
 		return <List>
 			{
-				links.map(v => {
-					if (v)
-						return <ListItem 
-							key={v}
-							children={<img 
-								key={v} 
-								src={v} 
-							/>}
-							disabled={true}
-						/>
+				photos.map(v => {
+					return <ListItem 
+						key={v.link}
+						children={<img 
+							src={v.link} 
+						/>}
+						disabled={true}
+					/>
 				})
 			}
 		</List>
 	}
-	offers(ID, os) {
-		return <List>
+	offersDemand(offers, ID) {
+		// WHY IS IT AN ABSOLUTE LINK, RELATIVE PATH IS MORE CONVENIENT !!!!!!!!!!!
+		return offers && <List>
 			{
-				Object.values(os).map(v => <ListItem 
+				Object.values(offers).map(v => <ListItem 
 					key={v.ID}
 					primaryText={v.explanation}
 					secondaryText={v.amount} 
@@ -162,18 +171,19 @@ class Demand extends Component {
 	}
 	render() {
 		const {
-			showDialogDemand, 
-			showDialogOffer
+			dialogDemandShow, 
+			dialogOfferShow
 		} = this.state
 		const {
 			params: {ID}, 
-			contents, 
-			tags, 
+			contexts, 
+			photosDemand, 
+			tagsDemand, 
+			offersDemand, 
 			demand, 
-			offers, 
 			userID, 
 			accountID, 
-			userRoles
+			rolesUser
 		} = this.props
 		return (
 			<div style={styles.root}>
@@ -181,9 +191,9 @@ class Demand extends Component {
 					<CardTitle title={demand.status} />
 					<CardText>
 						<List>
-							<ListItem primaryText={contents["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"] || "Description"} secondaryText={demand.explanation} disabled={true} />
-							<ListItem primaryText={contents["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIITW9kaWZpZWQM"] || "Modified"} secondaryText={demand.lastModified} disabled={true} />
-							<ListItem primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHQ3JlYXRlZAw"] || "Created"} secondaryText={demand.created} disabled={true} />
+							<ListItem primaryText={contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"] || "Description"} secondaryText={demand.description} disabled={true} />
+							<ListItem primaryText={contexts["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIITW9kaWZpZWQM"] || "Modified"} secondaryText={demand.lastModified} disabled={true} />
+							<ListItem primaryText={contexts["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHQ3JlYXRlZAw"] || "Created"} secondaryText={demand.created} disabled={true} />
 						</List>
 					</CardText>
 					<CardActions>
@@ -192,11 +202,11 @@ class Demand extends Component {
 								(
 									(userID && userID === demand.userID) || 
 									(
-										isAdmin(userRoles) && 
+										isAdmin(rolesUser) && 
 										(accountID && accountID === demand.accountID)
 									) ?
 									<FlatButton 
-										label={contents["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"] || "Delete"}
+										label={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"] || "Delete"}
 										secondary={true}
 										onTouchTap={this.handleDelete} 
 									/> : 
@@ -207,26 +217,29 @@ class Demand extends Component {
 				</Card>
 				<Divider />
 				{
-					this.demandTags(contents, tags, demand.tagIDs)
+					this.tagsDemand(tagsDemand, context)
 				}
 				<Divider />
 				{
-					this.demandPhotos(demand.linksPhoto)
+					this.photosDemand(photosDemand)
 				}
 				<Divider />
 				{
 					demand.status !== "accepted" && 
-					this.offers(ID, offers)
+					this.offersDemand(offersDemand, ID)
 				}
 				{
 					(
-						!showDialogDemand && 
+						!dialogDemandShow && 
 						demand.status !== "accepted" && 
-						Object.values(offers).length === 0 && 
+						(
+							offersDemand && 
+							Object.values(offersDemand).length === 0 
+						) && 
 						(
 							(userID && userID === demand.userID) || 
 							(
-								isAdmin(userRoles) && 
+								isAdmin(rolesUser) && 
 								(accountID && accountID === demand.accountID)
 							)
 						)
@@ -234,64 +247,72 @@ class Demand extends Component {
 						<FloatingActionButton 
 							secondary={true}
 							style={styles.floatingActionButton}
-							onTouchTap={this.toggleDialogDemand}
+							onTouchTap={this.dialogDemandToggle}
 						>
-							<ContentCreate />
+							<contentCreate />
 						</FloatingActionButton>
 				}
 				{
 					(
 						demand.status !== "accepted" && 
-						!showDialogOffer && 
+						!dialogOfferShow && 
 						(accountID && accountID !== demand.accountID)
 					) && 
 						<FloatingActionButton 
 							secondary={true}
 							style={styles.floatingActionButton}
-							onTouchTap={this.toggleDialogOffer}
+							onTouchTap={this.dialogOfferToggle}
 						>
-							<ContentAdd />
+							<contentAdd />
 						</FloatingActionButton>
 				}
-				<DialogDemand
-					contents={contents} 
-					title={contents["aghkZXZ-Tm9uZXIeCxIHQ29udGVudCIRVXBkYXRlIFRoZSBEZW1hbmQM"] || "Update The Demand"}
-					showDialog={showDialogDemand} 
+				<DialogDemandUpdate
+					contexts={contexts} 
+					title={contexts["aghkZXZ-Tm9uZXIeCxIHQ29udGVudCIRVXBkYXRlIFRoZSBEZW1hbmQM"] || "Update The Demand"}
+					dialogShow={dialogDemandShow} 
 					demand={demand} 
-					toggleDialog={this.toggleDialogDemand}
+					tagIDsDemand={Object.keys(tagsDemand)} 
+					dialogToggle={this.dialogDemandToggle}
 				/>
-				<DialogOffer
-					contents={contents} 
-					title={contents["aghkZXZ-Tm9uZXIaCxIHQ29udGVudCINTWFrZSBBbiBPZmZlcgw"] || "Make An Offer"}
+				<DialogOfferCreate
+					contexts={contexts} 
+					title={contexts["aghkZXZ-Tm9uZXIaCxIHQ29udGVudCINTWFrZSBBbiBPZmZlcgw"] || "Make An Offer"}
 					uID={userID}
 					dID={ID}
-					showDialog={showDialogOffer} 
-					toggleDialog={this.toggleDialogOffer}
+					dialogShow={dialogOfferShow} 
+					dialogToggle={this.dialogOfferToggle}
 				/>
 			</div>
 		)
 	}
 }
 
-// For "undefined required demand" error when refreshing the demand.
 Demand.defaultProps = {
-	contents: {}, 
+	// Not necessary, because returned values by "filterAnObjectByKeys" 
+	// returns at least an empty object.
+	// contexts: {}, 
+	// photosDemand: {}, 
+	// tagsDemand: {}, 
 	demand: {}
 }
 
 Demand.propTypes = {
-	contents: PropTypes.object.isRequired, 
+	contexts: PropTypes.object.isRequired, 
+	photosGet: PropTypes.func.isRequired, 
+	photosDemand: PropTypes.object.isRequired, 
+	tagsDemandGet: PropTypes.func.isRequired, 
+	tagsDemand: PropTypes.object.isRequired, 
+	tagsGet: PropTypes.func.isRequired, 
 	tags: PropTypes.object.isRequired, 
+	tagsPagination: PropTypes.object.isRequired, 
+	offersGet: PropTypes.func.isRequired, 
+	offersDemand: PropTypes.object, 
+	demandGet: PropTypes.func.isRequired, 
 	demand: PropTypes.object.isRequired, 
-	offers: PropTypes.object.isRequired, 
 	userID: PropTypes.string, 
 	accountID: PropTypes.string, 
-	userRoles: PropTypes.object, 
-	tagsGet: PropTypes.func.isRequired, 
-	demandGet: PropTypes.func.isRequired, 
-	demandsDelete: PropTypes.func.isRequired, 
-	tagsByFilterGet: PropTypes.func.isRequired, 
-	offersGet: PropTypes.func.isRequired
+	rolesUser: PropTypes.object, 
+	demandDelete: PropTypes.func.isRequired
 }
 
 export default Demand

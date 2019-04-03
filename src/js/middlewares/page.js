@@ -1,11 +1,21 @@
-import {makeLoader} from "./utilities"
+import makeLoader from "./utilities"
 import {
-	pageSuccess
-} from "../actions/page"
+	pagesRequest, 
+	pagesSuccess, 
+	pagesFailure
+} from "../actions/pages"
 
 const pageGet = makeLoader({
+	defaults: {
+		kind: "pages"
+	}, 
 	actionCreators: {
-		actionsSuccess: [pageSuccess]
+		actionsRequest: [pagesRequest], 
+		actionsSuccess: [pagesSuccess], 
+		actionsFailure: [pagesFailure]
+	}, 
+	options: {
+		didValidate
 	}
 })
 export const pagePut = makeLoader({
@@ -13,14 +23,27 @@ export const pagePut = makeLoader({
 		method: "PUT", 
 		headers: {
 			"Accept": "application/json"
-		}
+		}, 
+		kind: "pages"
 	},
 	actionCreators: {
-		actionsSuccess: [pageSuccess]
+		actionsRequest: [pagesRequest], 
+		actionsSuccess: [pagesSuccess], 
+		actionsFailure: [pagesFailure]
+	}
+})
+export const pageDelete = makeLoader({
+	defaults: {
+		method: "DELETE", 
+		kind: "pages"
+	},
+	actionCreators: {
+		actionsRequest: [pagesRequest],
+		actionsSuccess: [pagesSuccess],
+		actionsFailure: [pagesFailure]
 	}, 
 	options: {
-		showSnackbar: true, 
-		mergeIntoState: true
+		hideFetching
 	}
 })
 

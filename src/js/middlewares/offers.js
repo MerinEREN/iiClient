@@ -1,4 +1,4 @@
-import {makeLoader} from "./utilities"
+import makeLoader from "./utilities"
 import {
 	offersRequest, 
 	offersSuccess, 
@@ -15,28 +15,17 @@ const offersGet = makeLoader({
 		actionsFailure: [offersFailure]
 	}
 })
-export const offersDelete = makeLoader({
+export const offerPost = makeLoader({
 	defaults: {
-		method: "DELETE", 
-		kind: "offers"
+		method: "POST", 
+		headers: {
+			"Accept": "application/json"
+		}
 	},
 	actionCreators: {
 		actionsRequest: [offersRequest],
 		actionsSuccess: [offersSuccess],
 		actionsFailure: [offersFailure]
-	}, 
-	options: {
-		hideFetching: true, 
-		showSnackbar: true
-	}
-})
-export const offerPost = makeLoader({
-	defaults: {
-		method: "POST"
-	},
-	options: {
-		hideFetching: true, 
-		showSnackbar: true
 	}
 })
 

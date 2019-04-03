@@ -1,10 +1,11 @@
 import createReducer, {
-	mergeIntoOrRemoveFromObject, 
-	removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
-	mergeIntoOrResetObject, 
+	paginate, 
+	fetchRequest, 
+	fetchSuccessEntities, 
+	fetchSuccess, 
 	fetchFailure, 
-	addToOrRemoveFromArray, 
-	resetArrayOrObject
+	resetAnArrayOrAnObject, 
+	addToOrRemoveFromAnArray
 } from "./utilities"
 import {
 	USERS_REQUEST,
@@ -12,29 +13,34 @@ import {
 	USERS_FAILURE, 
 	USERIDS_SELECTED_ADD_REMOVE
 } from "../actions/types"
-import user, {userBuffered} from "./user"
 
 // Slice Reducers
 const users = createReducer(
 	{}, 
 	{
-		USERS_SUCCESS: removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
-		...user
+		USERS_SUCCESS: fetchSuccessEntities
 	}
 )
 export const usersBuffered = createReducer(
 	{}, 
 	{
-		USERS_REQUEST: mergeIntoOrRemoveFromObject, 
-		USERS_SUCCESS: mergeIntoOrResetObject, 
-		USERS_FAILURE: fetchFailure, 
-		...userBuffered
+		USERS_REQUEST: fetchRequest, 
+		USERS_SUCCESS: fetchSuccess, 
+		USERS_FAILURE: fetchFailure
 	}
 )
+export const usersPagination = paginate({
+	mapActionToKey: action => action.key, 
+	types: [
+		USERS_REQUEST, 
+		USERS_SUCCESS, 
+		USERS_FAILURE
+	]
+})
 export const userIDsSelected = createReducer([], 
 	{
-		USERS_REQUEST: resetArrayOrObject, 
-		USERIDS_SELECTED_ADD_REMOVE: addToOrRemoveFromArray
+		USERS_REQUEST: resetAnArrayOrAnObject, 
+		USERIDS_SELECTED_ADD_REMOVE: addToOrRemoveFromAnArray
 	}
 )
 

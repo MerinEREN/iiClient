@@ -1,9 +1,11 @@
-import {combineReducers} from 'redux'
-import pagination from './pagination'
-import entities from './entities'
-import entitiesBuffered from './entitiesBuffered'
-import appState from './appState'
-import ui from './ui'
+import {
+	combineReducers
+} from "redux"
+import pagination from "./pagination"
+import entities from "./entities"
+import entitiesBuffered from "./entitiesBuffered"
+import appState from "./appState"
+import ui from "./ui"
 
 // Root Reducer
 const rootReducer = combineReducers({

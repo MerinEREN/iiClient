@@ -1,23 +1,49 @@
-import {makeLoader} from "./utilities"
+import makeLoader from "./utilities"
 import {
-	servicePackSuccess
-} from "../actions/servicePack"
+	servicePacksRequest, 
+	servicePacksSuccess, 
+	servicePacksFailure
+} from "../actions/servicePacks"
 
-const getServicePack = makeLoader({
-	actionCreators: {
-		actionsSuccess: [servicePackSuccess]
-	}
-})
-export const putServicePack = makeLoader({
+const servicePackGet = makeLoader({
 	defaults: {
-		method: "PUT"
+		kind: "servicePacks"
 	},
 	actionCreators: {
-		actionsSuccess: [servicePackSuccess]
+		actionsRequest: [servicePacksRequest], 
+		actionsSuccess: [servicePacksSuccess], 
+		actionsFailure: [servicePacksFailure]
 	}, 
 	options: {
-		showSnackbar: true, 
-		mergeIntoState: true
+		didValidate
+	}
+})
+export const servicePackPut = makeLoader({
+	defaults: {
+		method: "PUT", 
+		headers: {
+			"Accept": "application/json"
+		}, 
+		kind: "servicePacks"
+	},
+	actionCreators: {
+		actionsRequest: [servicePacksRequest], 
+		actionsSuccess: [servicePacksSuccess], 
+		actionsFailure: [servicePacksFailure]
+	}
+})
+export const servicePackDelete = makeLoader({
+	defaults: {
+		method: "DELETE", 
+		kind: "servicePacks"
+	},
+	actionCreators: {
+		actionsRequest: [servicePacksRequest],
+		actionsSuccess: [servicePacksSuccess],
+		actionsFailure: [servicePacksFailure]
+	}, 
+	options: {
+		hideFetching
 	}
 })
 

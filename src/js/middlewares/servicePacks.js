@@ -1,4 +1,4 @@
-import {makeLoader} from "./utilities"
+import makeLoader from "./utilities"
 import {
 	servicePacksRequest, 
 	servicePacksSuccess, 
@@ -7,7 +7,20 @@ import {
 
 const servicePacksGet = makeLoader({
 	defaults: {
-		kind: "servicePacks" 
+		kind: "servicePacks"
+	},
+	actionCreators: {
+		actionsRequest: [servicePacksRequest],
+		actionsSuccess: [servicePacksSuccess],
+		actionsFailure: [servicePacksFailure]
+	}
+})
+export const servicePackPost = makeLoader({
+	defaults: {
+		method: "POST", 
+		headers: {
+			"Accept": "application/json"
+		}
 	},
 	actionCreators: {
 		actionsRequest: [servicePacksRequest],

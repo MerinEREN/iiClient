@@ -1,10 +1,10 @@
 import createReducer from "./utilities"
-import {CHANGE_THEME} from "../actions/types" 
+import {THEME_CHANGE} from "../actions/types" 
 import getMuiTheme from "material-ui/styles/getMuiTheme"
 import lightBaseTheme from "material-ui/styles/baseThemes/lightBaseTheme"
 import darkBaseTheme from "material-ui/styles/baseThemes/darkBaseTheme"
 
-function changeTheme(state, action) {
+function themeChange(state, action) {
 	switch (action.cookies.get("theme")) {
 		case "dark":
 			action.cookies.set("theme", "light")
@@ -16,8 +16,11 @@ function changeTheme(state, action) {
 }
 
 // Slice Reducer
-const selectedTheme = createReducer({}, {
-	CHANGE_THEME: changeTheme
-})
+const themeSelected = createReducer(
+	{}, 
+	{
+		THEME_CHANGE: themeChange
+	}
+)
 
-export default selectedTheme
+export default themeSelected

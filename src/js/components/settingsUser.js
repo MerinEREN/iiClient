@@ -64,11 +64,11 @@ class UserSettings extends Component {
 	}
 	// INDEX AND VALUES ARE FOR SELECT FIELD ONLY
 	handleRolesInputChange(event, index, values) {
-		this.props.roleIDsSelectedByKeySet(this.props.user.ID, values)
+		this.props.roleIDsSelectedByKeySet({[this.props.user.ID]: values})
 	}
 	// INDEX AND VALUES ARE FOR SELECT FIELD ONLY
 	handleTagsInputChange(event, index, values) {
-		this.props.tagIDsSelectedByKeySet(this.props.user.ID, values)
+		this.props.tagIDsSelectedByKeySet({[this.props.user.ID]: values})
 	}
 	handlePostRoles() {
 		const {
@@ -83,7 +83,6 @@ class UserSettings extends Component {
 				// type: "JSON" is default
 				data: roleIDsSelected
 			}, 
-			stateSlice: roles, 
 			key: ID
 		})
 	}
@@ -100,7 +99,6 @@ class UserSettings extends Component {
 				// type: "JSON" is default
 				data: tagIDsSelected
 			}, 
-			stateSlice: tags, 
 			key: ID
 		})
 	}

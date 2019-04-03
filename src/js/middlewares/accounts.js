@@ -1,12 +1,11 @@
-import {makeLoader} from "./utilities"
+import makeLoader from "./utilities"
 import {
 	accountsRequest, 
 	accountsSuccess, 
 	accountsFailure
 } from "../actions/accounts"
 
-// Get tags as args to filter result.
-const getAccounts = makeLoader({
+const accountsGet = makeLoader({
 	defaults: {
 		URL: "/accounts", 
 		kind: "accounts"
@@ -14,8 +13,8 @@ const getAccounts = makeLoader({
 	actionCreators: {
 		actionsRequest: [accountsRequest],
 		actionsSuccess: [accountsSuccess],
-		actionsFailure: [accountsFailure],
+		actionsFailure: [accountsFailure]
 	}
-	})
+})
 
-export default getAccounts
+export default accountsGet

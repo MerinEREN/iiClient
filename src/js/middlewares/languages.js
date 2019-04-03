@@ -1,4 +1,4 @@
-import {makeLoader} from "./utilities"
+import makeLoader from "./utilities"
 import {
 	languagesRequest, 
 	languagesSuccess, 
@@ -16,30 +16,23 @@ const languagesGet = makeLoader({
 		actionsFailure: [languagesFailure]
 	}, 
 	options: {
-		didInvalidate: false
+		didValidate
 	}
 })
-
 export const languagePost = makeLoader({
 	defaults: {
 		URL: "/languages", 
 		method: "POST", 
 		headers: {
 			"Accept": "application/json"
-		}, 
-		kind: "languages"
+		}
 	},
 	actionCreators: {
 		actionsRequest: [languagesRequest],
 		actionsSuccess: [languagesSuccess],
 		actionsFailure: [languagesFailure]
-	}, 
-	options: {
-		hideFetching: true, 
-		showSnackbar: true
 	}
 })
-
 export const languagesDelete = makeLoader({
 	defaults: {
 		method: "DELETE", 
@@ -51,8 +44,7 @@ export const languagesDelete = makeLoader({
 		actionsFailure: [languagesFailure]
 	}, 
 	options: {
-		hideFetching: true, 
-		showSnackbar: true
+		hideFetching
 	}
 })
 

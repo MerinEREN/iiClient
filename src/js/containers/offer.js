@@ -1,8 +1,7 @@
 import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
 import OfferComponent from "../components/offer"
-import offerGet, {offerPut} from "../middlewares/offer"
-import {offersDelete} from "../middlewares/offers"
+import offerGet, {offerDelete} from "../middlewares/offer"
 
 const mapStateToProps = (state, ownProps) => {
 	const {

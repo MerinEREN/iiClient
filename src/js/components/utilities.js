@@ -20,26 +20,7 @@ export const isContentEditor = (roles) => {
 	return check
 }
 
-// generateURLVariableFromIDs returns a string that established with provided object keys 
-// or array values and each value seperated by comma.
-export const generateURLVariableFromIDs = (arrayOrObject) => {
-	let URLVar = ""
-	if (Array.isArray(arrayOrObject)) {
-		arrayOrObject.forEach((v, i) => {
-			i !== arrayOrObject.length - 1 ? 
-				URLVar += v + "," : 
-				URLVar += v
-		})
-	} else {
-		Object.keys(arrayOrObject).forEach((v, i) => {
-			i !== Object.keys(arrayOrObject).length - 1 ? 
-				URLVar += v + "," : 
-				URLVar += v
-		})
-	}
-	return URLVar
-}
-
+/* 
 export const addIntoRemoveFromArray = (v, a) => {
 	if (a.indexOf(v) === -1)
 		return [...a, v]
@@ -50,28 +31,33 @@ export const addIntoRemoveFromArray = (v, a) => {
 	})
 	return a2
 }
+*/
 
-export const getRouteContents = (session, prevProps, nextProps) => {
+export const contextsGet = (session, prevProps, nextProps) => {
 	if (prevProps.routes !== nextProps.routes) {
 		// console.log(prevProps.routes)
 		// console.log(nextProps.routes)
 		const {
 			routes, 
 			location, 
-			getRouteContents: get
+			contextsGet: get
 		} = nextProps
 		routes.forEach(v => {
 			if (v.path) {
 				if (v.path === "/") {
 					if (location.pathname === "/") {
+						get({
+							URL: "/contexts?pageID=body", 
+							key: "body"
+						})
 						if (session) {
 							get({
-								URL: "/contents?pageID=timeline", 
+								URL: "/contexts?pageID=timeline", 
 								key: "timeline"
 							})
 						} else {
 							get({
-								URL: "/contents?pageID=landingpage", 
+								URL: "/contexts?pageID=landingpage", 
 								key: "landingpage"
 							})
 						}
@@ -87,7 +73,7 @@ export const getRouteContents = (session, prevProps, nextProps) => {
 					}
 					path = path.toLowerCase()
 					get({
-						URL: `/contents?pageID=${path}`, 
+						URL: `/contexts?pageID=${path}`, 
 						key: path
 					})
 				}
@@ -96,7 +82,7 @@ export const getRouteContents = (session, prevProps, nextProps) => {
 	}
 }
 
-export const getFirstLetters = text => {
+export const firstLettersGenerate = text => {
 	if (!text)
 		return
 	let a = text.split(" ", 3)

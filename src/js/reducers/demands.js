@@ -1,8 +1,8 @@
 import createReducer, {
 	paginate, 
-	mergeIntoOrRemoveFromObject, 
-	removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
-	mergeIntoOrResetObject, 
+	fetchRequest, 
+	fetchSuccessEntities, 
+	fetchSuccess, 
 	fetchFailure
 } from "./utilities"
 import {
@@ -10,25 +10,22 @@ import {
 	DEMANDS_SUCCESS, 
 	DEMANDS_FAILURE
 } from "../actions/types"
-import demand, {demandBuffered} from "./demand"
 
 const demands = createReducer(
 	{}, 
 	{
-		DEMANDS_SUCCESS: removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
-		...demand
+		DEMANDS_SUCCESS: fetchSuccessEntities
 	}
 )
 export const demandsBuffered = createReducer(
 	{}, 
 	{
-		DEMANDS_REQUEST: mergeIntoOrRemoveFromObject, 
-		DEMANDS_SUCCESS: mergeIntoOrResetObject, 
-		DEMANDS_FAILURE: fetchFailure, 
-		...demandBuffered
+		DEMANDS_REQUEST: fetchRequest, 
+		DEMANDS_SUCCESS: fetchSuccess, 
+		DEMANDS_FAILURE: fetchFailure
 	}
 )
-export const paginationDemands = paginate({
+export const demandsPagination = paginate({
 	mapActionToKey: action => action.key, 
 	types: [
 		DEMANDS_REQUEST, 

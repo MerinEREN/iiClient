@@ -1,35 +1,34 @@
 import createReducer, {
 	paginate, 
-	mergeIntoOrRemoveFromObject, 
-	removeFromObjectIfDeleteOrMergeIntoOrResetObject, 
-	mergeIntoOrResetObject, 
-	fetchFailure, 
-	resetArrayOrObject, 
-	resetReducer
+	fetchRequest, 
+	fetchSuccessEntities, 
+	fetchSuccess, 
+	fetchFailure
+	// resetReducer
 } from "./utilities"
 import {
 	ROLETYPES_REQUEST, 
 	ROLETYPES_SUCCESS, 
-	ROLETYPES_FAILURE, 
-	ROLETYPEIDS_SELECTED_RESET
+	ROLETYPES_FAILURE
+	// ROLETYPEIDS_SELECTED_RESET
 } from "../actions/types"
 
 // Slice Reducers
 const roleTypes = createReducer(
 	{}, 
 	{
-		ROLETYPES_SUCCESS: removeFromObjectIfDeleteOrMergeIntoOrResetObject
+		ROLETYPES_SUCCESS: fetchSuccessEntities
 	}
 )
 export const roleTypesBuffered = createReducer(
 	{}, 
 	{
-		ROLETYPES_REQUEST: mergeIntoOrRemoveFromObject, 
-		ROLETYPES_SUCCESS: mergeIntoOrResetObject, 
+		ROLETYPES_REQUEST: fetchRequest, 
+		ROLETYPES_SUCCESS: fetchSuccess, 
 		ROLETYPES_FAILURE: fetchFailure
 	}
 )
-export const paginationRoleTypes = paginate({
+export const roleTypesPagination = paginate({
 	mapActionToKey: action => action.key, 
 	types: [
 		ROLETYPES_REQUEST, 
@@ -38,11 +37,13 @@ export const paginationRoleTypes = paginate({
 	]
 })
 
+/* 
 export const roleTypeIDsSelected = createReducer(
 	[],  
 	{
 		ROLETYPEIDS_SELECTED_RESET: resetReducer
 	}
 )
+*/
 
 export default roleTypes

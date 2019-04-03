@@ -1,10 +1,14 @@
-import createReducer from './utilities'
-import {TOOGLE_FETCHING} from '../actions/types'
+import createReducer from "./utilities"
+import {
+	FETCHING_TOGGLE
+} from "../actions/types"
 
 // Case Reducers
-const toggleFetching = (state, action) => !state
+const fetchingToggle = (state, action) => !state
 
 // Slice Reducers
-export const isFetching = createReducer(false, {
-	TOGGLE_FETCHING: toggleFetching
+const isFetching = createReducer(false, {
+	FETCHING_TOGGLE: fetchingToggle
 })
+
+export default isFetching

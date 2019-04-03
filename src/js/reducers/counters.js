@@ -1,9 +1,11 @@
-import {addDynamicKeyReturnResult} from "./utilities"
+import {
+	setPartiallyOrResetAnObject
+} from "./utilities"
 import {
 	COUNTER_SUCCESS
 } from "../actions/types"
 
-const counters = addDynamicKeyReturnResult({
+const counters = setPartiallyOrResetAnObject({
 	mapActionToKey: action => action.key, 
 	types: [
 		COUNTER_SUCCESS

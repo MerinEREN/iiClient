@@ -1,10 +1,14 @@
-import createReducer from './utilities'
-import {TOGGLE_DRAWER} from '../actions/types'
+import createReducer from "./utilities"
+import {
+	DRAWER_TOGGLE
+} from "../actions/types"
 
 // Case Reducers
-const toggleDrawer = (state, action) => !state
+const drawerToggle = (state, action) => !state
 
 // Slice Reducers
-export const openDrawer = createReducer(false, {
-	TOGGLE_DRAWER: toggleDrawer
+const drawerOpen = createReducer(false, {
+	DRAWER_TOGGLE: drawerToggle
 })
+
+export default drawerOpen

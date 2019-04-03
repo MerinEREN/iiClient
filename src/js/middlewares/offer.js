@@ -1,23 +1,35 @@
-import {makeLoader} from "./utilities"
+import makeLoader from "./utilities"
 import {
-	offerSuccess
-} from "../actions/offer"
+	offersRequest, 
+	offersSuccess, 
+	offersFailure
+} from "../actions/offers"
 
 const offerGet = makeLoader({
-	actionCreators: {
-		actionsSuccess: [offerSuccess]
-	}
-})
-export const offerPut = makeLoader({
 	defaults: {
-		method: "PUT"
+		kind: "offers"
 	},
 	actionCreators: {
-		actionsSuccess: [offerSuccess]
+		actionsRequest: [offersRequest], 
+		actionsSuccess: [offersSuccess], 
+		actionsFailure: [offersFailure]
 	}, 
 	options: {
-		showSnackbar: true, 
-		mergeIntoState: true
+		didValidate
+	}
+})
+export const offerDelete = makeLoader({
+	defaults: {
+		method: "DELETE", 
+		kind: "offers"
+	},
+	actionCreators: {
+		actionsRequest: [offersRequest],
+		actionsSuccess: [offersSuccess],
+		actionsFailure: [offersFailure]
+	}, 
+	options: {
+		hideFetching
 	}
 })
 

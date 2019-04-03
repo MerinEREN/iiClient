@@ -16,7 +16,7 @@ import Signin  from "../containers/signin"
 import Signed  from "../containers/signed"
 import Drawer from "../containers/drawer"
 import DialogDemand from "../containers/dialogDemand"
-import {getRouteContents} from "./utilities"
+import {contextsGet} from "./utilities"
 
 class Body extends Component {
 	constructor(props) {
@@ -35,16 +35,12 @@ class Body extends Component {
 		}
 		this.state = {
 			completed: 0, 
-			showDialog: false
+			dialogShow: false
 		}
-		this.toggleDialog = this.toggleDialog.bind(this)
+		this.dialogToggle = this.dialogToggle.bind(this)
 	}
 	componentWillMount() {
-		this.props.getRouteContents({
-			URL: "/contents?pageID=body", 
-			key: "body"
-		})
-		getRouteContents(this.session, {}, this.props)
+		contextsGet(this.session, {}, this.props)
 	}
 	componentWillReceiveProps(nextProps) {
 		if (!nextProps.isFetching) {
@@ -52,7 +48,7 @@ class Body extends Component {
 		} else {
 			this.progress(5)
 		}
-		getRouteContents(this.session, this.props, nextProps)
+		contextsGet(this.session, this.props, nextProps)
 	}
 	componentWillUnmount() {
 		clearTimeout(this.timer)
@@ -69,32 +65,32 @@ class Body extends Component {
 				50)
 		}
 	}
-	toggleDialog() {
+	dialogToggle() {
 		const {
-			showDialog
+			dialogShow
 		} = this.state
 		// Getting most used six tags to show as initial autocomplete values 
 		// if they does not exist yet.
-		this.props.tagsByFilterGet({
-			URL: "/tags?st=top", 
+		this.props.tagsGet({
+			URL: "/tags?q=top", 
 			key: "top"
 		})
-		this.setState({showDialog: !showDialog})
+		this.setState({dialogShow: !dialogShow})
 	}
 	render() {
 		const {
-			showDialog
+			dialogShow
 		} = this.state
 		const {
 			location, 
 			muiTheme, 
 			isFetching, 
 			snackbars, 
-			contents, 
+			contexts, 
 			user, 
 			userTags, 
 			cookies, 
-			toggleDrawer, 
+			drawerToggle, 
 			children, 
 			timeline, 
 			landingPage
@@ -142,12 +138,16 @@ class Body extends Component {
 					/>
 				}
 				{
-					(user.status !== "deleted" && user.status !== "suspended") && 
+					(
+						user.status && 
+						user.status !== "deleted" && 
+						user.status !== "suspended"
+					) && 
 						<AppBar
 							title={user.email || "Ince Is"}
 							style={this.styles.appBar}
 							showMenuIconButton={this.session !== undefined}
-							onLeftIconButtonTouchTap={() => toggleDrawer()}
+							onLeftIconButtonTouchTap={() => drawerToggle()}
 						>
 							<ToolbarGroup>
 								<Badge 
@@ -157,7 +157,7 @@ class Body extends Component {
 									style={this.styles.badge.style}
 								>
 									<IconButton 
-										tooltip={contents["aghkZXZ-Tm9uZXIaCxIHQ29udGVudCINTm90aWZpY2F0aW9ucww"] || "notifications"}
+										tooltip={contexts["aghkZXZ-Tm9uZXIaCxIHQ29udGVudCINTm90aWZpY2F0aW9ucww"] || "notifications"}
 									>
 										<NotificationsIcon/>
 									</IconButton>
@@ -170,21 +170,32 @@ class Body extends Component {
 											lang={this.lang}
 										/> :
 										<Signin 
-											contents={contents} 
+											contexts={contexts} 
 										/>
 								}
 							</ToolbarGroup>
 						</AppBar>
 				}
-				{(this.session && user.status !== "deleted" && user.status !== "suspended") && <Drawer {...this.props} />}
+				{
+					(
+						this.session && 
+						user.status && 
+						user.status !== "deleted" && 
+						user.status !== "suspended"
+					) && 
+						<Drawer {...this.props} />}
 				{
 					this.session ? 
 						(
-							(user.status !== "deleted" && user.status !== "suspended") ?
+							(
+								user.status && 
+								user.status !== "deleted" && 
+								user.status !== "suspended"
+							) ?
 							(
 								location.pathname === "/" ? 
 								(
-									userTags && Object.keys(userTags).length ? 
+									userTags ? 
 									timeline : 
 									landingPage
 								) : 
@@ -196,25 +207,29 @@ class Body extends Component {
 				}
 				{
 					(
-						!showDialog && 
+						!dialogShow && 
 						this.session && 
-						(user.status !== "deleted" && user.status !== "suspended") && 
+						(
+							user.status && 
+							user.status !== "deleted" && 
+							user.status !== "suspended"
+						) && 
 						location.pathname === "/"
 					) && 
 						<FloatingActionButton 
 							secondary={true}
 							style={this.styles.floatingActionButton}
-							onTouchTap={this.toggleDialog}
+							onTouchTap={this.dialogToggle}
 						>
 							<ContentAdd />
 						</FloatingActionButton>
 				}
 				<DialogDemand
-					contents={contents} 
-					title={contents["aghkZXZ-Tm9uZXIgCxIHQ29udGVudCITQ3JlYXRlIEEgTmV3IERlbWFuZAw"] || "Create A New Demand"}
-					showDialog={showDialog} 
+					contexts={contexts} 
+					title={contexts["aghkZXZ-Tm9uZXIgCxIHQ29udGVudCITQ3JlYXRlIEEgTmV3IERlbWFuZAw"] || "Create A New Demand"}
+					dialogShow={dialogShow} 
 					uID={user.ID}
-					toggleDialog={this.toggleDialog}
+					dialogToggle={this.dialogToggle}
 				/>
 				{
 					Object.entries(snackbars).map(([k, v]) => 
@@ -235,19 +250,20 @@ class Body extends Component {
 }
 
 Body.defaultProps = {
-	contents: {}
+	contexts: {}, 
+	user: {}
 }
 
 Body.propTypes = {
 	cookies: instanceOf(Cookies).isRequired, 
 	muiTheme: PropTypes.object.isRequired,
 	isFetching: PropTypes.bool.isRequired,
-	user: PropTypes.object,
+	user: PropTypes.object.isRequired,
 	userTags: PropTypes.object,
-	contents: PropTypes.object.isRequired,
-	getRouteContents: PropTypes.func.isRequired,
-	tagsByFilterGet: PropTypes.func.isRequired, 
-	toggleDrawer: PropTypes.func.isRequired,
+	contexts: PropTypes.object.isRequired,
+	contextsGet: PropTypes.func.isRequired,
+	tagsGet: PropTypes.func.isRequired, 
+	drawerToggle: PropTypes.func.isRequired,
 	children: PropTypes.node, 
 	timeline: PropTypes.node, 
 	landingPage: PropTypes.node, 

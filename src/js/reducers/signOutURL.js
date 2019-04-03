@@ -5,11 +5,12 @@ import {
 
 // Case Reducers
 function signOutURLSuccess(state, action) {
-	return action.response.result
+	return action.response.data || action.response
 }
 
 // Slice Reducer
-const signOutURL = createReducer("", 
+const signOutURL = createReducer(
+	null, 
 	{
 		SIGN_OUT_URL_SUCCESS: signOutURLSuccess
 	}

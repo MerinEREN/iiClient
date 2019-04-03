@@ -1,7 +1,7 @@
-import makeActionCreator from './creator'
+import makeActionCreator from "./creator"
 import {
 	COUNTER_SUCCESS
-} from './types'
+} from "./types"
 
 export const counterSuccess = makeActionCreator(
 	COUNTER_SUCCESS

@@ -19,8 +19,7 @@ export const rolesFailure = makeActionCreator(
 )
 export const roleIDsSelectedByKeySet = makeActionCreator(
 	ROLEIDS_SELECTED_BY_KEY_SET, 
-	"key", 
-	"value"
+	"data"
 )
 export const roleIDsSelectedByKeyRemove = makeActionCreator(
 	ROLEIDS_SELECTED_BY_KEY_REMOVE, 

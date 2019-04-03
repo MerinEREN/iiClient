@@ -1,4 +1,4 @@
-import {makeLoader} from "./utilities"
+import makeLoader from "./utilities"
 import {
 	demandsRequest, 
 	demandsSuccess, 
@@ -15,10 +15,9 @@ const demandsGet = makeLoader({
 		actionsFailure: [demandsFailure]
 	}
 })
-export const demandsDelete = makeLoader({
+export const demandPost = makeLoader({
 	defaults: {
-		method: "DELETE", 
-		kind: "demands"
+		method: "POST"
 	},
 	actionCreators: {
 		actionsRequest: [demandsRequest],
@@ -26,17 +25,7 @@ export const demandsDelete = makeLoader({
 		actionsFailure: [demandsFailure]
 	}, 
 	options: {
-		hideFetching: true, 
-		showSnackbar: true
-	}
-})
-export const demandPost = makeLoader({
-	defaults: {
-		method: "POST"
-	},
-	options: {
-		hideFetching: true, 
-		showSnackbar: true
+		showSnackbar
 	}
 })
 
