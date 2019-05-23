@@ -1,12 +1,12 @@
-import {connect} from 'react-redux'
-import getMuiTheme from 'material-ui/styles/getMuiTheme'
-import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme'
-import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme'
-import ThemeComponent from '../components/theme'
+import {connect} from "react-redux"
+import getMuiTheme from "material-ui/styles/getMuiTheme"
+import lightBaseTheme from "material-ui/styles/baseThemes/lightBaseTheme"
+import darkBaseTheme from "material-ui/styles/baseThemes/darkBaseTheme"
+import ThemeComponent from "../components/theme"
 
 function setTheme(ID) {
 	switch (ID) {
-		case 'dark':
+		case "dark":
 			return getMuiTheme(darkBaseTheme)
 		default:
 			return getMuiTheme(lightBaseTheme)
@@ -14,15 +14,21 @@ function setTheme(ID) {
 }
 
 const mapStateToProps = (state, ownProps) => {
+	const {
+		ui: {
+			selectedTheme
+		}
+	} = state
+	const {
+		cookies
+	} = ownProps
 	return {
-		theme: Object.keys(state.ui.selectedTheme).length 
-		? 
-		state.ui.selectedTheme 
-		:
-		setTheme(ownProps.cookies.get('theme'))
+		theme: Object.keys(selectedTheme).length ? 
+		selectedTheme : 
+		setTheme(cookies.get("theme"))
 	}
 }
 
-const Theme = connect(mapStateToProps)(ThemeComponent)
+const Theme = connect(mapStateToProps, null)(ThemeComponent)
 
 export default Theme

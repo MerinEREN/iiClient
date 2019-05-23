@@ -1,13 +1,13 @@
-import React, {Component} from 'react'
-import PropTypes from 'prop-types'
-import FlatButton from 'material-ui/FlatButton'
-import Popover from 'material-ui/Popover'
-import Menu from 'material-ui/Menu'
-import MenuItem from 'material-ui/MenuItem'
+import React, {Component} from "react"
+import PropTypes from "prop-types"
+import FlatButton from "material-ui/FlatButton"
+import Popover from "material-ui/Popover"
+import Menu from "material-ui/Menu"
+import MenuItem from "material-ui/MenuItem"
 
 const styles = {
 	a: {
-		textDecoration: 'none'
+		textDecoration: "none"
 	}
 }
 
@@ -38,20 +38,20 @@ class Signin extends Component {
 	}
 	render() {
 		const {
-			contents, 
+			contexts, 
 			loginUrls 
 		} = this.props
 		return (
 			<div>
 				<FlatButton
-					label={contents["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGTG9nIGluDA"] || "Log in"}
+					label={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGTG9nIGluDA"] || "Log in"}
 					onTouchTap={this.handleTouchTap}
 				/>
 				<Popover
 					open={this.state.open}
 					anchorEl={this.state.anchorEl}
-					anchorOrigin={{horizontal: 'right', vertical: 'top'}}
-					targetOrigin={{horizontal: 'right', vertical: 'top'}}
+					anchorOrigin={{horizontal: "right", vertical: "top"}}
+					targetOrigin={{horizontal: "right", vertical: "top"}}
 					onRequestClose={this.handleRequestClose}
 				>
 					<Menu>
@@ -66,8 +66,7 @@ class Signin extends Component {
 										primaryText={k}
 									/>
 								</a>
-							)
-							)
+							))
 						}
 					</Menu>
 				</Popover>
@@ -76,12 +75,8 @@ class Signin extends Component {
 	}
 }
 
-Signin.defaultProps = {
-	contents: {}
-}
-
 Signin.propTypes = {
-contents: PropTypes.object.isRequired,
+contexts: PropTypes.object.isRequired,
 loginUrls: PropTypes.object.isRequired, 
 loginUrlsGet: PropTypes.func.isRequired
 }

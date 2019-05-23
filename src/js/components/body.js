@@ -15,7 +15,7 @@ import Unauthorized from "./unauthorized"
 import Signin  from "../containers/signin"
 import Signed  from "../containers/signed"
 import Drawer from "../containers/drawer"
-import DialogDemand from "../containers/dialogDemand"
+import DialogDemandCreate from "../containers/DialogDemandCreate"
 import {contextsGet} from "./utilities"
 
 class Body extends Component {
@@ -69,12 +69,6 @@ class Body extends Component {
 		const {
 			dialogShow
 		} = this.state
-		// Getting most used six tags to show as initial autocomplete values 
-		// if they does not exist yet.
-		this.props.tagsGet({
-			URL: "/tags?q=top", 
-			key: "top"
-		})
 		this.setState({dialogShow: !dialogShow})
 	}
 	render() {
@@ -88,7 +82,7 @@ class Body extends Component {
 			snackbars, 
 			contexts, 
 			user, 
-			userTags, 
+			tagsUser, 
 			cookies, 
 			drawerToggle, 
 			children, 
@@ -140,8 +134,10 @@ class Body extends Component {
 				{
 					(
 						user.status && 
-						user.status !== "deleted" && 
-						user.status !== "suspended"
+						!(
+							user.status === "deleted" || 
+							user.status === "suspended"
+						)
 					) && 
 						<AppBar
 							title={user.email || "Ince Is"}
@@ -180,8 +176,10 @@ class Body extends Component {
 					(
 						this.session && 
 						user.status && 
-						user.status !== "deleted" && 
-						user.status !== "suspended"
+						!(
+							user.status === "deleted" || 
+							user.status === "suspended"
+						)
 					) && 
 						<Drawer {...this.props} />}
 				{
@@ -189,13 +187,15 @@ class Body extends Component {
 						(
 							(
 								user.status && 
-								user.status !== "deleted" && 
-								user.status !== "suspended"
+								!(
+									user.status === "deleted" || 
+									user.status === "suspended"
+								)
 							) ?
 							(
 								location.pathname === "/" ? 
 								(
-									userTags ? 
+									tagsUser ? 
 									timeline : 
 									landingPage
 								) : 
@@ -211,8 +211,10 @@ class Body extends Component {
 						this.session && 
 						(
 							user.status && 
-							user.status !== "deleted" && 
-							user.status !== "suspended"
+							!(
+								user.status === "deleted" || 
+								user.status === "suspended"
+							)
 						) && 
 						location.pathname === "/"
 					) && 
@@ -224,7 +226,7 @@ class Body extends Component {
 							<ContentAdd />
 						</FloatingActionButton>
 				}
-				<DialogDemand
+				<DialogDemandCreate
 					contexts={contexts} 
 					title={contexts["aghkZXZ-Tm9uZXIgCxIHQ29udGVudCITQ3JlYXRlIEEgTmV3IERlbWFuZAw"] || "Create A New Demand"}
 					dialogShow={dialogShow} 
@@ -258,11 +260,10 @@ Body.propTypes = {
 	cookies: instanceOf(Cookies).isRequired, 
 	muiTheme: PropTypes.object.isRequired,
 	isFetching: PropTypes.bool.isRequired,
-	user: PropTypes.object.isRequired,
-	userTags: PropTypes.object,
-	contexts: PropTypes.object.isRequired,
 	contextsGet: PropTypes.func.isRequired,
-	tagsGet: PropTypes.func.isRequired, 
+	contexts: PropTypes.object.isRequired,
+	user: PropTypes.object.isRequired,
+	tagsUser: PropTypes.object,
 	drawerToggle: PropTypes.func.isRequired,
 	children: PropTypes.node, 
 	timeline: PropTypes.node, 

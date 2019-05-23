@@ -4,6 +4,7 @@ import createReducer, {
 	fetchSuccessEntities, 
 	fetchSuccess, 
 	fetchFailure,
+	resetAnObject, 
 	resetAnArrayOrAnObject, 
 	addToOrRemoveFromAnArray
 } from "./utilities"
@@ -22,7 +23,8 @@ import {
 const contexts = createReducer(
 	{}, 
 	{
-		CONTEXTS_SUCCESS: fetchSuccessEntities
+		CONTEXTS_SUCCESS: fetchSuccessEntities, 
+		CONTEXTS_RESET_ALL: resetAnObject
 	}
 )
 export const contextsBuffered = createReducer(
@@ -31,6 +33,7 @@ export const contextsBuffered = createReducer(
 		CONTEXTS_REQUEST: fetchRequest, 
 		CONTEXTS_SUCCESS: fetchSuccess, 
 		CONTEXTS_FAILURE: fetchFailure, 
+		CONTEXTS_RESET_ALL: resetAnObject, 
 		CONTEXT_UPDATE: contextUpdate
 	}
 )

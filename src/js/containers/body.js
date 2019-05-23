@@ -3,7 +3,6 @@ import {bindActionCreators} from "redux"
 import BodyComponent from "../components/body"
 import contextsGet from "../middlewares/contexts"
 import drawerToggle from "../actions/drawer"
-import tagsGet from "../middlewares/tags"
 import {filterAnObjectByKeys} from "../middlewares/utilities"
 // Needed for onTouchTap, REMOVE WHEN REACT HAS THIS FEATURE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // It"s a mobile friendly onClick() alternative for all components in Material-UI 
@@ -48,8 +47,8 @@ const mapStateToProps = state => {
 	} = state
 	return {
 		contexts: body && filterAnObjectByKeys(contexts, body.IDs), 
-		user: logged && filterAnObjectByKeys(users, logged.IDs), 
-		userTags: (logged && tagsPagination[logged.IDs[0]]) && 
+		user: logged && users[logged.IDs[0]], 
+		tagsUser: (logged && tagsPagination[logged.IDs[0]]) && 
 		filterAnObjectByKeys(tags, tagsPagination[logged.IDs[0]].IDs), 
 		snackbars, 
 		isFetching
@@ -59,8 +58,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
 		contextsGet, 
-		drawerToggle, 
-		tagsGet
+		drawerToggle
 	},
 	dispatch
 )

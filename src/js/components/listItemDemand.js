@@ -3,20 +3,21 @@ import PropTypes from "prop-types"
 import {ListItem} from "material-ui/List"
 import Link from "react-router/lib/Link"
 
-const ListItemDemand = ({ID, explanation}) => <ListItem
+const ListItemDemand = ({ID, description}) => <ListItem
 	containerElement={
 		<Link
 			to={`/demands/${ID}`}
 		/>
 	}
 >
-	{explanation}
+	{description}
 </ListItem>
 
 ListItemDemand.muiName = "ListItem"
 
 ListItemDemand.propTypes = {
-	ID: PropTypes.string.isRequired
+	ID: PropTypes.string.isRequired, 
+	description: PropTypes.string.isRequired
 }
 
 export default ListItemDemand

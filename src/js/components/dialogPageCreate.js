@@ -5,7 +5,7 @@ import VerticalStepper from "./verticalStepper"
 import TextField from "material-ui/TextField"
 import FlatButton from "material-ui/FlatButton"
 
-class DialogDemandUpdate extends Component {
+class DialogPageCreate extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -15,11 +15,7 @@ class DialogDemandUpdate extends Component {
 		}
 		this.handleStepIndex = this.handleStepIndex.bind(this)
 		this.handleFieldChange = this.handleFieldChange.bind(this)
-		this.handlePut = this.handlePut.bind(this)
-	}
-	componentWillReceiveProps(nextProps) {
-		if (this.props.demand !== nextProps.demand)
-			this.setState({newObject: nextProps.demand})
+		this.handlePost = this.handlePost.bind(this)
 	}
 	handleStepIndex(direction) {
 		const {
@@ -51,7 +47,7 @@ class DialogDemandUpdate extends Component {
 		let key
 		switch (i) {
 			case 1:
-				key = "description"
+				key = "name"
 				break
 			default:
 				return false
@@ -87,33 +83,29 @@ class DialogDemandUpdate extends Component {
 			}
 		})
 	}
-	handlePut() {
+	handlePost() {
 		const {
-			stepIndex, 
 			newObject
 		} = this.state
-		if(this.handleRequiredField(stepIndex))
-			return
 		const {
-			params: {ID}, 
 			dialogToggle, 
-			demandPut
+			pagePost
 		} = this.props
 		dialogToggle()
-		// "ID" in data value is for enveloped or not check only
-		// and not be sended to the backand.
-		demandPut({
-			URL: `/demands/${ID}`, 
+		this.props.pagePost({
 			data: {
+				type: "FormData", 
+				// Use "contextType" for "Blob" type.
+				// contextType: "application/json", 
 				value: {
-					ID, 
-					...newObject
+						...newObject, 
+						file: this.file.files[0] 
 				}
-			}, 
-			key: ID
+			}
 		})
 		this.setState({
-			stepIndex: 0
+			stepIndex: 0, 
+			newObject: {}
 		})
 	}
 	stepLabels() { 
@@ -122,43 +114,51 @@ class DialogDemandUpdate extends Component {
 		} = this.props
 		return Object.keys(contexts).length > 0 ?
 			[
-				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRXhwbGFuYXRpb24M"], 
-				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"]
-			] : 
+				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"], 
+				contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIETmFtZQw"], 
+				contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIERmlsZQw"]
+			] :
 			[
 				"Explanation", 
-				"Description"
+				"Name", 
+				"Photo"
 			]
 	}
-	descriptionField() {
+	explanationField() {
 		const {
-			newObject: {description}, 
+			contexts
+		} = this.props
+		return <p>
+			{contexts["aghkZXZ-Tm9uZXI0CxIHQ29udGVudCInQWRkIGEgbmV3IHBhZ2UuIE5hbWUgZmllbGQgaXMgcmVxdWlyZWQuDA"] || "Add a new page. Name field is required."}
+		</p>
+	}
+	nameField() {
+		const {
+			newObject: {name}, 
 			inputErrTexts
 		} = this.state
 		const {
 			contexts
 		} = this.props
 		return <TextField 
-			name="description" 
-			value={description || ""}
-			floatingLabelText={contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"] || "Description"}
-			errorText={inputErrTexts.description}
-			fullWidth={true}
-			multiLine={true}
-			rows={3}
-			rowsMax={5}
+			name="name"
+			value={name || ""}
+			floatingLabelText={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGQW1vdW50DA"] || "Name"}
+			errorText={inputErrTexts.name}
 			onChange={this.handleFieldChange}
 		/>
 	}
+	photoField() {
+		return <input 
+			type="file"
+			ref={input => this.file = input}
+		/>
+	}
 	stepContents() {
-		const {
-			contexts
-		} = this.props
 		return [
-			<p>
-				{contexts["aghkZXZ-Tm9uZXJJCxIHQ29udGVudCI8VXBkYXRlIHRoZSBkZW1hbmQuIFRhZ3MgYW5kIERlc2NyaXB0aW9uIGZpZWxkcyBhcmUgcmVxdWlyZWQuDA"]}
-			</p>, 
-			this.descriptionField()
+			this.explanationField(), 
+			this.nameField(), 
+			this.photoField()
 		]
 	}
 	children() {
@@ -184,7 +184,6 @@ class DialogDemandUpdate extends Component {
 			contexts, 
 			dialogToggle
 		} = this.props
-
 		let actions = [
 			<FlatButton
 				label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
@@ -194,7 +193,7 @@ class DialogDemandUpdate extends Component {
 		this.stepContents().length - 1 === stepIndex && actions.push(<FlatButton
 			label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
 			primary={true}
-			onTouchTap={this.handlePut}
+			onTouchTap={this.handlePost}
 		/>)
 		return actions
 	}
@@ -204,24 +203,23 @@ class DialogDemandUpdate extends Component {
 			dialogShow
 		} = this.props
 		return <Dialog
-					title={title}
-					children={this.children()}
-					actions={this.actions()}
-					modal={true}
-					open={dialogShow} 
-				/>
+			title={title}
+			children={this.children()}
+			actions={this.actions()}
+			modal={true}
+			open={dialogShow} 
+		/>
 	}
 }
 
-DialogDemandUpdate.propTypes = {
+DialogPageCreate.muiName = "Dialog"
+
+DialogPageCreate.propTypes = {
 	contexts: PropTypes.object.isRequired,
 	title: PropTypes.string.isRequired,
 	dialogShow: PropTypes.bool.isRequired, 
-	demand: PropTypes.object,
 	dialogToggle: PropTypes.func.isRequired, 
-	demandPut: PropTypes.func.isRequired
+	pagePost: PropTypes.func.isRequired
 }
 
-DialogDemandUpdate.muiName = "Dialog"
-
-export default DialogDemandUpdate
+export default DialogPageCreate

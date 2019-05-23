@@ -3,7 +3,7 @@ import PropTypes from "prop-types"
 import {Link} from "react-router"
 import {GridTile} from "material-ui/GridList"
 import Checkbox from "material-ui/Checkbox"
-import {selectedPageIDsAddRemove} from '../actions/pages'
+import {selectedPageIDsAddRemove} from "../actions/pages"
 
 const styles = {
 	gridTile: {
@@ -23,7 +23,7 @@ const styles = {
 }
 
 // FIND A WAY TO PREVENT TO TRIGER LINK WHEN CHECKBOX CHECKED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-const PageTile = ({page, isChecked}) => {
+const TilePage = ({page, isChecked}) => {
 		const {
 			gridTile: {
 				paddingTop, 
@@ -34,10 +34,10 @@ const PageTile = ({page, isChecked}) => {
 			link: {activeStyle}, 
 			checkbox
 		} = styles
-		const {ID, text, link} = page
+		const {ID, name, link} = page
 		return (
 			<GridTile  
-				title={text}
+				title={name}
 				titlePosition="top"
 				titleBackground={titleBackground} 
 				cols={ID === "Root" ? 2 : 1} 
@@ -68,11 +68,11 @@ const PageTile = ({page, isChecked}) => {
 		)
 	}
 
-PageTile.propTypes = {
+TilePage.propTypes = {
 	page: PropTypes.object.isRequired, 
 	isChecked: PropTypes.bool.isRequired
 }
 
-// PageTile.muiName = "GridTile"
+// TilePage.muiName = "GridTile"
 
-export default PageTile
+export default TilePage

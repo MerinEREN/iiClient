@@ -4,15 +4,15 @@ import createReducer, {
 	fetchSuccessEntities, 
 	fetchSuccess, 
 	fetchFailure, 
-	addToAnObjectWithKey, 
-	removeFromAnObjectByKey
+	addToAnObjectWithKey
+	// removeFromAnObjectByKey
 } from "./utilities"
 import {
 	ROLES_REQUEST, 
 	ROLES_SUCCESS, 
 	ROLES_FAILURE, 
-	ROLEIDS_SELECTED_BY_KEY_SET, 
-	ROLEIDS_SELECTED_BY_KEY_REMOVE
+	ROLEIDS_SELECTED_BY_KEY_SET
+	// ROLEIDS_SELECTED_BY_KEY_REMOVE
 } from "../actions/types"
 
 // Slice Reducers
@@ -41,8 +41,8 @@ export const rolesPagination = paginate({
 export const roleIDsSelectedByKey = createReducer(
 	{},   
 	{
-		ROLEIDS_SELECTED_BY_KEY_SET: addToAnObjectWithKey, 
-		ROLEIDS_SELECTED_BY_KEY_REMOVE: removeFromAnObjectByKey
+		ROLEIDS_SELECTED_BY_KEY_SET: addToAnObjectWithKey
+		// ROLEIDS_SELECTED_BY_KEY_REMOVE: removeFromAnObjectByKey
 	}
 )
 

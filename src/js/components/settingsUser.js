@@ -1,249 +1,416 @@
 import React, {Component} from "react"
 import PropTypes from "prop-types"
 import browserHistory from "react-router/lib/browserHistory"
+import FloatingActionButton from "material-ui/FloatingActionButton"
+import ContentAdd from "material-ui/svg-icons/content/add"
 import SelectField from "material-ui/SelectField"
+import AutoComplete from "material-ui/AutoComplete"
 import MenuItem from "material-ui/MenuItem"
-import FlatButton from "material-ui/FlatButton"
-import {isAdmin} from "./utilities"
 import Chip from "material-ui/Chip"
 import Avatar from "material-ui/Avatar"
 import {blue300} from "material-ui/styles/colors"
-import {getFirstLetters} from "./utilities"
+import FlatButton from "material-ui/FlatButton"
+import {firstLettersGenerate} from "./utilities"
+import {filterAnObjectByKeys} from "../middlewares/utilities"
 
 class UserSettings extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			fetchUser: true
+			tagsAddShow: false, 
+			searchText: "", 
+			rolesAddShow: false
 		}
-		this.handleRolesInputChange = this.handleRolesInputChange.bind(this)
-		this.handleTagsInputChange = this.handleTagsInputChange.bind(this)
-		this.handlePostRoles = this.handlePostRoles.bind(this)
-		this.handlePostTags = this.handlePostTags.bind(this)
+		this.handleTagUserDelete = this.handleTagUserDelete.bind(this)
+		this.tagsAddToggle = this.tagsAddToggle.bind(this)
+		this.handleAutoComplete = this.handleAutoComplete.bind(this)
+		this.handleNewRequest = this.handleNewRequest.bind(this)
+		this.handleTagsUserPost= this.handleTagsUserPost.bind(this)
+		this.handleRoleUserDelete = this.handleRoleUserDelete.bind(this)
+		this.rolesAddToggle = this.rolesAddToggle.bind(this)
+		this.handleRolesFieldChange = this.handleRolesFieldChange.bind(this)
+		this.handleRolesUserPost= this.handleRolesUserPost.bind(this)
 		this.handleDelete = this.handleDelete.bind(this)
 	}
 	componentWillMount() {
 		const {
 			params: {ID}, 
-			rolesGet, 
-			tagsGet, 
-			userRolesGet, 
-			userTagsGet
+			IDUserLogged, 
+			tagsUserGet, 
+			rolesUserGet, 
+			userGet
 		} = this.props
-		// Only logged admin user sets selected user's roles and tags,
-		// that's why requests are in this code block.
-		if (ID) {
-			rolesGet()
-			tagsGet()
-			userRolesGet({
-				URL: `/userRoles/${ID}`, 
+		// Get user datas, user's tags and user's roles 
+		// if only logged user is an admin and 
+		// visited user is not logged user, otherwise use logged user as user.
+		if (
+			ID && 
+			IDUserLogged !== "" && 
+			ID !== IDUserLogged
+		) {
+			tagsUserGet({
+				URL: `/tagsUser?q=${ID}`, 
 				key: ID
 			})
-			userTagsGet({
-				URL: `/userTags/${ID}`, 
+			rolesUserGet({
+				URL: `/rolesUser?q=${ID}`, 
+				key: ID
+			})
+			userGet({
+				URL:`/users/${ID}`, 
 				key: ID
 			})
 		}
 	}
+	// For page refresh
 	componentWillReceiveProps(nextProps) {
 		const {
 			params: {ID}, 
-			user, 
+			tagsUserGet, 
+			rolesUserGet, 
 			userGet
 		} = this.props
-		// Get user datas if only logged user is an admin.
-		if (ID && this.state.fetchUser) {
-			// Get selected non logged user's data.
-			if (nextProps.userLogged.ID !== ID) {
-				userGet({
-					URL:`/users/${ID}`
-				})
-				this.setState({fetchUser: false})
-			}
+		// Get user datas, user's tags and user's roles 
+		// if only logged user is an admin and 
+		// visited user is not logged user, otherwise use logged user as user.
+		if ( 
+			ID && 
+			nextProps.IDUserLogged !== "" && 
+			ID !== nextProps.IDUserLogged
+		) {
+			tagsUserGet({
+				URL: `/tagsUser?q=${ID}`, 
+				key: ID
+			})
+			rolesUserGet({
+				URL: `/rolesUser?q=${ID}`, 
+				key: ID
+			})
+			userGet({
+				URL:`/users/${ID}`, 
+				key: ID
+			})
 		}
 	}
-	// INDEX AND VALUES ARE FOR SELECT FIELD ONLY
-	handleRolesInputChange(event, index, values) {
-		this.props.roleIDsSelectedByKeySet({[this.props.user.ID]: values})
-	}
-	// INDEX AND VALUES ARE FOR SELECT FIELD ONLY
-	handleTagsInputChange(event, index, values) {
-		this.props.tagIDsSelectedByKeySet({[this.props.user.ID]: values})
-	}
-	handlePostRoles() {
+	handleRoleUserDelete(rID) {
 		const {
-			user: {ID}, 
-			roles, 
-			roleIDsSelected, 
-			userRolesPost
+			params: {ID},
+			roleUserDelete
 		} = this.props
-		userRolesPost({
-			URL: `/userRoles/${ID}`, 
-			body: {
-				// type: "JSON" is default
-				data: roleIDsSelected
+		roleUserDelete({
+			URL: `/rolesUser?uID=${ID}&rID=${rID}`, 
+			data: {
+				value: [rID]
 			}, 
 			key: ID
 		})
 	}
-	handlePostTags() {
+	handleTagUserDelete(tID) {
 		const {
-			user: {ID}, 
-			tags, 
-			tagIDsSelected, 
-			userTagsPost
+			params: {ID},
+			tagUserDelete
 		} = this.props
-		userTagsPost({
-			URL: `/userTags/${ID}`, 
-			body: {
-				// type: "JSON" is default
-				data: tagIDsSelected
+		tagUserDelete({
+			URL: `/tagsUser?uID=${ID}&tID=${tID}`, 
+			data: {
+				value: [tID]
 			}, 
 			key: ID
-		})
-	}
-	handleDeleteRole(ID) {
-		const {
-			user: {ID: uID},
-			userRoleDelete
-		} = this.props
-		userRoleDelete({
-			URL: `/userRoles/${uID}/${ID}`, 
-			body: {
-				data: [ID]
-			}, 
-			key: uID
-		})
-	}
-	handleDeleteTag(ID) {
-		const {
-			user: {ID: uID},
-			userTagDelete
-		} = this.props
-		userTagDelete({
-			URL: `/userTags/${uID}/${ID}`, 
-			body: {
-				data: [ID]
-			}, 
-			key: uID
 		})
 	}
 	handleDelete() {
 		const {
 			params: {ID}, 
-			userDelete, 
-			userRolesRemove, 
-			userTagsRemove, 
+			IDAccount, 
+			userDelete
+			/*
+			rolesUserRemove, 
+			tagsUserRemove, 
 			roleIDsSelectedByKeyRemove, 
 			tagIDsSelectedByKeyRemove
+			*/
 		} = this.props
 		userDelete({
 			URL: `/users/${ID}`, 
-			body: {
-				data: [ID]
-			}
+			data: {
+				value: [ID]
+			}, 
+			key: IDAccount
 		}).then(response => {
 			if (response.ok) {
-				userRolesRemove(ID)
-				userTagsRemove(ID)
+				// ALSO REMOVE THE USER REFERENCE FROM THE 
+				// "usersPagination" (pagination.users[ID]) !!!!!!!!!!!!!!!
+				/* 
+				rolesUserRemove(ID)
+				tagsUserRemove(ID)
 				roleIDsSelectedByKeyRemove(ID) 
 				tagIDsSelectedByKeyRemove(ID)
+				*/
 			}
 		})
 		browserHistory.goBack()
 	}
-	roleItems(contents, roles, userRoles, roleIDsSelected) {
+	tagsAddToggle() {
+		const {
+			tagsAddShow
+		} = this.state
+		const {
+			tagsGet
+		} = this.props
+		// For minor performance improvements only
+		if (!tagsAddShow)
+			// Getting most used six tags 
+			// to show as initial autocomplete values 
+			// if they does not exist yet.
+			tagsGet({
+				URL: "/tags?q=top", 
+				key: "top"
+			})
+		this.setState({tagsAddShow: !tagsAddShow})
+	}
+	rolesAddToggle() {
+		const {
+			rolesAddShow
+		} = this.state
+		const {
+			rolesGet
+		} = this.props
+		// For minor performance improvements only
+		if (!rolesAddShow)
+			rolesGet()
+		this.setState({rolesAddShow: !rolesAddShow})
+	}
+	handleRolesUserPost() {
+		const {
+			params: {ID}, 
+			roleIDsSelected, 
+			rolesUserPost
+		} = this.props
+		rolesUserPost({
+			URL: `/rolesUser?q=${ID}`, 
+			data: {
+				// type: "JSON" is default
+				value: roleIDsSelected
+			}, 
+			key: ID
+		})
+	}
+	handleTagsUserPost() {
+		const {
+			params: {ID}, 
+			tagIDsSelected, 
+			tagsUserPost
+		} = this.props
+		tagsUserPost({
+			URL: `/tagsUser?q=${ID}`, 
+			data: {
+				// type: "JSON" is default
+				value: tagIDsSelected
+			}, 
+			key: ID
+		})
+	}
+	// INDEX AND VALUES ARE FOR SELECT FIELD ONLY
+	handleRolesFieldChange(event, index, values) {
+		const {
+			params: {ID}, 
+			roleIDsSelectedByKeySet
+		} = this.props
+		roleIDsSelectedByKeySet({[ID]: values})
+	}
+	handleAutoComplete(v) {
+		const {
+			tagsGet
+		} = this.props
+		clearTimeout(this.timer)
+		if (v.length > 2) {
+			this.timer = setTimeout(() => tagsGet({
+				URL: `/tags?q=${v}`, 
+				key: v
+			}), 1000)
+		}
+		this.setState({
+			searchText: v
+		})
+	}
+	handleNewRequest(obj) {
+		const {
+			params: {ID}, 
+			tagIDSelectedByKeyAdd
+		} = this.props
+		tagIDSelectedByKeyAdd(ID, obj.value.key)
+		this.setState({
+			searchText: ""
+		})
+	}
+	handleTagIDRemove(tID) {
+		const {
+			params: {ID}, 
+			tagIDSelectedByKeyRemove
+		} = this.props
+		tagIDSelectedByKeyRemove(ID, tID)
+	}
+	dataSourceTags(contexts, searchText) {
+		const {
+			tagsPagination, 
+			tags, 
+			tagsUser, 
+			tagIDsSelected
+		} = this.props
+		const IDs = tagsPagination[searchText] ? 
+			tagsPagination[searchText].IDs :
+			(
+				tagsPagination.top ?
+				tagsPagination.top.IDs : 
+				[]
+			)
+		const tagsFiltered = filterAnObjectByKeys(tags, IDs)
+		// CHECK RETURNED ARRAY ELEMENTS FOR null and undefined VALUES !!!!!!!!!!!!
+		return Object.entries(tagsFiltered)
+			.map(([k, v]) => {
+				return (
+					tagIDsSelected.indexOf(k) === -1 && 
+					!tagsUser.hasOwnProperty(k)
+				) && {
+					text: "", 
+					value: (
+						<MenuItem
+							key={k}
+							value={k}
+							primaryText={contexts[v.contextID]}
+						/>
+					)
+				}
+			})
+	}
+	tagsSelected(contexts) {
+		const {
+			tags, 
+			tagIDsSelected
+		} = this.props
+		return tagIDsSelected.map(v => 
+			<Chip 
+				key={v}
+				onRequestDelete={() => this.handleTagIDRemove(v)}
+			>
+				<Avatar 
+					size={32}
+					color={blue300}
+				>
+					{firstLettersGenerate(
+						contexts[tags[v].contextID]
+					)}
+				</Avatar>
+				{contexts[tags[v].contextID]}
+			</Chip>
+		)
+	}
+	autoCompleteTags(contexts) {
+		const {
+			searchText
+		} = this.state
+		return <div>
+			<AutoComplete
+				searchText={searchText}
+				filter={AutoComplete.noFilter}
+				dataSource={this.dataSourceTags(contexts, searchText)}
+				hintText={contexts["aghkZXZ-Tm9uZXIZCxIHQ29udGVudCIMU2VhcmNoIGEgdGFnDA"] || "Search a tag"}
+				floatingLabelText={contexts["aghkZXZ-Tm9uZXIQCxIHQ29udGVudCIDVGFnDA"] || "Tag"}
+				onUpdateInput={this.handleAutoComplete} 
+				onNewRequest={this.handleNewRequest}
+				openOnFocus={true}
+			/>
+			{this.tagsSelected(contexts)}
+		</div>
+	}
+	tagsUser(contexts, tagsUser) {
+		// IF ID PRESENT ITEMS SHOULD BE DELETABLE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		return <List>
+			{
+				Object.entries(tagsUser).map(([k, v]) => 
+					<ListItem
+						key={k}
+						children={
+							<Chip>
+								<Avatar 
+									size={32}
+									color={blue300}
+								>
+									{firstLettersGenerate(contexts[v.contextID])}
+								</Avatar>
+								{contexts[v.contextID]}
+							</Chip>
+						}
+						disabled={true} 
+					/>
+				)
+			}
+		</List>
+	}
+	rolesUser(contexts, rolesUser) {
+		// IF ID PRESENT ITEMS SHOULD BE DELETABLE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		return <List>
+			{
+				Object.entries(rolesUser).map(([k, v]) => 
+					<ListItem
+						key={k}
+						children={
+							<Chip>
+								<Avatar 
+									size={32}
+									color={blue300}
+								>
+									{firstLettersGenerate(contexts[v.contextID])}
+								</Avatar>
+								{contexts[v.contextID]}
+							</Chip>
+						}
+						disabled={true} 
+					/>
+				)
+			}
+		</List>
+	}
+	roleItems(contexts, roleIDsSelected, rolesUser) {
+		const {
+			roles
+		} = this.props
 		return Object.entries(roles).map(([k, v]) => <MenuItem
 			key={k}
 			value={k}
-			primaryText={contents[v.contentID]}
+			primaryText={contexts[v.contextID]}
 			checked={roleIDsSelected.indexOf(k) > -1}
-			disabled={userRoles.hasOwnProperty(k)}
+			disabled={rolesUser.hasOwnProperty(k)}
 			insetChildren={true}
 		/>)
 	}
-	tagItems(contents, tags, userTags, tagIDsSelected) {
-		return Object.entries(tags).map(([k, v]) => <MenuItem
-			key={k}
-			value={k}
-			primaryText={contents[v.contentID]}
-			checked={tagIDsSelected.indexOf(k) > -1}
-			disabled={userTags.hasOwnProperty(k)}
-			insetChildren={true}
-		/>)
-	}
-	rolesUserAndSelected(contents, roles, userRoles, roleIDsSelected) {
-		let rolesSelected
-		for (let v of roleIDsSelected) {
-			rolesSelected = {
-				...rolesSelected,
-				[v]: {...roles[v], type: "selected"}
-			}
-		}
-		const rolesUserAndSelected = {
-			...userRoles, 
-			...rolesSelected
-		}
-		return Object.entries(rolesUserAndSelected).map(([k, v]) => 
-			<Chip 
-				key={k}
-				onRequestDelete={
-					(v.type || Object.keys(userRoles).length === 1) ? 
-					null : 
-					() => this.handleDeleteRole(k)
-				}
-			>
-				<Avatar 
-					size={32}
-					color={blue300}
-				>
-					{getFirstLetters(contents[v.contentID])}
-				</Avatar>
-				{contents[v.contentID]}
-			</Chip>
-		)
-	}
-	tagsUserAndSelected(contents, tags, userTags, tagIDsSelected) {
-		let tagsSelected
-		for (let v of tagIDsSelected) {
-			tagsSelected = {
-				...tagsSelected, 
-				[v]: {...tags[v], type: "selected"}
-			}
-		}
-		const tagsUserAndSelected = {
-			...userTags, 
-			...tagsSelected
-		}
-		return Object.entries(tagsUserAndSelected).map(([k, v]) => 
-			<Chip 
-				key={k}
-				onRequestDelete={
-					v.type ? 
-					null : 
-					() => this.handleDeleteTag(k)
-				}
-			>
-				<Avatar 
-					size={32}
-					color={blue300}
-				>
-					{getFirstLetters(contents[v.contentID])}
-				</Avatar>
-				{contents[v.contentID]}
-			</Chip>
-		)
+	selectFieldRoles(contexts, roleIDsSelected, rolesUser) {
+		return <SelectField 
+			hintText={"Add roles"}
+			floatingLabelText={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFUm9sZXMM"] || "Roles"}
+			value={roleIDsSelected}
+			onChange={this.handleRolesFieldChange}
+			multiple={true}
+		>
+			{this.roleItems(
+				contexts, 
+				roleIDsSelected, 
+				rolesUser
+			)}
+		</SelectField>
 	}
 	render() {
 		const {
+			tagsAddShow, 
+			rolesAddShow
+		} = this.state
+		const {
 			params: {ID}, 
-			contents, 
-			userLogged, 
+			contexts, 
+			IDUserLogged, 
 			user, 
-			roles, 
-			tags, 
-			userRoles, 
-			userTags, 
+			rolesUser, 
+			tagsUser, 
 			roleIDsSelected, 
 			tagIDsSelected
 		} = this.props
@@ -257,75 +424,80 @@ class UserSettings extends Component {
 					}
 				</h1>
 				{
-					ID && 
-					<SelectField 
-						multiple={true}
-						hintText={"Add roles"}
-						value={roleIDsSelected}
-						floatingLabelText={contents["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFUm9sZXMM"] || "Roles"}
-						onChange={this.handleRolesInputChange}
-					>
-						{this.roleItems(
-							contents, 
-							roles, 
-							userRoles, 
-							roleIDsSelected
-						)}
-					</SelectField>
+					Object.keys(rolesUser).length && 
+						this.rolesUser(contexts, rolesUser)
 				}
 				{
-					this.rolesUserAndSelected(
-						contents, 
-						roles, 
-						userRoles, 
-						roleIDsSelected
-					)
+					rolesAddShow ?
+						<div>
+							{
+								this.selectFieldRoles(
+									contexts, 
+									roleIDsSelected, 
+									rolesUser
+								)
+							}
+							{
+								roleIDsSelected.length && <FlatButton
+									label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
+									primary={true}
+									onTouchTap={this.handleRolesUserPost}
+								/>
+							}
+							<FlatButton
+								label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
+								onTouchTap={this.rolesAddToggle}
+							/>
+						</div> : 
+						ID &&
+						<FloatingActionButton 
+							mini={true} 
+							style={styles.floatingActionButton}
+							onTouchTap={this.rolesAddToggle}
+						>
+							<ContentAdd />
+						</FloatingActionButton>
 				}
 				{
-					roleIDsSelected.length > 0 && 
-						<FlatButton
-							label={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
-							primary={true}
-							onTouchTap={this.handlePostRoles}
-						/>
+					Object.keys(tagsUser).length && 
+						this.tagsUser(contexts, tagsUser)
 				}
 				{
-					ID && 
-					<SelectField 
-						multiple={true}
-						hintText={"Add tags"}
-						value={tagIDsSelected}
-						floatingLabelText={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEVGFncww"] || "Tags"}
-						onChange={this.handleTagsInputChange}
-					>
-						{this.tagItems(
-							contents, 
-							tags, 
-							userTags, 
-							tagIDsSelected
-						)}
-					</SelectField>
+					tagsAddShow ? 
+						<div>
+							{
+								this.autoCompleteTags(contexts)
+							}
+							{
+								tagIDsSelected.length && <FlatButton
+									label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
+									primary={true}
+									onTouchTap={this.handleTagsUserPost}
+								/>
+							}
+							<FlatButton
+								label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
+								onTouchTap={this.tagsAddToggle}
+							/>
+						</div> : 
+						ID &&
+						<FloatingActionButton 
+							mini={true} 
+							style={styles.floatingActionButton}
+							onTouchTap={this.tagsAddToggle}
+						>
+							<ContentAdd />
+						</FloatingActionButton>
 				}
 				{
-					this.tagsUserAndSelected(
-						contents, 
-						tags, 
-						userTags, 
-						tagIDsSelected
-					)
-				}
-				{
-					tagIDsSelected.length > 0 && 
-						<FlatButton
-							label={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
-							primary={true}
-							onTouchTap={this.handlePostTags}
-						/>
-				}
-				{
-					(ID && userLogged.ID !== ID) && 
+					(
+						ID && 
+						IDUserLogged !== "" && 
+						IDUserLogged !== ID && 
+						IDAccount !== ""
+					) && 
 						<FlatButton 
-							label={contents["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"] || "Delete"}
+							label={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"] || "Delete"}
 							secondary={true}
 							onTouchTap={this.handleDelete} 
 						/>
@@ -335,35 +507,37 @@ class UserSettings extends Component {
 }
 
 UserSettings.defaultProps = {
-	contents: {}
+	contexts: {}, 
+	IDAccount: "", 
+	IDUserLogged: "", 
+	user: {}, 
+	rolesUser: {}
 }
 
 UserSettings.propTypes = {
-	contents: PropTypes.object.isRequired, 
-	userLogged: PropTypes.object.isRequired, 
+	contexts: PropTypes.object.isRequired, 
+	IDAccount: PropTypes.string.isRequired, 
+	IDUserLogged: PropTypes.string.isRequired, 
 	user: PropTypes.object.isRequired, 
 	roles: PropTypes.object, 
 	tags: PropTypes.object, 
-	userRoles: PropTypes.object.isRequired, 
-	userTags: PropTypes.object, 
+	rolesUser: PropTypes.object.isRequired, 
+	tagsUser: PropTypes.object, 
 	roleIDsSelected: PropTypes.array, 
 	tagIDsSelected: PropTypes.array, 
 	userGet: PropTypes.func.isRequired, 
 	rolesGet: PropTypes.func.isRequired, 
 	tagsGet: PropTypes.func.isRequired, 
-	userRolesGet: PropTypes.func.isRequired, 
-	userTagsGet: PropTypes.func.isRequired, 
+	rolesUserGet: PropTypes.func.isRequired, 
+	tagsUserGet: PropTypes.func.isRequired, 
 	roleIDsSelectedByKeySet: PropTypes.func.isRequired, 
-	tagIDsSelectedByKeySet: PropTypes.func.isRequired, 
-	userRolesPost: PropTypes.func.isRequired, 
-	userTagsPost: PropTypes.func.isRequired, 
-	userRoleDelete: PropTypes.func.isRequired, 
-	userTagDelete: PropTypes.func.isRequired, 
-	userDelete: PropTypes.func.isRequired, 
-	userRolesRemove: PropTypes.func.isRequired, 
-	userTagsRemove: PropTypes.func.isRequired, 
-	roleIDsSelectedByKeyRemove: PropTypes.func.isRequired, 
-	tagIDsSelectedByKeyRemove: PropTypes.func.isRequired
+	tagIDSelectedByKeyAdd: PropTypes.func.isRequired, 
+	tagIDSelectedByKeyRemove: PropTypes.func.isRequired, 
+	rolesUserPost: PropTypes.func.isRequired, 
+	tagsUserPost: PropTypes.func.isRequired, 
+	roleUserDelete: PropTypes.func.isRequired, 
+	tagUserDelete: PropTypes.func.isRequired, 
+	userDelete: PropTypes.func.isRequired
 }
 
 export default UserSettings

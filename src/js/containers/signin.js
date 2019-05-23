@@ -1,15 +1,20 @@
 import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
-import loginUrlsGet from "../middlewares/signin"
 import signinComponent from "../components/signin"
+import loginUrlsGet from "../middlewares/signin"
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
+	const {
+		entities: {
+			loginUrls
+		}
+	} = state
 	return {
-		loginUrls: state.entities.loginUrls
+		loginUrls
 	}
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
 	return bindActionCreators({
 		loginUrlsGet
 	}, 

@@ -10,10 +10,7 @@ class DialogOfferCreate extends Component {
 		super(props)
 		this.state = {
 			stepIndex: 0, 
-			newObject: {
-				explanation: "", 
-				amount: 0
-			},  
+			newObject: {},  
 			inputErrTexts: {}
 		}
 		this.handleStepIndex = this.handleStepIndex.bind(this)
@@ -45,12 +42,12 @@ class DialogOfferCreate extends Component {
 			inputErrTexts
 		} = this.state
 		const {
-			contents
+			contexts
 		} = this.props
 		let key
 		switch (i) {
 			case 1:
-				key = "explanation"
+				key = "description"
 				break
 			case 2:
 				key = "amount"
@@ -58,11 +55,11 @@ class DialogOfferCreate extends Component {
 			default:
 				return false
 		}
-		if(!newObject[key] || newObject[key].length === 0) {
+		if(!newObject[key]) {
 			this.setState({
 				inputErrTexts: {
 					...inputErrTexts, 
-					[key]: contents["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"] || "Required Field"
+					[key]: contexts["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"] || "Required Field"
 				}
 			})
 			return true
@@ -97,43 +94,36 @@ class DialogOfferCreate extends Component {
 		if(this.handleRequiredField(stepIndex))
 			return
 		const {
-			dID, 
+			params: {ID: dID}, 
 			uID, 
-			toggleDialog, 
+			dialogToggle, 
 			offerPost
 		} = this.props
-		toggleDialog()
+		dialogToggle()
 		offerPost({
 			URL: `/offers?dID=${dID}`, 
-			body: {
-				type: "FormData", 
-				// Use "contentType" for "Blob" type.
-				// contentType: "application/json", 
-				data: {
-					offer: {
-						...newObject, 
-						uID
-					}
+			data: {
+				value: {
+					...newObject, 
+					uID
 				}
-			}
+			}, 
+			key: dID
 		})
 		this.setState({
 			stepIndex: 0, 
-			newObject: {
-				explanation: "", 
-				amount: 0
-			}
+			newObject: {}
 		})
 	}
 	stepLabels() { 
 		const {
-			contents
+			contexts
 		} = this.props
-		return Object.keys(contents).length > 0 ?
+		return Object.keys(contexts).length > 0 ?
 			[
-				contents["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRXhwbGFuYXRpb24M"], 
-				contents["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"], 
-				contents["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGQW1vdW50DA"]
+				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRXhwbGFuYXRpb24M"], 
+				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"], 
+				contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGQW1vdW50DA"]
 			] : 
 			[
 				"Explanation", 
@@ -141,19 +131,19 @@ class DialogOfferCreate extends Component {
 				"Amount"
 			]
 	}
-	explanationField() {
+	descriptionField() {
 		const {
-			newObject: {explanation}, 
+			newObject: {description}, 
 			inputErrTexts
 		} = this.state
 		const {
-			contents
+			contexts
 		} = this.props
 		return <TextField 
-			name="explanation" 
-			value={explanation || ""}
-			floatingLabelText={contents["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"] || "Description"}
-			errorText={inputErrTexts.explanation}
+			name="description" 
+			value={description || ""}
+			floatingLabelText={contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"] || "Description"}
+			errorText={inputErrTexts.description}
 			fullWidth={true}
 			multiLine={true}
 			rows={3}
@@ -167,24 +157,24 @@ class DialogOfferCreate extends Component {
 			inputErrTexts
 		} = this.state
 		const {
-			contents
+			contexts
 		} = this.props
 		return <TextField 
 			name="amount" 
 			value={amount || 0}
 			type="number"
-			floatingLabelText={contents["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGQW1vdW50DA"] || "Amount"}
+			floatingLabelText={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGQW1vdW50DA"] || "Amount"}
 			errorText={inputErrTexts.amount}
 			onChange={this.handleFieldChange}
 		/>
 	}
 	stepContents() {
 		const {
-			contents
+			contexts
 		} = this.props
 		return [
-			<p>{contents["aghkZXZ-Tm9uZXI0CxIHQ29udGVudCInTWFrZSBhbiBvZmZlci4gQWxsIGZpZWxkcyBhcmUgcmVxdWlyZWQuDA"]}</p>, 
-			this.explanationField(), 
+			<p>{contexts["aghkZXZ-Tm9uZXI0CxIHQ29udGVudCInTWFrZSBhbiBvZmZlci4gQWxsIGZpZWxkcyBhcmUgcmVxdWlyZWQuDA"]}</p>, 
+			this.descriptionField(), 
 			this.amountField()
 		]
 	}
@@ -193,14 +183,14 @@ class DialogOfferCreate extends Component {
 			stepIndex
 		} = this.state
 		const {
-			contents
+			contexts
 		} = this.props
 		return <VerticalStepper 
 			stepLabels={this.stepLabels()} 
 			stepContents={this.stepContents()}
 			stepIndex={stepIndex}
 			updateStepIndex={this.handleStepIndex}
-			contents={contents}
+			contexts={contexts}
 		/>
 	}
 	actions() {
@@ -208,18 +198,18 @@ class DialogOfferCreate extends Component {
 			stepIndex
 		} = this.state
 		const {
-			contents, 
-			toggleDialog
+			contexts, 
+			dialogToggle
 		} = this.props
 
 		let actions = [
 			<FlatButton
-				label={contents["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
-				onTouchTap={toggleDialog}
+				label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
+				onTouchTap={dialogToggle}
 			/>
 		]
 		this.stepContents().length - 1 === stepIndex && actions.push(<FlatButton
-			label={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
+			label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
 			primary={true}
 			onTouchTap={this.handlePost}
 		/>)
@@ -228,14 +218,14 @@ class DialogOfferCreate extends Component {
 	render() {
 		const {
 			title, 
-			showDialog
+			dialogShow
 		} = this.props
 		return <Dialog
 			title={title}
 			children={this.children()}
 			actions={this.actions()}
 			modal={true}
-			open={showDialog} 
+			open={dialogShow} 
 		/>
 	}
 }
@@ -243,12 +233,11 @@ class DialogOfferCreate extends Component {
 DialogOfferCreate.muiName = "Dialog"
 
 DialogOfferCreate.propTypes = {
-	contents: PropTypes.object.isRequired,
+	contexts: PropTypes.object.isRequired,
 	title: PropTypes.string.isRequired,
-	uID: PropTypes.string,
-	dID: PropTypes.string.isRequired,
-	showDialog: PropTypes.bool.isRequired, 
-	toggleDialog: PropTypes.func.isRequired, 
+	uID: PropTypes.string.isRequired,
+	dialogShow: PropTypes.bool.isRequired, 
+	dialogToggle: PropTypes.func.isRequired, 
 	offerPost: PropTypes.func.isRequired
 }
 

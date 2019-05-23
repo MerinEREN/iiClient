@@ -11,20 +11,21 @@ const styles = {
 	root: {
 		display: "flex",
 		flexWrap: "wrap", 
-		justifyContent: "space-around"
+		justifycontext: "space-around"
 	}
 }
 
-// Show and modify some offer properties.
+// Show all properties and modify "status" property for delete and accept actions.
 class Offer extends Component {
 	constructor(props) {
 		super(props)
-		this.handlePut = this.handlePut.bind(this)
+		// this.handlePatch = this.handlePatch.bind(this)
+		this.handleAccept = this.handleAccept.bind(this)
 		this.handleDelete = this.handleDelete.bind(this)
 	}
 	componentWillMount() {
 		const {
-			params: {ID, pID}, 
+			params: {pID, ID}, 
 			offerGet
 		} = this.props
 		offerGet({
@@ -32,23 +33,25 @@ class Offer extends Component {
 			key: pID
 		})
 	}
-	handlePut() {
+	/* 
+	handlePatch() {
 		const {
-			params: {ID, pID}, 
+			params: {pID, ID}, 
 			offerPut
 		} = this.props
-		offerPut({
+		offerPatch({
 			URL: `/offers/${ID}`, 
-			body: {
-				data: {
-					[ID]: {
-						status: "accepted"
-					}
+			data: {
+				value: {
+					status: "accepted"
 				}
 			}, 
 			key: pID
 		})
-		browserHistory.goBack()
+	}
+	*/
+	handleAccept() {
+		// REDIRECT TO THE CONFIRMATION PAGE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	}
 	handleDelete() {
 		const {
@@ -57,8 +60,8 @@ class Offer extends Component {
 		} = this.props
 		offersDelete({
 			URL: `/offers/${ID}`, 
-			body: {
-				data: [ID]
+			data: {
+				value: [ID]
 			}, 
 			key: pID
 		})
@@ -66,11 +69,11 @@ class Offer extends Component {
 	}
 	render() {
 		const {
-			contents, 
+			contexts, 
 			offer, 
 			userID, 
 			accountID, 
-			userRoles
+			rolesUser
 		} = this.props
 		return (
 			<div style={styles.root}>
@@ -81,9 +84,18 @@ class Offer extends Component {
 					/>
 					<CardText>
 						<List>
-							<ListItem primaryText={contents["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"] || "Description"} secondaryText={offer.explanation} disabled={true} />
-							<ListItem primaryText={contents["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIITW9kaWZpZWQM"] || "Modified"} secondaryText={offer.lastModified} disabled={true} />
-							<ListItem primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHQ3JlYXRlZAw"] || "Created"} secondaryText={offer.created} disabled={true} />
+							<ListItem 
+								primaryText={contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"] || "Description"} 
+								secondaryText={offer.explanation} disabled={true} 
+							/>
+							<ListItem 
+								primaryText={contexts["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIITW9kaWZpZWQM"] || "Modified"} 
+								secondaryText={offer.lastModified} disabled={true} 
+							/>
+							<ListItem 
+								primaryText={contexts["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHQ3JlYXRlZAw"] || "Created"} 
+								secondaryText={offer.created} disabled={true} 
+							/>
 						</List>
 					</CardText>
 					<CardActions>
@@ -93,9 +105,9 @@ class Offer extends Component {
 								(accountID && accountID !== offer.accountID)
 							) && 
 								<RaisedButton 
-									label={contents["Accept"] || "Accept"}
+									label={contexts["Accept"] || "Accept"}
 									primary={true}
-									onTouchTap={this.handlePut} 
+									onTouchTap={this.handleAccept} 
 								/>
 						}
 					</CardActions>
@@ -106,13 +118,13 @@ class Offer extends Component {
 								(
 									(userID && userID === offer.userID) || 
 									(
-										isAdmin(userRoles) && 
+										isAdmin(rolesUser) && 
 										(accountID && accountID === offer.accountID)
 									)
 								)
 							) && 
 								<FlatButton 
-									label={contents["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"] || "Delete"}
+									label={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"] || "Delete"}
 									secondary={true}
 									onTouchTap={this.handleDelete} 
 								/>
@@ -124,18 +136,17 @@ class Offer extends Component {
 	}
 }
 
-// For "undefined required offer" error when refreshing the offer.
 Offer.defaultProps = {
-	contents: {}, 
+	contexts: {}, 
 	offer: {}
 }
 
 Offer.propTypes = {
-	contents: PropTypes.object.isRequired, 
+	contexts: PropTypes.object.isRequired, 
 	offer: PropTypes.object.isRequired, 
-	userID: PropTypes.string, 
-	accountID: PropTypes.string, 
-	userRoles: PropTypes.object, 
+	userID: PropTypes.string.isRequired, 
+	accountID: PropTypes.string.isRequired, 
+	rolesUser: PropTypes.object.isRequired, 
 	offerGet: PropTypes.func.isRequired, 
 	offersDelete: PropTypes.func.isRequired
 }

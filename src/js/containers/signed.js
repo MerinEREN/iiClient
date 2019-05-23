@@ -1,20 +1,31 @@
 import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
 import SignedComponent from "../components/signed"
-import userLoggedGet from "../middlewares/userLogged"
-import userRolesGet from "../middlewares/userRoles"
-import userTagsGet from "../middlewares/userTags"
+import userGet from "../middlewares/user"
+import photosGet from "../middlewares/photos"
+import rolesUserGet from "../middlewares/rolesUser"
+import tagsUserGet from "../middlewares/tagsUser"
 import languagesGet from "../middlewares/languages"
 import signOutURLGet from "../middlewares/signOutURL"
-import {routeContentsResetAll} from "../actions/routeContents"
+import {contextsResetAll} from "../actions/contexts"
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
 	const {
-		entitiesBuffered: {userLogged, languages}, 
+		pagination: {
+			photos: photosPagination
+		}, 
+		entitiesBuffered: {
+			photos, 
+			languages
+		}, 
 		entities: {signOutURL}
 	} = state
+	const {
+		user
+	} = ownProps
 	return {
-		user: userLogged, 
+		userPhoto: (user.ID && photosPagination[user.ID]) && 
+		photos[photosPagination[user.ID].IDs[0]], 
 		languages, 
 		signOutURL
 	}
@@ -22,12 +33,13 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
-		userLoggedGet, 
-		userRolesGet, 
-		userTagsGet, 
+		userGet, 
+		photosGet, 
+		rolesUserGet, 
+		tagsUserGet, 
 		languagesGet, 
 		signOutURLGet, 
-		routeContentsResetAll
+		contextsResetAll
 	},
 	dispatch
 )
@@ -36,4 +48,3 @@ const mapDispatchToProps = dispatch => bindActionCreators(
 const Signed = connect(mapStateToProps, mapDispatchToProps)(SignedComponent)
 
 export default Signed
-

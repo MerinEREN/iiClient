@@ -1,10 +1,10 @@
-import makeActionCreator from './creator'
+import makeActionCreator from "./creator"
 import {
-	CHANGE_THEME
-} from './types'
+	THEME_CHANGE
+} from "./types"
 
 // Action Creators
-export const changeTheme = makeActionCreator(
-	CHANGE_THEME, 
-	'cookies'
+export const themeChange = makeActionCreator(
+	THEME_CHANGE, 
+	"cookies"
 )

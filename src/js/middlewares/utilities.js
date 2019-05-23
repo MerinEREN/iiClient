@@ -70,8 +70,17 @@ const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) => {
 		returnedURL = returnedURL || "prevPageURL"
 		key = key || "all"
 		return (dispatch, getState) => {
-			// Parse request body for "POST" and "PUT" methods
 			if (data && method !== "DELETE") {
+				let body = {}
+				if (data.value.hasOwnProperty("ID")) {
+					const {ID, ...rest} = data.value
+					body = rest
+				} else {
+					Object.values(data.value).forEach(v => {
+						const {ID, ...rest} = v
+						body[ID] = rest
+					})
+				}
 				switch (data.type) {
 					case "Blob":
 						// USING ONLY FOR CONTENTS NOW AND IT IS 
@@ -118,7 +127,7 @@ const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) => {
 						break
 					default: 
 						// For JSON encoded []byte.
-						init.body = JSON.stringify(data.value)
+						init.body = JSON.stringify(body)
 				}
 			}
 			if (args.URL) {
@@ -179,9 +188,12 @@ const getChanged = (entities, entitiesBuffered) => {
 
 export const filterAnObjectByKeys = (object, keys) => {
 	let obj = {}
+	if (!object)
+		return obj
 	for (let v of keys) {
 		// Belowe control is delete page -> delete content which has only that page 
-		// 		// -> cancel delete content after delete page timeout expiris check.
+		// -> cancel delete content after delete page timeout expiris check.
+		// And also for undefined values of object[key].
 		if (object.hasOwnProperty(v))
 			obj[v] = object[v]
 	}

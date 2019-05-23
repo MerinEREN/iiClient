@@ -16,7 +16,8 @@ const ListItemOffer = ({ID, description}) => <ListItem
 ListItemOffer.muiName = "ListItem"
 
 ListItemOffer.propTypes = {
-	ID: PropTypes.string.isRequired
+	ID: PropTypes.string.isRequired, 
+	description: PropTypes.string.isRequired
 }
 
 export default ListItemOffer

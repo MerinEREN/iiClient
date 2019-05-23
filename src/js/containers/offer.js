@@ -2,34 +2,39 @@ import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
 import OfferComponent from "../components/offer"
 import offerGet, {offerDelete} from "../middlewares/offer"
+import {filterAnObjectByKeys} from "../middlewares/utilities"
 
 const mapStateToProps = (state, ownProps) => {
 	const {
-		ui: {contentsByPage: {offer: contents}}, 
+		pagination: {
+			contexts: {offer}, 
+			users: usersPagination, 
+			accounts: accountsPagination, 
+			roles: rolesPagination
+		}, 
 		entitiesBuffered: {
+			contexts, 
 			offers, 
-			userLogged: {ID: userID}, 
-			accountLogged: {ID: accountID}, 
-			rolesByUser
+			roles
 		}
 	} = state
-	const {
-		params: {ID, pID}
-	} = ownProps
 	return {
-		contents, 
-		offer: offers[pID] ? offers[pID][ID] : {}, 
-		userID, 
-		accountID, 
-		userRoles: rolesByUser[userID]
+		contexts: offer && filterAnObjectByKeys(contexts, offer.IDs), 
+		offer: offers[ownProps.params.ID], 
+		userID: usersPagination.logged && usersPagination.logged.IDs[0], 
+		accountID: accountsPagination.logged && accountsPagination.logged.IDs[0],  
+		rolesUser: (
+			usersPagination.logged && 
+			rolesPagination[usersPagination.logged.IDs[0]]
+		) && 
+		filterAnObjectByKeys(roles, rolesPagination[usersPagination.logged.IDs[0]].IDs)
 	}
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
 		offerGet, 
-		offerPut, 
-		offersDelete
+		offerDelete
 	},
 	dispatch
 )

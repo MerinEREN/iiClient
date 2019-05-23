@@ -15,9 +15,9 @@ const mapStateToProps = (state, ownProps) => {
 			photos: photosPagination, 
 			tags: tagsPagination, 
 			offers: offersPagination, 
-			roles: rolesPagination, 
 			users: usersPagination, 
-			account: accountPagination
+			accounts: accountsPagination, 
+			roles: rolesPagination
 		}, 
 		entitiesBuffered: {
 			contexts, 
@@ -30,22 +30,22 @@ const mapStateToProps = (state, ownProps) => {
 	} = state
 	return {
 		contexts: demand && filterAnObjectByKeys(contexts, demand.IDs), 
-		photosDemand: photosPagination[ownProps.params.ID] && 
+		photos: photosPagination[ownProps.params.ID] && 
 		filterAnObjectByKeys(photos, photosPagination[ownProps.params.ID].IDs), 
 		tagsDemand: tagsPagination[ownProps.params.ID] && 
 		filterAnObjectByKeys(tags, tagsPagination[ownProps.params.ID].IDs), 
 		tagsPagination, 
 		tags, 
-		offersDemand: offersPagination[ownProps.params.ID] && 
+		offers: offersPagination[ownProps.params.ID] && 
 		filterAnObjectByKeys(offers, offersPagination[ownProps.params.ID].IDs), 
 		demand: demands[ownProps.params.ID], 
 		userID: usersPagination.logged && usersPagination.logged.IDs[0], 
-		accountID: accountPagination.logged && accountPagination.logged.IDs[0],  
+		accountID: accountsPagination.logged && accountsPagination.logged.IDs[0],  
 		rolesUser: (
 			usersPagination.logged && 
 			rolesPagination[usersPagination.logged.IDs[0]]
 		) && 
-		filterAnObjectByKeys(roles, rolesPagination[usersPagination.logged.IDs[0].IDs])
+		filterAnObjectByKeys(roles, rolesPagination[usersPagination.logged.IDs[0]].IDs)
 	}
 }
 

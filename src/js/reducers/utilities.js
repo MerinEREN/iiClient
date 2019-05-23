@@ -397,7 +397,10 @@ export const fetchFailure = (state, action) => {
 	}
 }
 
-// Two functions below are used with "contents", "languagages" and "pages".
+// Used to reset "contexts" and "contextsBuffered".
+export const resetAnObject = () => {}
+
+// Two functions below are used with "contexts", "languagages" and "pages".
 export const resetAnArrayOrAnObject = (state, action) => {
 	if (action.method === "DELETE" || action.method === "POST")
 		return Array.isArray(state) ? [] : {}
@@ -431,10 +434,40 @@ export const removeFromAnObjectByKey = (state, action) => {
 	return newState
 }
 
-export const addToAnObjectWithKey = (state, action) => {
+export const addAValueToAnObjectByKey = (state, action) => {
+	const {
+		key, 
+		value
+	} = action
 	return {
 		...state, 
-		[aciton.data.ID]: action.data
+		[key]: {
+			...state[key], 
+			value
+		}
+	}
+}
+
+export const removeAValueFromAnObjectByKey = (state, action) => {
+	const {
+		key, 
+		value
+	} = action
+	let array = []
+	state[key].forEach(v => {
+		if (v !== value)
+			array.push(v)
+	})
+	return {
+		...state, 
+		[key]: array
+	}
+}
+
+export const setIntoAnObjectWithKey = (state, action) => {
+	return {
+		...state, 
+		...action.data
 	}
 }
 

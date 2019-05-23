@@ -1,24 +1,31 @@
 import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
 import TagsComponent from "../components/tags"
-import tagsGet, {tagsPost, tagDelete}  from "../middlewares/tags"
+import tagsGet from "../middlewares/tags"
+import {tagDelete} from "../middlewares/tag"
+import {filterAnObjectByKeys} from "../middlewares/utilities"
 
 // Can use ownProps here.
 const mapStateToProps = state => {
 	const {
-		entitiesBuffered: {tags}, 
-		ui: {contentsByPage: {tags: contents}}
+		pagination: {
+			contexts: contextsPagination
+		}, 
+		entitiesBuffered: {
+			contexts, 
+			tags
+		}
 	} = state
 	return {
-		tags, 
-		contents
+		contexts: contextsPagination.tags && 
+		filterAnObjectByKeys(contexts, contextsPagination.tags.IDs), 
+		tags
 	}
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
 		tagsGet, 
-		tagsPost, 
 		tagDelete
 	},
 	dispatch

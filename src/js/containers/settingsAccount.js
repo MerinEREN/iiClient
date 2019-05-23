@@ -1,40 +1,49 @@
 import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
 import AccountSettingsComponent from "../components/settingsAccount"
-import usersGet, {userPost, usersDelete} from "../middlewares/users"
-import rolesGet from "../middlewares/roles"
-import tagsGet from "../middlewares/tags"
+import accountGet from "../middlewares/account"
+import usersGet, {usersDelete} from "../middlewares/users"
+import {filterAnObjectByKeys} from "../middlewares/utilities"
 
 // Can use ownProps here.
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
 	const {
-		ui: {contentsByPage: {settings: contents}}, 
-		entitiesBuffered: {
-			accountLogged, 
-			userLogged, 
-			users, 
-			tags, 
-			roles
+		pagination: {
+			contexts: {settings}, 
+			accounts: accountsPagination, 
+			users: usersPagination
 		}, 
-		appState: {userIDs}
+		entitiesBuffered: {
+			contexts, 
+			accounts, 
+			users
+		}, 
+		appState: {userIDsSelected}
 	} = state
 	return {
-		contents, 
-		account: accountLogged, 
-		users: userLogged.ID ? {[userLogged.ID]: userLogged, ...users} : {}, 
-		userIDsSelected: userIDs, 
-		tags, 
-		roles
+		contexts: settings && filterAnObjectByKeys(contexts, settings.IDs), 
+		account: accountsPagination.logged && 
+		accounts[accountsPagination.logged.IDs[0]], 
+		users: (
+			usersPagination.logged && 
+			ownProps.account && 
+			usersPagination[ownProps.account.ID]
+		) && 
+		filterAnObjectByKeys(
+			users, 
+			[
+				usersPagination.logged.IDs[0], 
+				...usersPagination[ownProps.account.ID].IDs
+			]
+		), 
+		userIDsSelected
 	}
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
 		usersGet, 
-		userPost, 
-		usersDelete, 
-		tagsGet, 
-		rolesGet
+		usersDelete
 	},
 	dispatch
 )

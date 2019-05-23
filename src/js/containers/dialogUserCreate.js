@@ -1,8 +1,9 @@
 import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
-import DialogDemandCreateComponent from "../components/dialogDemandCreate"
+import DialogUserCreateComponent from "../components/dialogUserCreate"
+import rolesGet from "../middlewares/roles"
 import tagsGet from "../middlewares/tags"
-import {demandPost} from "../middlewares/demands"
+import {userPost} from "../middlewares/users"
 
 const mapStateToProps = (state, ownProps) => {
 	const {
@@ -10,22 +11,25 @@ const mapStateToProps = (state, ownProps) => {
 			tags: tagsPagination
 		}, 
 		entitiesBuffered: {
+			roles, 
 			tags
 		}
 	} = state
 	return {
+		roles, 
 		tagsPagination, 
 		tags
 	}
 }
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
+		rolesGet, 
 		tagsGet, 
-		demandPost
+		userPost
 	},
 	dispatch
 )
 
-const DialogDemandCreate = connect(mapStateToProps, mapDispatchToProps)(DialogDemandCreateComponent)
+const DialogUserCreate = connect(mapStateToProps, mapDispatchToProps)(DialogUserCreateComponent)
 
-export default DialogDemandCreate
+export default DialogUserCreate

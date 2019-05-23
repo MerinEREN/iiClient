@@ -47,17 +47,17 @@ export const contextsGet = (session, prevProps, nextProps) => {
 				if (v.path === "/") {
 					if (location.pathname === "/") {
 						get({
-							URL: "/contexts?pageID=body", 
+							URL: "/contexts?q=body", 
 							key: "body"
 						})
 						if (session) {
 							get({
-								URL: "/contexts?pageID=timeline", 
+								URL: "/contexts?q=timeline", 
 								key: "timeline"
 							})
 						} else {
 							get({
-								URL: "/contexts?pageID=landingpage", 
+								URL: "/contexts?q=landingpage", 
 								key: "landingpage"
 							})
 						}
@@ -73,7 +73,7 @@ export const contextsGet = (session, prevProps, nextProps) => {
 					}
 					path = path.toLowerCase()
 					get({
-						URL: `/contexts?pageID=${path}`, 
+						URL: `/contexts?q=${path}`, 
 						key: path
 					})
 				}

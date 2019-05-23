@@ -5,10 +5,8 @@ import {Card, CardActions, CardMedia, CardTitle, CardText} from "material-ui/Car
 import {List, ListItem} from "material-ui/List"
 import FloatingActionButton from "material-ui/FloatingActionButton"
 import ContentCreate from "material-ui/svg-icons/content/create"
-import Dialog from "material-ui/Dialog"
 import FlatButton from "material-ui/FlatButton"
-import VerticalStepper from "./verticalStepper"
-import TextField from "material-ui/TextField"
+import DialogPageUpdate from "../containers/dialogPageUpdate"
 
 const styles = {
 	root: {
@@ -24,231 +22,187 @@ const styles = {
 }
 
 // Show and modify all stored page properties, and also delete page.
-// Link to the corresponding page contents.
 class Page extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			showDialog: false, 
-			stepIndex: 0, 
-			text: "", 
-			inputErrTexts: {}
+			photoAddShow: false, 
+			dialogShow: false
 		}
-		this.toggleDialog = this.toggleDialog.bind(this)
-		this.handleStepIndex = this.handleStepIndex.bind(this)
-		this.handleFieldChange = this.handleFieldChange.bind(this)
-		this.handlePut = this.handlePut.bind(this)
+		this.dialogToggle = this.dialogToggle.bind(this)
+		this.photoAddToggle = this.photoAddToggle.bind(this)
+		this.handlePhotoPost = this.handlePhotoPost.bind(this)
 		this.handleDelete = this.handleDelete.bind(this)
 	}
 	componentWillMount() {
-		const {pageGet, params: {ID}} = this.props
+		const {
+			photosGet, 
+			pageGet, 
+			params: {
+				ID
+			}
+		} = this.props
+		photosGet({
+			URL: `/photos?q=${ID}`, 
+			key: ID
+		})
 		pageGet({
 			URL: `/pages/${ID}`
 		})
 
 	}
-	handleStepIndex(direction) {
-		const {stepIndex} = this.state
-		switch (direction) {
-			case "next":
-				if(this.handleRequiredField(stepIndex))
-					return
-				this.setState({
-					stepIndex: stepIndex + 1,
-				})
-				break
-			case "prev":
-				this.setState({
-					stepIndex: stepIndex - 1,
-				})
-				break
-		}
+	dialogToggle() {
+		this.setState({dialogShow: !this.state.dialogShow})
 	}
-	handleRequiredField(i) {
+	photoAddToggle() {
 		const {
-			contents
+			photoAddShow
+		} = this.state
+		this.setState({photoAddShow: !photoAddShow})
+	}
+	handlePhotoPost() {
+		const {
+			params: {ID}, 
+			photosPost
 		} = this.props
-		switch (i) {
-			case 1:
-				if(!this.state.text) {
-					this.setState({
-						inputErrTexts:{
-							...this.state.inputErrTexts, 
-							text: contents["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"] || "Required Field"
-						}
-					})
-					return true
-				}
-				return false
-			default:
-				return false
-		}
-	}
-	handleFieldChange(event) {
-		const target = event.target
-		const name = target.name
-		const value = target.value
-		this.setState({
-			text: value, 
-			inputErrTexts: {
-				...this.state.inputErrTexts, 
-				[name]: null
-			}
-		})
-	}
-	handlePut() {
-		this.toggleDialog()
-		const {text} = this.state
-		const {pagePut, params: {ID}, page} = this.props
-		pagePut({
-			URL: `/pages/${ID}`, 
-			body: {
+		this.photoAddToggle()
+		// TRY TO SEND AS JSON ENCODED []byte STRING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		photosPost({
+			URL: `/photos?q=${ID}`, 
+			data: {
 				type: "FormData", 
-				// Use "contentType" for "Blob" type.
-				// contentType: "application/json", 
-				data: {
-					[ID]: {
-						text: text.trim(), 
-						file: this.file.files[0] 
-					}
+				// Use "contextType" for "Blob" type.
+				// contextType: "application/json", 
+				value: {
+					file: this.file.files[0]
 				}
-			}
+			}, 
+			key: ID
 		})
-		this.setState({text: "", stepIndex: 0})
 	}
 	handleDelete() {
 		const {
 			params: {ID}, 
-			pagesDelete, 
-			removeUpdateContentsWithThatPage
+			pageDelete, 
+			removeUpdateContextsWithThatPage
 		} = this.props
-		pagesDelete({
+		pageDelete({
 			URL: `/pages/${ID}`, 
-			body: {
-				data: [ID]
+			data: {
+				value: [ID]
 			}
 		}).then(response => {
 			if (response.ok)
-				removeUpdateContentsWithThatPage(ID)
+				removeUpdateContextsWithThatPage(ID)
 		})
 		browserHistory.goBack()
 	}
-	toggleDialog() {
-		this.setState({showDialog: !this.state.showDialog})
+	fileInputPhoto() {
+			<input 
+				type="file"
+				accept="image/*" 
+				ref={input => this.file = input}
+			/>
 	}
 	render() {
 		const {
-			showDialog, 
-			stepIndex, 
-			text, 
-			inputErrTexts
+			photoAddShow, 
+			dialogShow
 		} = this.state
 		const {
-			contents, 
+			contexts, 
+			pagePhoto, 
 			page
 		} = this.props
-		const stepLabels = Object.keys(contents).length > 0 ?
-			[
-				contents["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"], 
-				contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIETmFtZQw"], 
-				contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIERmlsZQw"]
-			] :
-			[
-				"Description", 
-				"Name", 
-				"File"
-			]
-		const stepContents = [
-			<p>
-				{contents["aghkZXZ-Tm9uZXIxCxIHQ29udGVudCIkVXBkYXRlIHBhZ2UsIG5hbWUgZmllbGQgaXMgcmVxdWlyZWQuDA"] || "Update page, name field is required."}
-			</p>, 
-			<TextField 
-				name="text" 
-				value={text}
-				floatingLabelText={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIETmFtZQw"] || "Name"}
-				errorText={inputErrTexts.text}
-				onChange={this.handleFieldChange}
-			/>, 
-			<input 
-				type="file"
-				ref={input => this.file = input}
-			/>
-		]
-		const children = <VerticalStepper 
-			stepLabels={stepLabels} 
-			stepContents={stepContents}
-			stepIndex={stepIndex}
-			updateStepIndex={this.handleStepIndex}
-			contents={contents}
-		/>
-		const actions = [
-			<FlatButton
-				label={contents["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
-				onTouchTap={this.toggleDialog}
-			/>
-		]
-		stepContents.length - 1 === stepIndex && actions.push(<FlatButton
-			label={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
-			primary={true}
-			onTouchTap={this.handlePut}
-		/>)
 		return (
 			<div style={styles.root}>
 				<Card>
 					<CardMedia>
-						<img src={page.link || "/img/adele.jpg"} />
+						<img src={pagePhoto.link || "/img/adele.jpg"} />
 					</CardMedia>
-					<CardTitle title={page.text} />
+					<CardTitle title={page.name} />
 					<CardText>
 						<List>
-							<ListItem primaryText={contents["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIITW9kaWZpZWQM"] || "Modified"} secondaryText={page.lastModified} disabled={true} />
-							<ListItem primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHQ3JlYXRlZAw"] || "Created"} secondaryText={page.created} disabled={true} />
+							<ListItem 
+								primaryText={contexts["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIITW9kaWZpZWQM"] || "Modified"} 
+								secondaryText={page.lastModified} 
+								disabled={true} 
+							/>
+							<ListItem 
+								primaryText={contexts["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHQ3JlYXRlZAw"] || "Created"} 
+								secondaryText={page.created} 
+								disabled={true} 
+							/>
 						</List>
 					</CardText>
 					<CardActions>
+						{
+							photoAddShow ? 
+								<div>
+									{
+										this.fileInputPhoto()
+									}
+									{
+										this.file.files.length && 
+											<FlatButton
+												label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
+												primary={true}
+												onTouchTap={this.handlePhotoPost}
+											/>
+									}
+									<FlatButton
+										label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
+										onTouchTap={this.photoAddToggle}
+									/>
+								</div> : 
+								<FlatButton 
+									label={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"] || "Update Photo"}
+									onTouchTap={this.photoAddToggle} 
+								/>
+						}
 						<FlatButton 
-							label={contents["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"] || "Delete"}
+							label={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"] || "Delete"}
 							secondary={true}
 							onTouchTap={this.handleDelete} 
 						/>
 					</CardActions>
 				</Card>
 				{
-					!showDialog 
+					!dialogShow 
 						&& 
 						<FloatingActionButton 
 							secondary={true}
 							style={styles.floatingActionButton}
-							onTouchTap={this.toggleDialog}
+							onTouchTap={this.dialogToggle}
 						>
 							<ContentCreate />
 						</FloatingActionButton>
 				}
-				<Dialog
-					title={contents["aghkZXZ-Tm9uZXIcCxIHQ29udGVudCIPVXBkYXRlIFRoZSBQYWdlDA"] || "Update The Page"}
-					children={children}
-					actions={actions}
-					modal={true}
-					open={showDialog} 
-				/>
-			</div>
+				<DialogPageUpdate
+					contexts={contexts} 
+					title={contexts["aghkZXZ-Tm9uZXIcCxIHQ29udGVudCIPVXBkYXRlIFRoZSBQYWdlDA"] || "Update The Page"}
+					page={page}
+					dialogShow={dialogShow} 
+			dialogToggle={this.dialogDemandToggle}
+		/>
+	</div>
 		)
 	}
 }
 
-// For "undefined required page" error when refreshing the page.
 Page.defaultProps = {
-	contents: {}, 
+	contexts: {}, 
 	page: {}
 }
 
 Page.propTypes = {
-	contents: PropTypes.object.isRequired, 
-	page: PropTypes.object.isRequired, 
+	contexts: PropTypes.object.isRequired, 
+	photosGet: PropTypes.func.isRequired, 
+	pagePhoto: PropTypes.object, 
 	pageGet: PropTypes.func.isRequired, 
-	pagePut: PropTypes.func.isRequired, 
-	pagesDelete: PropTypes.func.isRequired, 
-	removeUpdateContentsWithThatPage: PropTypes.func.isRequired
+	page: PropTypes.object.isRequired, 
+	pageDelete: PropTypes.func.isRequired, 
+	removeUpdateContextsWithThatPage: PropTypes.func.isRequired
 }
 
 export default Page

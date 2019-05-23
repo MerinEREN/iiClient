@@ -4,9 +4,9 @@ import {GridTile} from "material-ui/GridList"
 import Avatar from 'material-ui/Avatar'
 import Chip from 'material-ui/Chip'
 import {blue300} from "material-ui/styles/colors"
-import {getFirstLetters} from "./utilities"
+import {firstLettersGenerate} from "./utilities"
 
-const TagTile = ({tag: {ID}, text, handleDelete}) => (
+const TileTag = ({tag: {ID}, text, handleDelete}) => (
 	<GridTile>
 		<Chip 
 			onRequestDelete={() => handleDelete(ID)}
@@ -15,17 +15,23 @@ const TagTile = ({tag: {ID}, text, handleDelete}) => (
 				size={32}
 				color={blue300}
 			>
-				{getFirstLetters(text)}
+				{firstLettersGenerate(text)}
 			</Avatar>
 			{text}
 		</Chip>
 	</GridTile>
 )
 
-TagTile.propTypes = {
+TileTag.defaultProps = {
+	text: ""
+}
+
+TileTag.propTypes = {
 	tag: PropTypes.object.isRequired, 
-	text: PropTypes.string, 
+	text: PropTypes.string.isRequired, 
 	handleDelete: PropTypes.func.isRequired
 }
 
-export default TagTile
+TileTag.muiName = "GridTile"
+
+export default TileTag

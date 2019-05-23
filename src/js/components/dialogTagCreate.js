@@ -5,7 +5,8 @@ import VerticalStepper from "./verticalStepper"
 import TextField from "material-ui/TextField"
 import FlatButton from "material-ui/FlatButton"
 
-class DialogDemandUpdate extends Component {
+// Creates a new tag.
+class DialogTagCreate extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -15,11 +16,7 @@ class DialogDemandUpdate extends Component {
 		}
 		this.handleStepIndex = this.handleStepIndex.bind(this)
 		this.handleFieldChange = this.handleFieldChange.bind(this)
-		this.handlePut = this.handlePut.bind(this)
-	}
-	componentWillReceiveProps(nextProps) {
-		if (this.props.demand !== nextProps.demand)
-			this.setState({newObject: nextProps.demand})
+		this.handlePost = this.handlePost.bind(this)
 	}
 	handleStepIndex(direction) {
 		const {
@@ -51,7 +48,7 @@ class DialogDemandUpdate extends Component {
 		let key
 		switch (i) {
 			case 1:
-				key = "description"
+				key = "contextID"
 				break
 			default:
 				return false
@@ -87,7 +84,7 @@ class DialogDemandUpdate extends Component {
 			}
 		})
 	}
-	handlePut() {
+	handlePost() {
 		const {
 			stepIndex, 
 			newObject
@@ -95,25 +92,22 @@ class DialogDemandUpdate extends Component {
 		if(this.handleRequiredField(stepIndex))
 			return
 		const {
-			params: {ID}, 
 			dialogToggle, 
-			demandPut
+			tagPost
 		} = this.props
 		dialogToggle()
-		// "ID" in data value is for enveloped or not check only
-		// and not be sended to the backand.
-		demandPut({
-			URL: `/demands/${ID}`, 
+		// FIND A SOLUTION FOR THAT "ID" THING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		tagPost({
 			data: {
 				value: {
-					ID, 
+					ID: "dummy", 
 					...newObject
 				}
-			}, 
-			key: ID
+			}
 		})
 		this.setState({
-			stepIndex: 0
+			stepIndex: 0, 
+			newObject: {}
 		})
 	}
 	stepLabels() { 
@@ -122,43 +116,42 @@ class DialogDemandUpdate extends Component {
 		} = this.props
 		return Object.keys(contexts).length > 0 ?
 			[
-				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRXhwbGFuYXRpb24M"], 
-				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"]
-			] : 
+				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"], 
+				contexts["aghkZXZ-Tm9uZXIQCxIHQ29udGVudCIDVGFnDA"]
+			] :
 			[
 				"Explanation", 
-				"Description"
+				"Tag"
 			]
 	}
-	descriptionField() {
+	explanationField() {
 		const {
-			newObject: {description}, 
+			contexts
+		} = this.props
+		return <p>
+			{contexts["aghkZXZ-Tm9uZXIyCxIHQ29udGVudCIlQWRkIGEgbmV3IHRhZy4gVGhlIGZpZWxkIGlzIHJlcXVpcmVkLgw"] || "Add a new tag. The field is required."}
+		</p>
+	}
+	contextIDField() {
+		const {
+			newObject: {contextID}, 
 			inputErrTexts
 		} = this.state
 		const {
 			contexts
 		} = this.props
 		return <TextField 
-			name="description" 
-			value={description || ""}
-			floatingLabelText={contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"] || "Description"}
-			errorText={inputErrTexts.description}
-			fullWidth={true}
-			multiLine={true}
-			rows={3}
-			rowsMax={5}
+			name="contextID" 
+			value={contextID || ""}
+			floatingLabelText={contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"] || "Context ID"}
+			errorText={inputErrTexts.contextID}
 			onChange={this.handleFieldChange}
 		/>
 	}
 	stepContents() {
-		const {
-			contexts
-		} = this.props
 		return [
-			<p>
-				{contexts["aghkZXZ-Tm9uZXJJCxIHQ29udGVudCI8VXBkYXRlIHRoZSBkZW1hbmQuIFRhZ3MgYW5kIERlc2NyaXB0aW9uIGZpZWxkcyBhcmUgcmVxdWlyZWQuDA"]}
-			</p>, 
-			this.descriptionField()
+			this.explanationField(), 
+			this.contextIDField()
 		]
 	}
 	children() {
@@ -184,7 +177,6 @@ class DialogDemandUpdate extends Component {
 			contexts, 
 			dialogToggle
 		} = this.props
-
 		let actions = [
 			<FlatButton
 				label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
@@ -194,7 +186,7 @@ class DialogDemandUpdate extends Component {
 		this.stepContents().length - 1 === stepIndex && actions.push(<FlatButton
 			label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
 			primary={true}
-			onTouchTap={this.handlePut}
+			onTouchTap={this.handlePost}
 		/>)
 		return actions
 	}
@@ -204,24 +196,23 @@ class DialogDemandUpdate extends Component {
 			dialogShow
 		} = this.props
 		return <Dialog
-					title={title}
-					children={this.children()}
-					actions={this.actions()}
-					modal={true}
-					open={dialogShow} 
-				/>
+			title={title}
+			children={this.children()}
+			actions={this.actions()}
+			modal={true}
+			open={dialogShow} 
+		/>
 	}
 }
 
-DialogDemandUpdate.propTypes = {
+DialogTagCreate.propTypes = {
 	contexts: PropTypes.object.isRequired,
 	title: PropTypes.string.isRequired,
 	dialogShow: PropTypes.bool.isRequired, 
-	demand: PropTypes.object,
 	dialogToggle: PropTypes.func.isRequired, 
-	demandPut: PropTypes.func.isRequired
+	tagPost: PropTypes.func.isRequired
 }
 
-DialogDemandUpdate.muiName = "Dialog"
+DialogTagCreate.muiName = "Dialog"
 
-export default DialogDemandUpdate
+export default DialogTagCreate

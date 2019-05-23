@@ -5,7 +5,8 @@ import VerticalStepper from "./verticalStepper"
 import TextField from "material-ui/TextField"
 import FlatButton from "material-ui/FlatButton"
 
-class DialogDemandUpdate extends Component {
+// Creates a new roleType.
+class DialogRoleTypeCreate extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -15,11 +16,7 @@ class DialogDemandUpdate extends Component {
 		}
 		this.handleStepIndex = this.handleStepIndex.bind(this)
 		this.handleFieldChange = this.handleFieldChange.bind(this)
-		this.handlePut = this.handlePut.bind(this)
-	}
-	componentWillReceiveProps(nextProps) {
-		if (this.props.demand !== nextProps.demand)
-			this.setState({newObject: nextProps.demand})
+		this.handlePost = this.handlePost.bind(this)
 	}
 	handleStepIndex(direction) {
 		const {
@@ -51,7 +48,7 @@ class DialogDemandUpdate extends Component {
 		let key
 		switch (i) {
 			case 1:
-				key = "description"
+				key = "ID"
 				break
 			default:
 				return false
@@ -87,7 +84,7 @@ class DialogDemandUpdate extends Component {
 			}
 		})
 	}
-	handlePut() {
+	handlePost() {
 		const {
 			stepIndex, 
 			newObject
@@ -95,70 +92,55 @@ class DialogDemandUpdate extends Component {
 		if(this.handleRequiredField(stepIndex))
 			return
 		const {
-			params: {ID}, 
 			dialogToggle, 
-			demandPut
+			roleTypePost
 		} = this.props
 		dialogToggle()
-		// "ID" in data value is for enveloped or not check only
-		// and not be sended to the backand.
-		demandPut({
-			URL: `/demands/${ID}`, 
+		roleTypePost({
 			data: {
-				value: {
-					ID, 
-					...newObject
-				}
-			}, 
-			key: ID
+				value: newObject
+			}
 		})
 		this.setState({
-			stepIndex: 0
+			stepIndex: 0, 
+			newObject: {}
 		})
 	}
 	stepLabels() { 
 		const {
 			contexts
 		} = this.props
-		return Object.keys(contexts).length > 0 ?
-			[
-				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRXhwbGFuYXRpb24M"], 
-				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"]
-			] : 
-			[
-				"Explanation", 
-				"Description"
-			]
+		let labels = Object.keys(contexts).length > 0 ?
+			[contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRXhwbGFuYXRpb24M"]] : 
+			["Explanation"]
+		labels.push("ID")
+		return labels
 	}
-	descriptionField() {
-		const {
-			newObject: {description}, 
-			inputErrTexts
-		} = this.state
+	explanationField() {
 		const {
 			contexts
 		} = this.props
+		return <p>
+			{contexts["aghkZXZ-Tm9uZXI4CxIHQ29udGVudCIrQWRkIGEgbmV3IHJvbGUgdHlwZS4gVGhlIGZpZWxkIGlzIHJlcXVpcmVkLgw"] || "Add a new role type. The field is required."}
+		</p>
+	}
+	IDField() {
+		const {
+			newObject: {ID}, 
+			inputErrTexts
+		} = this.state
 		return <TextField 
-			name="description" 
-			value={description || ""}
-			floatingLabelText={contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"] || "Description"}
-			errorText={inputErrTexts.description}
-			fullWidth={true}
-			multiLine={true}
-			rows={3}
-			rowsMax={5}
+			name="ID" 
+			value={ID || ""}
+			floatingLabelText="ID"
+			errorText={inputErrTexts.ID}
 			onChange={this.handleFieldChange}
 		/>
 	}
 	stepContents() {
-		const {
-			contexts
-		} = this.props
 		return [
-			<p>
-				{contexts["aghkZXZ-Tm9uZXJJCxIHQ29udGVudCI8VXBkYXRlIHRoZSBkZW1hbmQuIFRhZ3MgYW5kIERlc2NyaXB0aW9uIGZpZWxkcyBhcmUgcmVxdWlyZWQuDA"]}
-			</p>, 
-			this.descriptionField()
+			this.explanationField(), 
+			this.IDField()
 		]
 	}
 	children() {
@@ -184,7 +166,6 @@ class DialogDemandUpdate extends Component {
 			contexts, 
 			dialogToggle
 		} = this.props
-
 		let actions = [
 			<FlatButton
 				label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
@@ -194,7 +175,7 @@ class DialogDemandUpdate extends Component {
 		this.stepContents().length - 1 === stepIndex && actions.push(<FlatButton
 			label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
 			primary={true}
-			onTouchTap={this.handlePut}
+			onTouchTap={this.handlePost}
 		/>)
 		return actions
 	}
@@ -204,24 +185,23 @@ class DialogDemandUpdate extends Component {
 			dialogShow
 		} = this.props
 		return <Dialog
-					title={title}
-					children={this.children()}
-					actions={this.actions()}
-					modal={true}
-					open={dialogShow} 
-				/>
+			title={title}
+			children={this.children()}
+			actions={this.actions()}
+			modal={true}
+			open={dialogShow} 
+		/>
 	}
 }
 
-DialogDemandUpdate.propTypes = {
+DialogRoleTypeCreate.propTypes = {
 	contexts: PropTypes.object.isRequired,
 	title: PropTypes.string.isRequired,
 	dialogShow: PropTypes.bool.isRequired, 
-	demand: PropTypes.object,
 	dialogToggle: PropTypes.func.isRequired, 
-	demandPut: PropTypes.func.isRequired
+	roleTypePost: PropTypes.func.isRequired
 }
 
-DialogDemandUpdate.muiName = "Dialog"
+DialogRoleTypeCreate.muiName = "Dialog"
 
-export default DialogDemandUpdate
+export default DialogRoleTypeCreate

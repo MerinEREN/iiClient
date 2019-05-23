@@ -1,28 +1,28 @@
 import React, {Component}  from "react"
 import PropTypes from "prop-types"
-import {List, ListItem} from "material-ui/List"
+import {List} from "material-ui/List"
 import Demand from "../components/listItemDemand"
 import Offer from "../components/listItemOffer"
 import ServicePack from "../components/listItemServicePack"
 
-class TimelineList extends Component {
-	componentWillMount() {
+class ListTimeline extends Component {
+	componentWillReceiveProps(nextProps) {
 		const {
 			uID, 
-			getItems
+			itemsGet
 		} = this.props
-		getItems(uID, "timeline", null)
+		if (uID !== nextProps.uID)
+			itemsGet(uID, "timeline", null)
 	}
 	render() {
 		const {
-			contents, 
+			contexts, 
 			items
 		} =  this.props 
 		return (
 			<List>
 				{
-					items.length 
-						?
+					items.length ? 
 						items.map((v, i) => {
 							switch (v.type) {
 								case "demand":
@@ -41,21 +41,20 @@ class TimelineList extends Component {
 										{...v}
 									/>
 							}
-						})
-						:
-						<h3>{contents["aghkZXZ-Tm9uZXIXCxIHQ29udGVudCIKTm8gQ29udGVudAw"] || "No Content"}</h3>
+						}) : 
+						<h3>{contexts["aghkZXZ-Tm9uZXIXCxIHQ29udGVudCIKTm8gQ29udGVudAw"] || "No Content"}</h3>
 				}
 			</List>
 		)
 	}
 }
 
-TimelineList.defaultProps = {
-	contents: {}, 
+ListTimeline.defaultProps = {
+	contexts: {}, 
 	uID: ""
 }
 
-TimelineList.propTypes = {
+ListTimeline.propTypes = {
 	/* items: PropTypes.objectOf(PropTypes.shape({
 		offers: PropTypes.objectOf(PropTypes.shape({
 			id: PropTypes.number.isRequired, 
@@ -68,12 +67,12 @@ TimelineList.propTypes = {
 			editable: PropTypes.bool.isRequired
 		}))
 	})), */
-	contents: PropTypes.object.isRequired, 
+	contexts: PropTypes.object.isRequired, 
+	uID: PropTypes.string.isRequired, 
 	items: PropTypes.array, 
-	getItems: PropTypes.func.isRequired, 
-	uID: PropTypes.string.isRequired
+	itemsGet: PropTypes.func.isRequired
 }
 
-TimelineList.muiName = "List"
+ListTimeline.muiName = "List"
 
-export default TimelineList
+export default ListTimeline

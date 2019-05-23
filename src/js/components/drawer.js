@@ -25,8 +25,7 @@ import ListAction from "material-ui/svg-icons/action/list"
 import Settings from "material-ui/svg-icons/action/settings"
 import Help from "material-ui/svg-icons/action/help"
 import Feedback from "material-ui/svg-icons/action/feedback"
-import {isAdmin, isContentEditor} from "./utilities"
-import {getFirstLetters} from "./utilities"
+import {isAdmin, isContentEditor, firstLettersGenerate} from "./utilities"
 
 const styles = {
 	drawer: {
@@ -63,38 +62,45 @@ class MyDrawer extends Component {
 	}
 	componentWillMount() {
 		const {
-			accountLoggedGet, 
-			toggleDrawer
+			accountGet, 
+			drawerToggle
 		} = this.props
-		accountLoggedGet().then(toggleDrawer())
+		accountGet({
+			URL: "/accounts/logged", 
+			key: "logged"
+		}).then(response => photosGet({
+			URL: `/photos?q=${response.ID}&type="main"`, 
+			key: response.ID
+		})).then(response => drawerToggle())
 	}
-	tagTiles() {
+	TilesTag() {
 		const {
-			contents, 
-			userTags
+			contexts, 
+			tagsUser
 		} = this.props
-		return Object.entries(userTags).map(([i, v]) => 
+		return Object.entries(tagsUser).map(([i, v]) => 
 			<GridTile key={i}>
 				<Avatar 
 					size={32}
 					color={blue300}
 				>
-					{getFirstLetters(contents[v.contentID])}
+					{firstLettersGenerate(contexts[v.contextID])}
 				</Avatar>
-				{contents[v.contentID]}
+				{contexts[v.contextID]}
 			</GridTile>
 		)
 	}
 	render() {
 		const {
-			contents, 
+			contexts, 
 			cookies, 
 			user, 
+			accountPhoto, 
 			account, 
-			userRoles, 
-			userTags, 
+			rolesUser, 
+			tagsUser, 
 			open, 
-			changeTheme
+			themeChange
 		} = this.props
 		return (
 			<Drawer 
@@ -103,7 +109,7 @@ class MyDrawer extends Component {
 			>
 				<AppBar
 					title={user.email}
-					onLeftIconButtonTouchTap={() => toggleDrawer()}
+					onLeftIconButtonTouchTap={() => drawerToggle()}
 				/>
 				{/*ADD ALL NECESSARY ACCOUNT INFO IN CARD !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 				ALSO ADD THE ACCOUNT RANK AS SUBTITLE OF CardTitle !!!!!!!!!!!!!!!!!!!!!*/}
@@ -120,12 +126,12 @@ class MyDrawer extends Component {
 						<CardMedia
 							overlay={
 								<CardTitle 
-									title={`${contents["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFU2NvcmUM"]}: 4`} 
+									title={`${contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFU2NvcmUM"]}: 4`} 
 								/>
 							}
 						>
 							<img 
-								src={account.link || "/img/matrix.gif"} 
+								src={accountPhoto.link || "/img/matrix.gif"} 
 							/>
 						</CardMedia>
 					</CardTitle>
@@ -133,32 +139,38 @@ class MyDrawer extends Component {
 						<List>
 							<ListItem 
 								leftIcon={<Skills />} 
-								primaryText={`${contents["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGU2tpbGxzDA"]}: 4`} 
+								primaryText={`${contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGU2tpbGxzDA"]}: 4`} 
 								disabled={true}
 							/>
 							<ListItem 
 								leftIcon={<Time />} 
-								primaryText={`${contents["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGVGltaW5nDA"]}: 3`} 
+								primaryText={`${contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGVGltaW5nDA"]}: 3`} 
 								disabled={true}
 							/>
 							<ListItem 
 								leftIcon={<Communication />} 
-								primaryText={`${contents["aghkZXZ-Tm9uZXIaCxIHQ29udGVudCINQ29tbXVuaWNhdGlvbgw"]}: 5`} 
+								primaryText={`${contexts["aghkZXZ-Tm9uZXIaCxIHQ29udGVudCINQ29tbXVuaWNhdGlvbgw"]}: 5`} 
 									disabled={true}
 							/>
 						</List>
 						{ 
-							Object.keys(userTags).length > 0 && 
+							(
+								tagsUser && 
+								Object.keys(tagsUser).length > 0
+							) && 
 								<Divider />
 						}
 						{ 
-							Object.keys(userTags).length > 0 && 
+							(
+								tagsUser && 
+								Object.keys(tagsUser).length > 0
+							) && 
 								<GridList 
 									cols={1} 
 									cellHeight="auto" 
 									style={styles.gridList}
 								>
-									{this.tagTiles()}
+									{this.TilesTag()}
 								</GridList>
 						}
 					</CardText>
@@ -171,7 +183,7 @@ class MyDrawer extends Component {
 								activeStyle={styles.link.activeStyle}
 							/>
 						}
-						primaryText={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIESG9tZQw"] || "Home"}
+						primaryText={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIESG9tZQw"] || "Home"}
 						leftIcon={<Home />}
 					/>
 					<ListItem 
@@ -181,11 +193,11 @@ class MyDrawer extends Component {
 								activeStyle={styles.link.activeStyle}
 							/>
 						}
-						primaryText={contents["aghkZXZ-Tm9uZXIWCxIHQ29udGVudCIJRGFzaGJvYXJkDA"] || "Dashboard"}
+						primaryText={contexts["aghkZXZ-Tm9uZXIWCxIHQ29udGVudCIJRGFzaGJvYXJkDA"] || "Dashboard"}
 						leftIcon={<Dashboard />}
 					/>
 					{
-						(user.type === "inHouse") && (isContentEditor(userRoles) || isAdmin(userRoles))
+						(user.type === "inHouse") && (isContentEditor(rolesUser) || isAdmin(rolesUser))
 						&&
 							<ListItem 
 								containerElement={
@@ -194,12 +206,12 @@ class MyDrawer extends Component {
 										activeStyle={styles.link.activeStyle}
 									/>
 								}
-								primaryText={contents["aghkZXZ-Tm9uZXIWCxIHQ29udGVudCIJTGFuZ3VhZ2VzDA"] || "Languages"}
+								primaryText={contexts["aghkZXZ-Tm9uZXIWCxIHQ29udGVudCIJTGFuZ3VhZ2VzDA"] || "Languages"}
 								leftIcon={<EditContent />}
 							/>
 					}
 					{
-						(user.type === "inHouse") && (isContentEditor(userRoles) || isAdmin(userRoles))
+						(user.type === "inHouse") && (isContentEditor(rolesUser) || isAdmin(rolesUser))
 						&&
 							<ListItem 
 								containerElement={
@@ -208,26 +220,26 @@ class MyDrawer extends Component {
 										activeStyle={styles.link.activeStyle}
 									/>
 								}
-								primaryText={contents["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFUGFnZXMM"] || "Pages"}
+								primaryText={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFUGFnZXMM"] || "Pages"}
 								leftIcon={<EditContent />}
 							/>
 					}
 					{
-						(user.type === "inHouse") && (isContentEditor(userRoles) || isAdmin(userRoles))
+						(user.type === "inHouse") && (isContentEditor(rolesUser) || isAdmin(rolesUser))
 						&&
 							<ListItem 
 								containerElement={
 									<Link
-										to="/contents"
+										to="/contexts"
 										activeStyle={styles.link.activeStyle}
 									/>
 								}
-								primaryText={contents["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIIQ29udGVudHMM"] || "Contents"}
+								primaryText={contexts["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIIQ29udGVudHMM"] || "Contexts"}
 								leftIcon={<EditContent />}
 							/>
 					}
 					{
-						(user.type === "inHouse") && (isAdmin(userRoles))
+						(user.type === "inHouse") && (isAdmin(rolesUser))
 						&&
 							<ListItem 
 								containerElement={
@@ -236,12 +248,12 @@ class MyDrawer extends Component {
 										activeStyle={styles.link.activeStyle}
 									/>
 								}
-								primaryText={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEVGFncww"] || "Tags"}
+								primaryText={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEVGFncww"] || "Tags"}
 								leftIcon={<EditContent />}
 							/>
 					}
 					{
-						(user.type === "inHouse") && (isAdmin(userRoles))
+						(user.type === "inHouse") && (isAdmin(rolesUser))
 						&&
 							<ListItem 
 								containerElement={
@@ -250,12 +262,12 @@ class MyDrawer extends Component {
 										activeStyle={styles.link.activeStyle}
 									/>
 								}
-								primaryText={contents["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFUm9sZXMM"] || "Roles"}
+								primaryText={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFUm9sZXMM"] || "Roles"}
 								leftIcon={<EditContent />}
 							/>
 					}
 					{
-						(user.type === "inHouse") && (isAdmin(userRoles))
+						(user.type === "inHouse") && (isAdmin(rolesUser))
 						&&
 							<ListItem 
 								containerElement={
@@ -264,7 +276,7 @@ class MyDrawer extends Component {
 										activeStyle={styles.link.activeStyle}
 									/>
 								}
-								primaryText={contents["aghkZXZ-Tm9uZXIXCxIHQ29udGVudCIKUm9sZSBUeXBlcww"] || "Role Types"}
+								primaryText={contexts["aghkZXZ-Tm9uZXIXCxIHQ29udGVudCIKUm9sZSBUeXBlcww"] || "Role Types"}
 								leftIcon={<EditContent />}
 							/>
 					}
@@ -275,7 +287,7 @@ class MyDrawer extends Component {
 								activeStyle={styles.link.activeStyle}
 							/>
 						} 
-						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHUHJvZmlsZQw"] || "Profile"}
+						primaryText={contexts["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHUHJvZmlsZQw"] || "Profile"}
 						leftIcon={<Account />} 
 					/>
 					<ListItem 
@@ -288,7 +300,7 @@ class MyDrawer extends Component {
 								activeStyle={styles.link.activeStyle}
 							/>
 						} 
-						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHRGVtYW5kcww"] || "Demands"}
+						primaryText={contexts["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHRGVtYW5kcww"] || "Demands"}
 						leftIcon={<ListAction />} 
 					/>
 					<ListItem 
@@ -298,7 +310,7 @@ class MyDrawer extends Component {
 								activeStyle={styles.link.activeStyle}
 							/>
 						} 
-						primaryText={contents["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGT2ZmZXJzDA"] || "Offers"}
+						primaryText={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGT2ZmZXJzDA"] || "Offers"}
 						leftIcon={<ListAction />} 
 					/>
 					<ListItem 
@@ -308,18 +320,18 @@ class MyDrawer extends Component {
 								activeStyle={styles.link.activeStyle}
 							/>
 						} 
-						primaryText={contents["aghkZXZ-Tm9uZXIaCxIHQ29udGVudCINU2VydmljZSBQYWNrcww"] || "Service Packs"}
+						primaryText={contexts["aghkZXZ-Tm9uZXIaCxIHQ29udGVudCINU2VydmljZSBQYWNrcww"] || "Service Packs"}
 						leftIcon={<ListAction />} 
 					/>
 				</List>
 				<Divider />
 				<List>
 					<ListItem
-						primaryText={contents["aghkZXZ-Tm9uZXIXCxIHQ29udGVudCIKTmlnaHQgTW9kZQw"] || "Night Mode"}
+						primaryText={contexts["aghkZXZ-Tm9uZXIXCxIHQ29udGVudCIKTmlnaHQgTW9kZQw"] || "Night Mode"}
 						rightToggle={
 							<Toggle
 								toggled={cookies.get("theme") === "dark"}
-								onToggle={() => changeTheme(cookies)}
+								onToggle={() => themeChange(cookies)}
 							/>
 						}
 					/>
@@ -333,7 +345,7 @@ class MyDrawer extends Component {
 								activeStyle={styles.link.activeStyle}
 							/>
 						} 
-						primaryText={contents["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIIU2V0dGluZ3MM"] || "Settings"}
+						primaryText={contexts["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIIU2V0dGluZ3MM"] || "Settings"}
 						leftIcon={<Settings />} 
 					/>
 					<ListItem 
@@ -343,7 +355,7 @@ class MyDrawer extends Component {
 								activeStyle={styles.link.activeStyle}
 							/>
 						} 
-						primaryText={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIESGVscAw"] || "Help"}
+						primaryText={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIESGVscAw"] || "Help"}
 						leftIcon={<Help />} 
 					/>
 					<ListItem 
@@ -353,7 +365,7 @@ class MyDrawer extends Component {
 								activeStyle={styles.link.activeStyle}
 							/>
 						} 
-						primaryText={contents["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIIRmVlZGJhY2sM"] || "Feedback"}
+						primaryText={contexts["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIIRmVlZGJhY2sM"] || "Feedback"}
 						leftIcon={<Feedback />} 
 					/>
 				</List>
@@ -362,17 +374,25 @@ class MyDrawer extends Component {
 	}
 }
 
+MyDrawer.defaultProps = {
+	contexts: {}, 
+	account: {}, 
+	accountPhoto: {}
+}
+
 MyDrawer.propTypes = {
-	contents: PropTypes.object.isRequired,
+	contexts: PropTypes.object.isRequired,
 	cookies: instanceOf(Cookies).isRequired, 
 	open: PropTypes.bool.isRequired,
-	account: PropTypes.object,
-	user: PropTypes.object,
-	userRoles: PropTypes.object,
-	userTags: PropTypes.object,
-	accountLoggedGet: PropTypes.func.isRequired, 
-	toggleDrawer: PropTypes.func.isRequired,
-	changeTheme: PropTypes.func.isRequired
+	accountGet: PropTypes.func.isRequired, 
+	account: PropTypes.object.isRequired,
+	photosGet: PropTypes.func.isRequired, 
+	accountPhoto: PropTypes.object,
+	user: PropTypes.object.isRequired,
+	rolesUser: PropTypes.object.isRequired,
+	tagsUser: PropTypes.object,
+	drawerToggle: PropTypes.func.isRequired,
+	themeChange: PropTypes.func.isRequired
 }
 
 MyDrawer.muiName = "Drawer"

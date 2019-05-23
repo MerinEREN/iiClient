@@ -5,7 +5,7 @@ import VerticalStepper from "./verticalStepper"
 import TextField from "material-ui/TextField"
 import FlatButton from "material-ui/FlatButton"
 
-class DialogDemandUpdate extends Component {
+class DialogPageUpdate extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -18,8 +18,8 @@ class DialogDemandUpdate extends Component {
 		this.handlePut = this.handlePut.bind(this)
 	}
 	componentWillReceiveProps(nextProps) {
-		if (this.props.demand !== nextProps.demand)
-			this.setState({newObject: nextProps.demand})
+		if (this.props.page !== nextProps.page)
+			this.setState({newObject: nextProps.page})
 	}
 	handleStepIndex(direction) {
 		const {
@@ -51,7 +51,7 @@ class DialogDemandUpdate extends Component {
 		let key
 		switch (i) {
 			case 1:
-				key = "description"
+				key = "name"
 				break
 			default:
 				return false
@@ -97,20 +97,22 @@ class DialogDemandUpdate extends Component {
 		const {
 			params: {ID}, 
 			dialogToggle, 
-			demandPut
+			pagePut
 		} = this.props
 		dialogToggle()
 		// "ID" in data value is for enveloped or not check only
 		// and not be sended to the backand.
-		demandPut({
-			URL: `/demands/${ID}`, 
+		pagePut({
+			URL: `/pages/${ID}`, 
 			data: {
+				type: "FormData", 
+				// Use "contextType" for "Blob" type.
+				// contextType: "application/json", 
 				value: {
 					ID, 
 					...newObject
 				}
-			}, 
-			key: ID
+			}
 		})
 		this.setState({
 			stepIndex: 0
@@ -122,31 +124,27 @@ class DialogDemandUpdate extends Component {
 		} = this.props
 		return Object.keys(contexts).length > 0 ?
 			[
-				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRXhwbGFuYXRpb24M"], 
-				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"]
-			] : 
+				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"], 
+				contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIETmFtZQw"]
+			] :
 			[
 				"Explanation", 
-				"Description"
+				"Name"
 			]
 	}
-	descriptionField() {
+	nameField() {
 		const {
-			newObject: {description}, 
+			newObject: {name}, 
 			inputErrTexts
 		} = this.state
 		const {
 			contexts
 		} = this.props
 		return <TextField 
-			name="description" 
-			value={description || ""}
-			floatingLabelText={contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"] || "Description"}
-			errorText={inputErrTexts.description}
-			fullWidth={true}
-			multiLine={true}
-			rows={3}
-			rowsMax={5}
+			name="name" 
+			value={name || ""}
+			floatingLabelText={contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"] || "Name"}
+			errorText={inputErrTexts.name}
 			onChange={this.handleFieldChange}
 		/>
 	}
@@ -156,9 +154,9 @@ class DialogDemandUpdate extends Component {
 		} = this.props
 		return [
 			<p>
-				{contexts["aghkZXZ-Tm9uZXJJCxIHQ29udGVudCI8VXBkYXRlIHRoZSBkZW1hbmQuIFRhZ3MgYW5kIERlc2NyaXB0aW9uIGZpZWxkcyBhcmUgcmVxdWlyZWQuDA"]}
+				{contexts["aghkZXZ-Tm9uZXIxCxIHQ29udGVudCIkVXBkYXRlIHBhZ2UsIG5hbWUgZmllbGQgaXMgcmVxdWlyZWQuDA"] || "Update page, name field is required."}
 			</p>, 
-			this.descriptionField()
+			this.nameField()
 		]
 	}
 	children() {
@@ -184,7 +182,6 @@ class DialogDemandUpdate extends Component {
 			contexts, 
 			dialogToggle
 		} = this.props
-
 		let actions = [
 			<FlatButton
 				label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
@@ -204,24 +201,24 @@ class DialogDemandUpdate extends Component {
 			dialogShow
 		} = this.props
 		return <Dialog
-					title={title}
-					children={this.children()}
-					actions={this.actions()}
-					modal={true}
-					open={dialogShow} 
-				/>
+			title={title}
+			children={this.children()}
+			actions={this.actions()}
+			modal={true}
+			open={dialogShow} 
+		/>
 	}
 }
 
-DialogDemandUpdate.propTypes = {
+DialogPageUpdate.propTypes = {
 	contexts: PropTypes.object.isRequired,
 	title: PropTypes.string.isRequired,
 	dialogShow: PropTypes.bool.isRequired, 
-	demand: PropTypes.object,
+	page: PropTypes.object.isRequired,
 	dialogToggle: PropTypes.func.isRequired, 
-	demandPut: PropTypes.func.isRequired
+	pagePut: PropTypes.func.isRequired
 }
 
-DialogDemandUpdate.muiName = "Dialog"
+DialogPageUpdate.muiName = "Dialog"
 
-export default DialogDemandUpdate
+export default DialogPageUpdate

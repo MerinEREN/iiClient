@@ -13,9 +13,7 @@ import {filterAnObjectByKeys} from "../middlewares/utilities"
 const mapStateToProps = state => {
 	const {
 		pagination: {
-			contexts: contextsPagination, 
-			languages: languagesPagination, 
-			pages: pagesPagination
+			contexts: contextsPagination
 		}, 
 		entitiesBuffered: {
 			contexts, 
@@ -32,10 +30,8 @@ const mapStateToProps = state => {
 		contexts: contextsPagination.all && 
 		filterAnObjectByKeys(contexts, contextsPagination.all.IDs), 
 		contextIDsSelected: contextIDs, 
-		languages: languagesPagination.all && 
-		filterAnObjectByKeys(languages, languagesPagination.all.IDs), 
-		pages: pagesPagination.all && 
-		filterAnObjectByKeys(pages, pagesPagination.all.IDs)
+		languages, 
+		pages
 	}
 }
 

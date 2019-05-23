@@ -1,42 +1,71 @@
 import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
 import UserSettingsComponent from "../components/settingsUser"
-import userGet from "../middlewares/user"
-import {userDelete} from "../middlewares/users"
+import userGet, {userDelete} from "../middlewares/user"
+import rolesUserGet, {rolesUserPost} from "../middlewares/rolesUser"
+import {roleUserDelete} from "../middlewares/roleUser"
+import tagsUserGet, {tagsUserPost} from "../middlewares/tagsUser"
+import {tagUserDelete} from "../middlewares/tagUser"
 import rolesGet from "../middlewares/roles"
 import tagsGet from "../middlewares/tags"
-import userRolesGet, {userRolesPost, userRoleDelete} from "../middlewares/userRoles"
-import userTagsGet, {userTagsPost, userTagDelete} from "../middlewares/userTags"
-import {roleIDsSelectedByKeySet, roleIDsSelectedByKeyRemove} from "../actions/roles"
-import {tagIDsSelectedByKeySet, tagIDsSelectedByKeyRemove} from "../actions/tags"
-import {userRolesRemove} from "../actions/userRoles"
-import {userTagsRemove} from "../actions/userTags"
+import {roleIDsSelectedByKeySet} from "../actions/roles"
+import {
+	tagIDSelectedByKeyAdd, 
+	tagIDSelectedByKeyRemove
+} from "../actions/tags"
+import {filterAnObjectByKeys} from "../middlewares/utilities"
 
 // Can use ownProps here.
 const mapStateToProps = (state, ownProps) => {
 	const {
-		ui: {contentsByPage: {user: contents}}, 
-		entitiesBuffered: {
-			userLogged, 
-			users, 
-			tags, 
-			roles, 
-			rolesByUser, 
-			tagsByUser
+		pagination: {
+			contexts: {user}, 
+			accounts: accountsPagination, 
+			users: {logged}, 
+			roles: rolesPagination, 
+			tags: tagsPagination
 		}, 
-		appState: {roleIDsByKey, tagIDsByKey}
+		entitiesBuffered: {
+			contexts,
+			users, 
+			roles, 
+			tags
+		}, 
+		appState: {roleIDsSelectedByKey, tagIDsSelectedByKey}
 	} = state
-	const {ID} = ownProps.params
+	const {
+		ID
+	} = ownProps.params
 	return {
-		contents, 
-		userLogged, 
-		user: ID ? (users[ID] || userLogged) : userLogged, 
-		tags, 
+		contexts: user && filterAnObjectByKeys(contexts, user.IDs), 
+		IDAccount: accountsPagination.logged && accountsPagination.logged.IDs[0], 
+		IDUserLogged: logged && logged.IDs[0], 
+		user: ID ? users[ID] : (logged && users[logged.IDs[0]]), 
+		rolesUser: ID ? 
+		(
+			rolesPagination[ID] && 
+			filterAnObjectByKeys(roles, rolesPagination[ID].IDs)
+		) : 
+		(
+			logged && 
+			rolesPagination[logged.IDs[0]] && 
+			filterAnObjectByKeys(roles, rolesPagination[logged.IDs[0]].IDs)
+		), 
+		tagsUser: ID ? 
+		(
+			tagsPagination[ID] && 
+			filterAnObjectByKeys(tags, tagsPagination[ID].IDs)
+		) : 
+		(
+			logged && 
+			tagsPagination[logged.IDs[0]] && 
+			filterAnObjectByKeys(tags, tagsPagination[logged.IDs[0]].IDs)
+		), 
 		roles, 
-		userRoles: rolesByUser[ID] || {}, 
-		userTags: tagsByUser[ID] || {}, 
-		roleIDsSelected: roleIDsByKey[ID] || [], 
-		tagIDsSelected: tagIDsByKey[ID] || []
+		tagsPagination, 
+		tags, 
+		roleIDsSelected: roleIDsSelectedByKey[ID], 
+		tagIDsSelected: tagIDsSelectedByKey[ID]
 	}
 }
 
@@ -45,19 +74,24 @@ const mapDispatchToProps = dispatch => bindActionCreators(
 		userGet, 
 		rolesGet, 
 		tagsGet, 
-		userRolesGet, 
-		userTagsGet, 
+		rolesUserGet, 
+		tagsUserGet, 
+		tagIDSelectedByKeyAdd, 
+		tagIDSelectedByKeyRemove, 
 		roleIDsSelectedByKeySet, 
-		tagIDsSelectedByKeySet, 
+		/* 
 		roleIDsSelectedByKeyRemove, 
 		tagIDsSelectedByKeyRemove, 
-		userRolesPost, 
-		userTagsPost, 
-		userRoleDelete, 
-		userTagDelete, 
-		userDelete, 
-		userRolesRemove, 
-		userTagsRemove
+		*/
+		rolesUserPost, 
+		tagsUserPost, 
+		roleUserDelete, 
+		tagUserDelete, 
+		userDelete
+		/*
+		rolesUserRemove, 
+		tagsUserRemove
+		*/
 	},
 	dispatch
 )

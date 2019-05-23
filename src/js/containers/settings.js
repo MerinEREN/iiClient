@@ -1,13 +1,24 @@
 import {connect} from "react-redux"
 import SettingsComponent from "../components/settings"
+import {filterAnObjectByKeys} from "../middlewares/utilities"
 
 // Can use ownProps here.
 const mapStateToProps = state => {
 	const {
-		entitiesBuffered: {userLogged, rolesByUser}, 
+		pagination: {
+			users: {logged}, 
+			roles: rolesPagination
+		}, 
+		entitiesBuffered: {
+			roles
+		}
 	} = state
 	return {
-		userRoles: rolesByUser[userLogged.ID]
+		rolesUser: (
+			logged && 
+			rolesPagination[logged.IDs[0]] 
+		) && 
+		filterAnObjectByKeys(roles, rolesPagination[logged.IDs[0]].IDs)
 	}
 }
 

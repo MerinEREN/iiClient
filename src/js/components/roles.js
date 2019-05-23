@@ -3,13 +3,8 @@ import PropTypes from "prop-types"
 import {GridList} from "material-ui/GridList"
 import FloatingActionButton from "material-ui/FloatingActionButton"
 import ContentAdd from "material-ui/svg-icons/content/add"
-import Dialog from "material-ui/Dialog"
-import FlatButton from "material-ui/FlatButton"
-import VerticalStepper from "./verticalStepper"
-import TextField from "material-ui/TextField"
-import SelectField from "material-ui/SelectField"
-import MenuItem from "material-ui/MenuItem"
-import RoleTile from "./roleTile"
+import TileRole from "./tileRole"
+import DialogRoleCreate from "../containers/dialogRoleCreate"
 
 const styles = {
 	root: {
@@ -31,149 +26,36 @@ class Roles extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			showDialog: false, 
-			stepIndex: 0, 
-			roleNew: {
-				contentID: "", 
-				types: []
-			}, 
-			inputErrTexts: {}
+			dialogShow: false
 		}
-		this.toggleDialog = this.toggleDialog.bind(this)
-		this.handleStepIndex = this.handleStepIndex.bind(this)
-		this.handleInputChange = this.handleInputChange.bind(this)
-		this.handlePost = this.handlePost.bind(this)
+		this.dialogToggle = this.dialogToggle.bind(this)
 		this.handleDelete = this.handleDelete.bind(this)
 	}
 	componentWillMount() {
 		this.props.rolesGet()
 	}
-	handleStepIndex(direction) {
-		const {stepIndex} = this.state
-		switch (direction) {
-			case "next":
-				if(this.handleRequiredField(stepIndex))
-					return
-				this.setState({
-					stepIndex: stepIndex + 1,
-				})
-				break
-			case "prev":
-				this.setState({
-					stepIndex: stepIndex - 1,
-				})
-				break
-		}
-	}
-	handleRequiredField(i) {
-		const {contents} = this.props
-		let key
-		switch (i) {
-			case 1:
-				key = "contentID"
-				break
-			case 2:
-				key = "types"
-				break
-			default:
-				return false
-		}
-		if (!this.state.roleNew[key] || this.state.roleNew[key].length === 0) {
-			this.setState({
-				inputErrTexts: {
-					...this.state.inputErrTexts, 
-					[key]: contents["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"] || "Required Field"
-				}
-			})
-			return true
-		}
-		return false
-	}
-	// INDEX AND VALUES ARE FOR SELECT FIELD ONLY
-	handleInputChange(event, index, values) {
-		const target = event.target
-		const name = target.name || "types"
-		const value = target.value || values
-		const {
-			roleNew, 
-			inputErrTexts
-		} = this.state
-		this.setState({
-			roleNew: {
-				...roleNew, 
-				[name]: value
-			}, 
-			inputErrTexts: {
-				...inputErrTexts, 
-				[name]: null
-			}
-		})
-	}
-	handlePost() {
-		const {
-			stepIndex, 
-			roleNew
-		} = this.state
-		if(this.handleRequiredField(stepIndex))
-			return
-		this.toggleDialog()
-		this.props.rolesPost({
-			body: {
-				type: "FormData", 
-				// Use "contentType" for "Blob" type.
-				// contentType: "application/json", 
-				data: {
-					role: {
-						...roleNew
-					}
-				}
-			}
-		})
-		this.setState({
-			roleNew: {
-				contentID: "", 
-				types: []
-			}, 
-			stepIndex: 0
-		})
-	}
-	toggleDialog() {
-		this.props.roleTypesGet()
-		this.setState({showDialog: !this.state.showDialog})
+	dialogToggle() {
+		this.setState({dialogShow: !this.state.dialogShow})
 	}
 	handleDelete(ID) {
 		this.props.roleDelete({
 			URL: `/roles/${ID}`, 
-			body: {
-				data: [ID]
+			data: {
+				value: [ID]
 			}
 		})
 	}
-	roleTiles(roles) {
+	tilesRole(roles) {
 		const {
-			contents
+			contexts
 		} = this.props
 		return Object.entries(roles).map(([k, v]) => 
-			<RoleTile 
+			<TileRole 
 				key={k} 
 				role={v} 
-				text={contents[v.contentID]}
+				name={contexts[v.contextID]}
 				handleDelete={this.handleDelete}
 			/>)
-	}
-	menuItems(){
-		const {
-			roleNew: {types}
-		} = this.state
-		const {roleTypes} = this.props
-		return Object.entries(roleTypes).map(([k, v]) => <MenuItem
-			key={k}
-			value={v.ID}
-			primaryText={v.ID}
-			checked={types.indexOf(v.ID) > -1}
-			insetChildren={true}
-		/>
-		)
 	}
 	render() {
 		const {
@@ -182,94 +64,38 @@ class Roles extends Component {
 			floatingActionButton
 		} = styles
 		const {
-			showDialog, 
-			stepIndex, 
-			inputErrTexts, 
-			roleNew
+			dialogShow
 		} = this.state
 		const {
-			contents, 
+			contexts, 
 			roles
 		} = this.props
-		const stepLabels = Object.keys(contents).length > 0 ?
-			[
-				contents["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"], 
-				contents["aghkZXZ-Tm9uZXIQCxIHQ29udGVudCIDVGFnDA"], 
-				contents["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFVHlwZXMM"]
-			] :
-			[
-				"Description", 
-				"Tag", 
-				"Types"
-			]
-		const stepContents = [
-			<p>
-				{contents["aghkZXZ-Tm9uZXI1CxIHQ29udGVudCIoQWRkIGEgbmV3IHJvbGUuIEFsbCBmaWVsZHMgYXJlIHJlcXVpcmVkLgw"] || "Add a new role. All fields are required."}
-			</p>, 
-			<TextField 
-				name="contentID"
-				value={roleNew.contentID || ""}
-				floatingLabelText="ID"
-				errorText={inputErrTexts.contentID}
-				onChange={this.handleInputChange}
-			/>, 
-			<SelectField
-				multiple={true} 
-				hintText={contents["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFVHlwZXMM"] || "Types"}
-				value={roleNew.types}
-				errorText={inputErrTexts.types}
-				onChange={this.handleInputChange}
-			>
-				{this.menuItems()}
-			</SelectField>
-		]
-		const children = <VerticalStepper 
-			stepLabels={stepLabels} 
-			stepContents={stepContents}
-			stepIndex={stepIndex}
-			updateStepIndex={this.handleStepIndex}
-			contents={contents}
-		/>
-		const actions = [
-			<FlatButton
-				label={contents["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
-				onTouchTap={this.toggleDialog}
-			/>
-		]
-		stepContents.length - 1 === stepIndex && actions.push(<FlatButton
-			label={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
-			primary={true}
-			onTouchTap={this.handlePost}
-		/>)
 		return (
 			<div style={root}>
 				{ 
-					Object.entries(roles).length !== 0 
-						? 
-						<GridList 
-							style={gridList}
-						>
-							{this.roleTiles(roles)}
-						</GridList>
-						:
-						<h3>{contents["aghkZXZ-Tm9uZXIXCxIHQ29udGVudCIKTm8gQ29udGVudAw"] || "No Content"}</h3>
+					Object.keys(roles).length ? 
+					<GridList 
+						style={gridList}
+					>
+						{this.tilesRole(roles)}
+					</GridList> : 
+					<h3>{contexts["aghkZXZ-Tm9uZXIXCxIHQ29udGVudCIKTm8gQ29udGVudAw"] || "No Content"}</h3>
 				}
 				{
-					!showDialog && 
+					!dialogShow && 
 						<FloatingActionButton 
 							secondary={true}
 							style={floatingActionButton}
-							onTouchTap={this.toggleDialog}
+							onTouchTap={this.dialogToggle}
 						>
 							<ContentAdd />
 						</FloatingActionButton>
 				}
-				<Dialog
-					title={contents["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOQWRkIEEgTmV3IFJvbGUM"] || "Add A New Role"}
-					children={children}
-					actions={actions}
-					modal={true}
-					open={showDialog} 
+				<DialogRoleCreate
+					contexts={contexts} 
+					title={contexts["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOQWRkIEEgTmV3IFJvbGUM"] || "Add A New Role"}
+					dialogShow={dialogShow} 
+					dialogToggle={this.dialogToggle}
 				/>
 			</div>
 		)
@@ -277,16 +103,13 @@ class Roles extends Component {
 }
 
 Roles.defaultProps = {
-	contents: {}
+	contexts: {}
 }
 
 Roles.propTypes = {
-	contents: PropTypes.object.isRequired, 
+	contexts: PropTypes.object.isRequired, 
 	rolesGet: PropTypes.func.isRequired, 
-	roles: PropTypes.object.isRequired, 
-	roleTypesGet: PropTypes.func.isRequired, 
-	roleTypes: PropTypes.object.isRequired, 
-	rolesPost: PropTypes.func.isRequired, 
+	roles: PropTypes.object, 
 	roleDelete: PropTypes.func.isRequired
 }
 

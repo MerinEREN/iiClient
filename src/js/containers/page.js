@@ -1,26 +1,39 @@
 import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
 import PageComponent from "../components/page"
-import pageGet, {pagePut} from "../middlewares/page"
+import photosGet from "../middlewares/photos"
+import pageGet, {pageDelete} from "../middlewares/page"
 import {pagesDelete} from "../middlewares/pages"
 import {removeUpdateContentsWithThatPage} from "../middlewares/contents"
+import {filterAnObjectByKeys} from "../middlewares/utilities"
 
 const mapStateToProps = (state, ownProps) => {
 	const {
-		ui: {contentsByPage: {page: contents}}, 
-		entitiesBuffered: {pages: {[ownProps.params.ID]: page}}
+		pagination: {
+			contexts: {page}, 
+			photos: photosPagination
+		}, 
+		entitiesBuffered: {
+			contexts, 
+			photos, 
+			pages
+		}
 	} = state
+	const {
+		params: {ID}
+	} = ownProps	
 	return {
-		contents, 
-		page
+		contexts: page && filterAnObjectByKeys(contexts, page.IDs), 
+		pagePhoto: photosPagination[ID] && photos[photosPagination[ID].IDs[0]], 
+		page: pages[ID]
 	}
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
+		photosGet, 
 		pageGet, 
-		pagePut, 
-		pagesDelete, 
+		pageDelete, 
 		removeUpdateContentsWithThatPage
 	},
 	dispatch
@@ -29,4 +42,3 @@ const mapDispatchToProps = dispatch => bindActionCreators(
 const Page = connect(mapStateToProps, mapDispatchToProps)(PageComponent)
 
 export default Page
-

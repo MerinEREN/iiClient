@@ -16,7 +16,8 @@ const ListItemServicePack = ({ID, description}) => <ListItem
 ListItemServicePack.muiName = "ListItem"
 
 ListItemServicePack.propTypes = {
-	ID: PropTypes.string.isRequired
+	ID: PropTypes.string.isRequired, 
+	description: PropTypes.string.isRequired
 }
 
 export default ListItemServicePack

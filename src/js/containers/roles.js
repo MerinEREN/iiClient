@@ -1,27 +1,31 @@
 import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
 import RolesComponent from "../components/roles"
-import rolesGet, {rolesPost, roleDelete} from "../middlewares/roles"
-import roleTypesGet from "../middlewares/roleTypes"
+import rolesGet from "../middlewares/roles"
+import {roleDelete} from "../middlewares/role"
+import {filterAnObjectByKeys} from "../middlewares/utilities"
 
 // Can use ownProps here.
 const mapStateToProps = state => {
 	const {
-		entitiesBuffered: {roles, roleTypes}, 
-		ui: {contentsByPage: {roles: contents}}
+		pagination: {
+			contexts: contextsPagination
+		}, 
+		entitiesBuffered: {
+			contexts, 
+			roles
+		}
 	} = state
 	return {
-		roles, 
-		roleTypes, 
-		contents
+		contexts: contextsPagination.roles && 
+		filterAnObjectByKeys(contexts, contextsPagination.roles.IDs), 
+		roles
 	}
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
 		rolesGet, 
-		roleTypesGet, 
-		rolesPost, 
 		roleDelete
 	},
 	dispatch

@@ -1,26 +1,32 @@
 import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
 import LanguagesComponent from "../components/languages"
-import languagesGet, {languagePost, languagesDelete}  from "../middlewares/languages"
+import languagesGet, {languagesDelete}  from "../middlewares/languages"
+import {filterAnObjectByKeys} from "../middlewares/utilities"
 
 // Can use ownProps here.
 const mapStateToProps = state => {
 	const {
-		entitiesBuffered: {languages}, 
-		appState: {languageIDs: languageIDsSelected}, 
-		ui: {contentsByPage: {languages: contents}}
+		pagination: {
+			contexts: contextsPagination
+		}, 
+		entitiesBuffered: {
+			contexts, 
+			languages
+		}, 
+		appState: {languageIDsSelected}
 	} = state
 	return {
+		contexts: contextsPagination.languages && 
+		filterAnObjectByKeys(contexts, contextsPagination.languages.IDs), 
 		languages, 
-		languageIDsSelected, 
-		contents
+		languageIDsSelected
 	}
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
 		languagesGet, 
-		languagePost, 
 		languagesDelete
 	},
 	dispatch

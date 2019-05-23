@@ -2,10 +2,12 @@ import React, {Component}  from "react"
 import PropTypes from "prop-types"
 import Dialog from "material-ui/Dialog"
 import VerticalStepper from "./verticalStepper"
+import SelectField from "material-ui/SelectField"
+import MenuItem from "material-ui/MenuItem"
 import TextField from "material-ui/TextField"
 import FlatButton from "material-ui/FlatButton"
 
-class DialogDemandUpdate extends Component {
+class DialogLanguageCreate extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -15,11 +17,32 @@ class DialogDemandUpdate extends Component {
 		}
 		this.handleStepIndex = this.handleStepIndex.bind(this)
 		this.handleFieldChange = this.handleFieldChange.bind(this)
-		this.handlePut = this.handlePut.bind(this)
+		this.handlePost = this.handlePost.bind(this)
 	}
-	componentWillReceiveProps(nextProps) {
-		if (this.props.demand !== nextProps.demand)
-			this.setState({newObject: nextProps.demand})
+	componentWillReceiveProps (nextProps) {
+		if (this.props.contexts !== nextProps.contexts)
+			this.items = [
+				<MenuItem 
+					key={1} 
+					value="tr-TR" 
+					primaryText={nextProps.contexts["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHVHVya2lzaAw"] || "Turkish"} 
+				/>,
+				<MenuItem 
+					key={2} 
+					value="en-US" 
+					primaryText={nextProps.contexts["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHRW5nbGlzaAw"] || "English"} 
+				/>,
+				<MenuItem 
+					key={3} 
+					value="de-DE" 
+					primaryText={nextProps.contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGR2VybWFuDA"] || "German"} 
+				/>,
+				<MenuItem 
+					key={4} 
+					value="ru-RU" 
+					primaryText={nextProps.contexts["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHUnVzc2lhbgw"] || "Russian"} 
+				/>
+			]
 	}
 	handleStepIndex(direction) {
 		const {
@@ -51,7 +74,10 @@ class DialogDemandUpdate extends Component {
 		let key
 		switch (i) {
 			case 1:
-				key = "description"
+				key = "code"
+				break
+			case 2:
+				key = "contextID"
 				break
 			default:
 				return false
@@ -70,8 +96,8 @@ class DialogDemandUpdate extends Component {
 	// index and values are for select field only
 	handleFieldChange(event, index, values) {
 		const target = event.target
-		const name = target.name
-		const value = target.value
+		const name = target.name || "code"
+		const value = target.value || values
 		const {
 			newObject, 
 			inputErrTexts
@@ -87,33 +113,29 @@ class DialogDemandUpdate extends Component {
 			}
 		})
 	}
-	handlePut() {
+	handlePost() {
 		const {
-			stepIndex, 
 			newObject
 		} = this.state
-		if(this.handleRequiredField(stepIndex))
-			return
 		const {
-			params: {ID}, 
 			dialogToggle, 
-			demandPut
+			languagePost
 		} = this.props
 		dialogToggle()
-		// "ID" in data value is for enveloped or not check only
-		// and not be sended to the backand.
-		demandPut({
-			URL: `/demands/${ID}`, 
+		this.props.languagePost({
 			data: {
+				type: "FormData", 
+				// Use "contextType" for "Blob" type.
+				// contextType: "application/json", 
 				value: {
-					ID, 
-					...newObject
+						...newObject, 
+						file: this.file.files[0] 
 				}
-			}, 
-			key: ID
+			}
 		})
 		this.setState({
-			stepIndex: 0
+			stepIndex: 0, 
+			newObject: {}
 		})
 	}
 	stepLabels() { 
@@ -122,43 +144,71 @@ class DialogDemandUpdate extends Component {
 		} = this.props
 		return Object.keys(contexts).length > 0 ?
 			[
-				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRXhwbGFuYXRpb24M"], 
-				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"]
-			] : 
+				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"], 
+				contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIETmFtZQw"], 
+				contexts["aghkZXZ-Tm9uZXIQCxIHQ29udGVudCIDVGFnDA"], 
+				contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIERmlsZQw"]
+			] :
 			[
 				"Explanation", 
-				"Description"
+				"Language", 
+				"Context ID", 
+				"Photo"
 			]
 	}
-	descriptionField() {
+	explanationField() {
 		const {
-			newObject: {description}, 
+			contexts
+		} = this.props
+		return <p>
+			{contexts["aghkZXZ-Tm9uZXJGCxIHQ29udGVudCI5QWRkIGEgbmV3IGxhbmd1YWdlLiBMYW5ndWFnZSBhbmQgVGFnIGZpZWxkcyBhcmUgcmVxdWlyZWQuDA"] || "Add a new language. Language and Tag fields are required."}
+		</p>
+	}
+	languageCodeField() {
+		const {
+			newObject: {code}, 
+			inputErrTexts
+		} = this.state
+		const {
+			contexts
+		} = this.props
+		return <SelectField 
+			value={code || ""}
+			floatingLabelText={contexts["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIITGFuZ3VhZ2UM"] || "Language"}
+			errorText={inputErrTexts.code}
+			onChange={this.handleFieldChange}
+		>
+			{this.items}
+		</SelectField>
+	}
+	contextIDField() {
+		const {
+			newObject: {contextID}, 
 			inputErrTexts
 		} = this.state
 		const {
 			contexts
 		} = this.props
 		return <TextField 
-			name="description" 
-			value={description || ""}
-			floatingLabelText={contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"] || "Description"}
-			errorText={inputErrTexts.description}
-			fullWidth={true}
-			multiLine={true}
-			rows={3}
-			rowsMax={5}
+			name="contextID"
+			value={contextID || ""}
+			floatingLabelText={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGQW1vdW50DA"] || "Context ID"}
+			errorText={inputErrTexts.contextID}
 			onChange={this.handleFieldChange}
 		/>
 	}
+	photoField() {
+		return <input 
+			type="file"
+			ref={input => this.file = input}
+		/>
+	}
 	stepContents() {
-		const {
-			contexts
-		} = this.props
 		return [
-			<p>
-				{contexts["aghkZXZ-Tm9uZXJJCxIHQ29udGVudCI8VXBkYXRlIHRoZSBkZW1hbmQuIFRhZ3MgYW5kIERlc2NyaXB0aW9uIGZpZWxkcyBhcmUgcmVxdWlyZWQuDA"]}
-			</p>, 
-			this.descriptionField()
+			this.explanationField(), 
+			this.languageCodeField(), 
+			this.contextIDField(), 
+			this.photoField()
 		]
 	}
 	children() {
@@ -184,7 +234,6 @@ class DialogDemandUpdate extends Component {
 			contexts, 
 			dialogToggle
 		} = this.props
-
 		let actions = [
 			<FlatButton
 				label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
@@ -194,7 +243,7 @@ class DialogDemandUpdate extends Component {
 		this.stepContents().length - 1 === stepIndex && actions.push(<FlatButton
 			label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
 			primary={true}
-			onTouchTap={this.handlePut}
+			onTouchTap={this.handlePost}
 		/>)
 		return actions
 	}
@@ -204,24 +253,23 @@ class DialogDemandUpdate extends Component {
 			dialogShow
 		} = this.props
 		return <Dialog
-					title={title}
-					children={this.children()}
-					actions={this.actions()}
-					modal={true}
-					open={dialogShow} 
-				/>
+			title={title}
+			children={this.children()}
+			actions={this.actions()}
+			modal={true}
+			open={dialogShow} 
+		/>
 	}
 }
 
-DialogDemandUpdate.propTypes = {
+DialogLanguageCreate.muiName = "Dialog"
+
+DialogLanguageCreate.propTypes = {
 	contexts: PropTypes.object.isRequired,
 	title: PropTypes.string.isRequired,
 	dialogShow: PropTypes.bool.isRequired, 
-	demand: PropTypes.object,
 	dialogToggle: PropTypes.func.isRequired, 
-	demandPut: PropTypes.func.isRequired
+	languagePost: PropTypes.func.isRequired
 }
 
-DialogDemandUpdate.muiName = "Dialog"
-
-export default DialogDemandUpdate
+export default DialogLanguageCreate

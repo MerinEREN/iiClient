@@ -4,15 +4,15 @@ import createReducer, {
 	fetchSuccessEntities, 
 	fetchSuccess, 
 	fetchFailure, 
-	addToAnObjectWithKey, 
-	removeFromAnObjectByKey
+	addAValueToAnObjectByKey, 
+	removeAValueFromAnObjectByKey
 } from "./utilities"
 import {
 	TAGS_REQUEST, 
 	TAGS_SUCCESS, 
 	TAGS_FAILURE, 
-	TAGIDS_SELECTED_BY_KEY_SET, 
-	TAGIDS_SELECTED_BY_KEY_REMOVE
+	TAGID_SELECTED_BY_KEY_ADD, 
+	TAGID_SELECTED_BY_KEY_REMOVE
 } from "../actions/types"
 
 // Slice Reducers
@@ -41,8 +41,8 @@ export const tagsPagination = paginate({
 export const tagIDsSelectedByKey = createReducer(
 	{},   
 	{
-		TAGIDS_SELECTED_BY_KEY_SET: addToAnObjectWithKey, 
-		TAGIDS_SELECTED_BY_KEY_REMOVE: removeFromAnObjectByKey
+		TAGID_SELECTED_BY_KEY_ADD: addAValueToAnObjectByKey, 
+		TAGID_SELECTED_BY_KEY_REMOVE: removeAValueFromAnObjectByKey
 	}
 )
 

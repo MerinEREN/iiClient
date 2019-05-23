@@ -10,12 +10,14 @@ import FloatingActionButton from "material-ui/FloatingActionButton"
 import ContentCreate from "material-ui/svg-icons/content/create"
 import ContentAdd from "material-ui/svg-icons/content/add"
 import DialogDemandUpdate from "../containers/dialogDemandUpdate"
-import DialogOfferCreate from "../containers/DialogOfferCreate"
-import {isAdmin} from "./utilities"
+import DialogOfferCreate from "../containers/dialogOfferCreate"
+import AutoComplete from "material-ui/AutoComplete"
+import MenuItem from "material-ui/MenuItem"
 import Chip from "material-ui/Chip"
 import Avatar from "material-ui/Avatar"
 import {blue300} from "material-ui/styles/colors"
-import {firstLettersGenerate} from "./utilities"
+import {isAdmin, firstLettersGenerate} from "./utilities"
+import {filterAnObjectByKeys} from "../middlewares/utilities"
 
 const styles = {
 	root: {
@@ -35,11 +37,19 @@ class Demand extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			tagsInputShow: false, 
+			tagsAddShow: false, 
+			searchText: "", 
+			tagIDsSelected: [], 
+			photosAddShow: false, 
 			dialogDemandShow: false, 
 			dialogOfferShow: false
 		}
-		this.tagsInputToggle = this.tagsInputToggle.bind(this)
+		this.tagsAddToggle = this.tagsAddToggle.bind(this)
+		this.handleAutoComplete = this.handleAutoComplete.bind(this)
+		this.handleNewRequest = this.handleNewRequest.bind(this)
+		this.handleTagsDemandPost = this.handleTagsDemandPost.bind(this)
+		this.photosAddToggle = this.photosAddToggle.bind(this)
+		this.handlePhotosPost = this.handlePhotosPost.bind(this)
 		this.dialogDemandToggle = this.dialogDemandToggle.bind(this)
 		this.dialogOfferToggle = this.dialogOfferToggle.bind(this)
 		this.handleDelete = this.handleDelete.bind(this)
@@ -47,9 +57,10 @@ class Demand extends Component {
 	componentWillMount() {
 		const {
 			params: {ID}, 
+			photosGet, 
+			offersGet, 
 			tagsDemandGet, 
-			demandGet, 
-			offersGet
+			demandGet
 		} = this.props
 		photosGet({
 			URL: `/photos?q=${ID}`, 
@@ -59,14 +70,58 @@ class Demand extends Component {
 			URL: `/tagsDemand?q=${ID}`, 
 			key: ID
 		})
-		offersGet({
-			URL: `/offers?q=${ID}`, 
-			key: ID
-		})
 		demandGet({
 			URL: `/demands/${ID}`, 
 			key: ID
-		})
+		}).then(response => response.json()
+			.then(demand => {
+				demand.status !== "accepted" && 
+					offersGet({
+						URL: `/offers?q=${ID}`, 
+						key: ID
+					})
+			})
+		)
+	}
+	// Clear auto complete request timeout.
+	componentWillUnmount() {
+		clearTimeout(this.timer)
+	}
+	tagsAddToggle() {
+		const {
+			tagsAddShow
+		} = this.state
+		const {
+			tagsGet
+		} = this.props
+		// For minor performance improvements only
+		if (!tagsAddShow)
+			// Getting most used six tags 
+			// to show as initial autocomplete values 
+			// if they does not exist yet.
+			tagsGet({
+				URL: "/tags?q=top", 
+				key: "top"
+			})
+		this.setState({tagsAddShow: !tagsAddShow})
+	}
+	photosAddToggle() {
+		const {
+			photosAddShow
+		} = this.state
+		this.setState({photosAddShow: !photosAddShow})
+	}
+	dialogDemandToggle() {
+		const {
+			dialogDemandShow
+		} = this.state
+		this.setState({dialogDemandShow: !dialogDemandShow})
+	}
+	dialogOfferToggle() {
+		const {
+			dialogOfferShow
+		} = this.state
+		this.setState({dialogOfferShow: !dialogOfferShow})
 	}
 	handleDelete() {
 		const {
@@ -85,43 +140,152 @@ class Demand extends Component {
 		})
 		browserHistory.goBack()
 	}
-	tagsInputToggle() {
+	handleTagsDemandPost() {
+	}
+	handlePhotosPost() {
 		const {
-			tagsInputShow
+			params: {ID}, 
+			photosPost
+		} = this.props
+		this.photosAddToggle()
+		let photos = []
+		Object.values(this.inputPhotos.files).forEach(v => {
+			photos.push(v)
+		})
+		// TRY TO SEND AS JSON ENCODED []byte STRING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		photosPost({
+			URL: `/photos?q=${ID}`, 
+			data: {
+				type: "FormData", 
+				// Use "contextType" for "Blob" type.
+				// contextType: "application/json", 
+				value: {
+					files: photos
+				}
+			}, 
+			key: ID
+		})
+	}
+	handleAutoComplete(v) {
+		const {
+			tagsGet
+		} = this.props
+		clearTimeout(this.timer)
+		if (v.length > 2) {
+			this.timer = setTimeout(() => tagsGet({
+				URL: `/tags?q=${v}`, 
+				key: v
+			}), 1000)
+		}
+		this.setState({
+			searchText: v
+		})
+	}
+	handleNewRequest(obj) {
+		const {
+			tagIDsSelected
 		} = this.state
-		this.setState({tagsInputShow: !tagsInputShow})
-		// For minor performance improvements only
-		if (tagsInputShow)
-			// Getting most used six tags 
-			// to show as initial autocomplete values 
-			// if they does not exist yet.
-			this.props.tagsGet({
-				URL: "/tags?q=top", 
-				key: "top"
+		this.setState({
+			searchText: "", 
+			tagIDsSelected: [
+				...tagIDsSelected, 
+				obj.value.key
+			]
+		})
+	}
+	handleTagIDRemove(ID) {
+		const {
+			tagIDsSelected
+		} = this.state
+		let tagIDsUpdated = []
+		tagIDsSelected.forEach(v => v !== ID && tagIDsUpdated.push(v))
+		this.setState({tagIDsSelected: tagIDsUpdated})
+	}
+	dataSourceTags(contexts, searchText) {
+		const {
+			tagIDsSelected
+		} = this.state
+		const {
+			tagsPagination, 
+			tags, 
+			tagsDemand
+		} = this.props
+		const IDs = tagsPagination[searchText] ? 
+			tagsPagination[searchText].IDs :
+			(
+				tagsPagination.top ?
+				tagsPagination.top.IDs : 
+				[]
+			)
+		const tagsFiltered = filterAnObjectByKeys(tags, IDs)
+		// CHECK RETURNED ARRAY ELEMENTS FOR null and undefined VALUES !!!!!!!!!!!!
+		return Object.entries(tagsFiltered)
+			.map(([k, v]) => {
+				return (
+					tagIDsSelected.indexOf(k) === -1 && 
+					!tagsDemand.hasOwnProperty(k)
+				) && {
+					text: "", 
+					value: (
+						<MenuItem
+							key={k}
+							value={k}
+							primaryText={contexts[v.contextID]}
+						/>
+					)
+				}
 			})
 	}
-	dialogDemandToggle() {
+	tagsSelected(contexts) {
 		const {
-			dialogDemandShow
+			tagIDsSelected
 		} = this.state
-		this.setState({dialogDemandShow: !dialogDemandShow})
-	}
-	dialogOfferToggle() {
 		const {
-			dialogOfferShow
-		} = this.state
-		this.setState({dialogOfferShow: !dialogOfferShow})
+			tags
+		} = this.props
+		return tagIDsSelected.map(v => 
+			<Chip 
+				key={v}
+				onRequestDelete={() => this.handleTagIDRemove(v)}
+			>
+				<Avatar 
+					size={32}
+					color={blue300}
+				>
+					{firstLettersGenerate(
+						contexts[tags[v].contextID]
+					)}
+				</Avatar>
+				{contexts[tags[v].contextID]}
+			</Chip>
+		)
 	}
-	tagsDemand(tags, contexts) {
+	autoCompleteTags(contexts) {
+		const {
+			searchText
+		} = this.state
+		return <div>
+			<AutoComplete
+				searchText={searchText}
+				filter={AutoComplete.noFilter}
+				dataSource={this.dataSourceTags(contexts, searchText)}
+				hintText={contexts["aghkZXZ-Tm9uZXIZCxIHQ29udGVudCIMU2VhcmNoIGEgdGFnDA"] || "Search a tag"}
+				floatingLabelText={contexts["aghkZXZ-Tm9uZXIQCxIHQ29udGVudCIDVGFnDA"] || "Tag"}
+				onUpdateInput={this.handleAutoComplete} 
+				onNewRequest={this.handleNewRequest}
+				openOnFocus={true}
+			/>
+			{this.tagsSelected(contexts)}
+		</div>
+	}
+	tagsDemand(contexts, tagsDemand) {
 		return <List>
 			{
-				Object.entries(tags).map(([k, v]) => 
+				Object.entries(tagsDemand).map(([k, v]) => 
 					<ListItem
 						key={k}
 						children={
-							<Chip
-								key={k}
-							>
+							<Chip>
 								<Avatar 
 									size={32}
 									color={blue300}
@@ -137,12 +301,12 @@ class Demand extends Component {
 			}
 		</List>
 	}
-	photosDemand(photos) {
+	photos(photos) {
 		return <List>
 			{
-				photos.map(v => {
+				Object.values(photos).map(v => {
 					return <ListItem 
-						key={v.link}
+						key={v.ID}
 						children={<img 
 							src={v.link} 
 						/>}
@@ -152,13 +316,21 @@ class Demand extends Component {
 			}
 		</List>
 	}
-	offersDemand(offers, ID) {
+	fileInputPhotos() {
+			<input 
+				type="file"
+				accept="image/*" 
+				ref={input => this.inputPhotos = input}
+				multiple
+			/>
+	}
+	offers(offers, ID) {
 		// WHY IS IT AN ABSOLUTE LINK, RELATIVE PATH IS MORE CONVENIENT !!!!!!!!!!!
-		return offers && <List>
+		return <List>
 			{
 				Object.values(offers).map(v => <ListItem 
 					key={v.ID}
-					primaryText={v.explanation}
+					primaryText={v.description}
 					secondaryText={v.amount} 
 					containerElement={
 						<Link 
@@ -169,18 +341,55 @@ class Demand extends Component {
 			}
 		</List>
 	}
+	isDeletable(demand, userID, rolesUser, accountID) {
+		return (
+			demand.status !== "accepted" && 
+			(
+				(userID === demand.userID) || 
+				(
+					isAdmin(rolesUser) && 
+					(accountID === demand.accountID)
+				)
+			)
+		) ? true : false
+	}
+	isUpdatable(demand, offers, userID, rolesUser, accountID) {
+		return (
+			demand.status !== "accepted" && 
+			(
+				offers && 
+				Object.values(offers).length === 0 
+			) && 
+			(
+				(userID === demand.userID) || 
+				(
+					isAdmin(rolesUser) && 
+					(accountID === demand.accountID)
+				)
+			)
+		) ? true : false
+	}
+	isOfferable(demand, accountID) {
+		return (
+			demand.status !== "accepted" && 
+			(accountID !== "" && accountID !== demand.accountID)
+		) ? true : false
+	}
 	render() {
 		const {
+			tagsAddShow, 
+			photosAddShow, 
+			tagIDsSelected, 
 			dialogDemandShow, 
 			dialogOfferShow
 		} = this.state
 		const {
 			params: {ID}, 
 			contexts, 
-			photosDemand, 
-			tagsDemand, 
-			offersDemand, 
 			demand, 
+			tagsDemand, 
+			photos, 
+			offers, 
 			userID, 
 			accountID, 
 			rolesUser
@@ -198,50 +407,109 @@ class Demand extends Component {
 					</CardText>
 					<CardActions>
 						{
-							demand.status !== "accepted" && 
-								(
-									(userID && userID === demand.userID) || 
-									(
-										isAdmin(rolesUser) && 
-										(accountID && accountID === demand.accountID)
-									) ?
-									<FlatButton 
-										label={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"] || "Delete"}
-										secondary={true}
-										onTouchTap={this.handleDelete} 
-									/> : 
-									null
-								)
+							this.isDeletable(
+								demand, 
+								userID, 
+								rolesUser, 
+								accountID
+							) ? 
+								<FlatButton 
+									label={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"] || "Delete"}
+									secondary={true}
+									onTouchTap={this.handleDelete} 
+								/> : 
+								null
 						}
 					</CardActions>
 				</Card>
 				<Divider />
 				{
-					this.tagsDemand(tagsDemand, context)
+					Object.keys(tagsDemand).length && 
+						this.tagsDemand(contexts, tagsDemand)
+				}
+				{
+					tagsAddShow ? 
+						<div>
+							{
+								this.autoCompleteTags(contexts)
+							}
+							{
+								tagIDsSelected.length && <FlatButton
+									label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
+									primary={true}
+									onTouchTap={this.handleTagsDemandPost}
+								/>
+							}
+							<FlatButton
+								label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
+								onTouchTap={this.tagsAddToggle}
+							/>
+						</div> : 
+						this.isUpdatable(
+							demand, 
+							offers, 
+							userID, 
+							rolesUser, 
+							accountID
+						) &&
+						<FloatingActionButton 
+							mini={true} 
+							style={styles.floatingActionButton}
+							onTouchTap={this.tagsAddToggle}
+						>
+							<ContentAdd />
+						</FloatingActionButton>
 				}
 				<Divider />
 				{
-					this.photosDemand(photosDemand)
+					photos && this.photos(photos)
+				}
+				{
+					photosAddShow ? 
+						<div>
+							{
+								this.fileInputPhotos()
+							}
+							{
+								Object.keys(this.inputPhotos.files).length && <FlatButton
+									label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
+									primary={true}
+									onTouchTap={this.handlePhotosPost}
+								/>
+							}
+							<FlatButton
+								label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
+								onTouchTap={this.photosAddToggle}
+							/>
+						</div> : 
+						this.isUpdatable(
+							demand, 
+							offers, 
+							userID, 
+							rolesUser, 
+							accountID
+						) &&
+						<FloatingActionButton 
+							mini={true} 
+							style={styles.floatingActionButton}
+							onTouchTap={this.photosAddToggle}
+						>
+							<ContentAdd />
+						</FloatingActionButton>
 				}
 				<Divider />
 				{
-					demand.status !== "accepted" && 
-					this.offersDemand(offersDemand, ID)
+					offers && this.offers(offers, ID)
 				}
 				{
 					(
 						!dialogDemandShow && 
-						demand.status !== "accepted" && 
-						(
-							offersDemand && 
-							Object.values(offersDemand).length === 0 
-						) && 
-						(
-							(userID && userID === demand.userID) || 
-							(
-								isAdmin(rolesUser) && 
-								(accountID && accountID === demand.accountID)
-							)
+						this.isUpdatable(
+							demand, 
+							offers, 
+							userID, 
+							rolesUser, 
+							accountID
 						)
 					) && 
 						<FloatingActionButton 
@@ -254,16 +522,15 @@ class Demand extends Component {
 				}
 				{
 					(
-						demand.status !== "accepted" && 
 						!dialogOfferShow && 
-						(accountID && accountID !== demand.accountID)
+						this.isOfferable(demand, accountID)
 					) && 
 						<FloatingActionButton 
 							secondary={true}
 							style={styles.floatingActionButton}
 							onTouchTap={this.dialogOfferToggle}
 						>
-							<contentAdd />
+							<ContentAdd />
 						</FloatingActionButton>
 				}
 				<DialogDemandUpdate
@@ -271,14 +538,12 @@ class Demand extends Component {
 					title={contexts["aghkZXZ-Tm9uZXIeCxIHQ29udGVudCIRVXBkYXRlIFRoZSBEZW1hbmQM"] || "Update The Demand"}
 					dialogShow={dialogDemandShow} 
 					demand={demand} 
-					tagIDsDemand={Object.keys(tagsDemand)} 
 					dialogToggle={this.dialogDemandToggle}
 				/>
 				<DialogOfferCreate
 					contexts={contexts} 
 					title={contexts["aghkZXZ-Tm9uZXIaCxIHQ29udGVudCINTWFrZSBBbiBPZmZlcgw"] || "Make An Offer"}
 					uID={userID}
-					dID={ID}
 					dialogShow={dialogOfferShow} 
 					dialogToggle={this.dialogOfferToggle}
 				/>
@@ -288,30 +553,30 @@ class Demand extends Component {
 }
 
 Demand.defaultProps = {
-	// Not necessary, because returned values by "filterAnObjectByKeys" 
-	// returns at least an empty object.
-	// contexts: {}, 
-	// photosDemand: {}, 
-	// tagsDemand: {}, 
-	demand: {}
+	contexts: {}, 
+	tagsDemand: {}, 
+	demand: {}, 
+	userID: "", 
+	accountID: "", 
+	rolesUser: {}
 }
 
 Demand.propTypes = {
 	contexts: PropTypes.object.isRequired, 
 	photosGet: PropTypes.func.isRequired, 
-	photosDemand: PropTypes.object.isRequired, 
+	photos: PropTypes.object, 
 	tagsDemandGet: PropTypes.func.isRequired, 
 	tagsDemand: PropTypes.object.isRequired, 
 	tagsGet: PropTypes.func.isRequired, 
-	tags: PropTypes.object.isRequired, 
-	tagsPagination: PropTypes.object.isRequired, 
+	tags: PropTypes.object, 
+	tagsPagination: PropTypes.object, 
 	offersGet: PropTypes.func.isRequired, 
-	offersDemand: PropTypes.object, 
+	offers: PropTypes.object, 
 	demandGet: PropTypes.func.isRequired, 
 	demand: PropTypes.object.isRequired, 
-	userID: PropTypes.string, 
-	accountID: PropTypes.string, 
-	rolesUser: PropTypes.object, 
+	userID: PropTypes.string.isRequired, 
+	accountID: PropTypes.string.isRequired, 
+	rolesUser: PropTypes.object.isRequired, 
 	demandDelete: PropTypes.func.isRequired
 }
 

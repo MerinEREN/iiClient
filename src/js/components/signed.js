@@ -10,7 +10,7 @@ import Divider from "material-ui/Divider"
 import ChevronLeft from "material-ui/svg-icons/navigation/chevron-left"
 import Language from "material-ui/svg-icons/action/language"
 import SignOut from "material-ui/svg-icons/action/exit-to-app"
-import {getRouteContents} from "./utilities"
+import {contextsGet} from "./utilities"
 
 const styles = {
 	divider: {
@@ -46,54 +46,64 @@ class Signed extends Component {
 	}
 	componentWillMount() {
 		const {
-			userLoggedGet, 
-			userRolesGet, 
-			userTagsGet, 
+			userGet, 
+			photosGet, 
+			rolesUserGet, 
+			tagsUserGet, 
 			languagesGet, 
 			signOutURLGet
 		} = this.props
-		userLoggedGet().then(response => { 
+		userGet({
+			URL: "/users/logged", 
+			key: "logged"
+		}).then(response => { 
 			if (response.ok) {
-				userRolesGet(
+				photosGet({
+					URL: `/photos?q=${response.ID}&type="main"`, 
+					key: response.ID
+				})
+				rolesUserGet(
 					{
-						URL: `/userRoles/${this.props.user.ID}`, 
-						key: this.props.user.ID
+						URL: `/rolesUser?q=${response.ID}`, 
+						key: response.ID
 					}
 				)
-				userTagsGet(
+				tagsUserGet(
 					{
-						URL: `/userTags/${this.props.user.ID}`, 
-						key: this.props.user.ID
+						URL: `/tagsUser?q=${response.ID}`, 
+						key: response.ID
 					}
 				)
+				signOutURLGet()
 			} else {
 				// Redirect unauthorized login attempts.
+				// USE RETURNED HEADER LINK TO REDIRECT !!!!!!!!!!!!!!!!!!!
 				browserHistory.push("/unauthorized")
 			}
 		})
 		languagesGet()
-		signOutURLGet()
 	}
-	selectLanguage(langID) {
+	languageSelect(lID) {
 		const {
 			cookies, 
-			routeContentsResetAll, 
-			getRouteContents: get, 
+			contextsResetAll, 
+			contextsGet: get, 
 			session
 		} = this.props
-		cookies.set("lang", langID)
-		routeContentsResetAll()
+		cookies.set("lang", lID)
+		contextsResetAll()
 		get({
-			URL: "/contents?pageID=body", 
+			URL: "/contexts?q=body", 
 			key: "body"
 		})
-		getRouteContents(session, {}, this.props)
-		this.setState({lang: langID})
+		contextsGet(session, {}, this.props)
+		this.setState({lang: lID})
 	}
 	render() {
 		const {
-			contents, 
+			contexts, 
 			user, 
+			userPhoto, 
 			languages, 
 			signOutURL
 		} = this.props
@@ -103,7 +113,7 @@ class Signed extends Component {
 					<IconButton 
 						style= {styles.iconButton}
 					>
-						<Avatar src={user.link || "/img/adele.jpg"} />
+						<Avatar src={userPhoto.link || "/img/adele.jpg"} />
 					</IconButton>
 				}
 				targetOrigin={{horizontal: "right", vertical: "top"}}
@@ -113,16 +123,16 @@ class Signed extends Component {
 				<Card style={styles.card}>
 					<CardHeader
 						title={user.email}
-						subtitle={`${contents["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFU2NvcmUM"]}: 4`} 
+						subtitle={`${contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFU2NvcmUM"]}: 4`} 
 						textStyle={styles.cardHeader.textStyle}
-						avatar={user.link || "/img/adele.jpg"}
+						avatar={userphoto.link || "/img/adele.jpg"}
 					/>
 				</Card>
 				<Divider style={styles.divider} />
 				{
-					Object.values(languages).length !== 0 && 
+					Object.keys(languages).length > 1 && 
 						<MenuItem 
-							primaryText={contents["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIITGFuZ3VhZ2UM"] || "Language"}
+							primaryText={contexts["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIITGFuZ3VhZ2UM"] || "Language"}
 							leftIcon={<ChevronLeft />}
 							rightIcon={<Language />}
 							menuItems={
@@ -131,10 +141,10 @@ class Signed extends Component {
 										l => 
 										<MenuItem 
 											key={l.ID}
-											primaryText={contents[l.contentID]} 
+											primaryText={contexts[l.contextID]} 
 											checked={l.ID === this.state.lang}
 											insetChildren={true}
-											onTouchTap={() => this.selectLanguage(l.ID)}
+											onTouchTap={() => this.languageSelect(l.ID)}
 										/>
 									)
 							}
@@ -145,7 +155,7 @@ class Signed extends Component {
 					style={styles.a}
 				>
 					<MenuItem 
-						primaryText={contents["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHTG9nIG91dAw"] || "Log out"}
+						primaryText={contexts["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHTG9nIG91dAw"] || "Log out"}
 						insetChildren={true}
 						rightIcon={<SignOut />}
 					/>
@@ -155,21 +165,27 @@ class Signed extends Component {
 	}
 }
 
+Signed.defaultProps = {
+	userPhoto: {}
+}
+
 Signed.propTypes = {
-	session: PropTypes.string.isRequired,
 	cookies: instanceOf(Cookies).isRequired, 
-	contents: PropTypes.object.isRequired,
+	session: PropTypes.string.isRequired,
 	lang: PropTypes.string.isRequired, 
-	languagesGet: PropTypes.func.isRequired, 
-	languages: PropTypes.object.isRequired, 
-	userLoggedGet: PropTypes.func.isRequired, 
+	contexts: PropTypes.object.isRequired,
 	user: PropTypes.object.isRequired, 
-	userRolesGet: PropTypes.func.isRequired, 
-	userTagsGet: PropTypes.func.isRequired, 
-	signOutURLGet: PropTypes.func.isRequired, 
+	userPhoto: PropTypes.object, 
+	languages: PropTypes.object.isRequired, 
 	signOutURL: PropTypes.string.isRequired, 
-	routeContentsResetAll: PropTypes.func.isRequired,
-	getRouteContents: PropTypes.func.isRequired
+	contextsGet: PropTypes.func.isRequired, 
+	userGet: PropTypes.func.isRequired, 
+	photosGet: PropTypes.func.isRequired, 
+	rolesUserGet: PropTypes.func.isRequired, 
+	tagsUserGet: PropTypes.func.isRequired, 
+	languagesGet: PropTypes.func.isRequired, 
+	signOutURLGet: PropTypes.func.isRequired, 
+	contextsResetAll: PropTypes.func.isRequired
 }
 
 // My custom "Signed" component acts like "IconMenu" mui component !!!!!!!!!!!!!!!!!!!!!!!

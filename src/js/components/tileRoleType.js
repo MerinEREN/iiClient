@@ -1,12 +1,12 @@
 import React from "react"
 import PropTypes from "prop-types"
 import {GridTile} from "material-ui/GridList"
-import Avatar from 'material-ui/Avatar'
-import Chip from 'material-ui/Chip'
+import Chip from "material-ui/Chip"
+import Avatar from "material-ui/Avatar"
 import {blue300} from "material-ui/styles/colors"
-import {getFirstLetters} from "./utilities"
+import {firstLettersGenerate} from "./utilities"
 
-const RoleTile = ({role: {ID}, text, handleDelete}) => (
+const TileRoleType = ({roleType: {ID}, handleDelete}) => (
 	<GridTile>
 		<Chip 
 			onRequestDelete={() => handleDelete(ID)}
@@ -15,17 +15,18 @@ const RoleTile = ({role: {ID}, text, handleDelete}) => (
 				size={32}
 				color={blue300}
 			>
-				{getFirstLetters(text)}
+				{firstLettersGenerate(ID)}
 			</Avatar>
-			{text}
+			{ID}
 		</Chip>
 	</GridTile>
 )
 
-RoleTile.propTypes = {
-	role: PropTypes.object.isRequired, 
-	text: PropTypes.string, 
+TileRoleType.propTypes = {
+	roleType: PropTypes.object.isRequired, 
 	handleDelete: PropTypes.func.isRequired
 }
 
-export default RoleTile
+TileRoleType.muiName = "GridTile"
+
+export default TileRoleType

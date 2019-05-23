@@ -27,13 +27,13 @@ const styles = {
  (The vertical stepper can also be used without `<StepContent>` to display 
  a basic stepper.)
  **/
-const VerticalStepper = ({contents, stepLabels, stepContents, stepIndex, updateStepIndex, save, cancel}) => {
+const VerticalStepper = ({contexts, stepLabels, stepContents, stepIndex, updateStepIndex, save, cancel}) => {
 	const stepActions = <div style={styles.stepActionsContainer}>
 		{
 			(save && stepIndex === stepContents.length - 1) 
 			&& 
 			<RaisedButton
-				label={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
+				label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
 				disableTouchRipple={true}
 				disableFocusRipple={true}
 				primary={true}
@@ -45,7 +45,7 @@ const VerticalStepper = ({contents, stepLabels, stepContents, stepIndex, updateS
 			stepIndex !== stepContents.length - 1 
 			&& 
 			<RaisedButton
-				label={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIETmV4dAw"] || "Next"}
+				label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIETmV4dAw"] || "Next"}
 				disableTouchRipple={true}
 				disableFocusRipple={true}
 				primary={true}
@@ -57,7 +57,7 @@ const VerticalStepper = ({contents, stepLabels, stepContents, stepIndex, updateS
 			(cancel && stepIndex === stepContents.length - 1) 
 			&& 
 			<RaisedButton
-				label={contents["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGQ2FuY2VsDA"] || "Cancel"}
+				label={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGQ2FuY2VsDA"] || "Cancel"}
 				disableTouchRipple={true}
 				disableFocusRipple={true}
 				secondary={true}
@@ -69,7 +69,7 @@ const VerticalStepper = ({contents, stepLabels, stepContents, stepIndex, updateS
 			stepIndex > 0 
 			&& 
 			<FlatButton
-				label={contents["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEQmFjaww"] || "Back"}
+				label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEQmFjaww"] || "Back"}
 				disabled={stepIndex === 0}
 				disableTouchRipple={true}
 				disableFocusRipple={true}
@@ -94,11 +94,11 @@ const VerticalStepper = ({contents, stepLabels, stepContents, stepIndex, updateS
 }
 
 VerticalStepper.defaultProps = {
-	contents: {}
+	contexts: {}
 }
 
 VerticalStepper.propTypes = {
-	contents: PropTypes.object.isRequired,
+	contexts: PropTypes.object.isRequired,
 	stepLabels: PropTypes.array.isRequired,
 	stepContents: PropTypes.array.isRequired,
 	stepIndex: PropTypes.number.isRequired,

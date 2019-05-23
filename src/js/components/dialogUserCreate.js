@@ -2,18 +2,19 @@ import React, {Component}  from "react"
 import PropTypes from "prop-types"
 import Dialog from "material-ui/Dialog"
 import VerticalStepper from "./verticalStepper"
+import TextField from "material-ui/TextField"
+import SelectField from "material-ui/SelectField"
 import AutoComplete from "material-ui/AutoComplete"
+import MenuItem from "material-ui/MenuItem"
 import Chip from "material-ui/Chip"
 import Avatar from "material-ui/Avatar"
 import {blue300} from "material-ui/styles/colors"
-import {firstLettersGenerate} from "./utilities"
-import MenuItem from "material-ui/MenuItem"
-import TextField from "material-ui/TextField"
 import FlatButton from "material-ui/FlatButton"
+import {firstLettersGenerate} from "./utilities"
 import {filterAnObjectByKeys} from "../middlewares/utilities"
 
-// Creates a new demand.
-class DialogDemandCreate extends Component {
+// Creates a new user.
+class DialogUserCreate extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -37,13 +38,17 @@ class DialogDemandCreate extends Component {
 			stepIndex
 		} = this.state
 		const {
+			rolesGet, 
 			tagsGet
 		} = this.props
 		switch (direction) {
 			case "next":
 				if(this.handleRequiredField(stepIndex))
 					return
-				if(stepIndex === 0)
+				switch (stepIndex) {
+				case 1:
+					rolesGet()
+				case 2:
 					// Getting most used six tags to show 
 					// as initial autocomplete values 
 					// if they does not exist yet.
@@ -51,6 +56,7 @@ class DialogDemandCreate extends Component {
 						URL: "/tags?q=top", 
 						key: "top"
 					})
+				}
 				this.setState({
 					stepIndex: stepIndex + 1,
 				})
@@ -73,14 +79,23 @@ class DialogDemandCreate extends Component {
 		let key
 		switch (i) {
 			case 1:
-				key = "tagIDs"
+				key = "email"
+				/* if(!isValidEmail(newObject[key])) {
+					this.setState({
+						inputErrTexts: {
+							...inputErrTexts, 
+							[key]: contexts["aghkZXZ-Tm9uZXIUCxIHQ29udGVudBiAgICAgLaNCgw"] || "Invalid email"
+						}
+					})
+					return true
+				} */
 				break
 			case 2:
-				key = "description"
+				key = "roleIDs"
 				break
 			case 3:
 				/* Uncoment to make required
-				key = "photos"
+				key = "tagIDs"
 				break */
 			default:
 				return false
@@ -99,8 +114,8 @@ class DialogDemandCreate extends Component {
 	// index and values are for select field only
 	handleFieldChange(event, index, values) {
 		const target = event.target
-		const name = target.name
-		const value = target.value
+		const name = target.name || "roleIDs"
+		const value = target.value || values
 		const {
 			newObject, 
 			inputErrTexts
@@ -161,28 +176,24 @@ class DialogDemandCreate extends Component {
 		if(this.handleRequiredField(stepIndex))
 			return
 		const {
-			uID, 
 			dialogToggle, 
-			demandPost
+			account: {ID}, 
+			userPost
 		} = this.props
 		dialogToggle()
-		let photos = []
-		Object.values(this.inputPhotos.files).forEach(v => {
-			photos.push(v)
-		})
-		// TRY TO SEND AS A BLOB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		demandPost({
-			URL: `/demands?uID=${uID}`, 
+		// FIND A SOLUTION FOR THAT "ID" THING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		userPost({
+			URL: `/users?q=${ID}`, 
 			data: {
 				type: "FormData", 
 				// Use "contextType" for "Blob" type.
 				// contextType: "application/json", 
 				value: {
-					...newObject, 
-					photos
+					ID: "dummy", 
+					...newObject
 				}
 			}, 
-			key: "timeline"
+			key: ID
 		})
 		this.setState({
 			stepIndex: 0, 
@@ -197,16 +208,68 @@ class DialogDemandCreate extends Component {
 		return Object.keys(contexts).length > 0 ?
 			[
 				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRXhwbGFuYXRpb24M"], 
-				contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEVGFncww"], 
-				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"], 
-				contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGUGhvdG9zDA"]
+				"Email", 
+				contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFUm9sZXMM"], 
+				contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEVGFncww"]
 			] : 
 			[
 				"Explanation", 
-				"Tags", 
-				"Description", 
-				"Photos"
+				"Email", 
+				"Roles", 
+				"Tags"
 			]
+	}
+	explanationField() {
+		const {
+			contexts
+		} = this.props
+		return <p>
+			{contexts["aghkZXZ-Tm9uZXJBCxIHQ29udGVudCI0QWRkIGEgbmV3IHVzZXIuIEVtYWlsIGFuZCBSb2xlcyBmaWVsZHMgYXJlIHJlcXVpcmVkLgw"] || "Add a new user. Email and Roles fields are required."}
+		</p>
+	}
+	emailField() {
+		const {
+			newObject: {email}, 
+			inputErrTexts
+		} = this.state
+		return <TextField 
+			name="email" 
+			value={email || ""}
+			floatingLabelText={"Email"}
+			errorText={inputErrTexts.email}
+			onChange={this.handleFieldChange}
+		/>
+	}
+	roleItems(roleIDs, contexts) {
+		const {
+			roles
+		} = this.props
+		return Object.entries(roles).map(([k, v]) => <MenuItem
+			key={k}
+			value={k}
+			primaryText={contexts[v.contextID]}
+			checked={roleIDs && roleIDs.indexOf(k) > -1}
+			insetChildren={true}
+		/>
+		)
+	}
+	rolesField() {
+		const {
+			newObject: {roleIDs}, 
+			inputErrTexts
+		} = this.state
+		const {
+			contexts
+		} = this.props
+		return <SelectField
+			value={roleIDs}
+			hintText={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFUm9sZXMM"] || "Roles"}
+			errorText={inputErrTexts.roleIDs}
+			onChange={this.handleFieldChange}
+			multiple={true} 
+		>
+			{this.roleItems(roleIDs, contexts)}
+		</SelectField>
 	}
 	handleTagIDRemove(ID) {
 		const {
@@ -302,44 +365,12 @@ class DialogDemandCreate extends Component {
 			{this.tagsSelected()}
 		</div>
 	}
-	descriptionField() {
-		const {
-			newObject: {description}, 
-			inputErrTexts
-		} = this.state
-		const {
-			contexts
-		} = this.props
-		return <TextField 
-			name="description" 
-			value={description || ""}
-			floatingLabelText={contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"] || "Description"}
-			errorText={inputErrTexts.description}
-			fullWidth={true}
-			multiLine={true}
-			rows={3}
-			rowsMax={5}
-			onChange={this.handleFieldChange}
-		/>
-	}
 	stepContents() {
-		const {
-			contexts
-		} = this.props
 		return [
-			<p>
-				{
-					contexts["aghkZXZ-Tm9uZXJLCxIHQ29udGVudCI-Q3JlYXRlIGEgbmV3IGRlbWFuZC4gVGFncyBhbmQgRGVzY3JpcHRpb24gZmllbGRzIGFyZSByZXF1aXJlZC4M"]
-				}
-			</p>, 
-			this.tagsField(), 
-			this.descriptionField(), 
-			<input 
-				type="file"
-				accept="image/*" 
-				ref={input => this.inputPhotos = input}
-				multiple
-			/>
+			this.explanationField(), 
+			this.emailField(), 
+			this.rolesField(), 
+			this.tagsField()
 		]
 	}
 	children() {
@@ -394,18 +425,19 @@ class DialogDemandCreate extends Component {
 	}
 }
 
-DialogDemandCreate.propTypes = {
+DialogUserCreate.propTypes = {
 	contexts: PropTypes.object.isRequired,
 	title: PropTypes.string.isRequired,
 	dialogShow: PropTypes.bool.isRequired, 
+	rolesGet: PropTypes.func.isRequired, 
+	roles: PropTypes.object.isRequired, 
 	tagsGet: PropTypes.func.isRequired, 
 	tags: PropTypes.object.isRequired, 
 	tagsPagination: PropTypes.object.isRequired, 
-	uID: PropTypes.string.isRequired,
 	dialogToggle: PropTypes.func.isRequired, 
-	demandPost: PropTypes.func.isRequired
+	userPost: PropTypes.func.isRequired
 }
 
-DialogDemandCreate.muiName = "Dialog"
+DialogUserCreate.muiName = "Dialog"
 
-export default DialogDemandCreate
+export default DialogUserCreate
