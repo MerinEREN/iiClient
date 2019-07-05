@@ -1,4 +1,5 @@
 import React from "react"
+import PropTypes from "prop-types"
 import {GridList, GridTile} from "material-ui/GridList"
 import ChipCounter from "../containers/chipCounter"
 import ListTimeline from "../containers/listTimeline"
@@ -14,7 +15,7 @@ const styles = {
 	}
 }
 
-const Timeline = () =>  (
+const Timeline = props =>  (
 	<div style={styles.root}>
 		<GridList 
 			cellHeight="auto"
@@ -24,11 +25,19 @@ const Timeline = () =>  (
 				<ChipCounter id={"timeline"} />
 			</GridTile>
 			<GridTile cols={2}>
-				<ListTimeline/>
+				<ListTimeline {...props}/>
 			</GridTile>
 		</GridList>
 	</div>
 )
+
+Timeline.defaultProps = {
+	contexts: {}
+}
+
+Timeline.propTypes = {
+	contexts: PropTypes.object.isRequired
+}
 
 Timeline.muiName = "GridList"
 

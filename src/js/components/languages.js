@@ -4,7 +4,7 @@ import {GridList, GridTile} from "material-ui/GridList"
 import RaisedButton from "material-ui/RaisedButton"
 import FloatingActionButton from "material-ui/FloatingActionButton"
 import ContentAdd from "material-ui/svg-icons/content/add"
-import DialogLanguageCreate from "../containers/DialogLanguageCreate"
+import DialogLanguageCreate from "../containers/dialogLanguageCreate"
 import TileLanguage from "./tileLanguage"
 
 const styles = {

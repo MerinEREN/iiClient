@@ -1,8 +1,7 @@
 import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
-import ListTimelineComponent from "../components/timelineList"
-import itemsGet from "../middlewares/ListTimeline"
-import {filterAnObjectByKeys} from "../middlewares/utilities"
+import ListTimelineComponent from "../components/listTimeline"
+import itemsGet from "../middlewares/listTimeline"
 
 const sortByLastModified = (is) => {
 	// Return sorted items array here.
@@ -55,11 +54,6 @@ const mapStateToProps = state => {
 		entitiesBuffered
 	} = state
 	return {
-		contexts: pagination.contexts.timeline && 
-		filterAnObjectByKeys(
-			entitiesBuffered.contexts, 
-			pagination.contexts.timeline.IDs
-		), 
 		uID: pagination.users.logged && pagination.users.logged.IDs[0], 
 		items: filterObjectsByKeys(pagination, entitiesBuffered)
 	}

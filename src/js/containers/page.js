@@ -4,7 +4,7 @@ import PageComponent from "../components/page"
 import photosGet from "../middlewares/photos"
 import pageGet, {pageDelete} from "../middlewares/page"
 import {pagesDelete} from "../middlewares/pages"
-import {removeUpdateContentsWithThatPage} from "../middlewares/contents"
+import {removeUpdateCoxtentsWithThatPage} from "../middlewares/contexts"
 import {filterAnObjectByKeys} from "../middlewares/utilities"
 
 const mapStateToProps = (state, ownProps) => {
@@ -34,7 +34,7 @@ const mapDispatchToProps = dispatch => bindActionCreators(
 		photosGet, 
 		pageGet, 
 		pageDelete, 
-		removeUpdateContentsWithThatPage
+		removeUpdateCoxtentsWithThatPage
 	},
 	dispatch
 )

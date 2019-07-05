@@ -20,22 +20,25 @@ class ChipCounter extends Component {
 		clearInterval(this.interval)
 	}
 	componentWillReceiveProps(nextProps) {
-		this.setState({display: "flex"})
+		if (nextProps.count)
+			this.setState({display: "flex"})
 	}
 	countGet() {
 		const {
 			countGet, 
 			URLGet
 		} = this.props
-		// CHANGE THE URL !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		countGet({
-			URL: URLGet("timeline", "nextPageURL"), 
+			URL: URLGet("timeline", "prev"), 
 			key: "timeline"
 		})
 	}
 	dataGet() {
+		const {
+			itemsGet
+		} = this.props
 		this.setState({display: "none"})
-		this.props.itemsGet(null, "timeline", "nextPageURL")
+		itemsGet(null, "timeline", "next")
 	}
 	render() {
 		return <Chip 

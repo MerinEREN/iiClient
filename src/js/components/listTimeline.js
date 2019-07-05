@@ -12,7 +12,7 @@ class ListTimeline extends Component {
 			itemsGet
 		} = this.props
 		if (uID !== nextProps.uID)
-			itemsGet(uID, "timeline", null)
+			itemsGet(nextProps.uID, "timeline", null)
 	}
 	render() {
 		const {
@@ -50,7 +50,6 @@ class ListTimeline extends Component {
 }
 
 ListTimeline.defaultProps = {
-	contexts: {}, 
 	uID: ""
 }
 

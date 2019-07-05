@@ -22,6 +22,7 @@ export const demandPut = makeLoader({
 	defaults: {
 		method: "PUT", 
 		headers: {
+			"Content-Type": "application/json", 
 			"Accept": "application/json"
 		}, 
 		kind: "demands"

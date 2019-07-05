@@ -18,6 +18,12 @@ const demandsGet = makeLoader({
 export const demandPost = makeLoader({
 	defaults: {
 		method: "POST"
+		/*
+		method: "POST", 
+		headers: {
+			"Content-Type": "application/json"
+		}
+		*/
 	},
 	actionCreators: {
 		actionsRequest: [demandsRequest],

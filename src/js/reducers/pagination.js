@@ -2,7 +2,7 @@ import {combineReducers} from "redux"
 import {accountsPagination as accounts} from "./accounts"
 import {languagesPagination as languages} from "./languages"
 import {pagesPagination as pages} from "./pages"
-import {contentsPagination as contents} from "./contents"
+import {contextsPagination as contexts} from "./contexts"
 import {tagsPagination as tags} from "./tags"
 import {rolesPagination as roles} from "./roles"
 import {typesPagination as roleTypes} from "./roleTypes"
@@ -16,7 +16,7 @@ const pagination = combineReducers({
 	accounts, 
 	languages, 
 	pages, 
-	contents, 
+	contexts, 
 	tags, 
 	roles, 
 	roleTypes, 

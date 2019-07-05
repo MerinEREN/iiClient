@@ -2,7 +2,7 @@ import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
 import ChipCounterComponent from "../components/chipCounter"
 import countGet, {URLGet} from "../middlewares/counters"
-import itemsGet from "../middlewares/timelineList"
+import itemsGet from "../middlewares/listTimeline"
 
 const mapStateToProps = state => {
 	return {

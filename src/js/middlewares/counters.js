@@ -5,24 +5,23 @@ import {
 	counterSuccess
 } from "../actions/counters"
 
-// CHANGE THIS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-export const URLGet = (key, paginationURL) => (dispatch, getState) => {
+export const URLGet = (key, link) => (dispatch, getState) => {
 	switch (key) {
 		case "something": 
 			break
 		default:
 			const {
 				demands: {
-					timeline: {[paginationURL]: dURL}
+					[key]: {hrefs: {[link]: dURL}}
 				}, 
 				/* offers: {
-					timeline: {[paginationURL]: oURL}
+					[key]: {hrefs: {[link]: oURL}}
 				}, */
 				offers: {
-					timeline: oURL
+					[key]: oURL
 				},
 				servicePacks: {
-					timeline: {[paginationURL]: spURL}
+					[key]: {hrefs: {[link]: spURL}}
 				}
 			} = getState().pagination
 			return generateURL(key, dURL, oURL, spURL)

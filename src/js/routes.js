@@ -4,13 +4,13 @@ import IndexRoute from "react-router/lib/IndexRoute"
 import Redirect from "react-router/lib/Redirect"
 import IndexRedirect from "react-router/lib/IndexRedirect"
 import Body from "./containers/body"
-import Timeline from "./components/timeline"
+import Timeline from "./containers/timeline"
 import LandingPage from "./containers/landingPage"
 import Dashboard from "./components/dashboard"
 import Languages from "./containers/languages"
 import Pages from "./containers/pages"
 import Page from "./containers/page"
-import Contents from "./containers/contents"
+import Contexts from "./containers/contexts"
 import Tags from "./containers/tags"
 import Roles from "./containers/roles"
 import RoleTypes from "./containers/roleTypes"
@@ -37,7 +37,7 @@ const routes  = <Route path="/" component={Body}>
 	<Route path="languages" component={Languages} />
 	<Route path="pages" component={Pages} />
 	<Route path="pages/:ID" component={Page} />
-	<Route path="contents" component={Contents} />
+	<Route path="contexts" component={Contexts} />
 	<Route path="tags" component={Tags} />
 	<Route path="roles" component={Roles} />
 	<Route path="roleTypes" component={RoleTypes} />

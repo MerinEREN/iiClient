@@ -31,7 +31,8 @@ export const paginate = ({types, mapActionToKey}) => {
 	// "reset" resets the "IDs" with given response.
 	const updatePagination = (state = {
 		IDs: [],
-		hrefs: {}, 
+		// "hrefs" value is important for URL value assignment, do not change it.
+		hrefs: null, 
 		error: null, 
 		isFetching: false,
 		didValidate: false
@@ -39,7 +40,6 @@ export const paginate = ({types, mapActionToKey}) => {
 		const {
 			type, 
 			method, 
-			data, 
 			response, 
 			hrefs, 
 			reset, 
@@ -47,8 +47,8 @@ export const paginate = ({types, mapActionToKey}) => {
 			didValidate
 		} = action
 		let obj = {}
-		const data = data || (response.data || response)
-		// If the data is not enveloped.
+		let data = action.data || (response.data || response)
+		// If the data is not plural.
 		if (data.hasOwnProperty(ID))
 			data = {[data.ID]: data}
 		switch (type) {
@@ -169,12 +169,11 @@ export const setPartiallyOrResetAnObject = ({types, mapActionToKey}) => {
 		const {
 			type, 
 			responseStatus, 
-			response, 
-			data
+			response
 		} = action
 		if (responseStatus === 204)
 			return state
-		const data = data || (response.data || response)
+		const data = action.data || (response.data || response)
 		switch (type) {
 			case setType:
 				const key = mapActionToKey(action)
@@ -219,7 +218,7 @@ export const fetchRequest = (state, action) => {
 						...data
 					}
 				}
-			// If the data is the envelop of the datas.
+			// If the data is plural.
 			let obj = {...state}
 			Object.values(data).forEach(v => {
 				obj = {
@@ -273,7 +272,7 @@ export const removeFromAnObject = (state, data) => {
 				if (data.ID !== k)
 					newState[k] = v
 			} else {
-				// If the data is the envelop of the datas.
+				// If the data is plural.
 				if (!data.hasOwnProperty(k))
 					newState[k] = v
 			}
@@ -313,6 +312,7 @@ export const fetchSuccess = (state, action) => {
 			}
 		default:
 			const data = response.data || response
+			let obj = {...state}
 			switch (method) {
 				case "PUT":
 				case "PATCH":
@@ -324,8 +324,7 @@ export const fetchSuccess = (state, action) => {
 								...data
 							}
 						}
-					// If the data is the envelop of the datas.
-					let obj = {...state}
+					// If the data is plural.
 					Object.values(data).forEach(v => {
 						obj = {
 							...obj, 
@@ -338,11 +337,10 @@ export const fetchSuccess = (state, action) => {
 					return obj
 				case "POST":
 				default:
-					let obj = {...state}
 					if (data.ID) {
 						if (obj.hasOwnProperty(data.ID)) {
-							// For "contexts" "value" update 
-							// after language change.
+							// To prevent losing 
+							// entity fields.
 							obj[data.ID] = {
 								...obj[data.ID], 
 								...data
@@ -351,11 +349,11 @@ export const fetchSuccess = (state, action) => {
 							obj[data.ID] = data
 						}
 					} else {
-						// If the data is the envelop of the datas.
+						// If the data is plural.
 						Object.values(data).forEach(v => {
 							if (obj.hasOwnProperty(v.ID)) {
-								// For "contexts" "value" update 
-								// after language change.
+								// To prevent losing 
+								// entity fields.
 								obj[v.ID] = {
 									...obj[v.ID], 
 									...v

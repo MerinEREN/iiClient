@@ -3,18 +3,18 @@ export const isAdmin = (roles) => {
 		return false
 	let check = false
 	Object.values(roles).forEach(v => {
-		if(v.contentID === "aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFYWRtaW4M")
+		if(v.contextID === "aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFYWRtaW4M")
 			check = true
 	})
 	return check
 }
 
-export const isContentEditor = (roles) => {
+export const isContextEditor = (roles) => {
 	if (!roles)
 		return false
 	let check = false
 	Object.values(roles).forEach(v => {
-		if(v.contentID === "aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOQ29udGVudCBFZGl0b3IM")
+		if(v.contextID === "aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOQ29udGVudCBFZGl0b3IM")
 			check = true
 	})
 	return check
@@ -34,6 +34,39 @@ export const addIntoRemoveFromArray = (v, a) => {
 */
 
 export const contextsGet = (session, prevProps, nextProps) => {
+	/*
+	let URL = new URL("/contexts", window.location.href)
+	let pathname = window.location.pathname
+	WHEN prevProps.routes !== nextProps.routes !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	if (pathname === "/") {
+		URL.searchParams.set("pID", "body")
+		get({
+			key: "body", 
+			URL
+		})
+		if (session) {
+			URL.searchParams.set("pID", "timeline")
+			get({
+				key: "timeline", 
+				URL
+			})
+		} else {
+			URL.searchParams.set("pID", "landingpage")
+			get({
+				key: "landingpage", 
+				URL
+			})
+		}
+	} else {
+		// PARSE THE "pathname" !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		pathname = pathname.toLowerCase()
+		URL.searchParams.set("pID", pathname)
+		get({
+			key: pathname, 
+			URL
+		})
+	}
+	*/
 	if (prevProps.routes !== nextProps.routes) {
 		// console.log(prevProps.routes)
 		// console.log(nextProps.routes)
@@ -42,23 +75,33 @@ export const contextsGet = (session, prevProps, nextProps) => {
 			location, 
 			contextsGet: get
 		} = nextProps
+		let URL = new URL("/contexts", window.location.href)
 		routes.forEach(v => {
 			if (v.path) {
 				if (v.path === "/") {
 					if (location.pathname === "/") {
+						URL.searchParams.set("pID", "body")
 						get({
-							URL: "/contexts?q=body", 
-							key: "body"
+							key: "body", 
+							URL
 						})
 						if (session) {
+							URL.searchParams.set(
+								"pID", 
+								"timeline"
+							)
 							get({
-								URL: "/contexts?q=timeline", 
-								key: "timeline"
+								key: "timeline", 
+								URL
 							})
 						} else {
+							URL.searchParams.set(
+								"pID", 
+								"landingpage"
+							)
 							get({
-								URL: "/contexts?q=landingpage", 
-								key: "landingpage"
+								key: "landingpage", 
+								URL
 							})
 						}
 					}
@@ -72,9 +115,10 @@ export const contextsGet = (session, prevProps, nextProps) => {
 						path = v.path.replace(":ID/", "")
 					}
 					path = path.toLowerCase()
+					URL.searchParams.set("pID", path)
 					get({
-						URL: `/contexts?q=${path}`, 
-						key: path
+						key: path, 
+						URL
 					})
 				}
 			}

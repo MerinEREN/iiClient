@@ -15,7 +15,7 @@ import Unauthorized from "./unauthorized"
 import Signin  from "../containers/signin"
 import Signed  from "../containers/signed"
 import Drawer from "../containers/drawer"
-import DialogDemandCreate from "../containers/DialogDemandCreate"
+import DialogDemandCreate from "../containers/dialogDemandCreate"
 import {contextsGet} from "./utilities"
 
 class Body extends Component {
@@ -153,7 +153,7 @@ class Body extends Component {
 									style={this.styles.badge.style}
 								>
 									<IconButton 
-										tooltip={contexts["aghkZXZ-Tm9uZXIaCxIHQ29udGVudCINTm90aWZpY2F0aW9ucww"] || "notifications"}
+										tooltip={contexts["aghkZXZ-Tm9uZXIaCxIHQ29udGVudCINTm90aWZpY2F0aW9ucww"].value || "notifications"}
 									>
 										<NotificationsIcon/>
 									</IconButton>
@@ -228,7 +228,7 @@ class Body extends Component {
 				}
 				<DialogDemandCreate
 					contexts={contexts} 
-					title={contexts["aghkZXZ-Tm9uZXIgCxIHQ29udGVudCITQ3JlYXRlIEEgTmV3IERlbWFuZAw"] || "Create A New Demand"}
+					title={contexts["aghkZXZ-Tm9uZXIgCxIHQ29udGVudCITQ3JlYXRlIEEgTmV3IERlbWFuZAw"].value || "Create A New Demand"}
 					dialogShow={dialogShow} 
 					uID={user.ID}
 					dialogToggle={this.dialogToggle}

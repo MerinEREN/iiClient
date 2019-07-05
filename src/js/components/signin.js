@@ -44,7 +44,7 @@ class Signin extends Component {
 		return (
 			<div>
 				<FlatButton
-					label={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGTG9nIGluDA"] || "Log in"}
+					label={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGTG9nIGluDA"].value || "Log in"}
 					onTouchTap={this.handleTouchTap}
 				/>
 				<Popover

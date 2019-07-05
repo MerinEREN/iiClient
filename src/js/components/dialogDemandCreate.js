@@ -16,6 +16,7 @@ import {filterAnObjectByKeys} from "../middlewares/utilities"
 class DialogDemandCreate extends Component {
 	constructor(props) {
 		super(props)
+		this.URL = new URL(window.location.href)
 		this.state = {
 			stepIndex: 0, 
 			searchText: "", 
@@ -43,14 +44,17 @@ class DialogDemandCreate extends Component {
 			case "next":
 				if(this.handleRequiredField(stepIndex))
 					return
-				if(stepIndex === 0)
+				if(stepIndex === 0) {
+					this.URL.pathname = "/tags"
+					this.URL.searchParams.set("q", "top")
 					// Getting most used six tags to show 
 					// as initial autocomplete values 
 					// if they does not exist yet.
 					tagsGet({
-						URL: "/tags?q=top", 
+						URL: this.URL, 
 						key: "top"
 					})
+				}
 				this.setState({
 					stepIndex: stepIndex + 1,
 				})
@@ -89,7 +93,7 @@ class DialogDemandCreate extends Component {
 			this.setState({
 				inputErrTexts: {
 					...inputErrTexts, 
-					[key]: contexts["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"] || "Required Field"
+					[key]: contexts["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"].value || "Required Field"
 				}
 			})
 			return true
@@ -125,8 +129,11 @@ class DialogDemandCreate extends Component {
 		} = this.props
 		clearTimeout(this.timer)
 		if (v.length > 2) {
+			if (this.URL.pathname !== "/tags")
+				this.URL.pathname = "/tags"
+			this.URL.searchParams.set("q", v)
 			this.timer = setTimeout(() => tagsGet({
-				URL: `/tags?q=${v}`, 
+				URL: this.URL, 
 				key: v
 			}), 1000)
 		}
@@ -166,20 +173,21 @@ class DialogDemandCreate extends Component {
 			demandPost
 		} = this.props
 		dialogToggle()
-		let photos = []
+		let files = []
 		Object.values(this.inputPhotos.files).forEach(v => {
-			photos.push(v)
+			files.push(v)
 		})
-		// TRY TO SEND AS A BLOB !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		this.URL.pathname = "/demands"
+		this.URL.searchParams.set("uID", uID)
 		demandPost({
-			URL: `/demands?uID=${uID}`, 
+			URL: this.URL, 
 			data: {
 				type: "FormData", 
 				// Use "contextType" for "Blob" type.
 				// contextType: "application/json", 
 				value: {
 					...newObject, 
-					photos
+					files
 				}
 			}, 
 			key: "timeline"
@@ -196,10 +204,10 @@ class DialogDemandCreate extends Component {
 		} = this.props
 		return Object.keys(contexts).length > 0 ?
 			[
-				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRXhwbGFuYXRpb24M"], 
-				contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEVGFncww"], 
-				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"], 
-				contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGUGhvdG9zDA"]
+				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRXhwbGFuYXRpb24M"].value, 
+				contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEVGFncww"].value, 
+				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"].value, 
+				contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGUGhvdG9zDA"].value
 			] : 
 			[
 				"Explanation", 
@@ -239,10 +247,10 @@ class DialogDemandCreate extends Component {
 					color={blue300}
 				>
 					{firstLettersGenerate(
-						contexts[tags[v].contextID]
+						contexts[tags[v].contextID].value
 					)}
 				</Avatar>
-				{contexts[tags[v].contextID]}
+				{contexts[tags[v].contextID].value}
 			</Chip>
 		)
 	}
@@ -273,7 +281,7 @@ class DialogDemandCreate extends Component {
 						<MenuItem
 							key={k}
 							value={k}
-							primaryText={contexts[v.contextID]}
+							primaryText={contexts[v.contextID].value}
 						/>
 					)
 				}
@@ -292,8 +300,8 @@ class DialogDemandCreate extends Component {
 				searchText={searchText}
 				filter={AutoComplete.noFilter}
 				dataSource={this.dataSourceTags()}
-				hintText={contexts["aghkZXZ-Tm9uZXIZCxIHQ29udGVudCIMU2VhcmNoIGEgdGFnDA"] || "Search a tag"}
-				floatingLabelText={contexts["aghkZXZ-Tm9uZXIQCxIHQ29udGVudCIDVGFnDA"] || "Tag"}
+				hintText={contexts["aghkZXZ-Tm9uZXIZCxIHQ29udGVudCIMU2VhcmNoIGEgdGFnDA"].value || "Search a tag"}
+				floatingLabelText={contexts["aghkZXZ-Tm9uZXIQCxIHQ29udGVudCIDVGFnDA"].value || "Tag"}
 				errorText={inputErrTexts.tagIDs}
 				onUpdateInput={this.handleAutoComplete} 
 				onNewRequest={this.handleNewRequest}
@@ -313,7 +321,7 @@ class DialogDemandCreate extends Component {
 		return <TextField 
 			name="description" 
 			value={description || ""}
-			floatingLabelText={contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"] || "Description"}
+			floatingLabelText={contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"].value || "Description"}
 			errorText={inputErrTexts.description}
 			fullWidth={true}
 			multiLine={true}
@@ -329,7 +337,7 @@ class DialogDemandCreate extends Component {
 		return [
 			<p>
 				{
-					contexts["aghkZXZ-Tm9uZXJLCxIHQ29udGVudCI-Q3JlYXRlIGEgbmV3IGRlbWFuZC4gVGFncyBhbmQgRGVzY3JpcHRpb24gZmllbGRzIGFyZSByZXF1aXJlZC4M"]
+					contexts["aghkZXZ-Tm9uZXJLCxIHQ29udGVudCI-Q3JlYXRlIGEgbmV3IGRlbWFuZC4gVGFncyBhbmQgRGVzY3JpcHRpb24gZmllbGRzIGFyZSByZXF1aXJlZC4M"].value
 				}
 			</p>, 
 			this.tagsField(), 
@@ -368,12 +376,12 @@ class DialogDemandCreate extends Component {
 
 		let actions = [
 			<FlatButton
-				label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
+				label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"].value || "Close"}
 				onTouchTap={dialogToggle}
 			/>
 		]
 		this.stepContents().length - 1 === stepIndex && actions.push(<FlatButton
-			label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
+			label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"].value || "Save"}
 			primary={true}
 			onTouchTap={this.handlePost}
 		/>)

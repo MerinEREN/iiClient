@@ -53,27 +53,30 @@ class Signed extends Component {
 			languagesGet, 
 			signOutURLGet
 		} = this.props
+		this.URL = new URL("/users/", window.location.href)
 		userGet({
-			URL: "/users/logged", 
+			URL: this.URL, 
 			key: "logged"
 		}).then(response => { 
 			if (response.ok) {
+				this.URL.pathname = "/photos"
+				this.URL.searchParams.set("pID", response.ID)
+				this.URL.searchParams.set("type", "main")
 				photosGet({
-					URL: `/photos?q=${response.ID}&type="main"`, 
+					URL: this.URL, 
 					key: response.ID
 				})
-				rolesUserGet(
-					{
-						URL: `/rolesUser?q=${response.ID}`, 
-						key: response.ID
-					}
-				)
-				tagsUserGet(
-					{
-						URL: `/tagsUser?q=${response.ID}`, 
-						key: response.ID
-					}
-				)
+				this.URL.pathname = "/rolesUser"
+				this.URL.searchParams.delete("type")
+				rolesUserGet({
+					URL: this.URL, 
+					key: response.ID
+				})
+				this.URL.pathname = "/tagsUser"
+				tagsUserGet({
+					URL: this.URL, 
+					key: response.ID
+				})
 				signOutURLGet()
 			} else {
 				// Redirect unauthorized login attempts.
@@ -92,8 +95,10 @@ class Signed extends Component {
 		} = this.props
 		cookies.set("lang", lID)
 		contextsResetAll()
+		this.URL.pathname = "/contexts"
+		this.URL.searchParams.set("pID", "body")
 		get({
-			URL: "/contexts?q=body", 
+			URL: this.URL, 
 			key: "body"
 		})
 		contextsGet(session, {}, this.props)
@@ -123,16 +128,16 @@ class Signed extends Component {
 				<Card style={styles.card}>
 					<CardHeader
 						title={user.email}
-						subtitle={`${contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFU2NvcmUM"]}: 4`} 
+						subtitle={`${contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFU2NvcmUM"].value}: 4`} 
 						textStyle={styles.cardHeader.textStyle}
-						avatar={userphoto.link || "/img/adele.jpg"}
+						avatar={userPhoto.link || "/img/adele.jpg"}
 					/>
 				</Card>
 				<Divider style={styles.divider} />
 				{
 					Object.keys(languages).length > 1 && 
 						<MenuItem 
-							primaryText={contexts["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIITGFuZ3VhZ2UM"] || "Language"}
+							primaryText={contexts["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIITGFuZ3VhZ2UM"].value || "Language"}
 							leftIcon={<ChevronLeft />}
 							rightIcon={<Language />}
 							menuItems={
@@ -141,7 +146,7 @@ class Signed extends Component {
 										l => 
 										<MenuItem 
 											key={l.ID}
-											primaryText={contexts[l.contextID]} 
+											primaryText={contexts[l.contextID].value} 
 											checked={l.ID === this.state.lang}
 											insetChildren={true}
 											onTouchTap={() => this.languageSelect(l.ID)}
@@ -155,7 +160,7 @@ class Signed extends Component {
 					style={styles.a}
 				>
 					<MenuItem 
-						primaryText={contexts["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHTG9nIG91dAw"] || "Log out"}
+						primaryText={contexts["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHTG9nIG91dAw"].value || "Log out"}
 						insetChildren={true}
 						rightIcon={<SignOut />}
 					/>

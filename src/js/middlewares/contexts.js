@@ -7,6 +7,8 @@ import {
 	contextsFailure
 } from "../actions/contexts"
 
+// The reason of usage of the "isCached" instead of the "didValidate" is pagination 
+// at the "Contexts" page.
 const contextsGet = makeLoader({
 	defaults: {
 		URL: "/contexts", 

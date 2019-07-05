@@ -10,7 +10,7 @@ import {
 } from "../actions/snackbars"
 import {
 	getObjectsFromAnObjectByKeys, 
-	headerLocationParse
+	headerLinkParse
 } from "./utilities"
 
 export default function fetchDomainDataIfNeeded(args) {
@@ -48,8 +48,7 @@ function shouldFetchDomainData(state, args) {
 		kind, 
 		key
 	} = args
-	// For non paginated objects, page contexts 
-	// and specific entities like account, demand, offer, page...
+	// For non paginated objects and page contexts.
 	if (isCached)
 		return !isCached(state, kind, key)
 	// For paginated objects
@@ -184,7 +183,7 @@ const fetchDomainData = args => (dispatch, getState) => {
 			if (response.ok) {
 				// The custom header entity to reset a kind.
 				if(response.headers.has("X-Reset"))
-					var reset = response.headers.get("X-Reset")
+					var reset = true
 				switch (response.status) {
 					case 204:
 						actionsSuccess && actionsSuccess.forEach(ac => dispatch(ac({
@@ -223,7 +222,7 @@ const fetchDomainData = args => (dispatch, getState) => {
 						// If the response is 200.
 						const contentType = response.headers.get("Content-Type")
 						if(response.headers.has("Link"))
-							var hrefs = headerLocationParse(response.headers.get("Link"))
+							var hrefs = headerLinkParse(response.headers.get("Link"))
 						if (
 							contentType &&
 							contentType.indexOf("text/html") !== -1

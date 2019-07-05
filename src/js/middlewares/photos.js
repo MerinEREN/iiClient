@@ -7,21 +7,16 @@ import {
 
 const photosGet = makeLoader({
 	defaults: {
-		URL: "/photos", 
 		kind: "photos"
 	},
 	actionCreators: {
 		actionsRequest: [photosRequest],
 		actionsSuccess: [photosSuccess],
 		actionsFailure: [photosFailure]
-	}, 
-	options: {
-		didValidate
 	}
 })
 export const photosPost = makeLoader({
 	defaults: {
-		URL: "/photos", 
 		method: "POST", 
 		headers: {
 			"Accept": "application/json"
