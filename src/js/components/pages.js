@@ -2,10 +2,10 @@ import React, {Component} from "react"
 import PropTypes from "prop-types"
 import {GridList, GridTile} from "material-ui/GridList"
 import RaisedButton from "material-ui/RaisedButton"
-import TilePage from "./tilePage"
 import FloatingActionButton from "material-ui/FloatingActionButton"
 import ContentAdd from "material-ui/svg-icons/content/add"
 import DialogPageCreate from "../containers/dialogPageCreate"
+import TilePage from "../containers/tilePage"
 
 const styles = {
 	root: {
@@ -37,34 +37,50 @@ class Pages extends Component {
 		this.handleDelete = this.handleDelete.bind(this)
 	}
 	componentWillMount() {
-		this.props.pagesGet()
+		const {
+			pagesGet
+		} = this.props
+		pagesGet()
 	}
 	dialogToggle() {
-		this.setState({dialogShow: !this.state.dialogShow})
+		const {
+			dialogShow
+		} = this.state
+		this.setState({dialogShow: !dialogShow})
 	}
 	handleDelete() {
 		const {
 			pageIDsSelected, 
-			pagesDelete
+			pagesDelete, 
+			removeUpdateContextsWithThatPage
 		}= this.props
+		let URL = new URL(window.location.href)
+		pageIDsSelected.forEach(([i, v]) => {
+			if (i === 0)
+				URL.searchParams.set("IDs", v)
+			URL.searchParams.append("IDs", v)
+		})
 		pagesDelete({
-			URL: `/pages?IDs=${generateURLVariableFromIDs(pageIDsSelected)}`, 
+			URL, 
 			data: {
 				value: pageIDsSelected
 			}
+		}).then(response => {
+			if (response.ok)
+				pageIDsSelected.forEach(v => 
+					removeUpdateContextsWithThatPage(v)
+				)
 		})
 	}
 	tilesPage(pages) {
 		const {
 			pageIDsSelected
 		} = this.props
-		return Object.entries(pages).map(([k, v]) => {
-			return <TilePage
-				key={k} 
-				page={v} 
-				isChecked={pageIDsSelected.indexOf(k) !== -1}
-			/>
-		})
+		return Object.entries(pages).map(([k, v]) => <TilePage
+			key={k} 
+			page={v} 
+			isChecked={pageIDsSelected.indexOf(k) !== -1}
+		/>)
 	}
 	render() {
 		const {
@@ -100,12 +116,12 @@ class Pages extends Component {
 							>
 								{this.tilesPage(pages)}
 							</GridList> : 
-							<h3>{contexts["aghkZXZ-Tm9uZXIXCxIHQ29udGVudCIKTm8gQ29udGVudAw"] || "No Context"}</h3>
+							<h3>{contexts["aghkZXZ-Tm9uZXIXCxIHQ29udGVudCIKTm8gQ29udGVudAw"].value || "No Context"}</h3>
 						}
 						{
 							pageIDsSelected.length > 0 && 
 								<RaisedButton
-									label={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"] || "Delete"}
+									label={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"].value || "Delete"}
 									style={raisedButton}
 									secondary={true}
 									onTouchTap={this.handleDelete}
@@ -126,7 +142,7 @@ class Pages extends Component {
 				}
 				<DialogPageCreate
 					contexts={contexts} 
-					title={contexts["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOQWRkIEEgTmV3IFBhZ2UM"] || "Add A New Page"}
+					title={contexts["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOQWRkIEEgTmV3IFBhZ2UM"].value || "Add A New Page"}
 					dialogShow={dialogShow} 
 					dialogToggle={this.dialogToggle}
 				/>
@@ -141,10 +157,11 @@ Pages.defaultProps = {
 
 Pages.propTypes = {
 	contexts: PropTypes.object.isRequired, 
-	pagesGet: PropTypes.func.isRequired, 
 	pages: PropTypes.object, 
 	pageIDsSelected: PropTypes.array, 
-	pagesDelete: PropTypes.func.isRequired
+	pagesGet: PropTypes.func.isRequired, 
+	pagesDelete: PropTypes.func.isRequired, 
+	removeUpdateContextsWithThatPage: PropTypes.func.isRequired
 }
 
 Pages.muiName = "GridList"

@@ -49,7 +49,7 @@ class TileContext extends Component {
 		return Object.values(pages).map(p => <MenuItem
 			key={p.ID}
 			value={p.ID}
-			primaryText={p.text}
+			primaryText={p.name}
 			checked={pageIDs && pageIDs.indexOf(p.ID) > -1}
 			insetChildren={true}
 		/>
@@ -66,7 +66,7 @@ class TileContext extends Component {
 		return (
 			<SelectField
 				multiple={true} 
-				hintText={contextsRoot["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFUGFnZXMM"] || "Pages"}
+				hintText={contextsRoot["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFUGFnZXMM"].value || "Pages"}
 				value={pageIDs}
 				errorText={inputErrTexts && inputErrTexts.pageIDs}
 				onChange={this.handleFieldChange}
@@ -88,7 +88,7 @@ class TileContext extends Component {
 				key={a[0]}
 				name={a[0]}
 				value={values[a[0]] || ""}
-				floatingLabelText={contextsRoot[a[1].contextID]}
+				floatingLabelText={contextsRoot[a[1].contextID].value}
 				errorText={inputErrTexts && inputErrTexts[a[0]]}
 				onChange={this.handleFieldChange}
 			/>

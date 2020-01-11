@@ -19,11 +19,14 @@ const tagsDemandGet = makeLoader({
 		didValidate
 	}
 })
-/*
 export const tagsDemandPost = makeLoader({
 	defaults: {
 		method: "POST", 
-		kind: "tags"
+		kind: "tags", 
+		headers: {
+			"Content-Type": "application/json", 
+			"Accept": "application/json"
+		}
 	},
 	actionCreators: {
 		actionsRequest: [tagsRequest],
@@ -35,6 +38,5 @@ export const tagsDemandPost = makeLoader({
 		showSnackbar
 	}
 })
-*/
 
 export default tagsDemandGet

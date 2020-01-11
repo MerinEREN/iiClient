@@ -1,9 +1,8 @@
 import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
 import PageComponent from "../components/page"
-import photosGet from "../middlewares/photos"
 import pageGet, {pageDelete} from "../middlewares/page"
-import {pagesDelete} from "../middlewares/pages"
+import photosGet from "../middlewares/photos"
 import {removeUpdateCoxtentsWithThatPage} from "../middlewares/contexts"
 import {filterAnObjectByKeys} from "../middlewares/utilities"
 
@@ -31,8 +30,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
-		photosGet, 
 		pageGet, 
+		photosGet, 
 		pageDelete, 
 		removeUpdateCoxtentsWithThatPage
 	},

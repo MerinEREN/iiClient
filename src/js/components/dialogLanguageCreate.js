@@ -25,22 +25,22 @@ class DialogLanguageCreate extends Component {
 				<MenuItem 
 					key={1} 
 					value="tr-TR" 
-					primaryText={nextProps.contexts["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHVHVya2lzaAw"] || "Turkish"} 
+					primaryText={nextProps.contexts["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHVHVya2lzaAw"].value || "Turkish"} 
 				/>,
 				<MenuItem 
 					key={2} 
 					value="en-US" 
-					primaryText={nextProps.contexts["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHRW5nbGlzaAw"] || "English"} 
+					primaryText={nextProps.contexts["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHRW5nbGlzaAw"].value || "English"} 
 				/>,
 				<MenuItem 
 					key={3} 
 					value="de-DE" 
-					primaryText={nextProps.contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGR2VybWFuDA"] || "German"} 
+					primaryText={nextProps.contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGR2VybWFuDA"].value || "German"} 
 				/>,
 				<MenuItem 
 					key={4} 
 					value="ru-RU" 
-					primaryText={nextProps.contexts["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHUnVzc2lhbgw"] || "Russian"} 
+					primaryText={nextProps.contexts["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHUnVzc2lhbgw"].value || "Russian"} 
 				/>
 			]
 	}
@@ -86,7 +86,7 @@ class DialogLanguageCreate extends Component {
 			this.setState({
 				inputErrTexts: {
 					...inputErrTexts, 
-					[key]: contexts["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"] || "Required Field"
+					[key]: contexts["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"].value || "Required Field"
 				}
 			})
 			return true
@@ -96,7 +96,7 @@ class DialogLanguageCreate extends Component {
 	// index and values are for select field only
 	handleFieldChange(event, index, values) {
 		const target = event.target
-		const name = target.name || "code"
+		const name = target.name || "ID"
 		const value = target.value || values
 		const {
 			newObject, 
@@ -119,18 +119,27 @@ class DialogLanguageCreate extends Component {
 		} = this.state
 		const {
 			dialogToggle, 
-			languagePost
+			languagePost, 
+			photosPost
 		} = this.props
 		dialogToggle()
-		this.props.languagePost({
+		languagePost({
 			data: {
-				type: "FormData", 
-				// Use "contextType" for "Blob" type.
-				// contextType: "application/json", 
-				value: {
-						...newObject, 
-						file: this.file.files[0] 
-				}
+				value: newObject
+			}
+		}).then(response => {
+			if (response.OK) { 
+				response.json().then(body => { 
+					let URL = new URL("/photos", window.location.href)
+					URL.searchParams.set("pID", body.ID)
+					photosPost({
+						URL, 
+						data: {
+							value: this.file.files
+						}, 
+						key: body.ID
+					})
+				})
 			}
 		})
 		this.setState({
@@ -144,10 +153,10 @@ class DialogLanguageCreate extends Component {
 		} = this.props
 		return Object.keys(contexts).length > 0 ?
 			[
-				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"], 
-				contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIETmFtZQw"], 
-				contexts["aghkZXZ-Tm9uZXIQCxIHQ29udGVudCIDVGFnDA"], 
-				contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIERmlsZQw"]
+				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"].value, 
+				contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIETmFtZQw"].value, 
+				contexts["aghkZXZ-Tm9uZXIQCxIHQ29udGVudCIDVGFnDA"].value, 
+				contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIERmlsZQw"].value
 			] :
 			[
 				"Explanation", 
@@ -156,59 +165,53 @@ class DialogLanguageCreate extends Component {
 				"Photo"
 			]
 	}
-	explanationField() {
-		const {
-			contexts
-		} = this.props
+	explanationField(contexts) {
 		return <p>
-			{contexts["aghkZXZ-Tm9uZXJGCxIHQ29udGVudCI5QWRkIGEgbmV3IGxhbmd1YWdlLiBMYW5ndWFnZSBhbmQgVGFnIGZpZWxkcyBhcmUgcmVxdWlyZWQuDA"] || "Add a new language. Language and Tag fields are required."}
+			{contexts["aghkZXZ-Tm9uZXJGCxIHQ29udGVudCI5QWRkIGEgbmV3IGxhbmd1YWdlLiBMYW5ndWFnZSBhbmQgVGFnIGZpZWxkcyBhcmUgcmVxdWlyZWQuDA"].value || "Add a new language. Language and Tag fields are required."}
 		</p>
 	}
-	languageCodeField() {
+	languageCodeField(contexts) {
 		const {
 			newObject: {code}, 
 			inputErrTexts
 		} = this.state
-		const {
-			contexts
-		} = this.props
 		return <SelectField 
 			value={code || ""}
-			floatingLabelText={contexts["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIITGFuZ3VhZ2UM"] || "Language"}
+			floatingLabelText={contexts["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIITGFuZ3VhZ2UM"].value || "Language"}
 			errorText={inputErrTexts.code}
 			onChange={this.handleFieldChange}
 		>
 			{this.items}
 		</SelectField>
 	}
-	contextIDField() {
+	contextIDField(contexts) {
 		const {
 			newObject: {contextID}, 
 			inputErrTexts
 		} = this.state
-		const {
-			contexts
-		} = this.props
 		return <TextField 
 			name="contextID"
 			value={contextID || ""}
-			floatingLabelText={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGQW1vdW50DA"] || "Context ID"}
+			floatingLabelText={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGQW1vdW50DA"].value || "Context ID"}
 			errorText={inputErrTexts.contextID}
 			onChange={this.handleFieldChange}
 		/>
 	}
-	photoField() {
+	fileField() {
 		return <input 
 			type="file"
 			ref={input => this.file = input}
 		/>
 	}
 	stepContents() {
+		const {
+			contexts
+		} = this.props
 		return [
-			this.explanationField(), 
-			this.languageCodeField(), 
-			this.contextIDField(), 
-			this.photoField()
+			this.explanationField(contexts), 
+			this.languageCodeField(contexts), 
+			this.contextIDField(contexts), 
+			this.fileField()
 		]
 	}
 	children() {
@@ -236,12 +239,12 @@ class DialogLanguageCreate extends Component {
 		} = this.props
 		let actions = [
 			<FlatButton
-				label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
+				label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"].value || "Close"}
 				onTouchTap={dialogToggle}
 			/>
 		]
 		this.stepContents().length - 1 === stepIndex && actions.push(<FlatButton
-			label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
+			label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"].value || "Save"}
 			primary={true}
 			onTouchTap={this.handlePost}
 		/>)
@@ -262,14 +265,15 @@ class DialogLanguageCreate extends Component {
 	}
 }
 
-DialogLanguageCreate.muiName = "Dialog"
-
 DialogLanguageCreate.propTypes = {
 	contexts: PropTypes.object.isRequired,
 	title: PropTypes.string.isRequired,
 	dialogShow: PropTypes.bool.isRequired, 
 	dialogToggle: PropTypes.func.isRequired, 
-	languagePost: PropTypes.func.isRequired
+	languagePost: PropTypes.func.isRequired, 
+	photosPost: PropTypes.func.isRequired
 }
+
+DialogLanguageCreate.muiName = "Dialog"
 
 export default DialogLanguageCreate

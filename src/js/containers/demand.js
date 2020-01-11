@@ -1,8 +1,8 @@
 import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
 import DemandComponent from "../components/demand"
-import photosGet from "../middlewares/photos"
-import tagsDemandGet from "../middlewares/tagsDemand"
+import photosGet, {photosPost} from "../middlewares/photos"
+import tagsDemandGet, {tagsDemandPost} from "../middlewares/tagsDemand"
 import tagsGet from "../middlewares/tags"
 import offersGet from "../middlewares/offers"
 import demandGet, {demandDelete} from "../middlewares/demand"
@@ -28,17 +28,20 @@ const mapStateToProps = (state, ownProps) => {
 			roles
 		}
 	} = state
+	const {
+		params: {ID}
+	} = ownProps
 	return {
 		contexts: demand && filterAnObjectByKeys(contexts, demand.IDs), 
-		photos: photosPagination[ownProps.params.ID] && 
-		filterAnObjectByKeys(photos, photosPagination[ownProps.params.ID].IDs), 
-		tagsDemand: tagsPagination[ownProps.params.ID] && 
-		filterAnObjectByKeys(tags, tagsPagination[ownProps.params.ID].IDs), 
+		photos: photosPagination[ID] && 
+		filterAnObjectByKeys(photos, photosPagination[ID].IDs), 
+		tagsDemand: tagsPagination[ID] && 
+		filterAnObjectByKeys(tags, tagsPagination[ID].IDs), 
 		tagsPagination, 
 		tags, 
-		offers: offersPagination[ownProps.params.ID] && 
-		filterAnObjectByKeys(offers, offersPagination[ownProps.params.ID].IDs), 
-		demand: demands[ownProps.params.ID], 
+		offers: offersPagination[ID] && 
+		filterAnObjectByKeys(offers, offersPagination[ID].IDs), 
+		demand: demands[ID], 
 		userID: usersPagination.logged && usersPagination.logged.IDs[0], 
 		accountID: accountsPagination.logged && accountsPagination.logged.IDs[0],  
 		rolesUser: (
@@ -52,7 +55,9 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
 		photosGet, 
+		photosPost, 
 		tagsDemandGet, 
+		tagsDemandPost, 
 		tagsGet, 
 		offersGet, 
 		demandGet, 

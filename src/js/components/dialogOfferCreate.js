@@ -1,5 +1,6 @@
 import React, {Component}  from "react"
 import PropTypes from "prop-types"
+import browserHistory from "react-router/lib/browserHistory"
 import Dialog from "material-ui/Dialog"
 import VerticalStepper from "./verticalStepper"
 import TextField from "material-ui/TextField"
@@ -59,7 +60,7 @@ class DialogOfferCreate extends Component {
 			this.setState({
 				inputErrTexts: {
 					...inputErrTexts, 
-					[key]: contexts["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"] || "Required Field"
+					[key]: contexts["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"].value || "Required Field"
 				}
 			})
 			return true
@@ -97,11 +98,14 @@ class DialogOfferCreate extends Component {
 			params: {ID: dID}, 
 			uID, 
 			dialogToggle, 
-			offerPost
+			offerPost, 
+			offersSuccess
 		} = this.props
 		dialogToggle()
+		let URL = new URL("/offers", window.location.href)
+		URL.searchParams.set("dID", dID)
 		offerPost({
-			URL: `/offers?dID=${dID}`, 
+			URL, 
 			data: {
 				value: {
 					...newObject, 
@@ -109,6 +113,19 @@ class DialogOfferCreate extends Component {
 				}
 			}, 
 			key: dID
+		}).then(response => {
+			if (response.ok) {
+				response.json().then(body => {
+					offersSuccess({
+						response: body, 
+						method: "GET", 
+						ineffective, 
+						didValidate, 
+						key: body.ID
+					})
+				})
+				browserHistory.push(response.headers.get("Location"))
+			}
 		})
 		this.setState({
 			stepIndex: 0, 
@@ -121,9 +138,9 @@ class DialogOfferCreate extends Component {
 		} = this.props
 		return Object.keys(contexts).length > 0 ?
 			[
-				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRXhwbGFuYXRpb24M"], 
-				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"], 
-				contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGQW1vdW50DA"]
+				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRXhwbGFuYXRpb24M"].value, 
+				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"].value, 
+				contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGQW1vdW50DA"].value
 			] : 
 			[
 				"Explanation", 
@@ -131,18 +148,20 @@ class DialogOfferCreate extends Component {
 				"Amount"
 			]
 	}
-	descriptionField() {
+	explanationField(contexts) {
+		return <p>
+			{contexts["aghkZXZ-Tm9uZXJJCxIHQ29udGVudCI8VXBkYXRlIHRoZSBkZW1hbmQuIFRhZ3MgYW5kIERlc2NyaXB0aW9uIGZpZWxkcyBhcmUgcmVxdWlyZWQuDA"].value}
+		</p>
+	}
+	descriptionField(contexts) {
 		const {
 			newObject: {description}, 
 			inputErrTexts
 		} = this.state
-		const {
-			contexts
-		} = this.props
 		return <TextField 
 			name="description" 
 			value={description || ""}
-			floatingLabelText={contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"] || "Description"}
+			floatingLabelText={contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"].value || "Description"}
 			errorText={inputErrTexts.description}
 			fullWidth={true}
 			multiLine={true}
@@ -151,19 +170,16 @@ class DialogOfferCreate extends Component {
 			onChange={this.handleFieldChange}
 		/>
 	}
-	amountField() {
+	amountField(contexts) {
 		const {
 			newObject: {amount}, 
 			inputErrTexts
 		} = this.state
-		const {
-			contexts
-		} = this.props
 		return <TextField 
 			name="amount" 
 			value={amount || 0}
 			type="number"
-			floatingLabelText={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGQW1vdW50DA"] || "Amount"}
+			floatingLabelText={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGQW1vdW50DA"].value || "Amount"}
 			errorText={inputErrTexts.amount}
 			onChange={this.handleFieldChange}
 		/>
@@ -173,9 +189,9 @@ class DialogOfferCreate extends Component {
 			contexts
 		} = this.props
 		return [
-			<p>{contexts["aghkZXZ-Tm9uZXI0CxIHQ29udGVudCInTWFrZSBhbiBvZmZlci4gQWxsIGZpZWxkcyBhcmUgcmVxdWlyZWQuDA"]}</p>, 
-			this.descriptionField(), 
-			this.amountField()
+			this.explanationField(contexts), 
+			this.descriptionField(contexts), 
+			this.amountField(contexts)
 		]
 	}
 	children() {
@@ -204,12 +220,12 @@ class DialogOfferCreate extends Component {
 
 		let actions = [
 			<FlatButton
-				label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
+				label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"].value || "Close"}
 				onTouchTap={dialogToggle}
 			/>
 		]
 		this.stepContents().length - 1 === stepIndex && actions.push(<FlatButton
-			label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
+			label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"].value || "Save"}
 			primary={true}
 			onTouchTap={this.handlePost}
 		/>)
@@ -230,15 +246,16 @@ class DialogOfferCreate extends Component {
 	}
 }
 
-DialogOfferCreate.muiName = "Dialog"
-
 DialogOfferCreate.propTypes = {
 	contexts: PropTypes.object.isRequired,
 	title: PropTypes.string.isRequired,
 	uID: PropTypes.string.isRequired,
 	dialogShow: PropTypes.bool.isRequired, 
 	dialogToggle: PropTypes.func.isRequired, 
-	offerPost: PropTypes.func.isRequired
+	offerPost: PropTypes.func.isRequired, 
+	offersSuccess: PropTypes.func.isRequired
 }
+
+DialogOfferCreate.muiName = "Dialog"
 
 export default DialogOfferCreate

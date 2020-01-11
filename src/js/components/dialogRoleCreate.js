@@ -67,7 +67,7 @@ class DialogRoleCreate extends Component {
 			this.setState({
 				inputErrTexts: {
 					...inputErrTexts, 
-					[key]: contexts["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"] || "Required Field"
+					[key]: contexts["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"].value || "Required Field"
 				}
 			})
 			return true
@@ -99,20 +99,16 @@ class DialogRoleCreate extends Component {
 			stepIndex, 
 			newObject
 		} = this.state
-		if(this.handleRequiredField(stepIndex))
+		if (this.handleRequiredField(stepIndex))
 			return
 		const {
 			dialogToggle, 
 			rolePost
 		} = this.props
 		dialogToggle()
-		// FIND A SOLUTION FOR THAT "ID" THING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		rolePost({
 			data: {
-				value: {
-					ID: "dummy", 
-					...newObject
-				}
+				value: newObject
 			}
 		})
 		this.setState({
@@ -126,41 +122,38 @@ class DialogRoleCreate extends Component {
 		} = this.props
 		return Object.keys(contexts).length > 0 ?
 			[
-				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRXhwbGFuYXRpb24M"], 
-				contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGUGhvdG9zDA"], 
-				contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFVHlwZXMM"]
+				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRXhwbGFuYXRpb24M"].value, 
+				contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGUGhvdG9zDA"].value, 
+				contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFVHlwZXMM"].value
 			] : 
 			[
 				"Explanation", 
-				"ContextID", 
+				"Context ID", 
 				"Types"
 			]
 	}
-	explanationField() {
-		const {
-			contexts
-		} = this.props
+	explanationField(contexts) {
 		return <p>
-			{contexts["aghkZXZ-Tm9uZXI1CxIHQ29udGVudCIoQWRkIGEgbmV3IHJvbGUuIEFsbCBmaWVsZHMgYXJlIHJlcXVpcmVkLgw"] || "Add a new role. All fields are required."}
+			{contexts["aghkZXZ-Tm9uZXI1CxIHQ29udGVudCIoQWRkIGEgbmV3IHJvbGUuIEFsbCBmaWVsZHMgYXJlIHJlcXVpcmVkLgw"].value || "Add a new role. All fields are required."}
 		</p>
 	}
-	contextIDField() {
+	contextIDField(contexts) {
 		const {
 			newObject: {contextID}, 
 			inputErrTexts
 		} = this.state
-		const {
-			contexts
-		} = this.props
 		return <TextField 
 			name="contextID" 
 			value={contextID || ""}
-			floatingLabelText={contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"] || "Context ID"}
+			floatingLabelText={contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"].value || "Context ID"}
 			errorText={inputErrTexts.contextID}
 			onChange={this.handleFieldChange}
 		/>
 	}
-	menuItems(roleTypes, types) {
+	menuItems(types) {
+		const {
+			roleTypes
+		} = this.props
 		return Object.entries(roleTypes).map(([k, v]) => <MenuItem
 			key={k}
 			value={v.ID}
@@ -169,32 +162,31 @@ class DialogRoleCreate extends Component {
 			insetChildren={true}
 		/>)
 	}
-	typesField() {
+	typesField(contexts) {
 		const {
 			newObject: {types}, 
 			inputErrTexts
 		} = this.state
-		const {
-			contexts, 
-			roleTypes
-		} = this.props
 		return <SelectField
 			value={types}
 			errorText={inputErrTexts.types}
-			hintText={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFVHlwZXMM"] || "Types"}
+			hintText={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFVHlwZXMM"].value || "Types"}
 			onChange={this.handleFieldChange}
 			multiple={true} 
 		>
 			{
-				this.menuItems(roleTypes, types)
+				this.menuItems(types)
 			}
 		</SelectField>
 	}
 	stepContents() {
+		const {
+			contexts
+		} = this.props
 		return [
-			this.explanationField(), 
-			this.contextIDField(), 
-			this.typesField()
+			this.explanationField(contexts), 
+			this.contextIDField(contexts), 
+			this.typesField(contexts)
 		]
 	}
 	children() {
@@ -222,12 +214,12 @@ class DialogRoleCreate extends Component {
 		} = this.props
 		let actions = [
 			<FlatButton
-				label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
+				label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"].value || "Close"}
 				onTouchTap={dialogToggle}
 			/>
 		]
 		this.stepContents().length - 1 === stepIndex && actions.push(<FlatButton
-			label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
+			label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"].value || "Save"}
 			primary={true}
 			onTouchTap={this.handlePost}
 		/>)
@@ -252,9 +244,9 @@ DialogRoleCreate.propTypes = {
 	contexts: PropTypes.object.isRequired,
 	title: PropTypes.string.isRequired,
 	dialogShow: PropTypes.bool.isRequired, 
-	roleTypesGet: PropTypes.func.isRequired, 
 	roleTypes: PropTypes.object.isRequired, 
 	dialogToggle: PropTypes.func.isRequired, 
+	roleTypesGet: PropTypes.func.isRequired, 
 	rolePost: PropTypes.func.isRequired
 }
 

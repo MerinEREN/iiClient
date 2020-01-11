@@ -32,14 +32,24 @@ class Roles extends Component {
 		this.handleDelete = this.handleDelete.bind(this)
 	}
 	componentWillMount() {
-		this.props.rolesGet()
+		const {
+			rolesGet
+		} = this.props
+		rolesGet()
 	}
 	dialogToggle() {
-		this.setState({dialogShow: !this.state.dialogShow})
+		const {
+			dialogShow
+		} = this.state
+		this.setState({dialogShow: !dialogShow})
 	}
 	handleDelete(ID) {
-		this.props.roleDelete({
-			URL: `/roles/${ID}`, 
+		const {
+			roleDelete
+		} = this.props
+		const URL = new URL(`/roles/${ID}`, window.location.href)
+		roleDelete({
+			URL, 
 			data: {
 				value: [ID]
 			}
@@ -53,7 +63,7 @@ class Roles extends Component {
 			<TileRole 
 				key={k} 
 				role={v} 
-				name={contexts[v.contextID]}
+				name={contexts[v.contextID].value}
 				handleDelete={this.handleDelete}
 			/>)
 	}
@@ -79,7 +89,7 @@ class Roles extends Component {
 					>
 						{this.tilesRole(roles)}
 					</GridList> : 
-					<h3>{contexts["aghkZXZ-Tm9uZXIXCxIHQ29udGVudCIKTm8gQ29udGVudAw"] || "No Content"}</h3>
+					<h3>{contexts["aghkZXZ-Tm9uZXIXCxIHQ29udGVudCIKTm8gQ29udGVudAw"].value || "No Content"}</h3>
 				}
 				{
 					!dialogShow && 
@@ -93,7 +103,7 @@ class Roles extends Component {
 				}
 				<DialogRoleCreate
 					contexts={contexts} 
-					title={contexts["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOQWRkIEEgTmV3IFJvbGUM"] || "Add A New Role"}
+					title={contexts["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOQWRkIEEgTmV3IFJvbGUM"].value || "Add A New Role"}
 					dialogShow={dialogShow} 
 					dialogToggle={this.dialogToggle}
 				/>

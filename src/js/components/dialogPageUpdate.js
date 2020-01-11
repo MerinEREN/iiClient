@@ -60,7 +60,7 @@ class DialogPageUpdate extends Component {
 			this.setState({
 				inputErrTexts: {
 					...inputErrTexts, 
-					[key]: contexts["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"] || "Required Field"
+					[key]: contexts["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"].value || "Required Field"
 				}
 			})
 			return true
@@ -102,17 +102,16 @@ class DialogPageUpdate extends Component {
 		dialogToggle()
 		// "ID" in data value is for enveloped or not check only
 		// and not be sended to the backand.
+		let URL = new URL(window.location.href)
 		pagePut({
-			URL: `/pages/${ID}`, 
+			URL, 
 			data: {
-				type: "FormData", 
-				// Use "contextType" for "Blob" type.
-				// contextType: "application/json", 
 				value: {
 					ID, 
 					...newObject
 				}
-			}
+			}, 
+			key: ID
 		})
 		this.setState({
 			stepIndex: 0
@@ -124,26 +123,28 @@ class DialogPageUpdate extends Component {
 		} = this.props
 		return Object.keys(contexts).length > 0 ?
 			[
-				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"], 
-				contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIETmFtZQw"]
+				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"].value, 
+				contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIETmFtZQw"].value
 			] :
 			[
 				"Explanation", 
 				"Name"
 			]
 	}
-	nameField() {
+	explanationField(contexts) {
+		return <p>
+			{contexts["aghkZXZ-Tm9uZXIxCxIHQ29udGVudCIkVXBkYXRlIHBhZ2UsIG5hbWUgZmllbGQgaXMgcmVxdWlyZWQuDA"].value || "Update page, name field is required."}
+		</p>
+	}
+	nameField(contexts) {
 		const {
 			newObject: {name}, 
 			inputErrTexts
 		} = this.state
-		const {
-			contexts
-		} = this.props
 		return <TextField 
 			name="name" 
 			value={name || ""}
-			floatingLabelText={contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"] || "Name"}
+			floatingLabelText={contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"].value || "Name"}
 			errorText={inputErrTexts.name}
 			onChange={this.handleFieldChange}
 		/>
@@ -153,10 +154,8 @@ class DialogPageUpdate extends Component {
 			contexts
 		} = this.props
 		return [
-			<p>
-				{contexts["aghkZXZ-Tm9uZXIxCxIHQ29udGVudCIkVXBkYXRlIHBhZ2UsIG5hbWUgZmllbGQgaXMgcmVxdWlyZWQuDA"] || "Update page, name field is required."}
-			</p>, 
-			this.nameField()
+			this.explanationField(contexts), 
+			this.nameField(contexts)
 		]
 	}
 	children() {
@@ -184,12 +183,12 @@ class DialogPageUpdate extends Component {
 		} = this.props
 		let actions = [
 			<FlatButton
-				label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
+				label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"].value || "Close"}
 				onTouchTap={dialogToggle}
 			/>
 		]
 		this.stepContents().length - 1 === stepIndex && actions.push(<FlatButton
-			label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
+			label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"].value || "Save"}
 			primary={true}
 			onTouchTap={this.handlePut}
 		/>)
@@ -213,8 +212,8 @@ class DialogPageUpdate extends Component {
 DialogPageUpdate.propTypes = {
 	contexts: PropTypes.object.isRequired,
 	title: PropTypes.string.isRequired,
-	dialogShow: PropTypes.bool.isRequired, 
 	page: PropTypes.object.isRequired,
+	dialogShow: PropTypes.bool.isRequired, 
 	dialogToggle: PropTypes.func.isRequired, 
 	pagePut: PropTypes.func.isRequired
 }

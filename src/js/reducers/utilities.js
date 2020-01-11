@@ -47,9 +47,9 @@ export const paginate = ({types, mapActionToKey}) => {
 			didValidate
 		} = action
 		let obj = {}
-		let data = action.data || (response.data || response)
-		// If the data is not plural.
-		if (data.hasOwnProperty(ID))
+		let data = action.data || (response && (response.data || response))
+		// If the data is defined, not array and not plural.
+		if (data && !Array.isArray(data) && data.hasOwnProperty("ID"))
 			data = {[data.ID]: data}
 		switch (type) {
 			case requestType:

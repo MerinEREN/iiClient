@@ -2,6 +2,7 @@ import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
 import PagesComponent from "../components/pages"
 import pagesGet, {pagesDelete}  from "../middlewares/pages"
+import {removeUpdateCoxtentsWithThatPage} from "../middlewares/contexts"
 import {filterAnObjectByKeys} from "../middlewares/utilities"
 
 // Can use ownProps here.
@@ -27,7 +28,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
 		pagesGet, 
-		pagesDelete
+		pagesDelete, 
+		removeUpdateCoxtentsWithThatPage
 	},
 	dispatch
 )

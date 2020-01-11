@@ -42,7 +42,7 @@ class ListTimeline extends Component {
 									/>
 							}
 						}) : 
-						<h3>{contexts["aghkZXZ-Tm9uZXIXCxIHQ29udGVudCIKTm8gQ29udGVudAw"] || "No Content"}</h3>
+						<h3>{contexts["aghkZXZ-Tm9uZXIXCxIHQ29udGVudCIKTm8gQ29udGVudAw"].value || "No Content"}</h3>
 				}
 			</List>
 		)

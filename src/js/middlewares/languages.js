@@ -5,9 +5,11 @@ import {
 	languagesFailure
 } from "../actions/languages"
 
+const URL = new URL("/languages", window.location.href)
+
 const languagesGet = makeLoader({
 	defaults: {
-		URL: "/languages", 
+		URL, 
 		kind: "languages"
 	},
 	actionCreators: {
@@ -21,9 +23,10 @@ const languagesGet = makeLoader({
 })
 export const languagePost = makeLoader({
 	defaults: {
-		URL: "/languages", 
+		URL, 
 		method: "POST", 
 		headers: {
+			"Content-Type": "application/json", 
 			"Accept": "application/json"
 		}
 	},

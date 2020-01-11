@@ -124,22 +124,16 @@ class DialogTagCreate extends Component {
 				"Tag"
 			]
 	}
-	explanationField() {
-		const {
-			contexts
-		} = this.props
+	explanationField(contexts) {
 		return <p>
 			{contexts["aghkZXZ-Tm9uZXIyCxIHQ29udGVudCIlQWRkIGEgbmV3IHRhZy4gVGhlIGZpZWxkIGlzIHJlcXVpcmVkLgw"] || "Add a new tag. The field is required."}
 		</p>
 	}
-	contextIDField() {
+	contextIDField(contexts) {
 		const {
 			newObject: {contextID}, 
 			inputErrTexts
 		} = this.state
-		const {
-			contexts
-		} = this.props
 		return <TextField 
 			name="contextID" 
 			value={contextID || ""}
@@ -149,9 +143,12 @@ class DialogTagCreate extends Component {
 		/>
 	}
 	stepContents() {
+		const {
+			contexts
+		} = this.props
 		return [
-			this.explanationField(), 
-			this.contextIDField()
+			this.explanationField(contexts), 
+			this.contextIDField(contexts)
 		]
 	}
 	children() {

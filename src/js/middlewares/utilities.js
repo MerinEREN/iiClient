@@ -62,23 +62,27 @@ const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) => {
 	}
 	return (args = {}) => {
 		var {
-			returnedURL, 
 			key, 
-			data
+			data, 
+			link
 		} = args
-		returnedURL = returnedURL || "prevPageURL"
 		key = key || "all"
+		link = link || "next"
 		return (dispatch, getState) => {
 			if (data && method !== "DELETE") {
-				let body = {}
-				if (data.value.hasOwnProperty("ID")) {
-					const {ID, ...rest} = data.value
-					body = rest
+				if (Array.isArray(data.value) || method === "POST") {
+					var body = data.value
 				} else {
-					Object.values(data.value).forEach(v => {
-						const {ID, ...rest} = v
-						body[ID] = rest
-					})
+					var body = {}
+					if (data.value.hasOwnProperty("ID")) {
+						const {ID, ...rest} = data.value
+						body = rest
+					} else {
+						Object.values(data.value).forEach(v => {
+							const {ID, ...rest} = v
+							body[ID] = rest
+						})
+					}
 				}
 				switch (data.type) {
 					case "Blob":
@@ -88,17 +92,13 @@ const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) => {
 						// AFTER CONTEXTS POST AND PUT REQUESTS 
 						// CHANGED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 						init.body = new Blob(
-							Array.isArray(data.value) ?
-							data.value.map(v => JSON.stringify(v)) :
 							Object.values(method !== "PUT" ? 
-								data.value : 
+								body : 
 								getChanged(
 									getState().entities[kind], 
 									data.value
 								)
 							).map(v => {
-								// const {ID, ...rest} = v
-								// return JSON.stringify(rest)
 								return JSON.stringify(v)
 							}),
 							{type : data.contentType}
@@ -106,7 +106,7 @@ const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) => {
 						break
 					case "FormData":
 						let fd = new FormData()
-						Object.entries(data.value).forEach(([k, v]) => {
+						Object.entries(body).forEach(([k, v]) => {
 							// if (a[0] !== "file")
 							// fd.set(a[0], a[1])
 							// if (a[0] === "file") {
@@ -134,7 +134,7 @@ const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) => {
 				// Use from defaults object or assign "/".
 				URL = URL || "/"
 				// If the method is GET and the pagination has 
-				// the hrefs property overwrite defaults with them.
+				// the hrefs property overwrite the defaults with them.
 				if(method === "GET") {
 					// if (kind)
 					var path = getState().pagination[kind]
@@ -145,7 +145,7 @@ const makeLoader = ({defaults = {}, actionCreators = {}, options = {}}) => {
 						path[key] && 
 						path[key].hrefs
 					)
-						URL = path[key][returnedURL] 
+						URL = path[key].hrefs[link] 
 				}
 			}
 			return dispatch(fetchDomainDataIfNeeded({

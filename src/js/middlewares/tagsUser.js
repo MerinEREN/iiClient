@@ -22,7 +22,11 @@ const tagsUserGet = makeLoader({
 export const tagsUserPost = makeLoader({
 	defaults: {
 		method: "POST", 
-		kind: "tags"
+		kind: "tags", 
+		headers: {
+			"Content-Type": "application/json", 
+			"Accept": "application/json"
+		}
 	},
 	actionCreators: {
 		actionsRequest: [tagsRequest],

@@ -5,9 +5,11 @@ import {
 	rolesFailure
 } from "../actions/roles"
 
+const URL = new URL("/roles", window.location.href)
+
 const rolesGet = makeLoader({
 	defaults: {
-		URL: "/roles", 
+		URL, 
 		kind: "roles"
 	},
 	actionCreators: {
@@ -21,9 +23,10 @@ const rolesGet = makeLoader({
 })
 export const rolePost = makeLoader({
 	defaults: {
-		URL: "/roles", 
+		URL, 
 		method: "POST", 
 		headers: {
+			"Content-Type": "application/json", 
 			"Accept": "application/json"
 		}
 	},

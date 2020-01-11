@@ -219,10 +219,7 @@ class DialogUserCreate extends Component {
 				"Tags"
 			]
 	}
-	explanationField() {
-		const {
-			contexts
-		} = this.props
+	explanationField(contexts) {
 		return <p>
 			{contexts["aghkZXZ-Tm9uZXJBCxIHQ29udGVudCI0QWRkIGEgbmV3IHVzZXIuIEVtYWlsIGFuZCBSb2xlcyBmaWVsZHMgYXJlIHJlcXVpcmVkLgw"] || "Add a new user. Email and Roles fields are required."}
 		</p>
@@ -253,14 +250,11 @@ class DialogUserCreate extends Component {
 		/>
 		)
 	}
-	rolesField() {
+	rolesField(contexts) {
 		const {
 			newObject: {roleIDs}, 
 			inputErrTexts
 		} = this.state
-		const {
-			contexts
-		} = this.props
 		return <SelectField
 			value={roleIDs}
 			hintText={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFUm9sZXMM"] || "Roles"}
@@ -342,14 +336,11 @@ class DialogUserCreate extends Component {
 				}
 			})
 	}
-	tagsField() {
+	tagsField(contexts) {
 		const {
 			searchText, 
 			inputErrTexts
 		} = this.state
-		const {
-			contexts
-		} = this.props
 		return <div>
 			<AutoComplete
 				searchText={searchText}
@@ -366,11 +357,14 @@ class DialogUserCreate extends Component {
 		</div>
 	}
 	stepContents() {
+		const {
+			contexts
+		} = this.props
 		return [
-			this.explanationField(), 
+			this.explanationField(contexts), 
 			this.emailField(), 
-			this.rolesField(), 
-			this.tagsField()
+			this.rolesField(contexts), 
+			this.tagsField(contexts)
 		]
 	}
 	children() {

@@ -1,5 +1,6 @@
 import React, {Component}  from "react"
 import PropTypes from "prop-types"
+import browserHistory from "react-router/lib/browserHistory"
 import Dialog from "material-ui/Dialog"
 import VerticalStepper from "./verticalStepper"
 import AutoComplete from "material-ui/AutoComplete"
@@ -170,7 +171,8 @@ class DialogDemandCreate extends Component {
 		const {
 			uID, 
 			dialogToggle, 
-			demandPost
+			demandPost, 
+			demandsSuccess
 		} = this.props
 		dialogToggle()
 		let files = []
@@ -191,6 +193,19 @@ class DialogDemandCreate extends Component {
 				}
 			}, 
 			key: "timeline"
+		}).then(response => {
+			if (response.OK) {
+				response.json().then(body => {
+					demandsSuccess({
+						response: body, 
+						method: "GET", 
+						ineffective, 
+						didValidate, 
+						key: body.ID
+					})
+				})
+				browserHistory.push(response.headers.get("Location"))
+			}
 		})
 		this.setState({
 			stepIndex: 0, 
@@ -287,14 +302,16 @@ class DialogDemandCreate extends Component {
 				}
 			})
 	}
-	tagsField() {
+	explanationField(contexts) {
+		return <p>
+				{contexts["aghkZXZ-Tm9uZXJJCxIHQ29udGVudCI8VXBkYXRlIHRoZSBkZW1hbmQuIFRhZ3MgYW5kIERlc2NyaXB0aW9uIGZpZWxkcyBhcmUgcmVxdWlyZWQuDA"].value}
+			</p>
+	}
+	tagsField(contexts) {
 		const {
 			searchText, 
 			inputErrTexts
 		} = this.state
-		const {
-			contexts
-		} = this.props
 		return <div>
 			<AutoComplete
 				searchText={searchText}
@@ -310,14 +327,11 @@ class DialogDemandCreate extends Component {
 			{this.tagsSelected()}
 		</div>
 	}
-	descriptionField() {
+	descriptionField(contexts) {
 		const {
 			newObject: {description}, 
 			inputErrTexts
 		} = this.state
-		const {
-			contexts
-		} = this.props
 		return <TextField 
 			name="description" 
 			value={description || ""}
@@ -330,24 +344,23 @@ class DialogDemandCreate extends Component {
 			onChange={this.handleFieldChange}
 		/>
 	}
+	fileField() {
+		return <input 
+			type="file"
+			accept="image/*" 
+			ref={input => this.inputPhotos = input}
+			multiple
+		/>
+	}
 	stepContents() {
 		const {
 			contexts
 		} = this.props
 		return [
-			<p>
-				{
-					contexts["aghkZXZ-Tm9uZXJLCxIHQ29udGVudCI-Q3JlYXRlIGEgbmV3IGRlbWFuZC4gVGFncyBhbmQgRGVzY3JpcHRpb24gZmllbGRzIGFyZSByZXF1aXJlZC4M"].value
-				}
-			</p>, 
-			this.tagsField(), 
-			this.descriptionField(), 
-			<input 
-				type="file"
-				accept="image/*" 
-				ref={input => this.inputPhotos = input}
-				multiple
-			/>
+			this.explanationField(contexts), 
+			this.tagsField(contexts), 
+			this.descriptionField(contexts), 
+			this.fileField()
 		]
 	}
 	children() {
@@ -411,7 +424,8 @@ DialogDemandCreate.propTypes = {
 	tagsPagination: PropTypes.object.isRequired, 
 	uID: PropTypes.string.isRequired,
 	dialogToggle: PropTypes.func.isRequired, 
-	demandPost: PropTypes.func.isRequired
+	demandPost: PropTypes.func.isRequired, 
+	demandsSuccess: PropTypes.func.isRequired
 }
 
 DialogDemandCreate.muiName = "Dialog"

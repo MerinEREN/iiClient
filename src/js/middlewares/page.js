@@ -22,6 +22,7 @@ export const pagePut = makeLoader({
 	defaults: {
 		method: "PUT", 
 		headers: {
+			"Content-Type": "application/json", 
 			"Accept": "application/json"
 		}, 
 		kind: "pages"

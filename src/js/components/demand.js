@@ -36,6 +36,7 @@ const styles = {
 class Demand extends Component {
 	constructor(props) {
 		super(props)
+		this.URL = new URL(window.location.href)
 		this.state = {
 			tagsAddShow: false, 
 			searchText: "", 
@@ -62,26 +63,36 @@ class Demand extends Component {
 			tagsDemandGet, 
 			demandGet
 		} = this.props
+		this.URL.pathname = "/photos"
+		this.URL.searchParams.set("pID", ID)
 		photosGet({
-			URL: `/photos?q=${ID}`, 
+			URL: this.URL, 
 			key: ID
 		})
+		this.URL.pathname = "/tagsDemand"
+		this.URL.searchParams.delete("pID", ID)
+		this.URL.searchParams.set("dID", ID)
 		tagsDemandGet({
-			URL: `/tagsDemand?q=${ID}`, 
+			URL: this.URL, 
 			key: ID
 		})
+		this.URL = new URL(window.location.href)
 		demandGet({
-			URL: `/demands/${ID}`, 
+			URL: this.URL, 
 			key: ID
-		}).then(response => response.json()
-			.then(demand => {
-				demand.status !== "accepted" && 
-					offersGet({
-						URL: `/offers?q=${ID}`, 
-						key: ID
-					})
-			})
-		)
+		}).then(response => {
+			if (response.OK) {
+				response.json().then(demand => {
+					this.URL.pathname = "/offers"
+					this.URL.searchParams.set("dID", ID)
+					demand.status === "active" && 
+						offersGet({
+							URL: this.URL, 
+							key: ID
+						})
+				})
+			}
+		})
 	}
 	// Clear auto complete request timeout.
 	componentWillUnmount() {
@@ -95,14 +106,19 @@ class Demand extends Component {
 			tagsGet
 		} = this.props
 		// For minor performance improvements only
-		if (!tagsAddShow)
-			// Getting most used six tags 
-			// to show as initial autocomplete values 
-			// if they does not exist yet.
+		if (!tagsAddShow) {
+			/*
+			Getting most used six tags 
+			to show as initial autocomplete values 
+			if they does not exist yet.
+			*/
+			this.URL = new URL("/tags", window.location.href)
+			this.URL.searchParams.set("q", "top")
 			tagsGet({
-				URL: "/tags?q=top", 
+				URL: this.URL, 
 				key: "top"
 			})
+		}
 		this.setState({tagsAddShow: !tagsAddShow})
 	}
 	photosAddToggle() {
@@ -128,11 +144,12 @@ class Demand extends Component {
 			params: {accID, ID}, 
 			demandDelete
 		} = this.props
+		this.URL = new URL(window.location.href)
 		// WHEN LISTING DEMANDS, BE CAREFULL ABOUT "undefined" VALUE OF 
 		// "entitiesBuffered[ID]" !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		// OR FIND A WAY TO DELETE THE "ID" FROM ALL "pagination[key].IDs" !!!!!!!!
+		// OR FIND A WAY TO DELETE THE "ID" FROM ALL "pagination[kind][key].IDs" !!
 		demandDelete({
-			URL: `/demands/${ID}`, 
+			URL: this.URL, 
 			data: {
 				value: [ID]
 			}, 
@@ -141,27 +158,40 @@ class Demand extends Component {
 		browserHistory.goBack()
 	}
 	handleTagsDemandPost() {
+		this.tagsAddToggle()
+		const {
+			tagIDsSelected
+		} = this.state
+		const {
+			params: {ID}, 
+			tagsDemandPost
+		} = this.props
+		this.URL = new URL("/tagsDemand", window.location.href)
+		this.URL.searchParams.set("dID", ID)
+		tagsDemandPost({
+			URL: this.URL, 
+			data: {
+				value: tagIDsSelected
+			}, 
+			key: ID
+		}).then(response => this.setState({tagIDsSelected: []}))
 	}
 	handlePhotosPost() {
+		this.photosAddToggle()
 		const {
 			params: {ID}, 
 			photosPost
 		} = this.props
-		this.photosAddToggle()
 		let photos = []
-		Object.values(this.inputPhotos.files).forEach(v => {
+		Object.values(this.file.files).forEach(v => {
 			photos.push(v)
 		})
-		// TRY TO SEND AS JSON ENCODED []byte STRING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		this.URL = new URL("/photos", window.location.href)
+		this.URL.searchParams.set("pID", ID)
 		photosPost({
-			URL: `/photos?q=${ID}`, 
+			URL: this.URL, 
 			data: {
-				type: "FormData", 
-				// Use "contextType" for "Blob" type.
-				// contextType: "application/json", 
-				value: {
-					files: photos
-				}
+				value: photos
 			}, 
 			key: ID
 		})
@@ -172,10 +202,13 @@ class Demand extends Component {
 		} = this.props
 		clearTimeout(this.timer)
 		if (v.length > 2) {
-			this.timer = setTimeout(() => tagsGet({
-				URL: `/tags?q=${v}`, 
+			this.timer = setTimeout(() => {
+				this.URL = new URL(`/tags`, window.location.href)
+				this.URL.searchParams.set("q", v)
+				tagsGet({
+				URL: this.URL, 
 				key: v
-			}), 1000)
+			}), 1000})
 		}
 		this.setState({
 			searchText: v
@@ -218,7 +251,6 @@ class Demand extends Component {
 				[]
 			)
 		const tagsFiltered = filterAnObjectByKeys(tags, IDs)
-		// CHECK RETURNED ARRAY ELEMENTS FOR null and undefined VALUES !!!!!!!!!!!!
 		return Object.entries(tagsFiltered)
 			.map(([k, v]) => {
 				return (
@@ -230,7 +262,7 @@ class Demand extends Component {
 						<MenuItem
 							key={k}
 							value={k}
-							primaryText={contexts[v.contextID]}
+							primaryText={contexts[v.contextID].value}
 						/>
 					)
 				}
@@ -253,10 +285,10 @@ class Demand extends Component {
 					color={blue300}
 				>
 					{firstLettersGenerate(
-						contexts[tags[v].contextID]
+						contexts[tags[v].contextID].value
 					)}
 				</Avatar>
-				{contexts[tags[v].contextID]}
+				{contexts[tags[v].contextID].value}
 			</Chip>
 		)
 	}
@@ -269,8 +301,8 @@ class Demand extends Component {
 				searchText={searchText}
 				filter={AutoComplete.noFilter}
 				dataSource={this.dataSourceTags(contexts, searchText)}
-				hintText={contexts["aghkZXZ-Tm9uZXIZCxIHQ29udGVudCIMU2VhcmNoIGEgdGFnDA"] || "Search a tag"}
-				floatingLabelText={contexts["aghkZXZ-Tm9uZXIQCxIHQ29udGVudCIDVGFnDA"] || "Tag"}
+				hintText={contexts["aghkZXZ-Tm9uZXIZCxIHQ29udGVudCIMU2VhcmNoIGEgdGFnDA"].value || "Search a tag"}
+				floatingLabelText={contexts["aghkZXZ-Tm9uZXIQCxIHQ29udGVudCIDVGFnDA"].value || "Tag"}
 				onUpdateInput={this.handleAutoComplete} 
 				onNewRequest={this.handleNewRequest}
 				openOnFocus={true}
@@ -290,9 +322,9 @@ class Demand extends Component {
 									size={32}
 									color={blue300}
 								>
-									{firstLettersGenerate(contexts[v.contextID])}
+									{firstLettersGenerate(contexts[v.contextID].value)}
 								</Avatar>
-								{contexts[v.contextID]}
+								{contexts[v.contextID].value}
 							</Chip>
 						}
 						disabled={true} 
@@ -320,12 +352,12 @@ class Demand extends Component {
 			<input 
 				type="file"
 				accept="image/*" 
-				ref={input => this.inputPhotos = input}
+				ref={input => this.file = input}
 				multiple
 			/>
 	}
-	offers(offers, ID) {
-		// WHY IS IT AN ABSOLUTE LINK, RELATIVE PATH IS MORE CONVENIENT !!!!!!!!!!!
+	// offers(offers, ID) {
+	offers(offers) {
 		return <List>
 			{
 				Object.values(offers).map(v => <ListItem 
@@ -334,7 +366,8 @@ class Demand extends Component {
 					secondaryText={v.amount} 
 					containerElement={
 						<Link 
-							to={`/${ID}/offers/${v.ID}`} 
+							to={`offers/${v.ID}`} 
+							// to={`/${ID}/offers/${v.ID}`} 
 						/> 
 					}
 				/>)
@@ -355,7 +388,7 @@ class Demand extends Component {
 	}
 	isUpdatable(demand, offers, userID, rolesUser, accountID) {
 		return (
-			demand.status !== "accepted" && 
+			demand.status === "active" && 
 			(
 				offers && 
 				Object.values(offers).length === 0 
@@ -371,7 +404,7 @@ class Demand extends Component {
 	}
 	isOfferable(demand, accountID) {
 		return (
-			demand.status !== "accepted" && 
+			demand.status === "active" && 
 			(accountID !== "" && accountID !== demand.accountID)
 		) ? true : false
 	}
@@ -400,27 +433,26 @@ class Demand extends Component {
 					<CardTitle title={demand.status} />
 					<CardText>
 						<List>
-							<ListItem primaryText={contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"] || "Description"} secondaryText={demand.description} disabled={true} />
-							<ListItem primaryText={contexts["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIITW9kaWZpZWQM"] || "Modified"} secondaryText={demand.lastModified} disabled={true} />
-							<ListItem primaryText={contexts["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHQ3JlYXRlZAw"] || "Created"} secondaryText={demand.created} disabled={true} />
+							<ListItem primaryText={contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"].value || "Description"} secondaryText={demand.description} disabled={true} />
+							<ListItem primaryText={contexts["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIITW9kaWZpZWQM"].value || "Modified"} secondaryText={demand.lastModified} disabled={true} />
+							<ListItem primaryText={contexts["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHQ3JlYXRlZAw"].value || "Created"} secondaryText={demand.created} disabled={true} />
 						</List>
 					</CardText>
-					<CardActions>
-						{
-							this.isDeletable(
-								demand, 
-								userID, 
-								rolesUser, 
-								accountID
-							) ? 
+					{
+						this.isDeletable(
+							demand, 
+							userID, 
+							rolesUser, 
+							accountID
+						) && 
+							<CardActions>
 								<FlatButton 
-									label={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"] || "Delete"}
+									label={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"].value || "Delete"}
 									secondary={true}
 									onTouchTap={this.handleDelete} 
-								/> : 
-								null
-						}
-					</CardActions>
+								/>
+							</CardActions>
+					}
 				</Card>
 				<Divider />
 				{
@@ -435,13 +467,13 @@ class Demand extends Component {
 							}
 							{
 								tagIDsSelected.length && <FlatButton
-									label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
+									label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"].value || "Save"}
 									primary={true}
 									onTouchTap={this.handleTagsDemandPost}
 								/>
 							}
 							<FlatButton
-								label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
+								label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"].value || "Close"}
 								onTouchTap={this.tagsAddToggle}
 							/>
 						</div> : 
@@ -471,14 +503,14 @@ class Demand extends Component {
 								this.fileInputPhotos()
 							}
 							{
-								Object.keys(this.inputPhotos.files).length && <FlatButton
-									label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
+								Object.keys(this.file.files).length && <FlatButton
+									label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"].value || "Save"}
 									primary={true}
 									onTouchTap={this.handlePhotosPost}
 								/>
 							}
 							<FlatButton
-								label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
+								label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"].value || "Close"}
 								onTouchTap={this.photosAddToggle}
 							/>
 						</div> : 
@@ -499,6 +531,7 @@ class Demand extends Component {
 				}
 				<Divider />
 				{
+					// offers && this.offers(offers, ID)
 					offers && this.offers(offers, ID)
 				}
 				{
@@ -517,7 +550,7 @@ class Demand extends Component {
 							style={styles.floatingActionButton}
 							onTouchTap={this.dialogDemandToggle}
 						>
-							<contentCreate />
+							<ContentCreate />
 						</FloatingActionButton>
 				}
 				{
@@ -535,14 +568,14 @@ class Demand extends Component {
 				}
 				<DialogDemandUpdate
 					contexts={contexts} 
-					title={contexts["aghkZXZ-Tm9uZXIeCxIHQ29udGVudCIRVXBkYXRlIFRoZSBEZW1hbmQM"] || "Update The Demand"}
+					title={contexts["aghkZXZ-Tm9uZXIeCxIHQ29udGVudCIRVXBkYXRlIFRoZSBEZW1hbmQM"].value || "Update The Demand"}
 					dialogShow={dialogDemandShow} 
 					demand={demand} 
 					dialogToggle={this.dialogDemandToggle}
 				/>
 				<DialogOfferCreate
 					contexts={contexts} 
-					title={contexts["aghkZXZ-Tm9uZXIaCxIHQ29udGVudCINTWFrZSBBbiBPZmZlcgw"] || "Make An Offer"}
+					title={contexts["aghkZXZ-Tm9uZXIaCxIHQ29udGVudCINTWFrZSBBbiBPZmZlcgw"].value || "Make An Offer"}
 					uID={userID}
 					dialogShow={dialogOfferShow} 
 					dialogToggle={this.dialogOfferToggle}
@@ -577,6 +610,8 @@ Demand.propTypes = {
 	userID: PropTypes.string.isRequired, 
 	accountID: PropTypes.string.isRequired, 
 	rolesUser: PropTypes.object.isRequired, 
+	photosPost: PropTypes.func.isRequired, 
+	tagsDemandPost: PropTypes.func.isRequired, 
 	demandDelete: PropTypes.func.isRequired
 }
 

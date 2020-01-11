@@ -11,7 +11,7 @@
 
 export default function makeActionCreator(type, ...argNames) {
 	let action = {type}
-	// If argNames provided match with returned args
+	// If argNames provided match to returned args
 	if(argNames.length)
 		return (...args) => {
 			argNames.forEach((v, i) => {

@@ -1,11 +1,16 @@
-import makeLoader from "./utilities"
+import makeLoader, {
+	isCached
+} from "./utilities"
 import {
 	tagsRequest, 
 	tagsSuccess, 
 	tagsFailure
 } from "../actions/tags"
 
-// "didValidate" is also for autocomplete.
+/*
+The reason of usage of the "isCached" instead of the "didValidate" is pagination 
+at the "Tags" page.
+*/
 const tagsGet = makeLoader({
 	defaults: {
 		URL: "/tags", 
@@ -17,7 +22,8 @@ const tagsGet = makeLoader({
 		actionsFailure: [tagsFailure]
 	}, 
 	options: {
-		didValidate
+		hideFetching, 
+		isCached
 	}
 })
 export const tagPost = makeLoader({
@@ -25,6 +31,7 @@ export const tagPost = makeLoader({
 		URL: "/tags", 
 		method: "POST", 
 		headers: {
+			"Content-Type": "application/json", 
 			"Accept": "application/json"
 		}
 	},

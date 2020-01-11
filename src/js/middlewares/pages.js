@@ -5,9 +5,11 @@ import {
 	pagesFailure
 } from "../actions/pages"
 
+const URL = new URL("/pages", window.location.href)
+
 const pagesGet = makeLoader({
 	defaults: {
-		URL: "/pages", 
+		URL, 
 		kind: "pages"
 	},
 	actionCreators: {
@@ -21,9 +23,10 @@ const pagesGet = makeLoader({
 })
 export const pagePost = makeLoader({
 	defaults: {
-		URL: "/pages", 
+		URL, 
 		method: "POST", 
 		headers: {
+			"Content-Type": "application/json", 
 			"Accept": "application/json"
 		}
 	},
@@ -31,6 +34,20 @@ export const pagePost = makeLoader({
 		actionsRequest: [pagesRequest],
 		actionsSuccess: [pagesSuccess],
 		actionsFailure: [pagesFailure]
+	}
+})
+export const pagesDelete = makeLoader({
+	defaults: {
+		method: "DELETE", 
+		kind: "pages"
+	},
+	actionCreators: {
+		actionsRequest: [languagesRequest],
+		actionsSuccess: [languagesSuccess],
+		actionsFailure: [languagesFailure]
+	}, 
+	options: {
+		hideFetching
 	}
 })
 

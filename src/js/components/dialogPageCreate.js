@@ -1,5 +1,6 @@
 import React, {Component}  from "react"
 import PropTypes from "prop-types"
+import browserHistory from "react-router/lib/browserHistory"
 import Dialog from "material-ui/Dialog"
 import VerticalStepper from "./verticalStepper"
 import TextField from "material-ui/TextField"
@@ -56,7 +57,7 @@ class DialogPageCreate extends Component {
 			this.setState({
 				inputErrTexts: {
 					...inputErrTexts, 
-					[key]: contexts["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"] || "Required Field"
+					[key]: contexts["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"].value || "Required Field"
 				}
 			})
 			return true
@@ -89,18 +90,26 @@ class DialogPageCreate extends Component {
 		} = this.state
 		const {
 			dialogToggle, 
-			pagePost
+			pagePost, 
+			pagesSuccess
 		} = this.props
 		dialogToggle()
 		this.props.pagePost({
 			data: {
-				type: "FormData", 
-				// Use "contextType" for "Blob" type.
-				// contextType: "application/json", 
-				value: {
-						...newObject, 
-						file: this.file.files[0] 
-				}
+				value: newObject
+			}
+		}).then(response => {
+			if (response.OK) {
+				response.json().then(body => {
+					pagesSuccess({
+						response: body, 
+						method: "GET", 
+						inefective, 
+						didValidate, 
+						key: body.ID
+					})
+				})
+				browserHistory.push(response.headers.get("Location"))
 			}
 		})
 		this.setState({
@@ -114,51 +123,39 @@ class DialogPageCreate extends Component {
 		} = this.props
 		return Object.keys(contexts).length > 0 ?
 			[
-				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"], 
-				contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIETmFtZQw"], 
-				contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIERmlsZQw"]
+				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"].value, 
+				contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIETmFtZQw"].value
 			] :
 			[
 				"Explanation", 
-				"Name", 
-				"Photo"
+				"Name"
 			]
 	}
-	explanationField() {
-		const {
-			contexts
-		} = this.props
+	explanationField(contexts) {
 		return <p>
-			{contexts["aghkZXZ-Tm9uZXI0CxIHQ29udGVudCInQWRkIGEgbmV3IHBhZ2UuIE5hbWUgZmllbGQgaXMgcmVxdWlyZWQuDA"] || "Add a new page. Name field is required."}
+			{contexts["aghkZXZ-Tm9uZXI0CxIHQ29udGVudCInQWRkIGEgbmV3IHBhZ2UuIE5hbWUgZmllbGQgaXMgcmVxdWlyZWQuDA"].value || "Add a new page. Name field is required."}
 		</p>
 	}
-	nameField() {
+	nameField(contexts) {
 		const {
 			newObject: {name}, 
 			inputErrTexts
 		} = this.state
-		const {
-			contexts
-		} = this.props
 		return <TextField 
 			name="name"
 			value={name || ""}
-			floatingLabelText={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGQW1vdW50DA"] || "Name"}
+			floatingLabelText={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGQW1vdW50DA"].value || "Name"}
 			errorText={inputErrTexts.name}
 			onChange={this.handleFieldChange}
 		/>
 	}
-	photoField() {
-		return <input 
-			type="file"
-			ref={input => this.file = input}
-		/>
-	}
 	stepContents() {
+		const {
+			contexts
+		} = this.props
 		return [
-			this.explanationField(), 
-			this.nameField(), 
-			this.photoField()
+			this.explanationField(contexts), 
+			this.nameField(contexts)
 		]
 	}
 	children() {
@@ -186,12 +183,12 @@ class DialogPageCreate extends Component {
 		} = this.props
 		let actions = [
 			<FlatButton
-				label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
+				label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"].value || "Close"}
 				onTouchTap={dialogToggle}
 			/>
 		]
 		this.stepContents().length - 1 === stepIndex && actions.push(<FlatButton
-			label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
+			label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"].value || "Save"}
 			primary={true}
 			onTouchTap={this.handlePost}
 		/>)
@@ -212,14 +209,15 @@ class DialogPageCreate extends Component {
 	}
 }
 
-DialogPageCreate.muiName = "Dialog"
-
 DialogPageCreate.propTypes = {
 	contexts: PropTypes.object.isRequired,
 	title: PropTypes.string.isRequired,
 	dialogShow: PropTypes.bool.isRequired, 
 	dialogToggle: PropTypes.func.isRequired, 
-	pagePost: PropTypes.func.isRequired
+	pagePost: PropTypes.func.isRequired, 
+	pagesSuccess: PropTypes.func.isRequired
 }
+
+DialogPageCreate.muiName = "Dialog"
 
 export default DialogPageCreate

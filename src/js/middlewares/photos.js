@@ -13,19 +13,26 @@ const photosGet = makeLoader({
 		actionsRequest: [photosRequest],
 		actionsSuccess: [photosSuccess],
 		actionsFailure: [photosFailure]
+	}, 
+	options: {
+		didValidate
 	}
 })
+// "showSnackbar" is to inform the users about activation after confirmation process.
 export const photosPost = makeLoader({
 	defaults: {
 		method: "POST", 
 		headers: {
-			"Accept": "application/json"
+			"Content-Type": "application/json"
 		}
 	},
 	actionCreators: {
 		actionsRequest: [photosRequest],
 		actionsSuccess: [photosSuccess],
 		actionsFailure: [photosFailure]
+	}, 
+	options: {
+		showSnackbar
 	}
 })
 export const photosDelete = makeLoader({

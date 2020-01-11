@@ -17,21 +17,16 @@ const demandsGet = makeLoader({
 })
 export const demandPost = makeLoader({
 	defaults: {
-		method: "POST"
-		/*
 		method: "POST", 
 		headers: {
-			"Content-Type": "application/json"
+			// "Content-Type": "application/json"
+			"Accept": "application/json"
 		}
-		*/
 	},
 	actionCreators: {
 		actionsRequest: [demandsRequest],
 		actionsSuccess: [demandsSuccess],
 		actionsFailure: [demandsFailure]
-	}, 
-	options: {
-		showSnackbar
 	}
 })
 

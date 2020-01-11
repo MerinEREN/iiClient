@@ -2,7 +2,7 @@
 // BUT I THINK ALL BROWSERS SUPPORTS fetch NOW.
 // import fetch from "isomorphic-fetch"
 // OR import fetch from "cross-fetch"
-import browserHistory from "react-router/lib/browserHistory"
+// import browserHistory from "react-router/lib/browserHistory"
 import {toggleFetching} from "../actions/fetchingProgres"
 import {
 	addSnackbar, 
@@ -26,9 +26,18 @@ export default function fetchDomainDataIfNeeded(args) {
 					// Dispatch a thunk from thunk.
 					return dispatch(fetchDomainData(args))
 				} else {
+					const {
+						kind, 
+						key
+					} = args
+					const init = {status: 200}
+					const body = JSON.stringify(
+						getState().entities[kind][key]
+					)
+					const response = new Response(body, init)
 					// Let the calling code know there is nothing 
 					// to wait for.
-					return Promise.resolve()
+					return Promise.resolve(response)
 				}
 			case "DELETE":
 				// Dispatch a thunk from thunk.
@@ -48,10 +57,8 @@ function shouldFetchDomainData(state, args) {
 		kind, 
 		key
 	} = args
-	// For non paginated objects and page contexts.
 	if (isCached)
 		return !isCached(state, kind, key)
-	// For paginated objects
 	if (state.pagination[kind][key])
 		return !(state.pagination[kind][key].isFetching || 
 			state.pagination[kind][key].didValidate)
@@ -214,10 +221,12 @@ const fetchDomainData = args => (dispatch, getState) => {
 						})))
 						break
 					case 201:
+						/*
 						// If needed use the "location" to redirect 
 						// here.
 						if(response.headers.has("Location"))
 							var location = response.headers.get("Location")
+						*/
 					default:
 						// If the response is 200.
 						const contentType = response.headers.get("Content-Type")
@@ -294,6 +303,7 @@ const fetchDomainData = args => (dispatch, getState) => {
 					onRequestClose: () => dispatch(removeSnackbar(snackbarKey.toString()))
 				}))
 			}
+			/*
 			if (location) {
 				browserHistory.push(location)
 				// Let the calling code know there is nothing to wait for.
@@ -301,6 +311,7 @@ const fetchDomainData = args => (dispatch, getState) => {
 			} else {
 				return response
 			}
+			*/
 		})
 		.catch(err => {
 			if(!hideFetching)

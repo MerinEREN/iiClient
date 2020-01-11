@@ -116,10 +116,7 @@ class DialogRoleTypeCreate extends Component {
 		labels.push("ID")
 		return labels
 	}
-	explanationField() {
-		const {
-			contexts
-		} = this.props
+	explanationField(contexts) {
 		return <p>
 			{contexts["aghkZXZ-Tm9uZXI4CxIHQ29udGVudCIrQWRkIGEgbmV3IHJvbGUgdHlwZS4gVGhlIGZpZWxkIGlzIHJlcXVpcmVkLgw"] || "Add a new role type. The field is required."}
 		</p>
@@ -138,8 +135,11 @@ class DialogRoleTypeCreate extends Component {
 		/>
 	}
 	stepContents() {
+		const {
+			contexts
+		} = this.props
 		return [
-			this.explanationField(), 
+			this.explanationField(contexts), 
 			this.IDField()
 		]
 	}

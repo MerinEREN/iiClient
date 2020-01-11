@@ -5,7 +5,7 @@ import RaisedButton from "material-ui/RaisedButton"
 import FloatingActionButton from "material-ui/FloatingActionButton"
 import ContentAdd from "material-ui/svg-icons/content/add"
 import DialogLanguageCreate from "../containers/dialogLanguageCreate"
-import TileLanguage from "./tileLanguage"
+import TileLanguage from "../containers/tileLanguage"
 
 const styles = {
 	root: {
@@ -36,18 +36,30 @@ class Languages extends Component {
 		this.handleDelete = this.handleDelete.bind(this)
 	}
 	componentWillMount() {
-		this.props.languagesGet()
+		const {
+			languagesGet
+		} = this.props
+		languagesGet()
 	}
 	dialogToggle() {
-		this.setState({dialogShow: !this.state.dialogShow})
+		const {
+			dialogShow
+		} = this.state
+		this.setState({dialogShow: !dialogShow})
 	}
 	handleDelete() {
 		const {
 			languageIDsSelected, 
 			languagesDelete
 		} = this.props
+		let URL = new URL(window.location.href)
+		languageIDsSelected.forEach(([i, v]) => {
+			if (i === 0)
+				URL.searchParams.set("IDs", v)
+			URL.searchParams.append("IDs", v)
+		})
 		languagesDelete({
-			URL: `/languages?IDs=${generateURLVariableFromIDs(languageIDsSelected)}`, 
+			URL, 
 			data: {
 				value: languageIDsSelected
 			}
@@ -58,13 +70,12 @@ class Languages extends Component {
 			contexts, 
 			languageIDsSelected
 		} = this.props
-		return Object.values(languages).map(v => 
-			<TileLanguage 
-				key={v.ID} 
-				language={v} 
-				title={contexts[v.contextID] || v.ID}
-				isChecked={languageIDsSelected.indexOf(v.ID) !== -1}
-			/>)
+		return Object.values(languages).map(v => <TileLanguage 
+			key={v.ID} 
+			language={v} 
+			title={contexts[v.contextID].value || v.ID}
+			isChecked={languageIDsSelected.indexOf(v.ID) !== -1}
+		/>)
 	}
 	render() {
 		const {
@@ -100,12 +111,12 @@ class Languages extends Component {
 							>
 								{this.tilesLanguage(languages)}
 							</GridList> : 
-							<h3>{contexts["aghkZXZ-Tm9uZXIXCxIHQ29udGVudCIKTm8gQ29udGVudAw"] || "No Content"}</h3>
+							<h3>{contexts["aghkZXZ-Tm9uZXIXCxIHQ29udGVudCIKTm8gQ29udGVudAw"].value || "No Content"}</h3>
 						}
 						{
 							languageIDsSelected.length > 0 && 
 								<RaisedButton
-									label={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"] || "Delete"}
+									label={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"].value || "Delete"}
 									style={raisedButton}
 									secondary={true}
 									onTouchTap={this.handleDelete}
@@ -126,7 +137,7 @@ class Languages extends Component {
 				}
 				<DialogLanguageCreate
 					contexts={contexts} 
-					title={contexts["aghkZXZ-Tm9uZXIfCxIHQ29udGVudCISQWRkIEEgTmV3IExhbmd1YWdlDA"] || "Add A New Language"}
+					title={contexts["aghkZXZ-Tm9uZXIfCxIHQ29udGVudCISQWRkIEEgTmV3IExhbmd1YWdlDA"].value || "Add A New Language"}
 					dialogShow={dialogShow} 
 					dialogToggle={this.dialogToggle}
 				/>
@@ -141,9 +152,9 @@ Languages.defaultProps = {
 
 Languages.propTypes = {
 	contexts: PropTypes.object.isRequired, 
-	languagesGet: PropTypes.func.isRequired, 
 	languages: PropTypes.object, 
 	languageIDsSelected: PropTypes.array, 
+	languagesGet: PropTypes.func.isRequired, 
 	languagesDelete: PropTypes.func.isRequired
 }
 

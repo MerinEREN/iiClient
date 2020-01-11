@@ -2,10 +2,12 @@ import {connect} from "react-redux"
 import {bindActionCreators} from "redux"
 import DialogPageCreateComponent from "../components/dialogPageCreate"
 import {pagePost}  from "../middlewares/pages"
+import {pagesSuccess} from "../actions/pages"
 
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
-		pagePost
+		pagePost, 
+		pagesSuccess
 	},
 	dispatch
 )

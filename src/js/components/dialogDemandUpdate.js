@@ -60,7 +60,7 @@ class DialogDemandUpdate extends Component {
 			this.setState({
 				inputErrTexts: {
 					...inputErrTexts, 
-					[key]: contexts["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"] || "Required Field"
+					[key]: contexts["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"].value || "Required Field"
 				}
 			})
 			return true
@@ -102,8 +102,9 @@ class DialogDemandUpdate extends Component {
 		dialogToggle()
 		// "ID" in data value is for enveloped or not check only
 		// and not be sended to the backand.
+		let URL = new URL(window.location.href)
 		demandPut({
-			URL: `/demands/${ID}`, 
+			URL, 
 			data: {
 				value: {
 					ID, 
@@ -122,26 +123,28 @@ class DialogDemandUpdate extends Component {
 		} = this.props
 		return Object.keys(contexts).length > 0 ?
 			[
-				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRXhwbGFuYXRpb24M"], 
-				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"]
+				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRXhwbGFuYXRpb24M"].value, 
+				contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"].value
 			] : 
 			[
 				"Explanation", 
 				"Description"
 			]
 	}
-	descriptionField() {
+	explanationField(contexts) {
+		return <p>
+			{contexts["aghkZXZ-Tm9uZXJJCxIHQ29udGVudCI8VXBkYXRlIHRoZSBkZW1hbmQuIFRhZ3MgYW5kIERlc2NyaXB0aW9uIGZpZWxkcyBhcmUgcmVxdWlyZWQuDA"].value}
+		</p>
+	}
+	descriptionField(contexts) {
 		const {
 			newObject: {description}, 
 			inputErrTexts
 		} = this.state
-		const {
-			contexts
-		} = this.props
 		return <TextField 
 			name="description" 
 			value={description || ""}
-			floatingLabelText={contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"] || "Description"}
+			floatingLabelText={contexts["aghkZXZ-Tm9uZXIYCxIHQ29udGVudCILRGVzY3JpcHRpb24M"].value || "Description"}
 			errorText={inputErrTexts.description}
 			fullWidth={true}
 			multiLine={true}
@@ -155,10 +158,8 @@ class DialogDemandUpdate extends Component {
 			contexts
 		} = this.props
 		return [
-			<p>
-				{contexts["aghkZXZ-Tm9uZXJJCxIHQ29udGVudCI8VXBkYXRlIHRoZSBkZW1hbmQuIFRhZ3MgYW5kIERlc2NyaXB0aW9uIGZpZWxkcyBhcmUgcmVxdWlyZWQuDA"]}
-			</p>, 
-			this.descriptionField()
+			this.explanationField(contexts), 
+			this.descriptionField(contexts)
 		]
 	}
 	children() {
@@ -187,12 +188,12 @@ class DialogDemandUpdate extends Component {
 
 		let actions = [
 			<FlatButton
-				label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
+				label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"].value || "Close"}
 				onTouchTap={dialogToggle}
 			/>
 		]
 		this.stepContents().length - 1 === stepIndex && actions.push(<FlatButton
-			label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
+			label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"].value || "Save"}
 			primary={true}
 			onTouchTap={this.handlePut}
 		/>)
@@ -204,12 +205,12 @@ class DialogDemandUpdate extends Component {
 			dialogShow
 		} = this.props
 		return <Dialog
-					title={title}
-					children={this.children()}
-					actions={this.actions()}
-					modal={true}
-					open={dialogShow} 
-				/>
+			title={title}
+			children={this.children()}
+			actions={this.actions()}
+			modal={true}
+			open={dialogShow} 
+		/>
 	}
 }
 

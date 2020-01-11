@@ -1,9 +1,7 @@
-import React from "react"
-import {connect} from "react-redux"
+import React, {Component} from "react"
 import PropTypes from "prop-types"
 import {GridTile} from "material-ui/GridList"
 import Checkbox from "material-ui/Checkbox"
-import {selectedLanguageIDsAddRemove} from "../actions/languages"
 
 const styles = {
 	gridTile: {
@@ -14,41 +12,72 @@ const styles = {
 	}
 }
 
-const LanguageTile = ({language: {ID, link}, title, isChecked, dispatch}) => {
-	const {
-		gridTile: {
-			titleBackground
-		}, 
-		checkbox
-	} = styles
-	return (
-		<GridTile  
-			style={{
-				opacity: isChecked ? 0.5 : 1
-			}}
-			title={title}
-			titlePosition="top"
-			titleBackground={titleBackground} 
-			actionIcon={
-				<Checkbox
-					style={checkbox} 
-					checked={isChecked}
-					onCheck={() => dispatch(selectedLanguageIDsAddRemove(ID))}
-				/>
-			}
-			actionPosition="left"
-		>
-			<img src={link || "/img/adele.jpg"} />
-		</GridTile>
-	)
+class TileLanguage extends Component {
+	constructor(props) {
+		super(props)
+	}
+	componentWillMount() {
+		const {
+			language: {ID}, 
+			photosGet
+		} = this.props
+		let URL = new URL("/photos", window.location.href)
+		URL.searchParams.set("pID", ID)
+		photosGet({
+			URL, 
+			key: ID
+		})
+	}
+	render() {
+		const {
+			gridTile: {
+				titleBackground
+			}, 
+			checkbox
+		} = styles
+		const {
+			language: {ID}, 
+			title, 
+			isChecked, 
+			languagePhoto: {link}, 
+			selectedLanguageIDsAddRemove
+		} = this.props
+		return (
+			<GridTile  
+				style={{
+					opacity: isChecked ? 0.5 : 1
+				}}
+				title={title}
+				titlePosition="top"
+				titleBackground={titleBackground} 
+				actionIcon={
+					<Checkbox
+						style={checkbox} 
+						checked={isChecked}
+						onCheck={() => selectedLanguageIDsAddRemove(ID)}
+					/>
+				}
+				actionPosition="left"
+			>
+				<img src={link || "/img/adele.jpg"} />
+			</GridTile>
+		)
+	}
 }
 
-LanguageTile.propTypes = {
+TileLanguage.defaultProps = {
+	languagePhoto: {}
+}
+
+TileLanguage.propTypes = {
 	language: PropTypes.object.isRequired, 
 	title: PropTypes.string.isRequired, 
-	isChecked: PropTypes.bool.isRequired
+	isChecked: PropTypes.bool.isRequired, 
+	languagePhoto: PropTypes.object, 
+	photosGet: PropTypes.func.isRequired, 
+	selectedLanguageIDsAddRemove: PropTypes.func.isRequired
 }
 
-// LanguageTile.muiName = "GridTile"
+// TileLanguage.muiName = "GridTile"
 
-export default connect()(LanguageTile)
+export default TileLanguage

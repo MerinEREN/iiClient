@@ -68,6 +68,8 @@ class Signed extends Component {
 				})
 				this.URL.pathname = "/rolesUser"
 				this.URL.searchParams.delete("type")
+				this.URL.searchParams.delete("pID")
+				this.URL.searchParams.set("uID", response.ID)
 				rolesUserGet({
 					URL: this.URL, 
 					key: response.ID

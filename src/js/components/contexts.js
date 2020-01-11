@@ -44,8 +44,12 @@ class Contexts extends Component {
 		this.handleDelete = this.handleDelete.bind(this)
 	}
 	componentWillMount() {
-		this.props.contextsGet()
-		this.props.pagesGet()
+		const {
+			contextsGet, 
+			pagesGet
+		} = this.props
+		contextsGet()
+		pagesGet()
 	}
 	handleCreateNewContexts() {
 		const {
@@ -132,7 +136,7 @@ class Contexts extends Component {
 						...inputErrTexts, 
 						[a[0]]: {
 							...inputErrTexts[a[0]], 
-							["en-US"]: contextsRoot["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"] || "Required Field"
+							["en-US"]: contextsRoot["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"].value || "Required Field"
 						}
 					}
 				})
@@ -144,7 +148,7 @@ class Contexts extends Component {
 						...inputErrTexts, 
 						[a[0]]: {
 							...inputErrTexts[a[0]], 
-							pageIDs: contextsRoot["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"] || "Required Field"
+							pageIDs: contextsRoot["aghkZXZ-Tm9uZXIbCxIHQ29udGVudCIOUmVxdWlyZWQgRmllbGQM"].value || "Required Field"
 						}
 					}
 				})
@@ -198,7 +202,12 @@ class Contexts extends Component {
 			contextIDsSelected, 
 			contextsDelete
 		} = this.props
-		// CREATE URL HERE AND USE IT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		let URL = new URL(window.location.href)
+		for (let i = 0; i < contextIDsSelected.length; i++) {
+			if (i === 0)
+				URL.searchParams.set("IDs", contextIDsSelected[i])
+			URL.searchParams.append("IDs", contextIDsSelected[i])
+		}
 		contextsDelete({
 			URL, 
 			data: {
@@ -255,15 +264,15 @@ class Contexts extends Component {
 				</GridList>
 		const actions = [
 			<FlatButton
-				label={contextsRoot["aghkZXZ-Tm9uZXIiCxIHQ29udGVudCIVR2VuZXJhdGUgTmV3IENvbnRlbnRzDA"] || "Generate New Contexts"}
+				label={contextsRoot["aghkZXZ-Tm9uZXIiCxIHQ29udGVudCIVR2VuZXJhdGUgTmV3IENvbnRlbnRzDA"].value || "Generate New Contexts"}
 				onTouchTap={this.handleCreateNewContexts}
 			/>, 
 			<FlatButton
-				label={contextsRoot["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
+				label={contextsRoot["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"].value || "Close"}
 				onTouchTap={this.dialogToggle}
 			/>, 
 			<FlatButton
-				label={contextsRoot["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
+				label={contextsRoot["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"].value || "Save"}
 				primary={true}
 				onTouchTap={this.handlePost}
 			/>
@@ -288,14 +297,14 @@ class Contexts extends Component {
 							{this.tilesContext(contexts)}
 						</GridList> :
 						<div>
-							<h3>{contexts["aghkZXZ-Tm9uZXIXCxIHQ29udGVudCIKTm8gQ29udGVudAw"] || "No Context"}</h3>
+							<h3>{contextsRoot["aghkZXZ-Tm9uZXIXCxIHQ29udGVudCIKTm8gQ29udGVudAw"].value || "No Context"}</h3>
 						</div>
 					}
 					{
 						Object.keys(contexts).length > 0
 							&& 
 							<RaisedButton
-								label={contextsRoot["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
+								label={contextsRoot["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"].value || "Save"}
 								style={raisedButton}
 								primary={true}
 								onTouchTap={this.handlePut}
@@ -304,7 +313,7 @@ class Contexts extends Component {
 					{
 							contextIDsSelected.length > 0 && 
 							<RaisedButton
-								label={contextsRoot["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"] || "Delete"}
+								label={contextsRoot["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"].value || "Delete"}
 								style={raisedButton}
 								secondary={true}
 								onTouchTap={this.handleDelete}
@@ -328,7 +337,7 @@ class Contexts extends Component {
 						</FloatingActionButton>
 				}
 				<Dialog
-					title={contextsRoot["aghkZXZ-Tm9uZXIdCxIHQ29udGVudCIQQWRkIE5ldyBDb250ZW50cww"] || "Add New Contexts"}
+					title={contextsRoot["aghkZXZ-Tm9uZXIdCxIHQ29udGVudCIQQWRkIE5ldyBDb250ZW50cww"].value || "Add New Contexts"}
 					children={children}
 					actions={actions}
 					modal={true}
@@ -354,10 +363,10 @@ Contexts.propTypes = {
 	contexts: PropTypes.object.isRequired, 
 	pagesGet: PropTypes.func.isRequired, 
 	pages: PropTypes.object.isRequired, 
-	postContexts: PropTypes.func.isRequired, 
-	putContexts: PropTypes.func.isRequired, 
+	contextsPost: PropTypes.func.isRequired, 
+	contextsPut: PropTypes.func.isRequired, 
 	contextIDsSelected: PropTypes.array.isRequired, 
-	deleteContexts: PropTypes.func.isRequired
+	contextsDelete: PropTypes.func.isRequired
 }
 
 Contexts.muiName = "GridList"

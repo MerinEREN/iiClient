@@ -7,11 +7,15 @@ import {
 	contextsFailure
 } from "../actions/contexts"
 
-// The reason of usage of the "isCached" instead of the "didValidate" is pagination 
-// at the "Contexts" page.
+const URL = new URL("/contexts", window.location.href)
+
+/*
+The reason of usage of the "isCached" instead of the "didValidate" is pagination 
+at the "Contexts" page.
+*/
 const contextsGet = makeLoader({
 	defaults: {
-		URL: "/contexts", 
+		URL, 
 		kind: "contexts"
 	},
 	actionCreators: {
@@ -26,11 +30,17 @@ const contextsGet = makeLoader({
 })
 export const contextsPost = makeLoader({
 	defaults: {
-		URL: "/contexts", 
+		URL, 
 		method: "POST", 
 		headers: {
 			"Accept": "application/json"
 		}
+		/*
+		headers: {
+			"Content-Type": "application/json", 
+			"Accept": "application/json"
+		}
+		*/
 	},
 	actionCreators: {
 		actionsRequest: [contextsRequest],
@@ -40,7 +50,7 @@ export const contextsPost = makeLoader({
 })
 export const contextsPut = makeLoader({
 	defaults: {
-		URL: "/contexts", 
+		URL, 
 		method: "PUT", 
 		kind: "contexts"
 	},

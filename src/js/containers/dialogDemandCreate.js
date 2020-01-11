@@ -3,6 +3,7 @@ import {bindActionCreators} from "redux"
 import DialogDemandCreateComponent from "../components/dialogDemandCreate"
 import tagsGet from "../middlewares/tags"
 import {demandPost} from "../middlewares/demands"
+import {demandsSuccess} from "../actions/demands"
 
 const mapStateToProps = (state, ownProps) => {
 	const {
@@ -21,7 +22,8 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = dispatch => bindActionCreators(
 	{
 		tagsGet, 
-		demandPost
+		demandPost, 
+		demandsSuccess
 	},
 	dispatch
 )

@@ -36,23 +36,22 @@ class Page extends Component {
 	}
 	componentWillMount() {
 		const {
-			photosGet, 
+			params: {ID}, 
 			pageGet, 
-			params: {
-				ID
-			}
+			photosGet
 		} = this.props
-		photosGet({
-			URL: `/photos?q=${ID}`, 
+		this.URL = new URL(window.location.href)
+		pageGet({
+			URL: this.URL, 
 			key: ID
 		})
-		pageGet({
-			URL: `/pages/${ID}`
+		this.URL.pathname = "/photos"
+		this.URL.searchParams.set("pID", ID)
+		photosGet({
+			URL: this.URL, 
+			key: ID
 		})
 
-	}
-	dialogToggle() {
-		this.setState({dialogShow: !this.state.dialogShow})
 	}
 	photoAddToggle() {
 		const {
@@ -60,21 +59,25 @@ class Page extends Component {
 		} = this.state
 		this.setState({photoAddShow: !photoAddShow})
 	}
+	dialogToggle() {
+		const {
+			dialogShow
+		} = this.state
+		this.setState({dialogShow: !dialogShow})
+	}
 	handlePhotoPost() {
+		this.photoAddToggle()
 		const {
 			params: {ID}, 
 			photosPost
 		} = this.props
-		this.photoAddToggle()
-		// TRY TO SEND AS JSON ENCODED []byte STRING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		this.URL = new URL("/photos", window.location.href)
+		this.URL.searchParams.set("pID", ID)
 		photosPost({
-			URL: `/photos?q=${ID}`, 
+			URL: this.URL, 
 			data: {
-				type: "FormData", 
-				// Use "contextType" for "Blob" type.
-				// contextType: "application/json", 
 				value: {
-					file: this.file.files[0]
+					file: this.file.files
 				}
 			}, 
 			key: ID
@@ -86,8 +89,9 @@ class Page extends Component {
 			pageDelete, 
 			removeUpdateContextsWithThatPage
 		} = this.props
+		this.URL = new URL(window.location.href)
 		pageDelete({
-			URL: `/pages/${ID}`, 
+			URL: this.URL, 
 			data: {
 				value: [ID]
 			}
@@ -124,12 +128,12 @@ class Page extends Component {
 					<CardText>
 						<List>
 							<ListItem 
-								primaryText={contexts["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIITW9kaWZpZWQM"] || "Modified"} 
+								primaryText={contexts["aghkZXZ-Tm9uZXIVCxIHQ29udGVudCIITW9kaWZpZWQM"].value || "Modified"} 
 								secondaryText={page.lastModified} 
 								disabled={true} 
 							/>
 							<ListItem 
-								primaryText={contexts["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHQ3JlYXRlZAw"] || "Created"} 
+								primaryText={contexts["aghkZXZ-Tm9uZXIUCxIHQ29udGVudCIHQ3JlYXRlZAw"].value || "Created"} 
 								secondaryText={page.created} 
 								disabled={true} 
 							/>
@@ -145,23 +149,23 @@ class Page extends Component {
 									{
 										this.file.files.length && 
 											<FlatButton
-												label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"] || "Save"}
+												label={contexts["aghkZXZ-Tm9uZXIRCxIHQ29udGVudCIEU2F2ZQw"].value || "Save"}
 												primary={true}
 												onTouchTap={this.handlePhotoPost}
 											/>
 									}
 									<FlatButton
-										label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"] || "Close"}
+										label={contexts["aghkZXZ-Tm9uZXISCxIHQ29udGVudCIFQ2xvc2UM"].value || "Close"}
 										onTouchTap={this.photoAddToggle}
 									/>
 								</div> : 
 								<FlatButton 
-									label={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"] || "Update Photo"}
+									label={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"].value || "Update Photo"}
 									onTouchTap={this.photoAddToggle} 
 								/>
 						}
 						<FlatButton 
-							label={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"] || "Delete"}
+							label={contexts["aghkZXZ-Tm9uZXITCxIHQ29udGVudCIGRGVsZXRlDA"].value || "Delete"}
 							secondary={true}
 							onTouchTap={this.handleDelete} 
 						/>
@@ -180,27 +184,28 @@ class Page extends Component {
 				}
 				<DialogPageUpdate
 					contexts={contexts} 
-					title={contexts["aghkZXZ-Tm9uZXIcCxIHQ29udGVudCIPVXBkYXRlIFRoZSBQYWdlDA"] || "Update The Page"}
+					title={contexts["aghkZXZ-Tm9uZXIcCxIHQ29udGVudCIPVXBkYXRlIFRoZSBQYWdlDA"].value || "Update The Page"}
 					page={page}
 					dialogShow={dialogShow} 
-			dialogToggle={this.dialogDemandToggle}
-		/>
-	</div>
+					dialogToggle={this.dialogDemandToggle}
+				/>
+			</div>
 		)
 	}
 }
 
 Page.defaultProps = {
 	contexts: {}, 
-	page: {}
+	page: {}, 
+	pagePhoto: {}
 }
 
 Page.propTypes = {
 	contexts: PropTypes.object.isRequired, 
-	photosGet: PropTypes.func.isRequired, 
+	page: PropTypes.object.isRequired, 
 	pagePhoto: PropTypes.object, 
 	pageGet: PropTypes.func.isRequired, 
-	page: PropTypes.object.isRequired, 
+	photosGet: PropTypes.func.isRequired, 
 	pageDelete: PropTypes.func.isRequired, 
 	removeUpdateContextsWithThatPage: PropTypes.func.isRequired
 }

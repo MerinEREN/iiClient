@@ -1,9 +1,8 @@
-import React from "react"
+import React, {Component} from "react"
 import PropTypes from "prop-types"
 import {Link} from "react-router"
 import {GridTile} from "material-ui/GridList"
 import Checkbox from "material-ui/Checkbox"
-import {selectedPageIDsAddRemove} from "../actions/pages"
 
 const styles = {
 	gridTile: {
@@ -23,7 +22,23 @@ const styles = {
 }
 
 // FIND A WAY TO PREVENT TO TRIGER LINK WHEN CHECKBOX CHECKED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-const TilePage = ({page, isChecked}) => {
+class TilePage extends Component {
+	constructor(props) {
+		super(props)
+	}
+	componentWillMount() {
+		const {
+			page: {ID}, 
+			photosGet
+		} = this.props
+		let URL = new URL("/photos", window.location.href)
+		URL.searchParams.set("pID", ID)
+		photosGet({
+			URL, 
+			key: ID
+		})
+	}
+	render() {
 		const {
 			gridTile: {
 				paddingTop, 
@@ -34,20 +49,25 @@ const TilePage = ({page, isChecked}) => {
 			link: {activeStyle}, 
 			checkbox
 		} = styles
-		const {ID, name, link} = page
+		const {
+			page: {ID, name}, 
+			isChecked, 
+			pagePhoto: {link}, 
+			selectedPageIDsAddRemove
+		} = this.props
 		return (
 			<GridTile  
-				title={name}
-				titlePosition="top"
-				titleBackground={titleBackground} 
-				cols={ID === "Root" ? 2 : 1} 
-				rows={ID === "Root" ? 1 : 1}
 				style={{
 					paddingTop, 
 					marginTop, 
 					marginBottom, 
 					opacity: isChecked ? 0.5 : 1
 				}} 
+				title={name}
+				titlePosition="top"
+				titleBackground={titleBackground} 
+				cols={ID === "Root" ? 2 : 1} 
+				rows={ID === "Root" ? 1 : 1}
 				actionIcon={
 					<Checkbox
 						style={{...checkbox, display: "none"}} 
@@ -67,10 +87,18 @@ const TilePage = ({page, isChecked}) => {
 			</GridTile>
 		)
 	}
+}
+
+TilePage.defaultProps = {
+	pagePhoto: {}
+}
 
 TilePage.propTypes = {
 	page: PropTypes.object.isRequired, 
-	isChecked: PropTypes.bool.isRequired
+	isChecked: PropTypes.bool.isRequired, 
+	pagePhoto: PropTypes.object, 
+	photosGet: PropTypes.func.isRequired, 
+	selectedPageIDsAddRemove: PropTypes.func.isRequired
 }
 
 // TilePage.muiName = "GridTile"
